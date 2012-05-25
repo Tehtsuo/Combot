@@ -7,6 +7,7 @@
 #include core/obj_ComBot.iss
 
 #include core/obj_Move.iss
+#include core/obj_Ship.iss
 #include core/obj_CommandQueue.iss
 
 
@@ -24,6 +25,7 @@ function main()
 	declarevariable ComBot obj_ComBot script
 
 	declarevariable Move obj_Move script
+	declarevariable Ship obj_Ship script
 	declarevariable CommandQueue obj_CommandQueue script
 	
 	

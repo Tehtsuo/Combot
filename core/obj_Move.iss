@@ -8,6 +8,12 @@ objectdef obj_Move
 	variable int64 ApproachingID
 	variable int ApproachingDistance
 	variable int TimeStartedApproaching = 0
+
+	variable bool Warp_Cooldown=FALSE
+
+
+
+
 	
 
 	method Initialize()
@@ -30,7 +36,9 @@ objectdef obj_Move
 
 	    if ${LavishScript.RunningTime} >= ${This.NextPulse}
 		{
+			This:Warp_Check
 
+				
     		This.NextPulse:Set[${Math.Calc[${LavishScript.RunningTime} + ${PulseIntervalInMilliseconds} + ${Math.Rand[500]}]}]
 		}
 	}	
@@ -178,6 +186,25 @@ objectdef obj_Move
 		}
 	}
 
+	method Warp_Check()
+	{
+		if ${Me.ToEntity.Mode} == 3 && ${Warp_Cooldown} && ${Ship.AfterBurner_Active}
+		{
+			Ship:Deactivate_AfterBurner
+			return
+		}
+		if ${Me.ToEntity.Mode} == 3 && !${Warp_Cooldown}
+		{
+			Ship:Activate_AfterBurner
+			Warp_Cooldown:Set[TRUE]
+			return
+		}
+		if ${Me.ToEntity.Mode} != 3
+		{
+			Warp_Cooldown:Set[FALSE]
+			return
+		}
+	}
 	
 }
 	
