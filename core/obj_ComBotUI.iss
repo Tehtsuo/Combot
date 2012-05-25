@@ -54,11 +54,13 @@ objectdef obj_ComBotUI
 
 	}
 
-	method Update(string StatusMessage)
+	method Update(string StatusMessage, string Color="w")
 	{
 		if ${StatusMessage(exists)}
 		{
-			UIElement[StatusConsole@Status@ComBot_Children@ComBot]:Echo["${StatusMessage}"]
+		variable string msg = "\a${Color}${StatusMessage}"
+
+			UIElement[StatusConsole@Status@ComBot_Children@ComBot]:Echo["\a${Color}${StatusMessage}"]
 		}
 	}
 
