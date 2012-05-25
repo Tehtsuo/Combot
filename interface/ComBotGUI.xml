@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ISUI>
+	<window name='ComBot'>
+		<Visible>1</Visible>
+		<BackGroundColor></BackGroundColor>
+		<Border>0</Border>
+		<X>200</X>
+		<Y>300</Y>
+		<Width>550</Width>
+		<Height>320</Height>
+		<Title>ComBot</Title>
+		<TitleBar>
+			<Width>100%</Width>
+			<Height>20</Height>
+			<Border>0</Border>
+			<Children>
+				<Text name='ComBot_TitleBar_Title'>
+					<X>200</X>
+					<Y>3</Y>
+					<Width>130</Width>
+					<Height>20</Height>
+					<Text>ComBot by Tehtsuo</Text>
+				</Text>
+				<button	Name='Close' template='EVESkin.Window.TitleBar.Close'>
+					<OnLeftClick>
+						endscript ComBot
+					</OnLeftClick>
+				</button>
+			</Children>
+		</TitleBar>
+		<Children name="ComBot_Children">
+			<TabControl	Name='ComBotTab'>
+				<X>0</X>
+				<Y>4</Y>
+				<Width>100%</Width>
+				<Height>100%</Height>
+				<Tabs>
+					<Tab Name='Status'>
+						<console Name="StatusConsole">
+							<X>5</X>
+							<Y>50</Y>
+							<Width>90%</Width>
+							<Height>90%</Height>
+						</console>
+					</Tab>
+				</Tabs>
+			</TabControl>
+		</Children>
+	</window>
+</ISUI>
