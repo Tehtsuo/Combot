@@ -25,6 +25,7 @@ objectdef obj_CommandQueue
 	method Initialize()
 	{
 		Event[ISXEVE_onFrame]:AttachAtom[This:Pulse]
+		UI:Update["obj_CommandQueue: Initialized", "g"]
 	}
 
 	method Shutdown()

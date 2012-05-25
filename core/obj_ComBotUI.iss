@@ -13,7 +13,7 @@ objectdef obj_ComBotUI
 		ui -load interface/ComBotGUI.xml
 
 		Event[ISXEVE_onFrame]:AttachAtom[This:Pulse]
-		This:Update["obj_ComBotUI: Initialized"]
+		This:Update["obj_ComBotUI: Initialized", "g"]
 	}
 
 	method Reload()

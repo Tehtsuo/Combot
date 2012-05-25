@@ -1,5 +1,5 @@
 
-objectdef obj_Warp
+objectdef obj_Move
 {
 	variable int NextPulse
 	variable int PulseIntervalInMilliseconds = 2000
@@ -13,7 +13,7 @@ objectdef obj_Warp
 	method Initialize()
 	{
 		Event[ISXEVE_onFrame]:AttachAtom[This:Pulse]
-
+		UI:Update["obj_Move: Initialized", "g"]
 	}
 
 	method Shutdown()
@@ -43,6 +43,7 @@ objectdef obj_Warp
 	{
 		if !${Me.AutoPilotOn}
 		{
+			UI:Update["Activating autopilot", "g"]
 			EVE:Execute[CmdToggleAutopilot]
 		}
 	}
@@ -59,6 +60,7 @@ objectdef obj_Warp
 		
 		if ${DestinationList.Used} > 0
 		{
+			UI:Update["Setting destination to ${Universe[${DestinationSystemID}].Name}", "g"]
 			Universe[${DestinationSystemID}]:SetDestination
 			return
 		}
@@ -87,10 +89,12 @@ objectdef obj_Warp
 			{
 				if ${WarpFleet}
 				{
+					UI:Update["Warping fleet to ${Universe[${EVE.Bookmark[${DestinationBookmarkLabel}].ID}].Name}", "g"]
 					EVE.Bookmark[${DestinationBookmarkLabel}]:WarpFleetTo
-				}fs
+				}
 				else
 				{
+					UI:Update["Warping to ${Universe[${EVE.Bookmark[${DestinationBookmarkLabel}].ID}].Name}", "g"]
 					EVE.Bookmark[${DestinationBookmarkLabel}]:WarpTo
 				}
 			}
@@ -108,11 +112,17 @@ objectdef obj_Warp
 			return
 		}
 		
+		if !${Entity[${target}](exists)}
+		{
+			UI:Update["Attempted to approach a target that does not exist.  Target ID: ${target}", "r"]
+			return
+		}
+		
 		if ${Entity[${target}].Distance} <= ${distance}
 		{
 			return
 		}
-		
+
 		This.ApproachingID:Set[${target}]
 		This.ApproachingDistance:Set[${distance}]
 		This.TimeStartedApproaching:Set[-1]
@@ -137,7 +147,7 @@ objectdef obj_Warp
 		;	Find out if we need to warp to the target
 		if ${Entity[${This.ApproachingID}].Distance} > WARP_RANGE 
 		{
-			UI:UpdateConsole["ALERT:  ${Entity[${This.ApproachingID}].Name} is a long way away.  Warping to it."]
+			UI:Update["${Entity[${This.ApproachingID}].Name} is a long way away.  Warping to it", "g"]
 			Entity[${This.ApproachingID}]:WarpTo[1000]
 			return
 		}
@@ -145,7 +155,7 @@ objectdef obj_Warp
 		;	Find out if we need to approach the target
 		if ${Entity[${This.ApproachingID}].Distance} > ${This.ApproachingDistance} && ${This.TimeStartedApproaching} == -1
 		{
-			UI:UpdateConsole["ALERT:  Approaching to within ${EVEBot.MetersToKM_Str[${This.ApproachingDistance}]} of ${Entity[${This.ApproachingID}].Name}."]
+			UI:Update["Approaching to within ${ComBot.MetersToKM_Str[${distance}]} of ${Entity[${target}].Name}", "g"]
 			Entity[${This.ApproachingID}]:Approach[${distance}]
 			This.TimeStartedApproaching:Set[${Time.Timestamp}]
 			return
@@ -161,7 +171,7 @@ objectdef obj_Warp
 		;	If we're approaching a target, find out if we need to stop doing so 
 		if ${Entity[${This.ApproachingID}].Distance} <= ${This.ApproachingDistance}
 		{
-			UI:UpdateConsole["ALERT:  Within ${EVEBot.MetersToKM_Str[${This.ApproachingDistance}]} of ${Entity[${This.ApproachingID}].Name}."]
+			UI:Update["Within ${EVEBot.MetersToKM_Str[${This.ApproachingDistance}]} of ${Entity[${This.ApproachingID}].Name}", "g"]
 			EVE:Execute[CmdStopShip]
 			This.Approaching:Set[FALSE]
 			return
