@@ -5,7 +5,7 @@
 
 #include core/obj_ComBot.iss
 
-#include core/obj_Warp.iss
+#include core/obj_Move.iss
 #include core/obj_CommandQueue.iss
 
 
@@ -20,7 +20,7 @@ function main()
 	echo "${Time} ComBot: Starting"
 
 	declarevariable ComBot obj_ComBot script
-	declarevariable Warp obj_Warp script
+	declarevariable Move obj_Move script
 	declarevariable CommandQueue obj_CommandQueue script
 	
 	
