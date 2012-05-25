@@ -17,10 +17,10 @@ objectdef obj_Warp
 
 	method Pulse()
 	{
-		; if ${EVEBot.Paused}
-		; {
-			; return
-		; }
+		if ${ComBot.Paused}
+		{
+			return
+		}
 
 	    if ${LavishScript.RunningTime} >= ${This.NextPulse}
 		{

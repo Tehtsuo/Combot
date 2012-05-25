@@ -3,6 +3,7 @@
 	#error ComBot requires ISXEVE to be loaded before running
 #endif
 
+#include core/obj_ComBot.iss
 
 #include core/obj_Warp.iss
 #include core/obj_CommandQueue.iss
@@ -18,6 +19,7 @@ function main()
 {
 	echo "${Time} ComBot: Starting"
 
+	declarevariable ComBot obj_ComBot script
 	declarevariable Warp obj_Warp script
 	declarevariable CommandQueue obj_CommandQueue script
 	

@@ -34,10 +34,10 @@ objectdef obj_CommandQueue
 
 	method Pulse()
 	{
-		; if ${EVEBot.Paused}
-		; {
-			; return
-		; }
+		if ${ComBot.Paused}
+		{
+			return
+		}
 
 	    if ${LavishScript.RunningTime} >= ${This.NextPulse}
 		{
