@@ -60,7 +60,7 @@ objectdef obj_Move
 	
 	method Warp(int64 ID)
 	{
-		Entity[${BookmarkMoveLabel}]:WarpTo
+		Entity[${ID}]:WarpTo
 		Game:Wait[5000]
 	}
 	
@@ -154,23 +154,20 @@ objectdef obj_Move
 	
 	method BookmarkMove()
 	{
-		
+
 		if ${Me.InStation}
 		{
-			if ${Me.StationID} == ${EVE.Bookmark[${BookmarkMoveLabel}].ItemID}
+			if ${Me.StationID} == ${EVE.Bookmark[${This.WarpDestination.BookmarkMoveLabel}].ItemID}
 			{
-				UI:Update["Docked at ${BookmarkMoveLabel}", "g"]
-				This.BookmarkMove:Set[FALSE]
-				return
+				UI:Update["Docked at ${This.WarpDestination.BookmarkMoveLabel}", "g"]
+				This.Traveling:Set[FALSE]
 			}
 			else
 			{
 				UI:Update["Undocking from ${Me.Station.Name}", "g"]
-				
-				CommandQueue:QueueCommand[Move,Undock]
-				CommandQueue:QueueCommand[WAIT,10000]
-				return
+				This:Undock
 			}
+			return
 		}
 
 		if ${Me.ToEntity.Mode} == 3 || !${Me.InSpace}
@@ -178,73 +175,59 @@ objectdef obj_Move
 			return
 		}
 		
-		if ${EVE.Bookmark[${BookmarkMoveLabel}](exists)} && ${EVE.Bookmark[${BookmarkMoveLabel}].SolarSystemID} != ${Me.SolarSystemID}
+		
+		if  ${EVE.Bookmark[${This.WarpDestination.BookmarkMoveLabel}].SolarSystemID} != ${Me.SolarSystemID}
 		{
-			This:TravelToSystem[${EVE.Bookmark[${BookmarkMoveLabel}].SolarSystemID}]
+			This:TravelToSystem[${EVE.Bookmark[${This.WarpDestination.BookmarkMoveLabel}].SolarSystemID}]
 			return
 		}
 		
 		
-		if ${EVE.Bookmark[${BookmarkMoveLabel}](exists)}
+		if ${EVE.Bookmark[${This.WarpDestination.DestinationBookmarkLabel}].ItemID} == -1
 		{
-			if ${EVE.Bookmark[${DestinationBookmarkLabel}].ItemID} == -1
+			if ${EVE.Bookmark[${This.WarpDestination.BookmarkMoveLabel}].Distance} > WARP_RANGE
 			{
-				if ${EVE.Bookmark[${BookmarkMoveLabel}].Distance} > WARP_RANGE
-				{
-					UI:Update["Warping to ${BookmarkMoveLabel}", "g"]
-					This:Warp[${EVE.Bookmark[${BookmarkMoveLabel}].ID}]
-					return
-				}
-				else
-				{
-					UI:Update["Reached ${BookmarkMoveLabel}", "g"]
-					This.BookmarkMove:Set[FALSE]
-					return
-				}
+				UI:Update["Warping to ${This.WarpDestination.BookmarkMoveLabel}", "g"]
+				This:Warp[${EVE.Bookmark[${This.WarpDestination.BookmarkMoveLabel}].ID}]
 			}
 			else
 			{
-				if ${EVE.Bookmark[${BookmarkMoveLabel}].ToEntity(exists)}
-				{
-					if ${EVE.Bookmark[${BookmarkMoveLabel}].ToEntity.Distance} > WARP_RANGE
-					{
-						UI:Update["Warping to ${BookmarkMoveLabel}", "g"]
-						EVE.Bookmark[${BookmarkMoveLabel}].ToEntity:WarpTo
-						Game:Warp
-						return
-					}
-					else
-					{
-						UI:Update["Reached ${BookmarkMoveLabel}, docking", "g"]
-						CommandQueue:QueueCommand[Move,DockAtStation,${EVE.Bookmark[${BookmarkMoveLabel}].ItemID}]
-						CommandQueue:QueueCommand[WAIT,10000]
-						return
-					}
-				}
-				else
-				{
-					if ${EVE.Bookmark[${BookmarkMoveLabel}].Distance} > WARP_RANGE
-					{
-						UI:Update["Warping to ${BookmarkMoveLabel}", "g"]
-						EVE.Bookmark[${BookmarkMoveLabel}]:WarpTo
-						Game:Warp
-						return
-					}
-					else
-					{
-						UI:Update["Reached ${BookmarkMoveLabel}", "g"]
-						This.BookmarkMove:Set[FALSE]
-						return
-					}
-				}
+				UI:Update["Reached ${This.WarpDestination.BookmarkMoveLabel}", "g"]
+				This.Traveling:Set[FALSE]
 			}
-			
+			return
 		}
 		else
 		{
-			UI:Update["Attempted to travel to a bookmark which does not exist", "r"]
-			UI:Update["Bookmark label: ${DestinationBookmarkLabel}", "r"]
-			This.BookmarkMove:Set[FALSE]
+			if ${EVE.Bookmark[${This.WarpDestination.BookmarkMoveLabel}].ToEntity(exists)}
+			{
+				if ${EVE.Bookmark[${This.WarpDestination.BookmarkMoveLabel}].ToEntity.Distance} > WARP_RANGE
+				{
+					UI:Update["Warping to ${This.WarpDestination.BookmarkMoveLabel}", "g"]
+					This:Warp[${EVE.Bookmark[${This.WarpDestination.BookmarkMoveLabel}].ToEntity}]
+				}
+				else
+				{
+					UI:Update["Reached ${This.WarpDestination.BookmarkMoveLabel}, docking", "g"]
+					This:DockAtStation[${EVE.Bookmark[${This.WarpDestination.BookmarkMoveLabel}].ItemID}]
+				}
+				return
+			}
+			else
+			{
+				if ${EVE.Bookmark[${This.WarpDestination.BookmarkMoveLabel}].Distance} > WARP_RANGE
+				{
+					UI:Update["Warping to ${This.WarpDestination.BookmarkMoveLabel}", "g"]
+					EVE.Bookmark[${This.WarpDestination.BookmarkMoveLabel}]:WarpTo
+					Game:Wait[5000]
+				}
+				else
+				{
+					UI:Update["Reached ${This.WarpDestination.BookmarkMoveLabel}", "g"]
+					This.Traveling:Set[FALSE]
+				}
+				return
+			}
 		}
 	}
 	
@@ -276,6 +259,8 @@ objectdef obj_Move
 		This.TimeStartedApproaching:Set[-1]
 		This.Approaching:Set[TRUE]
 	}
+	
+	
 	
 	method CheckApproach()
 	{
