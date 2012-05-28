@@ -13,7 +13,7 @@ objectdef obj_StateQueue
 }
 
 objectdef obj_State
-	{
+{
 	variable queue:obj_StateQueue States
 
 	variable int NextPulse
