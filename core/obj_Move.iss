@@ -199,13 +199,11 @@ objectdef obj_Move
 			return
 		}
 		
-		
 		if  ${EVE.Bookmark[${This.WarpDestination.Bookmark}].SolarSystemID} != ${Me.SolarSystemID}
 		{
 			This:TravelToSystem[${EVE.Bookmark[${This.WarpDestination.Bookmark}].SolarSystemID}]
 			return
 		}
-		
 		
 		if ${EVE.Bookmark[${This.WarpDestination.Bookmark}].ItemID} == -1
 		{
@@ -278,8 +276,7 @@ objectdef obj_Move
 		{
 			return
 		}
-		
-		
+			
 		if  ${Agent[${This.WarpDestination.Agent}].SolarSystem.ID} != ${Me.SolarSystemID}
 		{
 			This:TravelToSystem[${Agent[${This.WarpDestination.Agent}].SolarSystem.ID}]
@@ -297,6 +294,7 @@ objectdef obj_Move
 			{
 				UI:Update["obj_Move", "Reached ${Agent[${This.WarpDestination.Agent}].Station}, docking", "g"]
 				This:DockAtStation[${Agent[${This.WarpDestination.Agent}].StationID}]
+				This.Traveling:Set[FALSE]
 			}
 			return
 		}
