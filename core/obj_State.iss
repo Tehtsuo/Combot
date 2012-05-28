@@ -55,11 +55,11 @@ objectdef obj_State
 		variable int var_Frequency
 		if ${arg_Frequency} == -1
 		{
-			var_Frequency:Set[${arg_Frequency}]
+			var_Frequency:Set[${This.PulseFrequency}]
 		}
 		else
 		{
-			var_Frequency:Set[${This.PulseFrequency}]
+			var_Frequency:Set[${arg_Frequency}]
 		}
 		States:Queue[${arg_Object},${var_Frequency},"${arg_Args.Escape}"]
 	}
