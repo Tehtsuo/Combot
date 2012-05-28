@@ -4,7 +4,7 @@ objectdef obj_Salvage inherits obj_State
 	method Initialize()
 	{
     This[parent]:Initialize
-		UI:Update["obj_Salvage: Initialized", "g"]
+		UI:Update["obj_Salvage", "Initialized", "g"]
   }
   
   method SalvageCycle()
