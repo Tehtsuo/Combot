@@ -17,6 +17,7 @@ objectdef obj_State
 	variable queue:obj_StateQueue States
 
 	variable int NextPulse
+	variable int PulseFrequency = 2000
 
 	method Initialize()
 	{
@@ -42,16 +43,25 @@ objectdef obj_State
 			
 			if ${States.Used} == 0
 			{
-				States:Queue["Idle", 2000, ""];
+				States:Queue["Idle", 100];
 			}
 
 			This.NextPulse:Set[${Math.Calc[${LavishScript.RunningTime} + ${States.Frequency} + ${Math.Rand[500]}]}]
 		}
 	}
 
-	method QueueState(string arg_Name, int arg_Frequency=2000, string arg_Args="")
+	method QueueState(string arg_Name, int arg_Frequency=-1, string arg_Args="")
 	{
-		States:Queue[${arg_Object},${arg_Frequency},"${arg_Args.Escape}"]
+		variable int var_Frequency
+		if ${arg_Frequency} == -1
+		{
+			var_Frequency:Set[${arg_Frequency}]
+		}
+		else
+		{
+			var_Frequency:Set[${This.PulseFrequency}]
+		}
+		States:Queue[${arg_Object},${var_Frequency},"${arg_Args.Escape}"]
 	}
 
 	method Clear()
