@@ -1,3 +1,15 @@
+objectdef obj_WarpDestination
+{
+	variable string WarpType
+	variable string BookmarkMoveLabel
+
+	method Initialize(string arg_WarpType, string arg_BookmarkMoveLabel="")
+	{
+		WarpType:Set[${arg_WarpType}]
+		BookmarkMoveLabel:Set[${arg_BookmarkMoveLabel}]	
+	}
+}
+
 
 objectdef obj_Move
 {
@@ -11,9 +23,9 @@ objectdef obj_Move
 
 	variable bool InWarp_Cooldown=FALSE
 
-	variable bool BookmarkMove
-	variable string BookmarkMoveLabel
-	variable int TimeStartedBookmarkMove = 0
+	variable bool Traveling=FALSE
+	
+	variable obj_WarpDestination WarpDestination
 
 
 	method Initialize()
@@ -29,24 +41,28 @@ objectdef obj_Move
 
 	method Pulse()
 	{
-		if ${ComBot.Paused}
-		{
-			return
-		}
-
 	    if ${LavishScript.RunningTime} >= ${This.NextPulse}
 		{
-			if ${CommandQueue.Queued} == 0
+    		This.NextPulse:Set[${Math.Calc[${LavishScript.RunningTime} + ${PulseIntervalInMilliseconds} + ${Math.Rand[500]}]}]
+
+			This:InWarp_Check
+
+			if ${CommandQueue.Queued} == 0 && ${Game.Ready} && !${ComBot.Paused}
 			{
-				This:InWarp_Check
-				This:CheckBookmarkMove
+				This:Travel
 				This:CheckApproach
 			}
-				
-    		This.NextPulse:Set[${Math.Calc[${LavishScript.RunningTime} + ${PulseIntervalInMilliseconds} + ${Math.Rand[500]}]}]
 		}
 	}	
 
+	
+	
+	
+	method Warp(int64 ID)
+	{
+		Entity[${BookmarkMoveLabel}]:WarpTo
+		Game:Wait[5000]
+	}
 	
 	method ActivateAutoPilot()
 	{
@@ -77,11 +93,34 @@ objectdef obj_Move
 		This:ActivateAutoPilot
 	}
 
-
-	method MoveToBookmark(string DestinationBookmarkLabel)
+	method DockAtStation(int64 StationID)
 	{
-		;	If we're already traveling to the target, ignore the request
-		if ${DestinationBookmarkLabel.Equal[${This.BookmarkMoveLabel}]} && ${This.BookmarkMove}
+		if ${Entity[${StationID}](exists)}
+		{
+			UI:Update["Docking: ${Entity[${StationID}].Name}", "g"]
+			Entity[${StationID}]:Dock
+			Game:Wait[10000]
+		}
+		else
+		{
+			UI:Update["Station Requested does not exist.  StationID: ${StationID}", "r"]
+		}
+	}	
+	
+	method Undock()
+	{
+			EVE:Execute[CmdExitStation]
+			Game:Wait[10000]
+	}	
+	
+	
+	
+	
+	
+	
+	method Bookmark(string DestinationBookmarkLabel)
+	{
+		${This.Traveling}
 		{
 			return
 		}
@@ -93,51 +132,28 @@ objectdef obj_Move
 			return
 		}
 
-		if ${EVE.Bookmark[${DestinationBookmarkLabel}](exists)} && ${EVE.Bookmark[${DestinationBookmarkLabel}].SolarSystemID} == ${Me.SolarSystemID}
-		{
-			if ${EVE.Bookmark[${DestinationBookmarkLabel}].ItemID} == -1
-			{
-				if ${EVE.Bookmark[${DestinationBookmarkLabel}].Distance} < WARP_RANGE
-				{
-					UI:Update["Already at ${DestinationBookmarkLabel}", "o"]
-					return
-				}
-			}
-			else
-			{
-				if ${EVE.Bookmark[${DestinationBookmarkLabel}].ToEntity(exists)}
-				{
-					if ${EVE.Bookmark[${DestinationBookmarkLabel}].ToEntity.Distance} < WARP_RANGE
-					{
-						UI:Update["Already at ${DestinationBookmarkLabel}", "o"]
-						return
-					}
-				}
-				else
-				{
-					if ${EVE.Bookmark[${DestinationBookmarkLabel}].Distance} < WARP_RANGE
-					{
-						UI:Update["Already at ${DestinationBookmarkLabel}", "o"]
-						return
-					}
-				}
-			}
-		}
-
 		UI:Update["Movement queued.  Destination: ${DestinationBookmarkLabel}", "g"]
-		This.BookmarkMoveLabel:Set[${DestinationBookmarkLabel}]
-		This.TimeStartedBookmarkMove:Set[-1]
-		This.BookmarkMove:Set[TRUE]	
+		This.WarpDestination:Set[BOOKMARK, ${DestinationBookmarkLabel}]
+		This.Traveling:Set[TRUE]
 	}
 
-
-	
-	method CheckBookmarkMove()
+	method Travel()
 	{
-		if !${This.BookmarkMove}
+		if !${This.Traveling}
 		{
 			return
 		}
+		
+		switch ${This.WarpDestination.WarpType}
+		{
+			case BOOKMARK
+				This:BookmarkMove
+				break
+		}
+	}
+	
+	method BookmarkMove()
+	{
 		
 		if ${Me.InStation}
 		{
@@ -157,7 +173,7 @@ objectdef obj_Move
 			}
 		}
 
-		if ${Me.ToEntity.Mode} == 3 || !${Me.InSpace} || ${This.SystemChangeCooldown} > 0 || ${This.StartWarpCooldown} > 0
+		if ${Me.ToEntity.Mode} == 3 || !${Me.InSpace}
 		{
 			return
 		}
@@ -176,8 +192,7 @@ objectdef obj_Move
 				if ${EVE.Bookmark[${BookmarkMoveLabel}].Distance} > WARP_RANGE
 				{
 					UI:Update["Warping to ${BookmarkMoveLabel}", "g"]
-					EVE.Bookmark[${BookmarkMoveLabel}]:WarpTo
-					Game:Warp
+					This:Warp[${EVE.Bookmark[${BookmarkMoveLabel}].ID}]
 					return
 				}
 				else
@@ -233,38 +248,8 @@ objectdef obj_Move
 		}
 	}
 	
-	method DockAtStation(int64 StationID)
-	{
-		if ${Me.ToEntity.Mode} == 3
-		{
-			return
-		}
-		
-		if ${Me.InStation}
-		{	
-			return
-		}
-		
-		if !${Me.InSpace}
-		{
-			return
-		}
 
-		if ${Entity[${StationID}](exists)}
-		{
-			UI:Update["Docking: ${Entity[${StationID}].Name}", "g"]
-			Entity[${StationID}]:Dock
-		}
-		else
-		{
-			UI:Update["Station Requested does not exist.  StationID: ${StationID}", "r"]
-		}
-	}	
 
-	method Undock()
-	{
-			EVE:Execute[CmdExitStation]
-	}
 	
 	
 	method Approach(int64 target, int distance=0)
@@ -365,6 +350,5 @@ objectdef obj_Move
 			return
 		}
 	}
-	
 }
 	

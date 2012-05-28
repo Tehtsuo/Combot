@@ -21,14 +21,14 @@ objectdef obj_Game
 
 	method Pulse()
 	{
-		if ${ComBot.Paused}
-		{
-			return
-		}
-
 		if ${LavishScript.RunningTime} >= ${This.NextPulse}
 		{
 			This.NextPulse:Set[${Math.Calc[${LavishScript.RunningTime} + ${PulseIntervalInMilliseconds} + ${Math.Rand[500]}]}]
+
+			if ${ComBot.Paused}
+			{
+				return
+			}			
 			
 			This.Ready:Set[TRUE]
 
@@ -61,11 +61,11 @@ objectdef obj_Game
 		}
 	}	
 
-	method Warp()
+	method Wait(int time)
 	{
-		UI:Update["Warp detected: Initiating 5 second wait", "-o"]
+		UI:Update["obj_Game: Initiating 5 second wait", "-o"]
 		This.Ready:Set[FALSE]
-		This.NextPulse:Set[${Math.Calc[${LavishScript.RunningTime} + 5000 + ${Math.Rand[500]}]}]
+		This.NextPulse:Set[${Math.Calc[${LavishScript.RunningTime} + ${time} + ${Math.Rand[500]}]}]
 	}
 	
 }
