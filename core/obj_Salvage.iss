@@ -45,11 +45,9 @@ objectdef obj_Salvage inherits obj_State
 			This:QueueState["SalvageWrecks"]
 			This:QueueState["OpenCargoHold"]
 			This:QueueState["CheckCargoHold", 5000]
+			return true
 		}
-
-		//When full
-		//This:QueueState["ReturnToStation"]
-		//This:QueueState["Offload"]
+		return false
 	}
 
 	member:bool Traveling()
