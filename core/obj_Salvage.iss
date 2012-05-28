@@ -1,4 +1,4 @@
-objectdef obj_Salvage
+objectdef obj_Salvage inherits obj_State
 {
 
 	method Initialize()
