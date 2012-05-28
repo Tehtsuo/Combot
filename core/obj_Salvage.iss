@@ -7,9 +7,15 @@ objectdef obj_Salvage inherits obj_State
 		UI:Update["obj_Salvage", "Initialized", "g"]
 	}
 
-	method SalvageCycle()
+	method Start()
 	{
 		This:QueueState["CheckBookmarks"]
+	}
+	
+	method Stop()
+	{
+		Move:Bookmark["Station"]
+		This:QueueState["Traveling"]
 	}
 
 	member:bool CheckBookmarks()
@@ -47,6 +53,7 @@ objectdef obj_Salvage inherits obj_State
 			This:QueueState["CheckCargoHold", 5000]
 			return true
 		}
+		if
 		return false
 	}
 
