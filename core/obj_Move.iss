@@ -1,12 +1,14 @@
 objectdef obj_WarpDestination
 {
 	variable string WarpType
-	variable string BookmarkMoveLabel
+	variable string Bookmark
+	variable int Agent
 
-	method Initialize(string arg_WarpType, string arg_BookmarkMoveLabel="")
+	method Initialize(string arg_WarpType, string arg_Bookmark, int arg_Agent=0)
 	{
 		WarpType:Set[${arg_WarpType}]
-		BookmarkMoveLabel:Set[${arg_BookmarkMoveLabel}]	
+		Bookmark:Set[${arg_Bookmark}]	
+		Agent:Set[${arg_Agent}]	
 	}
 }
 
@@ -137,6 +139,25 @@ objectdef obj_Move
 		This.Traveling:Set[TRUE]
 	}
 
+	method Agent(string AgentName)
+	{
+		${This.Traveling}
+		{
+			return
+		}
+		
+		if !${Agent[${AgentName}](exists)}
+		{
+			UI:Update["obj_Move", "Attempted to travel to an agent which does not exist", "r"]
+			UI:Update["obj_Move", "Agent name: ${AgentName}", "r"]
+			return
+		}
+
+		UI:Update["obj_Move", "Movement queued.  Destination: ${AgentName}", "g"]
+		This.WarpDestination:Set[AGENT, "", ${Agent[AgentName].Index}]
+		This.Traveling:Set[TRUE]
+	}	
+	
 	method Travel()
 	{
 		if !${This.Traveling}
@@ -149,6 +170,9 @@ objectdef obj_Move
 			case BOOKMARK
 				This:BookmarkMove
 				break
+			case AGENT
+				This:AgentMove
+				break
 		}
 	}
 	
@@ -157,9 +181,9 @@ objectdef obj_Move
 
 		if ${Me.InStation}
 		{
-			if ${Me.StationID} == ${EVE.Bookmark[${This.WarpDestination.BookmarkMoveLabel}].ItemID}
+			if ${Me.StationID} == ${EVE.Bookmark[${This.WarpDestination.Bookmark}].ItemID}
 			{
-				UI:Update["obj_Move", "Docked at ${This.WarpDestination.BookmarkMoveLabel}", "g"]
+				UI:Update["obj_Move", "Docked at ${This.WarpDestination.Bookmark}", "g"]
 				This.Traveling:Set[FALSE]
 			}
 			else
@@ -175,55 +199,53 @@ objectdef obj_Move
 			return
 		}
 		
-		
-		if  ${EVE.Bookmark[${This.WarpDestination.BookmarkMoveLabel}].SolarSystemID} != ${Me.SolarSystemID}
+		if  ${EVE.Bookmark[${This.WarpDestination.Bookmark}].SolarSystemID} != ${Me.SolarSystemID}
 		{
-			This:TravelToSystem[${EVE.Bookmark[${This.WarpDestination.BookmarkMoveLabel}].SolarSystemID}]
+			This:TravelToSystem[${EVE.Bookmark[${This.WarpDestination.Bookmark}].SolarSystemID}]
 			return
 		}
 		
-		
-		if ${EVE.Bookmark[${This.WarpDestination.DestinationBookmarkLabel}].ItemID} == -1
+		if ${EVE.Bookmark[${This.WarpDestination.Bookmark}].ItemID} == -1
 		{
-			if ${EVE.Bookmark[${This.WarpDestination.BookmarkMoveLabel}].Distance} > WARP_RANGE
+			if ${EVE.Bookmark[${This.WarpDestination.Bookmark}].Distance} > WARP_RANGE
 			{
-				UI:Update["obj_Move", "Warping to ${This.WarpDestination.BookmarkMoveLabel}", "g"]
-				This:Warp[${EVE.Bookmark[${This.WarpDestination.BookmarkMoveLabel}].ID}]
+				UI:Update["obj_Move", "Warping to ${This.WarpDestination.Bookmark}", "g"]
+				This:Warp[${EVE.Bookmark[${This.WarpDestination.Bookmark}].ID}]
 			}
 			else
 			{
-				UI:Update["obj_Move", "Reached ${This.WarpDestination.BookmarkMoveLabel}", "g"]
+				UI:Update["obj_Move", "Reached ${This.WarpDestination.Bookmark}", "g"]
 				This.Traveling:Set[FALSE]
 			}
 			return
 		}
 		else
 		{
-			if ${EVE.Bookmark[${This.WarpDestination.BookmarkMoveLabel}].ToEntity(exists)}
+			if ${EVE.Bookmark[${This.WarpDestination.Bookmark}].ToEntity(exists)}
 			{
-				if ${EVE.Bookmark[${This.WarpDestination.BookmarkMoveLabel}].ToEntity.Distance} > WARP_RANGE
+				if ${EVE.Bookmark[${This.WarpDestination.Bookmark}].ToEntity.Distance} > WARP_RANGE
 				{
-					UI:Update["obj_Move", "Warping to ${This.WarpDestination.BookmarkMoveLabel}", "g"]
-					This:Warp[${EVE.Bookmark[${This.WarpDestination.BookmarkMoveLabel}].ToEntity}]
+					UI:Update["obj_Move", "Warping to ${This.WarpDestination.Bookmark}", "g"]
+					This:Warp[${EVE.Bookmark[${This.WarpDestination.Bookmark}].ToEntity}]
 				}
 				else
 				{
-					UI:Update["obj_Move", "Reached ${This.WarpDestination.BookmarkMoveLabel}, docking", "g"]
-					This:DockAtStation[${EVE.Bookmark[${This.WarpDestination.BookmarkMoveLabel}].ItemID}]
+					UI:Update["obj_Move", "Reached ${This.WarpDestination.Bookmark}, docking", "g"]
+					This:DockAtStation[${EVE.Bookmark[${This.WarpDestination.Bookmark}].ItemID}]
 				}
 				return
 			}
 			else
 			{
-				if ${EVE.Bookmark[${This.WarpDestination.BookmarkMoveLabel}].Distance} > WARP_RANGE
+				if ${EVE.Bookmark[${This.WarpDestination.Bookmark}].Distance} > WARP_RANGE
 				{
-					UI:Update["obj_Move", "Warping to ${This.WarpDestination.BookmarkMoveLabel}", "g"]
-					EVE.Bookmark[${This.WarpDestination.BookmarkMoveLabel}]:WarpTo
+					UI:Update["obj_Move", "Warping to ${This.WarpDestination.Bookmark}", "g"]
+					EVE.Bookmark[${This.WarpDestination.Bookmark}]:WarpTo
 					Game:Wait[5000]
 				}
 				else
 				{
-					UI:Update["obj_Move", "Reached ${This.WarpDestination.BookmarkMoveLabel}", "g"]
+					UI:Update["obj_Move", "Reached ${This.WarpDestination.Bookmark}", "g"]
 					This.Traveling:Set[FALSE]
 				}
 				return
@@ -232,6 +254,51 @@ objectdef obj_Move
 	}
 	
 
+	method AgentMove()
+	{
+
+		if ${Me.InStation}
+		{
+			if ${Me.StationID} == ${Agent[${This.WarpDestination.Agent}].StationID}
+			{
+				UI:Update["obj_Move", "Docked at ${Agent[${This.WarpDestination.Agent}].Station}", "g"]
+				This.Traveling:Set[FALSE]
+			}
+			else
+			{
+				UI:Update["obj_Move", "Undocking from ${Me.Station.Name}", "g"]
+				This:Undock
+			}
+			return
+		}
+
+		if ${Me.ToEntity.Mode} == 3 || !${Me.InSpace}
+		{
+			return
+		}
+			
+		if  ${Agent[${This.WarpDestination.Agent}].SolarSystem.ID} != ${Me.SolarSystemID}
+		{
+			This:TravelToSystem[${Agent[${This.WarpDestination.Agent}].SolarSystem.ID}]
+			return
+		}
+		
+		if ${Entity[${Agent[${This.WarpDestination.Agent}].StationID}](exists)}
+		{
+			if ${Entity[${Agent[${This.WarpDestination.Agent}].StationID}].Distance} > WARP_RANGE
+			{
+				UI:Update["obj_Move", "Warping to ${Agent[${This.WarpDestination.Agent}].Station}", "g"]
+				This:Warp[${Agent[${This.WarpDestination.Agent}].StationID}]
+			}
+			else
+			{
+				UI:Update["obj_Move", "Reached ${Agent[${This.WarpDestination.Agent}].Station}, docking", "g"]
+				This:DockAtStation[${Agent[${This.WarpDestination.Agent}].StationID}]
+				This.Traveling:Set[FALSE]
+			}
+			return
+		}
+	}
 
 	
 	
