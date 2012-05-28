@@ -31,7 +31,7 @@ function main()
 	declarevariable Ship obj_Ship script
 	declarevariable CommandQueue obj_CommandQueue script
 
-	UI:Update["ComBot: Module initialization complete", "y"]
+	UI:Update["ComBot", "Module initialization complete", "y"]
 	
 	variable index:item Cargo
 	while TRUE

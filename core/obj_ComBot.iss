@@ -9,7 +9,7 @@ objectdef obj_ComBot
 	method Initialize()
 	{
 		Event[ISXEVE_onFrame]:AttachAtom[This:Pulse]
-		UI:Update["obj_ComBot: Initialized", "g"]
+		UI:Update["obj_ComBot", "Initialized", "g"]
 	}
 
 	method Shutdown()
@@ -34,13 +34,13 @@ objectdef obj_ComBot
 
 	method Pause()
 	{
-		UI:Update["Combot Paused", "r"]
+		UI:Update["obj_ComBot", "Combot Paused", "r"]
 		This.Paused:Set[TRUE]
 	}
 
 	method Resume()
 	{
-		UI:Update["Combot Resumed", "g"]
+		UI:Update["obj_ComBot", "Combot Resumed", "g"]
 		This.Paused:Set[FALSE]
 	}
 

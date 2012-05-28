@@ -11,10 +11,10 @@ objectdef obj_ComBotUI
 	method Initialize()
 	{
 		ui -load interface/ComBotGUI.xml
-		This:Update["ComBot: Initializing modules", "y"]
+		This:Update["Combot", "Initializing modules", "y"]
 
 		Event[ISXEVE_onFrame]:AttachAtom[This:Pulse]
-		This:Update["obj_ComBotUI: Initialized", "g"]
+		This:Update["obj_ComBotUI", "Initialized", "g"]
 	}
 
 	method Reload()
@@ -55,12 +55,23 @@ objectdef obj_ComBotUI
 
 	}
 
-	method Update(string StatusMessage, string Color="w")
+	method Update(string CallingModule, string StatusMessage, string Color="w")
 	{
-		if ${StatusMessage(exists)}
+		variable string MSG
+		MSG:Set["["]
+		if ${CallingModule.Length > 15}
 		{
-			UIElement[StatusConsole@Status@ComBotTab@ComBot]:Echo["\a${Color}${StatusMessage}"]
+			MSG:Concat[${CallingModule.Left[15]}]
 		}
+		MSG:Concat["]"]
+		
+		while ${MSG.Length} < 17
+		{
+			MSG:Concat[" "]
+		}	
+		MSG:Concat["\a${Color}${StatusMessage}"]
+		
+		UIElement[StatusConsole@Status@ComBotTab@ComBot]:Echo["${MSG}"]
 	}
 
 

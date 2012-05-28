@@ -31,7 +31,7 @@ objectdef obj_Move
 	method Initialize()
 	{
 		Event[ISXEVE_onFrame]:AttachAtom[This:Pulse]
-		UI:Update["obj_Move: Initialized", "g"]
+		UI:Update["obj_Move", "Initialized", "g"]
 	}
 
 	method Shutdown()
@@ -68,7 +68,7 @@ objectdef obj_Move
 	{
 		if !${Me.AutoPilotOn}
 		{
-			UI:Update["Activating autopilot", "g"]
+			UI:Update["obj_Move", "Activating autopilot", "g"]
 			EVE:Execute[CmdToggleAutopilot]
 		}
 	}
@@ -85,7 +85,7 @@ objectdef obj_Move
 		
 		if ${DestinationList[${DestinationList.Used}]} != ${DestinationSystemID}
 		{
-			UI:Update["Setting destination to ${Universe[${DestinationSystemID}].Name}", "g"]
+			UI:Update["obj_Move", "Setting destination to ${Universe[${DestinationSystemID}].Name}", "g"]
 			Universe[${DestinationSystemID}]:SetDestination
 			return
 		}
@@ -97,13 +97,13 @@ objectdef obj_Move
 	{
 		if ${Entity[${StationID}](exists)}
 		{
-			UI:Update["Docking: ${Entity[${StationID}].Name}", "g"]
+			UI:Update["obj_Move", "Docking: ${Entity[${StationID}].Name}", "g"]
 			Entity[${StationID}]:Dock
 			Game:Wait[10000]
 		}
 		else
 		{
-			UI:Update["Station Requested does not exist.  StationID: ${StationID}", "r"]
+			UI:Update["obj_Move", "Station Requested does not exist.  StationID: ${StationID}", "r"]
 		}
 	}	
 	
@@ -127,12 +127,12 @@ objectdef obj_Move
 		
 		if !${EVE.Bookmark[${DestinationBookmarkLabel}](exists)}
 		{
-			UI:Update["Attempted to travel to a bookmark which does not exist", "r"]
-			UI:Update["Bookmark label: ${DestinationBookmarkLabel}", "r"]
+			UI:Update["obj_Move", "Attempted to travel to a bookmark which does not exist", "r"]
+			UI:Update["obj_Move", "Bookmark label: ${DestinationBookmarkLabel}", "r"]
 			return
 		}
 
-		UI:Update["Movement queued.  Destination: ${DestinationBookmarkLabel}", "g"]
+		UI:Update["obj_Move", "Movement queued.  Destination: ${DestinationBookmarkLabel}", "g"]
 		This.WarpDestination:Set[BOOKMARK, ${DestinationBookmarkLabel}]
 		This.Traveling:Set[TRUE]
 	}
@@ -159,12 +159,12 @@ objectdef obj_Move
 		{
 			if ${Me.StationID} == ${EVE.Bookmark[${This.WarpDestination.BookmarkMoveLabel}].ItemID}
 			{
-				UI:Update["Docked at ${This.WarpDestination.BookmarkMoveLabel}", "g"]
+				UI:Update["obj_Move", "Docked at ${This.WarpDestination.BookmarkMoveLabel}", "g"]
 				This.Traveling:Set[FALSE]
 			}
 			else
 			{
-				UI:Update["Undocking from ${Me.Station.Name}", "g"]
+				UI:Update["obj_Move", "Undocking from ${Me.Station.Name}", "g"]
 				This:Undock
 			}
 			return
@@ -187,12 +187,12 @@ objectdef obj_Move
 		{
 			if ${EVE.Bookmark[${This.WarpDestination.BookmarkMoveLabel}].Distance} > WARP_RANGE
 			{
-				UI:Update["Warping to ${This.WarpDestination.BookmarkMoveLabel}", "g"]
+				UI:Update["obj_Move", "Warping to ${This.WarpDestination.BookmarkMoveLabel}", "g"]
 				This:Warp[${EVE.Bookmark[${This.WarpDestination.BookmarkMoveLabel}].ID}]
 			}
 			else
 			{
-				UI:Update["Reached ${This.WarpDestination.BookmarkMoveLabel}", "g"]
+				UI:Update["obj_Move", "Reached ${This.WarpDestination.BookmarkMoveLabel}", "g"]
 				This.Traveling:Set[FALSE]
 			}
 			return
@@ -203,12 +203,12 @@ objectdef obj_Move
 			{
 				if ${EVE.Bookmark[${This.WarpDestination.BookmarkMoveLabel}].ToEntity.Distance} > WARP_RANGE
 				{
-					UI:Update["Warping to ${This.WarpDestination.BookmarkMoveLabel}", "g"]
+					UI:Update["obj_Move", "Warping to ${This.WarpDestination.BookmarkMoveLabel}", "g"]
 					This:Warp[${EVE.Bookmark[${This.WarpDestination.BookmarkMoveLabel}].ToEntity}]
 				}
 				else
 				{
-					UI:Update["Reached ${This.WarpDestination.BookmarkMoveLabel}, docking", "g"]
+					UI:Update["obj_Move", "Reached ${This.WarpDestination.BookmarkMoveLabel}, docking", "g"]
 					This:DockAtStation[${EVE.Bookmark[${This.WarpDestination.BookmarkMoveLabel}].ItemID}]
 				}
 				return
@@ -217,13 +217,13 @@ objectdef obj_Move
 			{
 				if ${EVE.Bookmark[${This.WarpDestination.BookmarkMoveLabel}].Distance} > WARP_RANGE
 				{
-					UI:Update["Warping to ${This.WarpDestination.BookmarkMoveLabel}", "g"]
+					UI:Update["obj_Move", "Warping to ${This.WarpDestination.BookmarkMoveLabel}", "g"]
 					EVE.Bookmark[${This.WarpDestination.BookmarkMoveLabel}]:WarpTo
 					Game:Wait[5000]
 				}
 				else
 				{
-					UI:Update["Reached ${This.WarpDestination.BookmarkMoveLabel}", "g"]
+					UI:Update["obj_Move", "Reached ${This.WarpDestination.BookmarkMoveLabel}", "g"]
 					This.Traveling:Set[FALSE]
 				}
 				return
@@ -245,7 +245,8 @@ objectdef obj_Move
 		
 		if !${Entity[${target}](exists)}
 		{
-			UI:Update["Attempted to approach a target that does not exist.  Target ID: ${target}", "r"]
+			UI:Update["obj_Move", "Attempted to approach a target that does not exist", "r"]
+			UI:Update["obj_Move", "Target ID: ${target}", "r"]
 			return
 		}
 		
@@ -281,7 +282,7 @@ objectdef obj_Move
 		;	Find out if we need to warp to the target
 		if ${Entity[${This.ApproachingID}].Distance} > WARP_RANGE 
 		{
-			UI:Update["${Entity[${This.ApproachingID}].Name} is a long way away.  Warping to it", "g"]
+			UI:Update["obj_Move", "${Entity[${This.ApproachingID}].Name} is a long way away.  Warping to it", "g"]
 			Entity[${This.ApproachingID}]:WarpTo[1000]
 			return
 		}
@@ -289,7 +290,7 @@ objectdef obj_Move
 		;	Find out if we need to approach the target
 		if ${Entity[${This.ApproachingID}].Distance} > ${This.ApproachingDistance} && ${This.TimeStartedApproaching} == -1
 		{
-			UI:Update["Approaching to within ${ComBot.MetersToKM_Str[${distance}]} of ${Entity[${target}].Name}", "g"]
+			UI:Update["obj_Move", "Approaching to within ${ComBot.MetersToKM_Str[${distance}]} of ${Entity[${target}].Name}", "g"]
 			Entity[${This.ApproachingID}]:Approach[${distance}]
 			This.TimeStartedApproaching:Set[${Time.Timestamp}]
 			return
@@ -305,7 +306,7 @@ objectdef obj_Move
 		;	If we're approaching a target, find out if we need to stop doing so 
 		if ${Entity[${This.ApproachingID}].Distance} <= ${This.ApproachingDistance}
 		{
-			UI:Update["Within ${EVEBot.MetersToKM_Str[${This.ApproachingDistance}]} of ${Entity[${This.ApproachingID}].Name}", "g"]
+			UI:Update["obj_Move", "Within ${ComBot.MetersToKM_Str[${This.ApproachingDistance}]} of ${Entity[${This.ApproachingID}].Name}", "g"]
 			EVE:Execute[CmdStopShip]
 			This.Approaching:Set[FALSE]
 			return

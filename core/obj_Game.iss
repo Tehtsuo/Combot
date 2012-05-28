@@ -12,6 +12,7 @@ objectdef obj_Game
 	method Initialize()
 	{
 		Event[ISXEVE_onFrame]:AttachAtom[This:Pulse]
+		UI:Update["obj_Game", "Initialized", "g"]
 	}
 
 	method Shutdown()
@@ -40,21 +41,21 @@ objectdef obj_Game
 	{
 		if ${Me.SolarSystemID} != ${CurrentSystem}
 		{
-			UI:Update["System change detected: Initiating 5 second wait", "-o"]
+			UI:Update["obj_Game", "System change detected: Initiating 5 second wait", "-o"]
 			This.Ready:Set[FALSE]
 			CurrentSystem:Set[${Me.SolarSystemID}]
 			This.NextPulse:Set[${Math.Calc[${LavishScript.RunningTime} + 5000 + ${Math.Rand[500]}]}]
 		}
 		if ${Me.InSpace} != ${InSpace}
 		{
-			UI:Update["Dock/Undock detected: Initiating 5 second wait", "-o"]
+			UI:Update["obj_Game", "Dock/Undock detected: Initiating 5 second wait", "-o"]
 			This.Ready:Set[FALSE]
 			InSpace:Set[${Me.InSpace}]
 			This.NextPulse:Set[${Math.Calc[${LavishScript.RunningTime} + 5000 + ${Math.Rand[500]}]}]
 		}
 		if ${Me.InStation} != ${InStation}
 		{
-			UI:Update["Dock/Undock detected: Initiating 5 second wait", "-o"]
+			UI:Update["obj_Game", "Dock/Undock detected: Initiating 5 second wait", "-o"]
 			This.Ready:Set[FALSE]
 			InStation:Set[${Me.InStation}]
 			This.NextPulse:Set[${Math.Calc[${LavishScript.RunningTime} + 5000 + ${Math.Rand[500]}]}]
@@ -63,9 +64,9 @@ objectdef obj_Game
 
 	method Wait(int time)
 	{
-		UI:Update["obj_Game: Initiating 5 second wait", "-o"]
+		UI:Update["obj_Game", "Initiating ${time} millisecond wait", "-o"]
 		This.Ready:Set[FALSE]
-		This.NextPulse:Set[${Math.Calc[${LavishScript.RunningTime} + ${time} + ${Math.Rand[500]}]}]
+		This.NextPulse:Set[${Math.Calc[${LavishScript.RunningTime} + ${time}]}]
 	}
 	
 }

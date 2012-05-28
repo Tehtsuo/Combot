@@ -35,7 +35,7 @@ objectdef obj_Ship
 	method Initialize()
 	{
 		Event[ISXEVE_onFrame]:AttachAtom[This:Pulse]
-		UI:Update["obj_Ship: Initialized", "g"]
+		UI:Update["obj_Ship", "Initialized", "g"]
 	}
 
 	method Shutdown()
@@ -51,8 +51,8 @@ objectdef obj_Ship
 			{
 				if ${RetryUpdateModuleList} == 10
 				{
-					UI:Update["obj_Ship:UpdateModuleList - No modules found. Pausing.", "r"]
-					UI:Update["obj_Ship:UpdateModuleList - If this ship has slots, you must have at least one module equipped, of any type.", "r"]
+					UI:Update["obj_Ship", "UpdateModuleList - No modules found. Pausing.", "r"]
+					UI:Update["obj_Ship", "UpdateModuleList - If this ship has slots, you must have at least one module equipped, of any type.", "r"]
 					RetryUpdateModuleList:Set[0]
 					EVEBot:Pause
 				}
@@ -72,7 +72,7 @@ objectdef obj_Ship
 	{
 		if ${Me.InStation}
 		{
-			UI:Update["obj_Ship:UpdateModuleList called while in station", "o"]
+			UI:Update["obj_Ship", "UpdateModuleList called while in station", "o"]
 			RetryUpdateModuleList:Set[1]
 			return
 		}
@@ -103,7 +103,8 @@ objectdef obj_Ship
 
 		if !${This.ModuleList.Used} && ${Me.Ship.HighSlots} > 0
 		{
-			UI:Update["obj_Ship:UpdateModuleList - No modules found. Retrying in a few seconds - If this ship has slots, you must have at least one module equipped, of any type.", "o"]
+			UI:Update["obj_Ship", "UpdateModuleList - No modules found. Retrying in a few seconds", "o"]
+			UI:Update["obj_Ship", "If this ship has slots, you must have at least one module equipped, of any type.", "o"]
 			RetryUpdateModuleList:Inc
 			return
 		}
@@ -122,7 +123,7 @@ objectdef obj_Ship
 
 			if !${ModuleIter.Value(exists)}
 			{
-				UI:Update["obj_Ship:UpdateModuleList - Null module found. Retrying in a few seconds.", "o"]
+				UI:Update["obj_Ship", "UpdateModuleList - Null module found. Retrying in a few seconds.", "o"]
 				RetryUpdateModuleList:Inc
 				return
 			}
@@ -219,15 +220,15 @@ objectdef obj_Ship
 		}
 		while ${ModuleIter:Next(exists)}
 
-		UI:Update["Ship Module Inventory", "u"]
+		UI:Update["obj_Ship", "Ship Module Inventory", "u"]
 		
 		This.ModuleList_Weapon:GetIterator[ModuleIter]
 		if ${ModuleIter:First(exists)}
 		{
-			UI:Update["Weapons:", "g"]
+			UI:Update["obj_Ship", "Weapons:", "g"]
 			do
 			{
-				UI:Update["Slot: ${ModuleIter.Value.ToItem.Slot} ${ModuleIter.Value.ToItem.Name}", "-g"]
+				UI:Update["obj_Ship", " Slot: ${ModuleIter.Value.ToItem.Slot} ${ModuleIter.Value.ToItem.Name}", "-g"]
 			}
 			while ${ModuleIter:Next(exists)}
 		}
@@ -235,10 +236,10 @@ objectdef obj_Ship
 		This.ModuleList_ECCM:GetIterator[ModuleIter]
 		if ${ModuleIter:First(exists)}
 		{
-			UI:Update["ECCM Modules:", "g"]
+			UI:Update["obj_Ship", "ECCM Modules:", "g"]
 			do
 			{
-				UI:Update["Slot: ${ModuleIter.Value.ToItem.Slot} ${ModuleIter.Value.ToItem.Name}", "-g"]
+				UI:Update["obj_Ship", " Slot: ${ModuleIter.Value.ToItem.Slot} ${ModuleIter.Value.ToItem.Name}", "-g"]
 			}
 			while ${ModuleIter:Next(exists)}
 		}
@@ -246,10 +247,10 @@ objectdef obj_Ship
 		This.ModuleList_ActiveResists:GetIterator[ModuleIter]
 		if ${ModuleIter:First(exists)}
 		{
-			UI:Update["Active Resistance Modules:", "g"]
+			UI:Update["obj_Ship", "Active Resistance Modules:", "g"]
 			do
 			{
-				UI:Update["	Slot: ${ModuleIter.Value.ToItem.Slot}  ${ModuleIter.Value.ToItem.Name}", "-g"]
+				UI:Update["obj_Ship", " Slot: ${ModuleIter.Value.ToItem.Slot}  ${ModuleIter.Value.ToItem.Name}", "-g"]
 			}
 			while ${ModuleIter:Next(exists)}
 		}
@@ -257,10 +258,10 @@ objectdef obj_Ship
 		This.ModuleList_Passive:GetIterator[ModuleIter]
 		if ${ModuleIter:First(exists)}
 		{
-			UI:Update["Passive Modules:", "g"]
+			UI:Update["obj_Ship", "Passive Modules:", "g"]
 			do
 			{
-				UI:Update["	 Slot: ${ModuleIter.Value.ToItem.Slot}  ${ModuleIter.Value.ToItem.Name}", "-g"]
+				UI:Update["obj_Ship", " Slot: ${ModuleIter.Value.ToItem.Slot}  ${ModuleIter.Value.ToItem.Name}", "-g"]
 			}
 			while ${ModuleIter:Next(exists)}
 		}
@@ -268,10 +269,10 @@ objectdef obj_Ship
 		This.ModuleList_MiningLaser:GetIterator[ModuleIter]
 		if ${ModuleIter:First(exists)}
 		{
-			UI:Update["Mining Modules:", "g"]
+			UI:Update["obj_Ship", "Mining Modules:", "g"]
 			do
 			{
-				UI:Update["	 Slot: ${ModuleIter.Value.ToItem.Slot}  ${ModuleIter.Value.ToItem.Name}", "-g"]
+				UI:Update["obj_Ship", " Slot: ${ModuleIter.Value.ToItem.Slot}  ${ModuleIter.Value.ToItem.Name}", "-g"]
 			}
 			while ${ModuleIter:Next(exists)}
 		}
@@ -279,10 +280,10 @@ objectdef obj_Ship
 		This.ModuleList_Repair_Armor:GetIterator[ModuleIter]
 		if ${ModuleIter:First(exists)}
 		{
-			UI:Update["Armor Repair Modules:", "g"]
+			UI:Update["obj_Ship", "Armor Repair Modules:", "g"]
 			do
 			{
-				UI:Update["	 Slot: ${ModuleIter.Value.ToItem.Slot}  ${ModuleIter.Value.ToItem.Name}", "-g"]
+				UI:Update["obj_Ship", " Slot: ${ModuleIter.Value.ToItem.Slot}  ${ModuleIter.Value.ToItem.Name}", "-g"]
 			}
 			while ${ModuleIter:Next(exists)}
 		}
@@ -290,10 +291,10 @@ objectdef obj_Ship
 		This.ModuleList_Regen_Shield:GetIterator[ModuleIter]
 		if ${ModuleIter:First(exists)}
 		{
-			UI:Update["Shield Regen Modules:", "g"]
+			UI:Update["obj_Ship", "Shield Regen Modules:", "g"]
 			do
 			{
-				UI:Update["	 Slot: ${ModuleIter.Value.ToItem.Slot}  ${ModuleIter.Value.ToItem.Name}", "-g"]
+				UI:Update["obj_Ship", " Slot: ${ModuleIter.Value.ToItem.Slot}  ${ModuleIter.Value.ToItem.Name}", "-g"]
 			}
 			while ${ModuleIter:Next(exists)}
 		}
@@ -301,10 +302,10 @@ objectdef obj_Ship
 		This.ModuleList_AB_MWD:GetIterator[ModuleIter]
 		if ${ModuleIter:First(exists)}
 		{
-			UI:Update["AfterBurner Modules:", "g"]
+			UI:Update["obj_Ship", "AfterBurner Modules:", "g"]
 			do
 			{
-				UI:Update["	 Slot: ${ModuleIter.Value.ToItem.Slot}  ${ModuleIter.Value.ToItem.Name}", "-g"]
+				UI:Update["obj_Ship", " Slot: ${ModuleIter.Value.ToItem.Slot}  ${ModuleIter.Value.ToItem.Name}", "-g"]
 			}
 			while ${ModuleIter:Next(exists)}
 		}
@@ -312,10 +313,10 @@ objectdef obj_Ship
 		This.ModuleList_Salvagers:GetIterator[ModuleIter]
 		if ${ModuleIter:First(exists)}
 		{
-			UI:Update["Salvaging Modules:", "g"]
+			UI:Update["obj_Ship", "Salvaging Modules:", "g"]
 			do
 			{
-				UI:Update["	 Slot: ${ModuleIter.Value.ToItem.Slot}  ${ModuleIter.Value.ToItem.Name}", "-g"]
+				UI:Update["obj_Ship", " Slot: ${ModuleIter.Value.ToItem.Slot}  ${ModuleIter.Value.ToItem.Name}", "-g"]
 			}
 			while ${ModuleIter:Next(exists)}
 		}
@@ -323,10 +324,10 @@ objectdef obj_Ship
 		This.ModuleList_TractorBeams:GetIterator[ModuleIter]
 		if ${ModuleIter:First(exists)}
 		{
-			UI:Update["Tractor Beam Modules:", "g"]
+			UI:Update["obj_Ship", "Tractor Beam Modules:", "g"]
 			do
 			{
-				UI:Update["	 Slot: ${ModuleIter.Value.ToItem.Slot}  ${ModuleIter.Value.ToItem.Name}", "-g"]
+				UI:Update["obj_Ship", " Slot: ${ModuleIter.Value.ToItem.Slot}  ${ModuleIter.Value.ToItem.Name}", "-g"]
 			}
 			while ${ModuleIter:Next(exists)}
 		}
@@ -334,10 +335,10 @@ objectdef obj_Ship
 		This.ModuleList_Cloaks:GetIterator[ModuleIter]
 		if ${ModuleIter:First(exists)}
 		{
-			UI:Update["Cloaking Device Modules:", "g"]
+			UI:Update["obj_Ship", "Cloaking Device Modules:", "g"]
 			do
 			{
-				UI:Update["	 Slot: ${ModuleIter.Value.ToItem.Slot}  ${ModuleIter.Value.ToItem.Name}", "-g"]
+				UI:Update["obj_Ship", " Slot: ${ModuleIter.Value.ToItem.Slot}  ${ModuleIter.Value.ToItem.Name}", "-g"]
 			}
 			while ${ModuleIter:Next(exists)}
 		}
@@ -345,10 +346,10 @@ objectdef obj_Ship
 		This.ModuleList_StasisWeb:GetIterator[ModuleIter]
 		if ${ModuleIter:First(exists)}
 		{
-			UI:Update["Stasis Web Modules:", "g"]
+			UI:Update["obj_Ship", "Stasis Web Modules:", "g"]
 			do
 			{
-				UI:Update["	 Slot: ${ModuleIter.Value.ToItem.Slot}  ${ModuleIter.Value.ToItem.Name}", "-g"]
+				UI:Update["obj_Ship", " Slot: ${ModuleIter.Value.ToItem.Slot}  ${ModuleIter.Value.ToItem.Name}", "-g"]
 			}
 			while ${ModuleIter:Next(exists)}
 		}
@@ -356,10 +357,10 @@ objectdef obj_Ship
 		This.ModuleList_SensorBoost:GetIterator[ModuleIter]
 		if ${ModuleIter:First(exists)}
 		{
-			UI:Update["Sensor Boost Modules:", "g"]
+			UI:Update["obj_Ship", "Sensor Boost Modules:", "g"]
 			do
 			{
-				UI:Update["	 Slot: ${ModuleIter.Value.ToItem.Slot}  ${ModuleIter.Value.ToItem.Name}", "-g"]
+				UI:Update["obj_Ship", " Slot: ${ModuleIter.Value.ToItem.Slot}  ${ModuleIter.Value.ToItem.Name}", "-g"]
 			}
 			while ${ModuleIter:Next(exists)}
 		}
@@ -367,10 +368,10 @@ objectdef obj_Ship
 		This.ModuleList_TargetPainter:GetIterator[ModuleIter]
 		if ${ModuleIter:First(exists)}
 		{
-			UI:Update["Target Painter Modules:", "g"]
+			UI:Update["obj_Ship", "Target Painter Modules:", "g"]
 			do
 			{
-				UI:Update["	 Slot: ${ModuleIter.Value.ToItem.Slot}  ${ModuleIter.Value.ToItem.Name}", "-g"]
+				UI:Update["obj_Ship", " Slot: ${ModuleIter.Value.ToItem.Slot}  ${ModuleIter.Value.ToItem.Name}", "-g"]
 			}
 			while ${ModuleIter:Next(exists)}
 		}
@@ -378,10 +379,10 @@ objectdef obj_Ship
 		This.ModuleList_TrackingComputer:GetIterator[ModuleIter]
 		if ${ModuleIter:First(exists)}
 		{
-			UI:Update["Tracking Computer Modules:", "g"]
+			UI:Update["obj_Ship", "Tracking Computer Modules:", "g"]
 			do
 			{
-				UI:Update["	 Slot: ${ModuleIter.Value.ToItem.Slot}  ${ModuleIter.Value.ToItem.Name}", "-g"]
+				UI:Update["obj_Ship", " Slot: ${ModuleIter.Value.ToItem.Slot}  ${ModuleIter.Value.ToItem.Name}", "-g"]
 			}
 			while ${ModuleIter:Next(exists)}
 		}
@@ -389,17 +390,17 @@ objectdef obj_Ship
 		This.ModuleList_ShieldTransporters:GetIterator[ModuleIter]
 		if ${ModuleIter:First(exists)}
 		{
-			UI:Update["Shield Transporter Modules:", "g"]
+			UI:Update["obj_Ship", "Shield Transporter Modules:", "g"]
 			do
 			{
-				UI:Update["	 Slot: ${ModuleIter.Value.ToItem.Slot}  ${ModuleIter.Value.ToItem.Name}", "-g"]
+				UI:Update["obj_Ship", " Slot: ${ModuleIter.Value.ToItem.Slot}  ${ModuleIter.Value.ToItem.Name}", "-g"]
 			}
 			while ${ModuleIter:Next(exists)}
 		}
 
 		if ${This.ModuleList_AB_MWD.Used} > 1
 		{
-			UI:Update["Warning: More than 1 Afterburner or MWD was detected, I will only use the first one.", "o"]
+			UI:Update["obj_Ship", "Warning: More than 1 Afterburner or MWD was detected, I will only use the first one.", "o"]
 		}
 	}
 
@@ -418,7 +419,7 @@ objectdef obj_Ship
 		{
 			if !${ModuleIter.Value.IsActive} && ${ModuleIter.Value.IsOnline}
 			{
-				UI:Update["Activating ${ModuleIter.Value.ToItem.Name}", "g"]
+				UI:Update["obj_Ship", "Activating ${ModuleIter.Value.ToItem.Name}", "g"]
 				ModuleIter.Value:Activate
 			}
 		}
@@ -458,7 +459,7 @@ objectdef obj_Ship
 		{
 			if ${ModuleIter.Value.IsActive} && ${ModuleIter.Value.IsOnline} && !${ModuleIter.Value.IsDeactivating}
 			{
-				UI:Update["Deactivating ${ModuleIter.Value.ToItem.Name}", "g"]
+				UI:Update["obj_Ship", "Deactivating ${ModuleIter.Value.ToItem.Name}", "g"]
 				ModuleIter.Value:Click
 			}
 		}
