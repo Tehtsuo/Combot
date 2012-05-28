@@ -40,9 +40,11 @@ objectdef obj_Salvage inherits obj_State
 		
 		if ${BookmarkFound}
 		{
-			Move.Bookmark[Target]
-			This:QueueState["GotoBookmark"]
+			Move:Bookmark[Target]
+			This:QueueState["Traveling"]
 			This:QueueState["SalvageWrecks"]
+			This:QueueState["OpenCargoHold"]
+			This:QueueState["CheckCargoHold", 5000]
 		}
 
 		//When full
@@ -50,7 +52,7 @@ objectdef obj_Salvage inherits obj_State
 		//This:QueueState["Offload"]
 	}
 
-	member:bool GotoBookmark()
+	member:bool Traveling()
 	{
 		return !${Move.Traveling}
 	}
@@ -60,10 +62,23 @@ objectdef obj_Salvage inherits obj_State
 		//Tractor, loot and salvage
 		//True when done 
 	}
-
-	member:bool ReturnToStation()
+	
+	member:bool OpenCargoHold()
 	{
-		//Dock at station
+		MyShip:OpenCargo[]
+		return true
+	}
+	
+	Member:bool CheckCargoHold()
+	{
+		if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) > 0.75
+		{
+			Move:Bookmark["Station"]
+			This:QueueState["Traveling"]
+			This:QueueState["Offload"]
+		}
+		This:QueueState["CheckBookmarks"]
+		return true;
 	}
 
 	member:bool Offload()
