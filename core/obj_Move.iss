@@ -16,9 +16,6 @@ objectdef obj_Move
 	variable string BookmarkMoveLabel
 	variable int TimeStartedBookmarkMove = 0
 
-	variable int SystemChangeCooldown=0
-	variable int64 CurrentSystem=${Me.SolarSystemID}
-	
 
 	method Initialize()
 	{
@@ -42,7 +39,6 @@ objectdef obj_Move
 		{
 			if ${CommandQueue.Queued} == 0
 			{
-				This:SystemChange_Check
 				This:InWarp_Check
 				This:StartWarp_Check
 				This:CheckBookmarkMove
@@ -55,31 +51,6 @@ objectdef obj_Move
 
 	
 	
-	method SystemChange_Check()
-	{
-		if ${SystemChangeCooldown} > 0
-		{
-			SystemChangeCooldown:Dec
-			UI:Update["System change cooldown: ${SystemChangeCooldown}", "-o"]
-		}
-		else
-		{
-			if ${Me.SolarSystemID} != ${CurrentSystem}
-			{
-				SystemChangeCooldown:Set[3]
-				return
-			}
-		}
-		CurrentSystem:Set[${Me.SolarSystemID}]
-	}	
-	method StartWarp_Check()
-	{
-		if ${StartWarpCooldown} > 0
-		{
-			StartWarpCooldown:Dec
-			UI:Update["Warp start cooldown: ${StartWarpCooldown}", "-o"]
-		}
-	}	
 	
 	method ActivateAutoPilot()
 	{
