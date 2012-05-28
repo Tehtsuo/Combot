@@ -53,7 +53,6 @@ objectdef obj_Salvage inherits obj_State
 			This:QueueState["CheckCargoHold", 5000]
 			return true
 		}
-		if
 		return false
 	}
 

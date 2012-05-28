@@ -59,7 +59,7 @@ objectdef obj_State
 		States:Clear
 	}
 
-	method:bool Idle()
+	member:bool Idle()
 	{
 		return true
 	}
