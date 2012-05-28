@@ -30,18 +30,16 @@ objectdef obj_State
 
 	method Pulse()
 	{
-		if ${ComBot.Paused} || !${Game.Ready}
-		{
-			return
-		}
-
 		if ${LavishScript.RunningTime} >= ${This.NextPulse}
 		{
-			if This.${States.Peek.Name}[${States.Peek.Args}]
+			if !${ComBot.Paused} && ${Game.Ready}
 			{
-				States:Dequeue
+				if This.${States.Peek.Name}[${States.Peek.Args}]
+				{
+					States:Dequeue
+				}
 			}
-
+			
 			if ${States.Used} == 0
 			{
 				States:Queue["Idle", 2000, ""];
