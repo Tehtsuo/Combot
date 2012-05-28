@@ -10,7 +10,6 @@ objectdef obj_Move
 	variable int TimeStartedApproaching = 0
 
 	variable bool InWarp_Cooldown=FALSE
-	variable int StartWarpCooldown=0
 
 	variable bool BookmarkMove
 	variable string BookmarkMoveLabel
@@ -40,7 +39,6 @@ objectdef obj_Move
 			if ${CommandQueue.Queued} == 0
 			{
 				This:InWarp_Check
-				This:StartWarp_Check
 				This:CheckBookmarkMove
 				This:CheckApproach
 			}
@@ -49,8 +47,6 @@ objectdef obj_Move
 		}
 	}	
 
-	
-	
 	
 	method ActivateAutoPilot()
 	{
@@ -181,7 +177,7 @@ objectdef obj_Move
 				{
 					UI:Update["Warping to ${BookmarkMoveLabel}", "g"]
 					EVE.Bookmark[${BookmarkMoveLabel}]:WarpTo
-					StartWarpCooldown:Set[2]
+					Game:Warp
 					return
 				}
 				else
@@ -199,7 +195,7 @@ objectdef obj_Move
 					{
 						UI:Update["Warping to ${BookmarkMoveLabel}", "g"]
 						EVE.Bookmark[${BookmarkMoveLabel}].ToEntity:WarpTo
-						StartWarpCooldown:Set[2]
+						Game:Warp
 						return
 					}
 					else
@@ -216,7 +212,7 @@ objectdef obj_Move
 					{
 						UI:Update["Warping to ${BookmarkMoveLabel}", "g"]
 						EVE.Bookmark[${BookmarkMoveLabel}]:WarpTo
-						StartWarpCooldown:Set[2]
+						Game:Warp
 						return
 					}
 					else
