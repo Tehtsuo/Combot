@@ -34,11 +34,13 @@ objectdef obj_ComBot
 
 	method Pause()
 	{
+		UI:Update["Combot Paused", "r"]
 		This.Paused:Set[TRUE]
 	}
 
 	method Resume()
 	{
+		UI:Update["Combot Resumed", "g"]
 		This.Paused:Set[FALSE]
 	}
 

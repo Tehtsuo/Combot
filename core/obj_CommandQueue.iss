@@ -44,7 +44,10 @@ objectdef obj_CommandQueue
 		{
 			This:ProcessCommands
 
-    		This.NextPulse:Set[${Math.Calc[${LavishScript.RunningTime} + ${PulseIntervalInMilliseconds} + ${Math.Rand[500]}]}]
+			if ${LavishScript.RunningTime} >= ${This.NextPulse}
+			{
+				This.NextPulse:Set[${Math.Calc[${LavishScript.RunningTime} + ${PulseIntervalInMilliseconds} + ${Math.Rand[500]}]}]
+			}
 		}
 	}	
 
@@ -63,6 +66,13 @@ objectdef obj_CommandQueue
 			if ${Commands.Peek.Object.Equal[IGNORE]}
 			{
 				Commands:Dequeue
+				return
+			}
+			if ${Commands.Peek.Object.Equal[WAIT]} 
+			{
+				This.NextPulse:Set[${Math.Calc[${LavishScript.RunningTime} + ${Commands.Peek.Method}]}]
+				Commands:Dequeue
+				This:QueueCommand[IGNORE]
 				return
 			}
 

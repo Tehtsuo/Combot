@@ -9,11 +9,15 @@ objectdef obj_Move
 	variable int ApproachingDistance
 	variable int TimeStartedApproaching = 0
 
-	variable bool Warp_Cooldown=FALSE
+	variable bool InWarp_Cooldown=FALSE
+	variable int StartWarpCooldown=0
 
+	variable bool BookmarkMove
+	variable string BookmarkMoveLabel
+	variable int TimeStartedBookmarkMove = 0
 
-
-
+	variable int SystemChangeCooldown=0
+	variable int64 CurrentSystem=${Me.SolarSystemID}
 	
 
 	method Initialize()
@@ -36,8 +40,14 @@ objectdef obj_Move
 
 	    if ${LavishScript.RunningTime} >= ${This.NextPulse}
 		{
-			This:Warp_Check
-
+			if ${CommandQueue.Queued} == 0
+			{
+				This:SystemChange_Check
+				This:InWarp_Check
+				This:StartWarp_Check
+				This:CheckBookmarkMove
+				This:CheckApproach
+			}
 				
     		This.NextPulse:Set[${Math.Calc[${LavishScript.RunningTime} + ${PulseIntervalInMilliseconds} + ${Math.Rand[500]}]}]
 		}
@@ -45,7 +55,31 @@ objectdef obj_Move
 
 	
 	
-	
+	method SystemChange_Check()
+	{
+		if ${SystemChangeCooldown} > 0
+		{
+			SystemChangeCooldown:Dec
+			UI:Update["System change cooldown: ${SystemChangeCooldown}", "-o"]
+		}
+		else
+		{
+			if ${Me.SolarSystemID} != ${CurrentSystem}
+			{
+				SystemChangeCooldown:Set[3]
+				return
+			}
+		}
+		CurrentSystem:Set[${Me.SolarSystemID}]
+	}	
+	method StartWarp_Check()
+	{
+		if ${StartWarpCooldown} > 0
+		{
+			StartWarpCooldown:Dec
+			UI:Update["Warp start cooldown: ${StartWarpCooldown}", "-o"]
+		}
+	}	
 	
 	method ActivateAutoPilot()
 	{
@@ -64,9 +98,9 @@ objectdef obj_Move
 		}
 
 		variable index:int DestinationList
-		EVE:GetToDestinationPath[DestinationList]
+		EVE:GetWaypoints[DestinationList]
 		
-		if ${DestinationList.Used} > 0
+		if ${DestinationList[${DestinationList.Used}]} != ${DestinationSystemID}
 		{
 			UI:Update["Setting destination to ${Universe[${DestinationSystemID}].Name}", "g"]
 			Universe[${DestinationSystemID}]:SetDestination
@@ -77,40 +111,194 @@ objectdef obj_Move
 	}
 
 
-	method Bookmark(string DestinationBookmarkLabel, bool WarpFleet=FALSE)
+	method MoveToBookmark(string DestinationBookmarkLabel)
+	{
+		;	If we're already traveling to the target, ignore the request
+		if ${DestinationBookmarkLabel.Equal[${This.BookmarkMoveLabel}]} && ${This.BookmarkMove}
+		{
+			return
+		}
+		
+		if !${EVE.Bookmark[${DestinationBookmarkLabel}](exists)}
+		{
+			UI:Update["Attempted to travel to a bookmark which does not exist", "r"]
+			UI:Update["Bookmark label: ${DestinationBookmarkLabel}", "r"]
+			return
+		}
+
+		if ${EVE.Bookmark[${DestinationBookmarkLabel}](exists)} && ${EVE.Bookmark[${DestinationBookmarkLabel}].SolarSystemID} == ${Me.SolarSystemID}
+		{
+			if ${EVE.Bookmark[${DestinationBookmarkLabel}].ItemID} == -1
+			{
+				if ${EVE.Bookmark[${DestinationBookmarkLabel}].Distance} < WARP_RANGE
+				{
+					UI:Update["Already at ${DestinationBookmarkLabel}", "o"]
+					return
+				}
+			}
+			else
+			{
+				if ${EVE.Bookmark[${DestinationBookmarkLabel}].ToEntity(exists)}
+				{
+					if ${EVE.Bookmark[${DestinationBookmarkLabel}].ToEntity.Distance} < WARP_RANGE
+					{
+						UI:Update["Already at ${DestinationBookmarkLabel}", "o"]
+						return
+					}
+				}
+				else
+				{
+					if ${EVE.Bookmark[${DestinationBookmarkLabel}].Distance} < WARP_RANGE
+					{
+						UI:Update["Already at ${DestinationBookmarkLabel}", "o"]
+						return
+					}
+				}
+			}
+		}
+
+		UI:Update["Movement queued.  Destination: ${DestinationBookmarkLabel}", "g"]
+		This.BookmarkMoveLabel:Set[${DestinationBookmarkLabel}]
+		This.TimeStartedBookmarkMove:Set[-1]
+		This.BookmarkMove:Set[TRUE]	
+	}
+
+
+	
+	method CheckBookmarkMove()
+	{
+		if !${This.BookmarkMove}
+		{
+			return
+		}
+		
+		if ${Me.InStation}
+		{
+			if ${Me.StationID} == ${EVE.Bookmark[${BookmarkMoveLabel}].ItemID}
+			{
+				UI:Update["Docked at ${BookmarkMoveLabel}", "g"]
+				This.BookmarkMove:Set[FALSE]
+				return
+			}
+			else
+			{
+				UI:Update["Undocking from ${Me.Station.Name}", "g"]
+				
+				CommandQueue:QueueCommand[Move,Undock]
+				CommandQueue:QueueCommand[WAIT,10000]
+				return
+			}
+		}
+
+		if ${Me.ToEntity.Mode} == 3 || !${Me.InSpace} || ${This.SystemChangeCooldown} > 0 || ${This.StartWarpCooldown} > 0
+		{
+			return
+		}
+		
+		if ${EVE.Bookmark[${BookmarkMoveLabel}](exists)} && ${EVE.Bookmark[${BookmarkMoveLabel}].SolarSystemID} != ${Me.SolarSystemID}
+		{
+			This:TravelToSystem[${EVE.Bookmark[${BookmarkMoveLabel}].SolarSystemID}]
+			return
+		}
+		
+		
+		if ${EVE.Bookmark[${BookmarkMoveLabel}](exists)}
+		{
+			if ${EVE.Bookmark[${DestinationBookmarkLabel}].ItemID} == -1
+			{
+				if ${EVE.Bookmark[${BookmarkMoveLabel}].Distance} > WARP_RANGE
+				{
+					UI:Update["Warping to ${BookmarkMoveLabel}", "g"]
+					EVE.Bookmark[${BookmarkMoveLabel}]:WarpTo
+					StartWarpCooldown:Set[2]
+					return
+				}
+				else
+				{
+					UI:Update["Reached ${BookmarkMoveLabel}", "g"]
+					This.BookmarkMove:Set[FALSE]
+					return
+				}
+			}
+			else
+			{
+				if ${EVE.Bookmark[${BookmarkMoveLabel}].ToEntity(exists)}
+				{
+					if ${EVE.Bookmark[${BookmarkMoveLabel}].ToEntity.Distance} > WARP_RANGE
+					{
+						UI:Update["Warping to ${BookmarkMoveLabel}", "g"]
+						EVE.Bookmark[${BookmarkMoveLabel}].ToEntity:WarpTo
+						StartWarpCooldown:Set[2]
+						return
+					}
+					else
+					{
+						UI:Update["Reached ${BookmarkMoveLabel}, docking", "g"]
+						CommandQueue:QueueCommand[Move,DockAtStation,${EVE.Bookmark[${BookmarkMoveLabel}].ItemID}]
+						CommandQueue:QueueCommand[WAIT,10000]
+						return
+					}
+				}
+				else
+				{
+					if ${EVE.Bookmark[${BookmarkMoveLabel}].Distance} > WARP_RANGE
+					{
+						UI:Update["Warping to ${BookmarkMoveLabel}", "g"]
+						EVE.Bookmark[${BookmarkMoveLabel}]:WarpTo
+						StartWarpCooldown:Set[2]
+						return
+					}
+					else
+					{
+						UI:Update["Reached ${BookmarkMoveLabel}", "g"]
+						This.BookmarkMove:Set[FALSE]
+						return
+					}
+				}
+			}
+			
+		}
+		else
+		{
+			UI:Update["Attempted to travel to a bookmark which does not exist", "r"]
+			UI:Update["Bookmark label: ${DestinationBookmarkLabel}", "r"]
+			This.BookmarkMove:Set[FALSE]
+		}
+	}
+	
+	method DockAtStation(int64 StationID)
 	{
 		if ${Me.ToEntity.Mode} == 3
 		{
 			return
 		}
 		
-		if ${EVE.Bookmark[${DestinationBookmarkLabel}](exists)} && ${EVE.Bookmark[${DestinationBookmarkLabel}].SolarSystemID} != ${Me.SolarSystemID}
-		{
-			This:TravelToSystem[${EVE.Bookmark[${Config.Miner.PanicLocation}].SolarSystemID}]
+		if ${Me.InStation}
+		{	
 			return
 		}
 		
-		
-		if ${EVE.Bookmark[${DestinationBookmarkLabel}](exists)}
+		if !${Me.InSpace}
 		{
-			if ${EVE.Bookmark[${DestinationBookmarkLabel}].Distance} > WARP_RANGE
-			{
-				if ${WarpFleet}
-				{
-					UI:Update["Warping fleet to ${Universe[${EVE.Bookmark[${DestinationBookmarkLabel}].ID}].Name}", "g"]
-					EVE.Bookmark[${DestinationBookmarkLabel}]:WarpFleetTo
-				}
-				else
-				{
-					UI:Update["Warping to ${Universe[${EVE.Bookmark[${DestinationBookmarkLabel}].ID}].Name}", "g"]
-					EVE.Bookmark[${DestinationBookmarkLabel}]:WarpTo
-				}
-			}
+			return
+		}
+
+		if ${Entity[${StationID}](exists)}
+		{
+			UI:Update["Docking: ${Entity[${StationID}].Name}", "g"]
+			Entity[${StationID}]:Dock
 		}
 		else
 		{
+			UI:Update["Station Requested does not exist.  StationID: ${StationID}", "r"]
 		}
+	}	
+
+	method Undock()
+	{
+			EVE:Execute[CmdExitStation]
 	}
+	
 	
 	method Approach(int64 target, int distance=0)
 	{
@@ -140,10 +328,11 @@ objectdef obj_Move
 	method CheckApproach()
 	{
 		;	Return immediately if we're not approaching
-		if !${This.Approaching}
+		if !${This.Approaching} || !${Me.InSpace}
 		{
 			return
 		}
+		
 		
 		;	Clear approach if we're in warp or the entity no longer exists
 		if ${Me.ToEntity.Mode} == 3 || !${Entity[${This.ApproachingID}](exists)}
@@ -186,22 +375,26 @@ objectdef obj_Move
 		}
 	}
 
-	method Warp_Check()
+	method InWarp_Check()
 	{
-		if ${Me.ToEntity.Mode} == 3 && ${Warp_Cooldown} && ${Ship.AfterBurner_Active}
+		if !${Me.InSpace}
+		{
+			return
+		}
+		if ${Me.ToEntity.Mode} == 3 && ${InWarp_Cooldown} && ${Ship.AfterBurner_Active}
 		{
 			Ship:Deactivate_AfterBurner
 			return
 		}
-		if ${Me.ToEntity.Mode} == 3 && !${Warp_Cooldown}
+		if ${Me.ToEntity.Mode} == 3 && !${InWarp_Cooldown}
 		{
 			Ship:Activate_AfterBurner
-			Warp_Cooldown:Set[TRUE]
+			InWarp_Cooldown:Set[TRUE]
 			return
 		}
 		if ${Me.ToEntity.Mode} != 3
 		{
-			Warp_Cooldown:Set[FALSE]
+			InWarp_Cooldown:Set[FALSE]
 			return
 		}
 	}

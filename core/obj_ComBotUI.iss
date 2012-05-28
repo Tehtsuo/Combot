@@ -11,6 +11,7 @@ objectdef obj_ComBotUI
 	method Initialize()
 	{
 		ui -load interface/ComBotGUI.xml
+		This:Update["ComBot: Initializing modules", "y"]
 
 		Event[ISXEVE_onFrame]:AttachAtom[This:Pulse]
 		This:Update["obj_ComBotUI: Initialized", "g"]
@@ -58,9 +59,7 @@ objectdef obj_ComBotUI
 	{
 		if ${StatusMessage(exists)}
 		{
-		variable string msg = "\a${Color}${StatusMessage}"
-
-			UIElement[StatusConsole@Status@ComBot_Children@ComBot]:Echo["\a${Color}${StatusMessage}"]
+			UIElement[StatusConsole@Status@ComBotTab@ComBot]:Echo["\a${Color}${StatusMessage}"]
 		}
 	}
 

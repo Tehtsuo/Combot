@@ -8,22 +8,46 @@
 		<Y>300</Y>
 		<Width>550</Width>
 		<Height>320</Height>
-		<Title>ComBot</Title>
 		<TitleBar>
 			<Width>100%</Width>
 			<Height>20</Height>
 			<Border>0</Border>
+			<BackgroundColor>FF000000</BackgroundColor>
 			<Children>
 				<Text name='ComBot_TitleBar_Title'>
 					<X>200</X>
 					<Y>3</Y>
-					<Width>130</Width>
+					<Width>200</Width>
 					<Height>20</Height>
 					<Text>ComBot by Tehtsuo</Text>
 				</Text>
-				<button	Name='Close' template='EVESkin.Window.TitleBar.Close'>
+				<button	Name='Close'>
+					<X>r40</X>
+					<Y>0</Y>
+					<Width>40</Width>
+					<Height>20</Height>
+					<Text>Close</Text>
 					<OnLeftClick>
 						endscript ComBot
+					</OnLeftClick>
+				</button>
+				<button	Name='Run'>
+					<X>0</X>
+					<Y>0</Y>
+					<Width>40</Width>
+					<Height>20</Height>
+					<Text>Run</Text>
+					<OnLeftClick>
+						if ${Script[ComBot].VariableScope.ComBot.Paused}
+						{
+							This:SetText[Stop]
+							Script[ComBot].VariableScope.ComBot:Resume
+						}
+						else
+						{
+							This:SetText[Run]
+							Script[ComBot].VariableScope.ComBot:Pause
+						}
 					</OnLeftClick>
 				</button>
 			</Children>
@@ -31,20 +55,27 @@
 		<Children name="ComBot_Children">
 			<TabControl	Name='ComBotTab'>
 				<X>0</X>
-				<Y>4</Y>
+				<Y>5</Y>
 				<Width>100%</Width>
 				<Height>100%</Height>
 				<Tabs>
 					<Tab Name='Status'>
 						<console Name="StatusConsole">
-							<X>5</X>
-							<Y>50</Y>
-							<Width>90%</Width>
-							<Height>90%</Height>
+							<Font template='Console.Font' />
+							<BackgroundColor>FF000000</BackgroundColor>
+							<X>0</X>
+							<Y>0</Y>
+							<Width>100%</Width>
+							<Height>100%</Height>
 						</console>
 					</Tab>
 				</Tabs>
 			</TabControl>
 		</Children>
 	</window>
+	
+	<template name='Console.Font'>	
+		<Name>Terminal</Name>
+		<Size>8</Size>
+	</template>	
 </ISUI>

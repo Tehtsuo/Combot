@@ -3,6 +3,7 @@
 	#error ComBot requires ISXEVE to be loaded before running
 #endif
 
+#include core/Defines.iss
 #include core/obj_ComBotUI.iss
 #include core/obj_ComBot.iss
 
@@ -27,10 +28,14 @@ function main()
 	declarevariable Move obj_Move script
 	declarevariable Ship obj_Ship script
 	declarevariable CommandQueue obj_CommandQueue script
+
+	UI:Update["ComBot: Module initialization complete", "y"]
 	
-	
+	variable index:item Cargo
 	while TRUE
 	{
+		MyShip:GetCargo[Cargo]
+		echo ${Cargo.Used}
 		wait 10
 	}
 }
