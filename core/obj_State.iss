@@ -18,6 +18,7 @@ objectdef obj_State
 
 	variable int NextPulse
 	variable int PulseFrequency = 2000
+	variable bool NonGameTiedPulse = false
 
 	method Initialize()
 	{
@@ -33,7 +34,7 @@ objectdef obj_State
 	{
 		if ${LavishScript.RunningTime} >= ${This.NextPulse}
 		{
-			if !${ComBot.Paused} && ${Game.Ready}
+			if (!${ComBot.Paused} && ${Game.Ready}) || ${This.NonGameTiedPulse}
 			{
 				if ${This.${States.Peek.Name}[${States.Peek.Args}]}
 				{
