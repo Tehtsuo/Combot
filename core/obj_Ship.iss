@@ -27,7 +27,8 @@ objectdef obj_Ship
 	variable index:module ModuleList_TrackingComputer
 	variable index:module ModuleList_GangLinks
 
-
+	variable double Module_Salvagers_Range
+	variable double Module_TractorBeams_Range
 
 
 	
@@ -109,9 +110,9 @@ objectdef obj_Ship
 			return
 		}
 		RetryUpdateModuleList:Set[0]
-
+		
 		variable iterator ModuleIter
-
+		
 		This.ModuleList:GetIterator[ModuleIter]
 		if ${ModuleIter:First(exists)}
 		do
@@ -120,26 +121,26 @@ objectdef obj_Ship
 			GroupID:Set[${ModuleIter.Value.ToItem.GroupID}]
 			variable int TypeID
 			TypeID:Set[${ModuleIter.Value.ToItem.TypeID}]
-
+			
 			if !${ModuleIter.Value(exists)}
 			{
 				UI:Update["obj_Ship", "UpdateModuleList - Null module found. Retrying in a few seconds.", "o"]
 				RetryUpdateModuleList:Inc
 				return
 			}
-
+			
 			if !${ModuleIter.Value.IsActivatable}
 			{
 				This.ModuleList_Passive:Insert[${ModuleIter.Value.ID}]
 				continue
 			}
-
+			
 			if ${ModuleIter.Value.MiningAmount(exists)}
 			{
 				This.ModuleList_MiningLaser:Insert[${ModuleIter.Value.ID}]
 				continue
 			}
-
+			
 			switch ${GroupID}
 			{
 				case GROUP_SHIELD_TRANSPORTER
@@ -184,13 +185,16 @@ objectdef obj_Ship
 				case GROUP_DATA_MINER
 					if ${TypeID} == TYPE_SALVAGER
 					{
+						This.Module_Salvagers_Range:Set[${ModuleIter.Value.OptimalRange}]
 						This.ModuleList_Salvagers:Insert[${ModuleIter.Value.ID}]
 					}
 					break
 				case GROUP_SALVAGER
-						This.ModuleList_Salvagers:Insert[${ModuleIter.Value.ID}]
+					This.Module_TractorBeams_Range:Set[${ModuleIter.Value.OptimalRange}]
+					This.ModuleList_Salvagers:Insert[${ModuleIter.Value.ID}]
 					break
 				case GROUP_TRACTOR_BEAM
+					This.Module_TractorBeams_Range:Set[${ModuleIter.Value.OptimalRange}]
 					This.ModuleList_TractorBeams:Insert[${ModuleIter.Value.ID}]
 					break
 				case NONE
