@@ -64,7 +64,7 @@ objectdef obj_Salvage inherits obj_State
 		
 		if ${BookmarkFound}
 		{
-			Move:Bookmark[Target]
+			Move:Bookmark[${Target}]
 			This:QueueState["Traveling"]
 			This:QueueState["SalvageWrecks"]
 			This:QueueState["DeleteBookmark", 1000, ${Target}]
