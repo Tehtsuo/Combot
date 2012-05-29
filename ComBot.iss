@@ -27,6 +27,7 @@ function main()
 
 	declarevariable Client obj_Client script
 	declarevariable Move obj_Move script
+	declarevariable InstaWarp obj_InstaWarp script
 	declarevariable Ship obj_Ship script
 
 	UI:Update["ComBot", "Module initialization complete", "y"]

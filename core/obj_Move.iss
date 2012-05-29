@@ -362,6 +362,7 @@ objectdef obj_InstaWarp inherits obj_State
 	method Initialize()
 	{
 		This[parent]:Initialize
+		This.NonGameTiedPulse:Set[TRUE]
 		UI:Update["obj_InstaWarp", "Initialized", "g"]
 		This:QueueState["CheckApproach"]
 	}
