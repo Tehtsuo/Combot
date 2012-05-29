@@ -20,17 +20,14 @@ objectdef obj_WarpDestination
 }
 
 
-objectdef obj_Move
+objectdef obj_Move inherits obj_State
 {
-	variable int NextPulse
-	variable int PulseIntervalInMilliseconds = 2000
-	
+
 	variable bool Approaching=FALSE
 	variable int64 ApproachingID
 	variable int ApproachingDistance
 	variable int TimeStartedApproaching = 0
 
-	variable bool InWarp_Cooldown=FALSE
 
 	variable bool Traveling=FALSE
 	
@@ -39,32 +36,12 @@ objectdef obj_Move
 
 	method Initialize()
 	{
-		Event[ISXEVE_onFrame]:AttachAtom[This:Pulse]
+		This[parent]:Initialize
 		UI:Update["obj_Move", "Initialized", "g"]
 	}
 
-	method Shutdown()
-	{
-		Event[ISXEVE_onFrame]:DetachAtom[This:Pulse]
-	}	
 
-	method Pulse()
-	{
-	    if ${LavishScript.RunningTime} >= ${This.NextPulse}
-		{
-    		This.NextPulse:Set[${Math.Calc[${LavishScript.RunningTime} + ${PulseIntervalInMilliseconds} + ${Math.Rand[500]}]}]
 
-			This:InWarp_Check
-
-			if ${CommandQueue.Queued} == 0 && ${Client.Ready} && !${ComBot.Paused}
-			{
-				This:Travel
-				This:CheckApproach
-			}
-		}
-	}	
-
-	
 	
 	
 	method Warp(int64 ID)
@@ -144,6 +121,7 @@ objectdef obj_Move
 		UI:Update["obj_Move", "Movement queued.  Destination: ${DestinationBookmarkLabel}", "g"]
 		This.WarpDestination:Set["BOOKMARK", ${DestinationBookmarkLabel}]
 		This.Traveling:Set[TRUE]
+		This:QueueState["BookmarkMove"]
 	}
 
 	method AgentName(string AgentName)
@@ -163,27 +141,11 @@ objectdef obj_Move
 		UI:Update["obj_Move", "Movement queued.  Destination: ${AgentName}", "g"]
 		This.WarpDestination:Set["AGENT", "", ${Agent[AgentName].Index}]
 		This.Traveling:Set[TRUE]
+		This:QueueState["AgentMove"]
 	}	
 	
-	method Travel()
-	{
-		if !${This.Traveling}
-		{
-			return
-		}
-		
-		switch ${This.WarpDestination.WarpType}
-		{
-			case BOOKMARK
-				This:BookmarkMove
-				break
-			case AGENT
-				This:AgentMove
-				break
-		}
-	}
 	
-	method BookmarkMove()
+	member:bool BookmarkMove()
 	{
 
 		if ${Me.InStation}
@@ -192,24 +154,25 @@ objectdef obj_Move
 			{
 				UI:Update["obj_Move", "Docked at ${This.WarpDestination.Bookmark}", "g"]
 				This.Traveling:Set[FALSE]
+				return TRUE
 			}
 			else
 			{
 				UI:Update["obj_Move", "Undocking from ${Me.Station.Name}", "g"]
 				This:Undock
+				return FALSE
 			}
-			return
 		}
 
 		if ${Me.ToEntity.Mode} == 3 || !${Client.InSpace}
 		{
-			return
+			return FALSE
 		}
 		
 		if  ${EVE.Bookmark[${This.WarpDestination.Bookmark}].SolarSystemID} != ${Me.SolarSystemID}
 		{
 			This:TravelToSystem[${EVE.Bookmark[${This.WarpDestination.Bookmark}].SolarSystemID}]
-			return
+			return FALSE
 		}
 		
 		if ${EVE.Bookmark[${This.WarpDestination.Bookmark}].ItemID} == -1
@@ -219,13 +182,14 @@ objectdef obj_Move
 				UI:Update["obj_Move", "Warping to ${This.WarpDestination.Bookmark}", "g"]
 				EVE.Bookmark[${This.WarpDestination.Bookmark}]:WarpTo
 				Client:Wait[5000]
+				return FALSE
 			}
 			else
 			{
 				UI:Update["obj_Move", "Reached ${This.WarpDestination.Bookmark}", "g"]
 				This.Traveling:Set[FALSE]
+				return TRUE
 			}
-			return
 		}
 		else
 		{
@@ -235,13 +199,14 @@ objectdef obj_Move
 				{
 					UI:Update["obj_Move", "Warping to ${This.WarpDestination.Bookmark}", "g"]
 					This:Warp[${EVE.Bookmark[${This.WarpDestination.Bookmark}].ToEntity}]
+					return FALSE
 				}
 				else
 				{
 					UI:Update["obj_Move", "Reached ${This.WarpDestination.Bookmark}, docking", "g"]
 					This:DockAtStation[${EVE.Bookmark[${This.WarpDestination.Bookmark}].ItemID}]
+					return FALSE
 				}
-				return
 			}
 			else
 			{
@@ -250,20 +215,21 @@ objectdef obj_Move
 					UI:Update["obj_Move", "Warping to ${This.WarpDestination.Bookmark}", "g"]
 					EVE.Bookmark[${This.WarpDestination.Bookmark}]:WarpTo
 					Client:Wait[5000]
+					return FALSE
 				}
 				else
 				{
 					UI:Update["obj_Move", "Reached ${This.WarpDestination.Bookmark}", "r"]
 					UI:Update["obj_Move", "InSpace: ${EVE.EntitiesCount}", "w"]
 					This.Traveling:Set[FALSE]
+					return TRUE
 				}
-				return
 			}
 		}
 	}
 	
 
-	method AgentMove()
+	member:bool AgentMove()
 	{
 
 		if ${Me.InStation}
@@ -272,24 +238,25 @@ objectdef obj_Move
 			{
 				UI:Update["obj_Move", "Docked at ${Agent[${This.WarpDestination.AgentID}].Station}", "g"]
 				This.Traveling:Set[FALSE]
+				return TRUE
 			}
 			else
 			{
 				UI:Update["obj_Move", "Undocking from ${Me.Station.Name}", "g"]
 				This:Undock
+				return FALSE
 			}
-			return
 		}
 
 		if ${Me.ToEntity.Mode} == 3 || !${Client.InSpace}
 		{
-			return
+			return FALSE
 		}
 			
 		if  ${Agent[${This.WarpDestination.AgentID}].SolarSystem.ID} != ${Me.SolarSystemID}
 		{
 			This:TravelToSystem[${Agent[${This.WarpDestination.AgentID}].SolarSystem.ID}]
-			return
+			return FALSE
 		}
 		
 		if ${Entity[${Agent[${This.WarpDestination.AgentID}].StationID}](exists)}
@@ -298,14 +265,15 @@ objectdef obj_Move
 			{
 				UI:Update["obj_Move", "Warping to ${Agent[${This.WarpDestination.AgentID}].Station}", "g"]
 				This:Warp[${Agent[${This.WarpDestination.AgentID}].StationID}]
+				return FALSE
 			}
 			else
 			{
 				UI:Update["obj_Move", "Reached ${Agent[${This.WarpDestination.AgentID}].Station}, docking", "g"]
 				This:DockAtStation[${Agent[${This.WarpDestination.AgentID}].StationID}]
 				This.Traveling:Set[FALSE]
+				return TRUE
 			}
-			return
 		}
 	}
 
@@ -335,32 +303,25 @@ objectdef obj_Move
 		This.ApproachingDistance:Set[${distance}]
 		This.TimeStartedApproaching:Set[-1]
 		This.Approaching:Set[TRUE]
+		This:QueueState["CheckApproach"]
 	}
 	
 	
-	
-	method CheckApproach()
+	member:bool CheckApproach()
 	{
-		;	Return immediately if we're not approaching
-		if !${This.Approaching} || !${Me.InSpace}
-		{
-			return
-		}
-		
-		
 		;	Clear approach if we're in warp or the entity no longer exists
 		if ${Me.ToEntity.Mode} == 3 || !${Entity[${This.ApproachingID}](exists)}
 		{
 			This.Approaching:Set[FALSE]
-			return
+			return TRUE
 		}			
 		
 		;	Find out if we need to warp to the target
 		if ${Entity[${This.ApproachingID}].Distance} > WARP_RANGE 
 		{
 			UI:Update["obj_Move", "${Entity[${This.ApproachingID}].Name} is a long way away.  Warping to it", "g"]
-			Entity[${This.ApproachingID}]:WarpTo[1000]
-			return
+			This:Warp[${This.ApproachingID}]
+			return FALSE
 		}
 		
 		;	Find out if we need to approach the target
@@ -369,14 +330,14 @@ objectdef obj_Move
 			UI:Update["obj_Move", "Approaching to within ${ComBot.MetersToKM_Str[${distance}]} of ${Entity[${target}].Name}", "g"]
 			Entity[${This.ApproachingID}]:Approach[${distance}]
 			This.TimeStartedApproaching:Set[${Time.Timestamp}]
-			return
+			return FALSE
 		}
 		
 		;	If we've been approaching for more than 1 minute, we need to give up
 		if ${Math.Calc[${This.TimeStartedApproaching}-${Time.Timestamp}]} < -60
 		{
 			This.Approaching:Set[FALSE]
-			return
+			return TRUE
 		}
 		
 		;	If we're approaching a target, find out if we need to stop doing so 
@@ -385,32 +346,47 @@ objectdef obj_Move
 			UI:Update["obj_Move", "Within ${ComBot.MetersToKM_Str[${This.ApproachingDistance}]} of ${Entity[${This.ApproachingID}].Name}", "g"]
 			EVE:Execute[CmdStopShip]
 			This.Approaching:Set[FALSE]
-			return
+			return TRUE
 		}
+		return FALSE
 	}
 
-	method InWarp_Check()
+}
+	
+	
+	
+objectdef obj_InstaWarp inherits obj_State
+{
+	variable bool InstaWarp_Cooldown=FALSE
+
+	method Initialize()
 	{
-		if !${Me.InSpace}
+		This[parent]:Initialize
+		UI:Update["obj_InstaWarp", "Initialized", "g"]
+		This:QueueState["CheckApproach"]
+	}
+	
+	member:bool InstaWarp_Check()
+	{
+		if !${Client.InSpace}
 		{
-			return
+			return FALSE
 		}
-		if ${Me.ToEntity.Mode} == 3 && ${InWarp_Cooldown} && ${Ship.AfterBurner_Active}
+		if ${Me.ToEntity.Mode} == 3 && ${InstaWarp_Cooldown} && ${Ship.AfterBurner_Active}
 		{
 			Ship:Deactivate_AfterBurner
-			return
+			return FALSE
 		}
-		if ${Me.ToEntity.Mode} == 3 && !${InWarp_Cooldown}
+		if ${Me.ToEntity.Mode} == 3 && !${InstaWarp_Cooldown}
 		{
 			Ship:Activate_AfterBurner
-			InWarp_Cooldown:Set[TRUE]
-			return
+			InstaWarp_Cooldown:Set[TRUE]
+			return FALSE
 		}
 		if ${Me.ToEntity.Mode} != 3
 		{
-			InWarp_Cooldown:Set[FALSE]
-			return
+			InstaWarp_Cooldown:Set[FALSE]
+			return FALSE
 		}
 	}
 }
-	
