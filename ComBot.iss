@@ -10,8 +10,7 @@
 #include core/obj_Client.iss
 #include core/obj_Move.iss
 #include core/obj_Ship.iss
-#include core/obj_CommandQueue.iss
-
+#include core/obj_State.iss
 
 
 function atexit()
@@ -29,7 +28,6 @@ function main()
 	declarevariable Client obj_Client script
 	declarevariable Move obj_Move script
 	declarevariable Ship obj_Ship script
-	declarevariable CommandQueue obj_CommandQueue script
 
 	UI:Update["ComBot", "Module initialization complete", "y"]
 	
