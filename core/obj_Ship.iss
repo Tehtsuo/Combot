@@ -47,7 +47,7 @@ objectdef obj_Ship
 	{
 	    if ${LavishScript.RunningTime} >= ${This.NextPulse}
 		{
-			if !${Me.InStation} && ${Me.InSpace}
+			if !${Me.InStation} && ${Client.Space}
 			{
 				if ${RetryUpdateModuleList} == 10
 				{
