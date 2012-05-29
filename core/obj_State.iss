@@ -22,6 +22,7 @@ objectdef obj_State
 
 	method Initialize()
 	{
+		This:QueueState["Idle", 100]
 		Event[ISXEVE_onFrame]:AttachAtom[This:Pulse]
 	}
 
