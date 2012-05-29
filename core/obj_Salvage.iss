@@ -67,6 +67,7 @@ objectdef obj_Salvage inherits obj_State
 			Move:Bookmark[Target]
 			This:QueueState["Traveling"]
 			This:QueueState["SalvageWrecks"]
+			This:QueueState["DeleteBookmark", 1000, ${Target}]
 			This:QueueState["OpenCargoHold"]
 			This:QueueState["CheckCargoHold", 5000]
 			return true
@@ -164,6 +165,19 @@ objectdef obj_Salvage inherits obj_State
 		return false
 	}
 	
+	member:bool DeleteBookmark(string bookmarkname)
+	{
+		variable index:entity Gates
+		variable iterator GateIterator
+		
+		Eve:QueryEntities[Gates, "GroupID == GROUP_WARPGATE"]
+		if ${Gates.Used} == 0
+		{
+			Eve.Bookmark[${bookmarkname}]:Remove
+		}
+		return true
+	}
+	
 	member:bool OpenCargoHold()
 	{
 		MyShip:OpenCargo[]
@@ -185,6 +199,7 @@ objectdef obj_Salvage inherits obj_State
 	member:bool Offload()
 	{
 		//Transfer stuff to corp hanger
+		return false
 	}
 	
 }
