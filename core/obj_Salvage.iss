@@ -63,8 +63,68 @@ objectdef obj_Salvage inherits obj_State
 
 	member:bool SalvageWrecks()
 	{
-		//Tractor, loot and salvage
-		//True when done 
+		variable index:entity Targets
+		variable iterator TargetIterator
+		variable queue:int LootRangeAndTractored
+		variable int Targeted = 0
+		variable int MaxTarget = ${MyShip.MaxLockedTargets}
+		variable int ModuleIndex = -1
+		
+		if ${Me.MaxLockedTargets} < ${MyShip.MaxLockedTargets}
+		{
+			MaxTarget:Set[${Me.MaxLockedTargets}]
+		}
+		
+		Eve:QueryEntities[Targets, "GroupID==${GROUP_WRECK} OR GroupID==${GROUP_CARGOCONTAINER}"]
+		if ${TargetIterator:First(exists)}
+		{
+			do
+			{
+				if !${TargetIterator.Value.BeingTargeted} && !${TargetIterator.Value.IsLockedTarget}
+				{
+					TargetIterator.Value:LockTarget
+					return false
+				}
+				if !${TargetIterator.Value.IsWreckEmpty} && !${TargetIterator.Value.LootWindow(exists)} && ${TargetIterator.Value.Distance}<LOOT_RANGE
+				{
+					TargetIterator.Value:OpenCargo
+					return false
+				}
+				if !${TargetIterator.Value.IsWreckEmpty} && ${TargetIterator.Value.Distance}<LOOT_RANGE
+				{
+					TargetIterator.Value.LootWindow:LootAll
+					return false
+				}
+				if !${This.IsModuleActiveOn[${Ship.ModuleList_TractorBeams}, ${TargetIterator.Value.ID}]} && ${TargetIterator.Value.Distance} < ${Ship.Module_TractorBeams_Range}
+				{
+					ModuleIndex:Set[${This.FindActiveModule[${Ship.ModuleList_TractorBeams}}]
+					if ${ModuleIndex} >= 0
+					{
+							Ship.ModuleList_TractorBeams.Get[${ModuleIndex}]:Activate[${TargetIterator.Value.ID}]
+							return false
+					}
+				}
+				if ${This.IsModuleActiveOn[${Ship.ModuleList_TractorBeams}, ${TargetIterator.Value.ID}]}  && ${TargetIterator.Value.Distance} < LOOT_RANGE
+				{
+					LootRangeAndTractored:Queue[${TargetIterator.Value.ID}]
+				}
+				if !${This.IsModuleActiveOn[${Ship.ModuleList_Salvagers}, ${TargetIterator.Value.ID}]} && ${TargetIterator.Value.Distance} < ${Ship.Module_Salvagers_Range}
+				{
+					ModuleIndex:Set[${This.FindActiveModule[${Ship.ModuleList_Salvagers}}]
+					if ${ModuleIndex} >= 0
+					{
+						Ship.ModuleList_Salvagers.Get[${ModuleIndex}]:Activate[${TargetIterator.Value.ID}]
+						return false
+					}
+				}
+			}
+			while ${TargetIterator:Next(exists)}
+		}
+		else
+		{
+			return true
+		}
+		return false
 	}
 	
 	member:bool OpenCargoHold()
@@ -89,5 +149,41 @@ objectdef obj_Salvage inherits obj_State
 	{
 		//Transfer stuff to corp hanger
 	}
-
+	
+	member:int FindUnactiveModule(index:module ModuleList)
+	{
+		variable Iterator ModuleIterator
+		ModuleList:GetIterator[ModuleIterator]
+		if ${ModuleIterator:First(exists)}
+		{
+			do
+			{
+				if !${ModuleIterator.Value.IsActive}
+				{
+					return ${ModuleIterator.Key}
+				}
+			}
+			while ${ModuleIterator:Next(exists)}
+		}
+		return -1
+	}
+	
+	member:bool IsModuleActiveOn(index:module ModuleList, int64 Target)
+	{
+		variable Iterator ModuleIterator
+		ModuleList:GetIterator[ModuleIterator]
+		if ${ModuleIterator:First(exists)}
+		{
+			do
+			{
+				if !${ModuleIterator.Value.IsActive} && ${ModuleIterator.Value.TargetID}==${Target}
+				{
+					return true
+				}
+			}
+			while ${ModuleIterator:Next(exists)}
+		}
+		return false
+	}
+	
 }
