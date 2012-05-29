@@ -35,7 +35,7 @@ objectdef obj_State
 		{
 			if !${ComBot.Paused} && ${Game.Ready}
 			{
-				if This.${States.Peek.Name}[${States.Peek.Args}]
+				if ${This.${States.Peek.Name}[${States.Peek.Args}]}
 				{
 					States:Dequeue
 				}
