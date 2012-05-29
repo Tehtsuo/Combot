@@ -77,6 +77,13 @@ objectdef obj_ComBotUI
 		MSG:Concat["\a${Color}${StatusMessage}"]
 		
 		UIElement[StatusConsole@Status@ComBotTab@ComBot]:Echo["${MSG}"]
+		
+		switch ${CallingModule}
+		{
+			case obj_Salvage
+				UIElement[obj_SalvageConsole@Salvager@ComBotTab@ComBot]:Echo["\a${Color}${StatusMessage}"]
+				break
+		}
 	}
 
 

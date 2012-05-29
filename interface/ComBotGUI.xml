@@ -69,6 +69,16 @@
 							<Height>100%</Height>
 						</console>
 					</Tab>
+					<Tab Name='Salvager'>
+						<console Name="obj_SalvageConsole">
+							<Font template='Console.Font' />
+							<BackgroundColor>FF000000</BackgroundColor>
+							<X>0</X>
+							<Y>0</Y>
+							<Width>100%</Width>
+							<Height>100%</Height>
+						</console>
+					</Tab>
 				</Tabs>
 			</TabControl>
 		</Children>

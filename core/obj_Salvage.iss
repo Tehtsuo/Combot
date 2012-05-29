@@ -9,11 +9,13 @@ objectdef obj_Salvage inherits obj_State
 
 	method Start()
 	{
+		UI:Update["obj_Salvage", "Started", "g"]
 		This:QueueState["CheckBookmarks"]
 	}
 	
 	method Stop()
 	{
+		UI:Update["obj_Salvage", "Salvage stopped, setting destination to station", "g"]
 		This:Clear()
 		Move:Bookmark["Station"]
 		This:QueueState["Traveling"]
@@ -31,7 +33,8 @@ objectdef obj_Salvage inherits obj_State
 		
 		if ${Entity["GroupID == GROUP_WARPGATE"](exists)}
 		{
-			Move:Gate[${Entity["GroupID == GROUP_WARPGATE"].ID}]
+			UI:Update["obj_Salvage", "Gate found, activating", "g"]
+Move:Gate[${Entity["GroupID == GROUP_WARPGATE"].ID}]
 			This.QueueState["Traveling"]
 			This.QueueState["SalvageWrecks"]
 			This:QueueState["OpenCargoHold"]
@@ -58,28 +61,35 @@ objectdef obj_Salvage inherits obj_State
 		
 		if ${BookmarkFound}
 		{
+			UI:Update["obj_Salvage", "Setting course for ${Target}", "g"]
 			Move:Bookmark[${Target}]
 			This:QueueState["Traveling"]
+			This:QueueState["Log", 1000, "Salvaging at ${Target}"]
 			This:QueueState["SalvageWrecks"]
 			This:QueueState["DeleteBookmark", 1000, ${Target}]
 			This:QueueState["OpenCargoHold"]
 			This:QueueState["CheckCargoHold", 5000]
 			return true
 		}
-		if !${Client.InStation}
-		{
-			Move:Bookmark["Station"]
-			This:QueueState["Traveling"]
-			This:QueueState["Offload"]
-			This:QueueState["CheckBookmarks"]
-			return true
-		}
-		return false
+
+		
+		UI:Update["obj_Salvage", "No salvage bookmark found - returning to station", "g"]
+		Move:Bookmark["Station"]
+		This:QueueState["Traveling"]
+		This:QueueState["Offload"]
+		This:QueueState["CheckBookmarks"]
+		return true
 	}
 
 	member:bool Traveling()
 	{
 		return !${Move.Traveling}
+	}
+	
+	member:bool Log(string text)
+	{
+		UI:Update["obj_Salvage", "${text}", "g"]
+		return TRUE
 	}
 
 	member:bool SalvageWrecks()
@@ -104,22 +114,26 @@ objectdef obj_Salvage inherits obj_State
 			{
 				if !${TargetIterator.Value.BeingTargeted} && !${TargetIterator.Value.IsLockedTarget}
 				{
+					UI:Update["obj_Salvage", "Locking - ${TargetIterator.Value.Name}", "g"]
 					TargetIterator.Value:LockTarget
 					return false
 				}
 				Targeted:Inc
 				if ${TargetIterator.Value.Distance} > ${Ship.Module_TractorBeams_Range} && ${Tractored}+1 == ${Targeted}
 				{
+					UI:Update["obj_Salvage", "Approaching - ${TargetIterator.Value.Name}", "g"]
 					Move:Approach[${TargetIterator.Value}]
 					return false
 				}
 				if !${TargetIterator.Value.IsWreckEmpty} && !${TargetIterator.Value.LootWindow(exists)} && ${TargetIterator.Value.Distance}<LOOT_RANGE
 				{
+					UI:Update["obj_Salvage", "Opening - ${TargetIterator.Value.Name}", "g"]
 					TargetIterator.Value:OpenCargo
 					return false
 				}
 				if !${TargetIterator.Value.IsWreckEmpty} && ${TargetIterator.Value.Distance}<LOOT_RANGE
 				{
+					UI:Update["obj_Salvage", "Looting - ${TargetIterator.Value.Name}", "g"]
 					TargetIterator.Value.LootWindow:LootAll
 					return false
 				}
@@ -128,6 +142,7 @@ objectdef obj_Salvage inherits obj_State
 					ModuleIndex:Set[${Ship.FindUnactiveModule[${Ship.ModuleList_TractorBeams}}]
 					if ${ModuleIndex} >= 0
 					{
+							UI:Update["obj_Salvage", "Activating tractor beam - ${TargetIterator.Value.Name}", "g"]
 							Ship.ModuleList_TractorBeams.Get[${ModuleIndex}]:Activate[${TargetIterator.Value.ID}]
 							return false
 					}
@@ -145,6 +160,7 @@ objectdef obj_Salvage inherits obj_State
 					ModuleIndex:Set[${Ship.FindUnactiveModule[${Ship.ModuleList_Salvagers}}]
 					if ${ModuleIndex} >= 0
 					{
+						UI:Update["obj_Salvage", "Activating salvager - ${TargetIterator.Value.Name}", "g"]
 						Ship.ModuleList_Salvagers.Get[${ModuleIndex}]:Activate[${TargetIterator.Value.ID}]
 						return false
 					}
@@ -163,7 +179,12 @@ objectdef obj_Salvage inherits obj_State
 	{
 		if !${Entity["GroupID == GROUP_WARPGATE"](exists)}
 		{
+			UI:Update["obj_Salvage", "Removing bookmark - ${bookmarkname}", "g"]
 			Eve.Bookmark[${bookmarkname}]:Remove
+		}
+		else
+		{
+			UI:Update["obj_Salvage", "Gate present: Not removing bookmark - ${bookmarkname}", "g"]
 		}
 		return true
 	}

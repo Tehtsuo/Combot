@@ -15,7 +15,7 @@ objectdef obj_WarpDestination
 	{
 		WarpType:Set[${arg_WarpType}]
 		Bookmark:Set[${arg_Bookmark}]	
-		AgentID:Set[${arg_Agent}]	
+		AgentID:Set[${arg_Agent}]
 	}
 }
 
