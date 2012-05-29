@@ -58,17 +58,22 @@ objectdef obj_ComBotUI
 	method Update(string CallingModule, string StatusMessage, string Color="w")
 	{
 		variable string MSG
-		MSG:Set["["]
-		if ${CallingModule.Length > 15}
+		MSG:Set["\aw["]
+		if ${CallingModule.Length} > 15
 		{
 			MSG:Concat[${CallingModule.Left[15]}]
 		}
+		else
+		{
+			MSG:Concat[${CallingModule}]
+		}
 		MSG:Concat["]"]
 		
-		while ${MSG.Length} < 17
+		while ${MSG.Length} < 20
 		{
 			MSG:Concat[" "]
 		}	
+
 		MSG:Concat["\a${Color}${StatusMessage}"]
 		
 		UIElement[StatusConsole@Status@ComBotTab@ComBot]:Echo["${MSG}"]

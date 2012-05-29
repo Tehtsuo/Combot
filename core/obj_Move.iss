@@ -2,13 +2,20 @@ objectdef obj_WarpDestination
 {
 	variable string WarpType
 	variable string Bookmark
-	variable int Agent
+	variable int AgentID
 
 	method Initialize(string arg_WarpType, string arg_Bookmark, int arg_Agent=0)
 	{
 		WarpType:Set[${arg_WarpType}]
 		Bookmark:Set[${arg_Bookmark}]	
-		Agent:Set[${arg_Agent}]	
+		AgentID:Set[${arg_Agent}]	
+	}
+	
+	method Set(string arg_WarpType, string arg_Bookmark, int arg_Agent=0)
+	{
+		WarpType:Set[${arg_WarpType}]
+		Bookmark:Set[${arg_Bookmark}]	
+		AgentID:Set[${arg_Agent}]	
 	}
 }
 
@@ -16,7 +23,7 @@ objectdef obj_WarpDestination
 objectdef obj_Move
 {
 	variable int NextPulse
-	variable int PulseIntervalInMilliseconds = 2000
+	variable int PulseIntervalInMilliseconds = 100
 	
 	variable bool Approaching=FALSE
 	variable int64 ApproachingID
@@ -49,7 +56,7 @@ objectdef obj_Move
 
 			This:InWarp_Check
 
-			if ${CommandQueue.Queued} == 0 && ${Game.Ready} && !${ComBot.Paused}
+			if ${CommandQueue.Queued} == 0 && ${Client.Ready} && !${ComBot.Paused}
 			{
 				This:Travel
 				This:CheckApproach
@@ -63,7 +70,7 @@ objectdef obj_Move
 	method Warp(int64 ID)
 	{
 		Entity[${ID}]:WarpTo
-		Game:Wait[5000]
+		Client:Wait[5000]
 	}
 	
 	method ActivateAutoPilot()
@@ -101,7 +108,7 @@ objectdef obj_Move
 		{
 			UI:Update["obj_Move", "Docking: ${Entity[${StationID}].Name}", "g"]
 			Entity[${StationID}]:Dock
-			Game:Wait[10000]
+			Client:Wait[10000]
 		}
 		else
 		{
@@ -112,7 +119,7 @@ objectdef obj_Move
 	method Undock()
 	{
 			EVE:Execute[CmdExitStation]
-			Game:Wait[10000]
+			Client:Wait[10000]
 	}	
 	
 	
@@ -122,7 +129,7 @@ objectdef obj_Move
 	
 	method Bookmark(string DestinationBookmarkLabel)
 	{
-		${This.Traveling}
+		if ${This.Traveling}
 		{
 			return
 		}
@@ -135,11 +142,11 @@ objectdef obj_Move
 		}
 
 		UI:Update["obj_Move", "Movement queued.  Destination: ${DestinationBookmarkLabel}", "g"]
-		This.WarpDestination:Set[BOOKMARK, ${DestinationBookmarkLabel}]
+		This.WarpDestination:Set["BOOKMARK", ${DestinationBookmarkLabel}]
 		This.Traveling:Set[TRUE]
 	}
 
-	method Agent(string AgentName)
+	method AgentName(string AgentName)
 	{
 		${This.Traveling}
 		{
@@ -154,7 +161,7 @@ objectdef obj_Move
 		}
 
 		UI:Update["obj_Move", "Movement queued.  Destination: ${AgentName}", "g"]
-		This.WarpDestination:Set[AGENT, "", ${Agent[AgentName].Index}]
+		This.WarpDestination:Set["AGENT", "", ${Agent[AgentName].Index}]
 		This.Traveling:Set[TRUE]
 	}	
 	
@@ -194,7 +201,7 @@ objectdef obj_Move
 			return
 		}
 
-		if ${Me.ToEntity.Mode} == 3 || !${Me.InSpace}
+		if ${Me.ToEntity.Mode} == 3 || !${Client.Space}
 		{
 			return
 		}
@@ -210,7 +217,8 @@ objectdef obj_Move
 			if ${EVE.Bookmark[${This.WarpDestination.Bookmark}].Distance} > WARP_RANGE
 			{
 				UI:Update["obj_Move", "Warping to ${This.WarpDestination.Bookmark}", "g"]
-				This:Warp[${EVE.Bookmark[${This.WarpDestination.Bookmark}].ID}]
+				EVE.Bookmark[${This.WarpDestination.Bookmark}]:WarpTo
+				Client:Wait[5000]
 			}
 			else
 			{
@@ -241,11 +249,12 @@ objectdef obj_Move
 				{
 					UI:Update["obj_Move", "Warping to ${This.WarpDestination.Bookmark}", "g"]
 					EVE.Bookmark[${This.WarpDestination.Bookmark}]:WarpTo
-					Game:Wait[5000]
+					Client:Wait[5000]
 				}
 				else
 				{
-					UI:Update["obj_Move", "Reached ${This.WarpDestination.Bookmark}", "g"]
+					UI:Update["obj_Move", "Reached ${This.WarpDestination.Bookmark}", "r"]
+					UI:Update["obj_Move", "InSpace: ${EVE.EntitiesCount}", "w"]
 					This.Traveling:Set[FALSE]
 				}
 				return
@@ -259,9 +268,9 @@ objectdef obj_Move
 
 		if ${Me.InStation}
 		{
-			if ${Me.StationID} == ${Agent[${This.WarpDestination.Agent}].StationID}
+			if ${Me.StationID} == ${Agent[${This.WarpDestination.AgentID}].StationID}
 			{
-				UI:Update["obj_Move", "Docked at ${Agent[${This.WarpDestination.Agent}].Station}", "g"]
+				UI:Update["obj_Move", "Docked at ${Agent[${This.WarpDestination.AgentID}].Station}", "g"]
 				This.Traveling:Set[FALSE]
 			}
 			else
@@ -272,28 +281,28 @@ objectdef obj_Move
 			return
 		}
 
-		if ${Me.ToEntity.Mode} == 3 || !${Me.InSpace}
+		if ${Me.ToEntity.Mode} == 3 || !${Client.Space}
 		{
 			return
 		}
 			
-		if  ${Agent[${This.WarpDestination.Agent}].SolarSystem.ID} != ${Me.SolarSystemID}
+		if  ${Agent[${This.WarpDestination.AgentID}].SolarSystem.ID} != ${Me.SolarSystemID}
 		{
-			This:TravelToSystem[${Agent[${This.WarpDestination.Agent}].SolarSystem.ID}]
+			This:TravelToSystem[${Agent[${This.WarpDestination.AgentID}].SolarSystem.ID}]
 			return
 		}
 		
-		if ${Entity[${Agent[${This.WarpDestination.Agent}].StationID}](exists)}
+		if ${Entity[${Agent[${This.WarpDestination.AgentID}].StationID}](exists)}
 		{
-			if ${Entity[${Agent[${This.WarpDestination.Agent}].StationID}].Distance} > WARP_RANGE
+			if ${Entity[${Agent[${This.WarpDestination.AgentID}].StationID}].Distance} > WARP_RANGE
 			{
-				UI:Update["obj_Move", "Warping to ${Agent[${This.WarpDestination.Agent}].Station}", "g"]
-				This:Warp[${Agent[${This.WarpDestination.Agent}].StationID}]
+				UI:Update["obj_Move", "Warping to ${Agent[${This.WarpDestination.AgentID}].Station}", "g"]
+				This:Warp[${Agent[${This.WarpDestination.AgentID}].StationID}]
 			}
 			else
 			{
-				UI:Update["obj_Move", "Reached ${Agent[${This.WarpDestination.Agent}].Station}, docking", "g"]
-				This:DockAtStation[${Agent[${This.WarpDestination.Agent}].StationID}]
+				UI:Update["obj_Move", "Reached ${Agent[${This.WarpDestination.AgentID}].Station}, docking", "g"]
+				This:DockAtStation[${Agent[${This.WarpDestination.AgentID}].StationID}]
 				This.Traveling:Set[FALSE]
 			}
 			return
