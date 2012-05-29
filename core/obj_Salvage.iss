@@ -28,6 +28,23 @@ objectdef obj_Salvage inherits obj_State
 		variable string Time
 		variable bool BookmarkFound
 		
+		variable index:entity Gates
+		variable iterator GateIterator
+		
+		Eve:QueryEntities[Gates, "GroupID == GROUP_WARPGATE"]
+		if ${Gates.Used} > 0
+		{
+			Gates:GetIterator[GateIterator]
+			GateIterator:First
+			Move:Gate[${GateIterator.Value.ID}]
+			This.QueueState["Traveling"]
+			This.QueueState["SalvageWrecks"]
+			This:QueueState["OpenCargoHold"]
+			This:QueueState["CheckCargoHold", 5000]
+			return true;
+		}
+		
+		
 		BookmarkFound:Set[false]
 		
 		Eve:GetBookmarks[Bookmarks]
@@ -51,6 +68,14 @@ objectdef obj_Salvage inherits obj_State
 			This:QueueState["SalvageWrecks"]
 			This:QueueState["OpenCargoHold"]
 			This:QueueState["CheckCargoHold", 5000]
+			return true
+		}
+		if !${Client.InStation}
+		{
+			Move:Bookmark["Station"]
+			This:QueueState["Traveling"]
+			This:QueueState["Offload"]
+			This:QueueState["CheckBookmarks"]
 			return true
 		}
 		return false
