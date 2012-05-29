@@ -47,7 +47,7 @@ objectdef obj_Ship
 	{
 	    if ${LavishScript.RunningTime} >= ${This.NextPulse}
 		{
-			if !${Me.InStation} && ${Client.Space}
+			if !${Me.InStation} && ${Client.InSpace}
 			{
 				if ${RetryUpdateModuleList} == 10
 				{
@@ -70,7 +70,7 @@ objectdef obj_Ship
 	
 	method UpdateModuleList()
 	{
-		if ${Me.InStation}
+		if !${Client.InSpace}
 		{
 			UI:Update["obj_Ship", "UpdateModuleList called while in station", "o"]
 			RetryUpdateModuleList:Set[1]

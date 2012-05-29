@@ -5,9 +5,6 @@ objectdef obj_Client
 	variable int NextPulse
 	
 	variable bool Ready=TRUE
-	variable int64 CurrentSystem=${Me.SolarSystemID}
-	variable bool InSpace=${Me.InSpace}
-	variable bool InStation=${Me.InStation}
 	
 	method Initialize()
 	{
@@ -35,7 +32,7 @@ objectdef obj_Client
 		}
 	}
 	
-	member:bool Space()
+	member:bool InSpace()
 	{
 		if ${Me.InSpace(type).Name.Equal[bool]} && ${EVE.EntitiesCount} > 0
 		{

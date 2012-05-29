@@ -23,7 +23,7 @@ objectdef obj_WarpDestination
 objectdef obj_Move
 {
 	variable int NextPulse
-	variable int PulseIntervalInMilliseconds = 100
+	variable int PulseIntervalInMilliseconds = 2000
 	
 	variable bool Approaching=FALSE
 	variable int64 ApproachingID
@@ -201,7 +201,7 @@ objectdef obj_Move
 			return
 		}
 
-		if ${Me.ToEntity.Mode} == 3 || !${Client.Space}
+		if ${Me.ToEntity.Mode} == 3 || !${Client.InSpace}
 		{
 			return
 		}
@@ -281,7 +281,7 @@ objectdef obj_Move
 			return
 		}
 
-		if ${Me.ToEntity.Mode} == 3 || !${Client.Space}
+		if ${Me.ToEntity.Mode} == 3 || !${Client.InSpace}
 		{
 			return
 		}
