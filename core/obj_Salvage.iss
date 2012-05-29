@@ -14,6 +14,7 @@ objectdef obj_Salvage inherits obj_State
 	
 	method Stop()
 	{
+		This:Clear()
 		Move:Bookmark["Station"]
 		This:QueueState["Traveling"]
 	}
