@@ -467,5 +467,43 @@ objectdef obj_Ship
 				ModuleIter.Value:Click
 			}
 		}
-	}	
-}	
+	}
+	
+	member:int FindUnactiveModule(index:module ModuleList)
+	{
+		variable Iterator ModuleIterator
+		ModuleList:GetIterator[ModuleIterator]
+		if ${ModuleIterator:First(exists)}
+		{
+			do
+			{
+				if !${ModuleIterator.Value.IsActive}
+				{
+					return ${ModuleIterator.Key}
+				}
+			}
+			while ${ModuleIterator:Next(exists)}
+		}
+		return -1
+	}
+	
+	member:bool IsModuleActiveOn(index:module ModuleList, int64 Target)
+	{
+		variable Iterator ModuleIterator
+		ModuleList:GetIterator[ModuleIterator]
+		if ${ModuleIterator:First(exists)}
+		{
+			do
+			{
+				if !${ModuleIterator.Value.IsActive} && ${ModuleIterator.Value.TargetID}==${Target}
+				{
+					return true
+				}
+			}
+			while ${ModuleIterator:Next(exists)}
+		}
+		return false
+	}
+	
+	
+}

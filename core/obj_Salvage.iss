@@ -67,6 +67,7 @@ objectdef obj_Salvage inherits obj_State
 		variable iterator TargetIterator
 		variable queue:int LootRangeAndTractored
 		variable int Targeted = 0
+		variable int Tractored = 0
 		variable int MaxTarget = ${MyShip.MaxLockedTargets}
 		variable int ModuleIndex = -1
 		
@@ -85,6 +86,12 @@ objectdef obj_Salvage inherits obj_State
 					TargetIterator.Value:LockTarget
 					return false
 				}
+				Targeted:Inc
+				if ${TargetIterator.Value.Distance} > ${Ship.Module_TractorBeams_Range} && ${Tractored}+1 == ${Targeted}
+				{
+					Move:Approach[${TargetIterator.Value}]
+					return false
+				}
 				if !${TargetIterator.Value.IsWreckEmpty} && !${TargetIterator.Value.LootWindow(exists)} && ${TargetIterator.Value.Distance}<LOOT_RANGE
 				{
 					TargetIterator.Value:OpenCargo
@@ -95,22 +102,26 @@ objectdef obj_Salvage inherits obj_State
 					TargetIterator.Value.LootWindow:LootAll
 					return false
 				}
-				if !${This.IsModuleActiveOn[${Ship.ModuleList_TractorBeams}, ${TargetIterator.Value.ID}]} && ${TargetIterator.Value.Distance} < ${Ship.Module_TractorBeams_Range}
+				if !${Ship.IsModuleActiveOn[${Ship.ModuleList_TractorBeams}, ${TargetIterator.Value.ID}]} && ${TargetIterator.Value.Distance} < ${Ship.Module_TractorBeams_Range}
 				{
-					ModuleIndex:Set[${This.FindActiveModule[${Ship.ModuleList_TractorBeams}}]
+					ModuleIndex:Set[${Ship.FindUnactiveModule[${Ship.ModuleList_TractorBeams}}]
 					if ${ModuleIndex} >= 0
 					{
 							Ship.ModuleList_TractorBeams.Get[${ModuleIndex}]:Activate[${TargetIterator.Value.ID}]
 							return false
 					}
 				}
-				if ${This.IsModuleActiveOn[${Ship.ModuleList_TractorBeams}, ${TargetIterator.Value.ID}]}  && ${TargetIterator.Value.Distance} < LOOT_RANGE
+				if ${Ship.IsModuleActiveOn[${Ship.ModuleList_TractorBeams}, ${TargetIterator.Value.ID}]}
+				{
+					Tractored:Inc
+				}
+				if ${Ship.IsModuleActiveOn[${Ship.ModuleList_TractorBeams}, ${TargetIterator.Value.ID}]}  && ${TargetIterator.Value.Distance} < LOOT_RANGE
 				{
 					LootRangeAndTractored:Queue[${TargetIterator.Value.ID}]
 				}
-				if !${This.IsModuleActiveOn[${Ship.ModuleList_Salvagers}, ${TargetIterator.Value.ID}]} && ${TargetIterator.Value.Distance} < ${Ship.Module_Salvagers_Range}
+				if !${Ship.IsModuleActiveOn[${Ship.ModuleList_Salvagers}, ${TargetIterator.Value.ID}]} && ${TargetIterator.Value.Distance} < ${Ship.Module_Salvagers_Range}
 				{
-					ModuleIndex:Set[${This.FindActiveModule[${Ship.ModuleList_Salvagers}}]
+					ModuleIndex:Set[${Ship.FindUnactiveModule[${Ship.ModuleList_Salvagers}}]
 					if ${ModuleIndex} >= 0
 					{
 						Ship.ModuleList_Salvagers.Get[${ModuleIndex}]:Activate[${TargetIterator.Value.ID}]
@@ -148,42 +159,6 @@ objectdef obj_Salvage inherits obj_State
 	member:bool Offload()
 	{
 		//Transfer stuff to corp hanger
-	}
-	
-	member:int FindUnactiveModule(index:module ModuleList)
-	{
-		variable Iterator ModuleIterator
-		ModuleList:GetIterator[ModuleIterator]
-		if ${ModuleIterator:First(exists)}
-		{
-			do
-			{
-				if !${ModuleIterator.Value.IsActive}
-				{
-					return ${ModuleIterator.Key}
-				}
-			}
-			while ${ModuleIterator:Next(exists)}
-		}
-		return -1
-	}
-	
-	member:bool IsModuleActiveOn(index:module ModuleList, int64 Target)
-	{
-		variable Iterator ModuleIterator
-		ModuleList:GetIterator[ModuleIterator]
-		if ${ModuleIterator:First(exists)}
-		{
-			do
-			{
-				if !${ModuleIterator.Value.IsActive} && ${ModuleIterator.Value.TargetID}==${Target}
-				{
-					return true
-				}
-			}
-			while ${ModuleIterator:Next(exists)}
-		}
-		return false
 	}
 	
 }
