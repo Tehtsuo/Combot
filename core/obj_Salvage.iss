@@ -168,7 +168,6 @@ objectdef obj_Salvage inherits obj_State
 	member:bool DeleteBookmark(string bookmarkname)
 	{
 		variable index:entity Gates
-		variable iterator GateIterator
 		
 		Eve:QueryEntities[Gates, "GroupID == GROUP_WARPGATE"]
 		if ${Gates.Used} == 0
