@@ -145,7 +145,7 @@ objectdef obj_Module inherits obj_State
 		variable iterator ModuleIterator
 		if !${Client.InSpace}
 		{
-			return false
+			return FALSE
 		}
 		ModuleList:GetIterator[ModuleIterator]
 		if ${ModuleIterator:First(exists)}
