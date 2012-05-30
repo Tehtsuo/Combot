@@ -32,7 +32,7 @@ objectdef obj_Module inherits obj_State
 	{
 		if ${ModuleActive[${Key}]}
 		{
-			return true;
+			return TRUE
 		}
 		else
 		{
