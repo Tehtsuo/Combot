@@ -6,7 +6,7 @@ objectdef obj_Ship
 	
 
 	variable int RetryUpdateModuleList=1
-
+	
 	variable index:module ModuleList
 	variable index:module ModuleList_ShieldTransporters
 	variable index:module ModuleList_MiningLaser
@@ -27,8 +27,8 @@ objectdef obj_Ship
 	variable index:module ModuleList_TrackingComputer
 	variable index:module ModuleList_GangLinks
 
-	variable double Module_Salvagers_Range
-	variable double Module_TractorBeams_Range
+	variable float Module_Salvagers_Range
+	variable float Module_TractorBeams_Range
 
 
 	
@@ -190,7 +190,7 @@ objectdef obj_Ship
 					}
 					break
 				case GROUP_SALVAGER
-					This.Module_TractorBeams_Range:Set[${ModuleIter.Value.OptimalRange}]
+					This.Module_Salvagers_Range:Set[${ModuleIter.Value.OptimalRange}]
 					This.ModuleList_Salvagers:Insert[${ModuleIter.Value.ID}]
 					break
 				case GROUP_TRACTOR_BEAM
@@ -469,10 +469,11 @@ objectdef obj_Ship
 		}
 	}
 	
-	member:int FindUnactiveModule(index:module ModuleList)
+	member:int FindUnactiveModule(index:module arg_ModuleList)
 	{
-		variable Iterator ModuleIterator
-		ModuleList:GetIterator[ModuleIterator]
+		variable iterator ModuleIterator
+		arg_ModuleList:GetIterator[ModuleIterator]
+		echo ModuleList Used - ${arg_ModuleList.Used}
 		if ${ModuleIterator:First(exists)}
 		{
 			do
@@ -489,7 +490,7 @@ objectdef obj_Ship
 	
 	member:bool IsModuleActiveOn(index:module ModuleList, int64 Target)
 	{
-		variable Iterator ModuleIterator
+		variable iterator ModuleIterator
 		ModuleList:GetIterator[ModuleIterator]
 		if ${ModuleIterator:First(exists)}
 		{
@@ -497,13 +498,182 @@ objectdef obj_Ship
 			{
 				if !${ModuleIterator.Value.IsActive} && ${ModuleIterator.Value.TargetID}==${Target}
 				{
-					return true
+					return TRUE
 				}
 			}
 			while ${ModuleIterator:Next(exists)}
 		}
-		return false
+		return FALSE
 	}
 	
+	member:bool IsTractoringID(int64 ID)
+	{
+		if !${Me.Ship(exists)}
+		{
+			return
+		}
+
+		variable iterator ModuleIter
+
+		This.ModuleList_TractorBeams:GetIterator[ModuleIter]
+		if ${ModuleIter:First(exists)}
+		do
+		{
+			if ${ModuleIter.Value.LastTarget(exists)} && \
+				${ModuleIter.Value.LastTarget.ID.Equal[${ID}]} && \
+				( ${ModuleIter.Value.IsActive} || ${ModuleIter.Value.IsGoingOnline} )
+			{
+				return TRUE
+			}
+		}
+		while ${ModuleIter:Next(exists)}
+
+		return FALSE
+	}
 	
+	method ActivateFreeTractorBeam(int64 ID)
+	{
+		variable string Slot
+
+		if !${Me.Ship(exists)}
+		{
+			return
+		}
+
+		variable iterator ModuleIter
+
+		This.ModuleList_TractorBeams:GetIterator[ModuleIter]
+		if ${ModuleIter:First(exists)}
+		do
+		{
+			if !${ModuleIter.Value.IsActive} && \
+				!${ModuleIter.Value.IsGoingOnline} && \
+				!${ModuleIter.Value.IsDeactivating} && \
+				!${ModuleIter.Value.IsChangingAmmo} &&\
+				!${ModuleIter.Value.IsReloadingAmmo}
+			{
+				Slot:Set[${ModuleIter.Value.ToItem.Slot}]
+
+					
+				ModuleIter.Value:Activate[${ID}]
+			}
+		}
+		while ${ModuleIter:Next(exists)}
+	}	
+	
+	member:bool IsSalvagingID(int64 ID)
+	{
+		if !${Me.Ship(exists)}
+		{
+			return
+		}
+
+		variable iterator ModuleIter
+
+		This.ModuleList_Salvagers:GetIterator[ModuleIter]
+		if ${ModuleIter:First(exists)}
+		do
+		{
+			if ${ModuleIter.Value.LastTarget(exists)} && \
+				${ModuleIter.Value.LastTarget.ID.Equal[${ID}]} && \
+				( ${ModuleIter.Value.IsActive} || ${ModuleIter.Value.IsGoingOnline} )
+			{
+				return TRUE
+			}
+		}
+		while ${ModuleIter:Next(exists)}
+
+		return FALSE
+	}	
+	
+	method ActivateFreeSalvager(int64 ID)
+	{
+		variable string Slot
+
+		if !${Me.Ship(exists)}
+		{
+			return
+		}
+
+		variable iterator ModuleIter
+
+		This.ModuleList_Salvagers:GetIterator[ModuleIter]
+		if ${ModuleIter:First(exists)}
+		do
+		{
+			if !${ModuleIter.Value.IsActive} && \
+				!${ModuleIter.Value.IsGoingOnline} && \
+				!${ModuleIter.Value.IsDeactivating} && \
+				!${ModuleIter.Value.IsChangingAmmo} &&\
+				!${ModuleIter.Value.IsReloadingAmmo}
+			{
+				Slot:Set[${ModuleIter.Value.ToItem.Slot}]
+
+					
+				ModuleIter.Value:Activate[${ID}]
+			}
+		}
+		while ${ModuleIter:Next(exists)}
+	}		
+	
+	member:int TotalTractorBeams()
+	{
+		return ${This.ModuleList_TractorBeams.Used}
+	}
+	member:int TotalSalvagers()
+	{
+		return ${This.ModuleList_Salvagers.Used}
+	}
+
+	member:int TotalActivatedSalvagers()
+	{
+		if !${Me.Ship(exists)}
+		{
+			return 0
+		}
+
+		variable int count
+		variable iterator ModuleIter
+
+		This.ModuleList_Salvagers:GetIterator[ModuleIter]
+		if ${ModuleIter:First(exists)}
+		do
+		{
+			if ${ModuleIter.Value.IsActive} || \
+				${ModuleIter.Value.IsGoingOnline} || \
+				${ModuleIter.Value.IsDeactivating}
+			{
+				count:Inc
+			}
+		}
+		while ${ModuleIter:Next(exists)}
+
+		return ${count}
+	}	
+
+	member:int TotalActivatedTractorBeams()
+	{
+		if !${Me.Ship(exists)}
+		{
+			return 0
+		}
+
+		variable int count
+		variable iterator ModuleIter
+
+		This.ModuleList_TractorBeams:GetIterator[ModuleIter]
+		if ${ModuleIter:First(exists)}
+		do
+		{
+			if (${ModuleIter.Value.IsActive} || \
+				${ModuleIter.Value.IsGoingOnline} || \
+				${ModuleIter.Value.IsDeactivating})
+			{
+				count:Inc
+			}
+		}
+		while ${ModuleIter:Next(exists)}
+
+		return ${count}
+	}
 }

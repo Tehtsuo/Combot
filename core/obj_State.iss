@@ -35,7 +35,7 @@ objectdef obj_State
 	{
 		if ${LavishScript.RunningTime} >= ${This.NextPulse}
 		{
-			if (!${ComBot.Paused} && ${Game.Ready}) || ${This.NonGameTiedPulse}
+			if (!${ComBot.Paused} && ${Client.Ready}) || ${This.NonGameTiedPulse}
 			{
 				if ${This.${States.Peek.Name}[${States.Peek.Args}]}
 				{
@@ -45,10 +45,10 @@ objectdef obj_State
 			
 			if ${States.Used} == 0
 			{
-				States:Queue["Idle", 100];
+				States:Queue["Idle", 1000];
 			}
 
-			This.NextPulse:Set[${Math.Calc[${LavishScript.RunningTime} + ${States.Frequency} + ${Math.Rand[500]}]}]
+			This.NextPulse:Set[${Math.Calc[${LavishScript.RunningTime} + ${States.Peek.Frequency} + ${Math.Rand[500]}]}]
 		}
 	}
 
@@ -63,7 +63,7 @@ objectdef obj_State
 		{
 			var_Frequency:Set[${arg_Frequency}]
 		}
-		States:Queue[${arg_Object},${var_Frequency},"${arg_Args.Escape}"]
+		States:Queue[${arg_Name},${var_Frequency},"${arg_Args.Escape}"]
 	}
 
 	method Clear()
@@ -73,6 +73,6 @@ objectdef obj_State
 
 	member:bool Idle()
 	{
-		return true
+		return TRUE
 	}
 }

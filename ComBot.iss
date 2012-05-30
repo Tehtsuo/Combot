@@ -11,6 +11,7 @@
 #include core/obj_Move.iss
 #include core/obj_Ship.iss
 #include core/obj_State.iss
+#include core/obj_Salvage.iss
 
 
 function atexit()
@@ -29,6 +30,7 @@ function main()
 	declarevariable Move obj_Move script
 	declarevariable InstaWarp obj_InstaWarp script
 	declarevariable Ship obj_Ship script
+	declarevariable Salvager obj_Salvage script
 
 	UI:Update["ComBot", "Module initialization complete", "y"]
 	
