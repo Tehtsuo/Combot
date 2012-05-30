@@ -425,8 +425,7 @@ objectdef obj_Ship
 		}
 		return -1
 	}
-	
-	member:bool IsModuleActiveOn(string arg_ModuleList, int64 ID)
+	member:int ModuleActiveOn(string arg_ModuleList, int64 ID)
 	{
 		variable iterator ModuleIterator
 		${arg_ModuleList}:GetIterator[ModuleIterator]
@@ -438,7 +437,7 @@ objectdef obj_Ship
 				${ModuleIter.Value.LastTarget.ID} == ${ID} && \
 				${ModuleIter.Value.IsActive}
 			
-				if !${ModuleIterator.Value.IsActive} && ${ModuleIterator.Value.TargetID}==${Target}
+				if !${ModuleIterator.Value.IsActive} && ${ModuleIterator.Value.TargetID}==${ID}
 				{
 					return TRUE
 				}
@@ -447,7 +446,6 @@ objectdef obj_Ship
 		}
 		return FALSE
 	}
-	
 	member:bool ActiveModuleCount(string arg_ModuleList)
 	{
 		variable int count=0
@@ -509,46 +507,52 @@ objectdef obj_Ship
 	
 	member:bool IsTractoringID(int64 ID)
 	{
-		return ${This.IsModuleActiveOn[ModuleList_TractorBeams, ${ID}]}
+		return ${This.ModuleActiveOn[ModuleList_TractorBeams, ${ID}]}
 	}
 	
 	method ActivateFreeTractorBeam(int64 ID)
 	{
 		if ${This.FindUnactiveModule[ModuleList_TractorBeams]} != -1
 		{
-			This.ModuleList_TractorBeams.Get[${This.FindUnactiveModule[ModuleList_TractorBeams]}]:Activate[${TargetIterator.Value.ID}]
+			This.ModuleList_TractorBeams.Get[${This.FindUnactiveModule[ModuleList_TractorBeams]}]:Activate[${ID}]
 		}
-	}	
-	
-	member:bool IsSalvagingID(int64 ID)
+	}
+	method DeactivateTractorBeam(int64 ID)
 	{
-		return ${This.IsModuleActiveOn[ModuleList_Salvagers, ${ID}]}
-	}	
-	
-	method ActivateFreeSalvager(int64 ID)
-	{
-		if ${This.FindUnactiveModule[ModuleList_Salvagers]} != -1
-		{
-			This.ModuleList_Salvagers.Get[${This.FindUnactiveModule[ModuleList_Salvagers]}]:Activate[${TargetIterator.Value.ID}]
-		}
-	}		
-	
+		This.ModuleList_TractorBeams.Get[${This.ModuleActiveOn[ModuleList_TractorBeams, ${ID}]}]:Deactivate
+	}
 	member:int TotalTractorBeams()
 	{
 		return ${This.ModuleList_TractorBeams.Used}
 	}
+	member:int TotalActivatedTractorBeams()
+	{
+		return ${This.ActiveModuleCount[ModuleList_TractorBeams]}
+	}
+	
+	member:bool IsSalvagingID(int64 ID)
+	{
+		return ${This.ModuleActiveOn[ModuleList_Salvagers, ${ID}]}
+	}	
+	method ActivateFreeSalvager(int64 ID)
+	{
+		if ${This.FindUnactiveModule[ModuleList_Salvagers]} != -1
+		{
+			This.ModuleList_Salvagers.Get[${This.FindUnactiveModule[ModuleList_Salvagers]}]:Activate[${ID}]
+		}
+	}		
+	method DeactivateSalvager(int64 ID)
+	{
+		This.ModuleList_Salvagers.Get[${This.ModuleActiveOn[ModuleList_Salvagers, ${ID}]}]:Deactivate
+	}
+	
 	member:int TotalSalvagers()
 	{
 		return ${This.ModuleList_Salvagers.Used}
 	}
-
 	member:int TotalActivatedSalvagers()
 	{
 		return ${This.ActiveModuleCount[ModuleList_Salvagers]}
 	}	
 
-	member:int TotalActivatedTractorBeams()
-	{
-		return ${This.ActiveModuleCount[ModuleList_TractorBeams]}
-	}
 }
