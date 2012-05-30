@@ -1,5 +1,10 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <ISUI>
+	<template name='Console.Font'>	
+		<Name>Terminal</Name>
+		<Size>8</Size>
+	</template>	
+
 	<window name='ComBot'>
 		<Visible>1</Visible>
 		<BackGroundColor></BackGroundColor>
@@ -70,22 +75,29 @@
 						</console>
 					</Tab>
 					<Tab Name='Salvager'>
-						<console Name="obj_SalvageConsole">
-							<Font template='Console.Font' />
+						<frame name='obj_SalvageFillerFrame'>
 							<BackgroundColor>FF000000</BackgroundColor>
+							<Border>1</Border>
+							<BorderColor>FFFFFFFF</BorderColor>
 							<X>0</X>
 							<Y>0</Y>
-							<Width>100%</Width>
 							<Height>100%</Height>
-						</console>
+							<Width>100%</Width>
+						 </frame>					
+						<listbox Name="obj_SalvageBookmarkList">
+							<Font template='Console.Font' />
+							<BackgroundColor>FF000000</BackgroundColor>
+							<Border>1</Border>
+							<BorderColor>FFFFFFFF</BorderColor>
+							<X>0</X>
+							<Y>0</Y>
+							<Width>400</Width>
+							<Height>100%</Height>
+						</listbox>
 					</Tab>
 				</Tabs>
 			</TabControl>
 		</Children>
 	</window>
 	
-	<template name='Console.Font'>	
-		<Name>Terminal</Name>
-		<Size>8</Size>
-	</template>	
 </ISUI>
