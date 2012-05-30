@@ -1,19 +1,16 @@
 objectdef obj_WarpDestination
 {
-	variable string WarpType
 	variable string Bookmark
 	variable int AgentID
 
-	method Initialize(string arg_WarpType, string arg_Bookmark, int arg_Agent=0)
+	method Initialize(string arg_Bookmark, int arg_Agent=0)
 	{
-		WarpType:Set[${arg_WarpType}]
 		Bookmark:Set[${arg_Bookmark}]	
 		AgentID:Set[${arg_Agent}]	
 	}
 	
-	method Set(string arg_WarpType, string arg_Bookmark, int arg_Agent=0)
+	method Set(string arg_Bookmark, int arg_Agent=0)
 	{
-		WarpType:Set[${arg_WarpType}]
 		Bookmark:Set[${arg_Bookmark}]	
 		AgentID:Set[${arg_Agent}]
 	}
@@ -32,6 +29,7 @@ objectdef obj_Move inherits obj_State
 	variable bool Traveling=FALSE
 	
 	variable obj_WarpDestination WarpDestination
+	variable int64 TargetGate = -1
 
 
 	method Initialize()
@@ -119,14 +117,14 @@ objectdef obj_Move inherits obj_State
 		}
 
 		UI:Update["obj_Move", "Movement queued.  Destination: ${DestinationBookmarkLabel}", "g"]
-		This.WarpDestination:Set["BOOKMARK", ${DestinationBookmarkLabel}]
+		This.WarpDestination:Set[${DestinationBookmarkLabel}]
 		This.Traveling:Set[TRUE]
 		This:QueueState["BookmarkMove"]
 	}
 
 	method AgentName(string AgentName)
 	{
-		${This.Traveling}
+		if ${This.Traveling}
 		{
 			return
 		}
@@ -139,10 +137,29 @@ objectdef obj_Move inherits obj_State
 		}
 
 		UI:Update["obj_Move", "Movement queued.  Destination: ${AgentName}", "g"]
-		This.WarpDestination:Set["AGENT", "", ${Agent[AgentName].Index}]
+		This.WarpDestination:Set["", ${Agent[AgentName].Index}]
 		This.Traveling:Set[TRUE]
 		This:QueueState["AgentMove"]
 	}	
+
+	method Gate(int64 ID)
+	{
+		TargetGate:Set[${ID}]
+		This.Traveling:Set[TRUE]
+		This:QueueState["GateMove"]
+	}
+
+	member:bool GateMove()
+	{
+		This:Approach[${TargetGate}, 3000]
+		if ${This.Approaching}
+		{
+			return FALSE
+		}
+		Entity[${TargetGate}]:Activate
+		Client:Wait[5000]
+		return TRUE
+	}
 	
 	
 	member:bool BookmarkMove()
@@ -327,7 +344,7 @@ objectdef obj_Move inherits obj_State
 		;	Find out if we need to approach the target
 		if ${Entity[${This.ApproachingID}].Distance} > ${This.ApproachingDistance} && ${This.TimeStartedApproaching} == -1
 		{
-			UI:Update["obj_Move", "Approaching to within ${ComBot.MetersToKM_Str[${distance}]} of ${Entity[${target}].Name}", "g"]
+			UI:Update["obj_Move", "Approaching to within ${ComBot.MetersToKM_Str[${distance}]} of ${Entity[${This.ApproachingID}].Name}", "g"]
 			Entity[${This.ApproachingID}]:Approach[${distance}]
 			This.TimeStartedApproaching:Set[${Time.Timestamp}]
 			return FALSE
@@ -364,7 +381,7 @@ objectdef obj_InstaWarp inherits obj_State
 		This[parent]:Initialize
 		This.NonGameTiedPulse:Set[TRUE]
 		UI:Update["obj_InstaWarp", "Initialized", "g"]
-		This:QueueState["CheckApproach"]
+		This:QueueState["InstaWarp_Check"]
 	}
 	
 	member:bool InstaWarp_Check()
