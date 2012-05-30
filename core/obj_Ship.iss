@@ -8,24 +8,24 @@ objectdef obj_Ship
 	variable int RetryUpdateModuleList=1
 	
 	variable index:module ModuleList
-	variable index:module ModuleList_ShieldTransporters
-	variable index:module ModuleList_MiningLaser
-	variable index:module ModuleList_Weapon
-	variable index:module ModuleList_ECCM
-	variable index:module ModuleList_ActiveResists
-	variable index:module ModuleList_Regen_Shield
-	variable index:module ModuleList_Repair_Armor
-	variable index:module ModuleList_Repair_Hull
-	variable index:module ModuleList_AB_MWD
+	variable obj_Module ModuleList_ShieldTransporters
+	variable obj_Module ModuleList_MiningLaser
+	variable obj_Module ModuleList_Weapon
+	variable obj_Module ModuleList_ECCM
+	variable obj_Module ModuleList_ActiveResists
+	variable obj_Module ModuleList_Regen_Shield
+	variable obj_Module ModuleList_Repair_Armor
+	variable obj_Module ModuleList_Repair_Hull
+	variable obj_Module ModuleList_AB_MWD
 	variable index:module ModuleList_Passive
 	variable obj_Module ModuleList_Salvagers
 	variable obj_Module ModuleList_TractorBeams
-	variable index:module ModuleList_Cloaks
-	variable index:module ModuleList_StasisWeb
-	variable index:module ModuleList_SensorBoost
-	variable index:module ModuleList_TargetPainter
-	variable index:module ModuleList_TrackingComputer
-	variable index:module ModuleList_GangLinks
+	variable obj_Module ModuleList_Cloaks
+	variable obj_Module ModuleList_StasisWeb
+	variable obj_Module ModuleList_SensorBoost
+	variable obj_Module ModuleList_TargetPainter
+	variable obj_Module ModuleList_TrackingComputer
+	variable obj_Module ModuleList_GangLinks
 
 	variable float Module_Salvagers_Range
 	variable float Module_TractorBeams_Range

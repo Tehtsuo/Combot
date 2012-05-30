@@ -32,11 +32,11 @@ objectdef obj_Module inherits obj_State
 	{
 		if ${ModuleActive[${Key}]}
 		{
-			return true;
+			return TRUE
 		}
 		else
 		{
-			return ${ModuleList[${Key}]}
+			return ${ModuleList[${Key}].IsActive}
 		}
 	}
 	
@@ -50,12 +50,26 @@ objectdef obj_Module inherits obj_State
 		}
 		else
 		{
-			ModuleList[${Module}]:Activate[${target}]
+			ModuleList[${Module}]:Activate
 			ModuleTarget:Set[${Module}, ${target}]
 		}
 		ModuleActive:Set[${Module}, TRUE]
 	}
+	
+	method ActivateCount(int moduleCount, int64 target = -1)
+	{
+		variable int varActivated = 0
+		for (${varActivated}<${moduleCount} ; varActivated:Inc)
+		{
+			This:Activate[${target}]
+		}
+	}
 
+	method ActivateAll(int64 target = -1)
+	{
+		This:Activate[${This.InactiveCount}, ${target}]
+	}
+	
 	method Deactivate(int64 target = -1)
 	{
 		variable iterator ModuleIterator
@@ -83,6 +97,20 @@ objectdef obj_Module inherits obj_State
 			}
 			while ${ModuleIterator:Next(exists)}
 		}
+	}
+
+	method DeactivateCount(int moduleCount, int64 target = -1)
+	{
+		variable int varDeactivated = 0
+		for (${varDeactivated}<${moduleCount} ; varDeactivated:Inc)
+		{
+			This:Deactivate[${target}]
+		}
+	}
+
+	method DeactivateAll(int64 target = -1)
+	{
+		This:Deactivate[${This.ActiveCount}, ${target}]
 	}
 	
 	member:bool IsActiveOn(int64 target = -1)
@@ -117,7 +145,7 @@ objectdef obj_Module inherits obj_State
 		variable iterator ModuleIterator
 		if !${Client.InSpace}
 		{
-			return false
+			return FALSE
 		}
 		ModuleList:GetIterator[ModuleIterator]
 		if ${ModuleIterator:First(exists)}
@@ -174,6 +202,11 @@ objectdef obj_Module inherits obj_State
 	member:int Count()
 	{
 		return ${ModuleList.Used}
+	}
+	
+	member:double Range()
+	{
+		return ${ModuleList.Get[1].OptimalRange}
 	}
 	
 	member:module GetIndex(int id)
