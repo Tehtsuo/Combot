@@ -206,7 +206,7 @@ objectdef obj_Module inherits obj_State
 	
 	member:double Range()
 	{
-		return ${ModuleList
+		return ${ModuleList.Get[1].OptimalRange}
 	}
 	
 	member:module GetIndex(int id)
