@@ -132,30 +132,29 @@ objectdef obj_Salvage inherits obj_State
 					Move:Approach[${TargetIterator.Value}]
 					return FALSE
 				}
-				if  !${Ship.IsTractoringID[${TargetIterator.Value.ID}]} &&\
+				if  !${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]} &&\
 					${TargetIterator.Value.Distance} < ${Ship.Module_TractorBeams_Range} &&\
 					${TargetIterator.Value.Distance} > LOOT_RANGE &&\
-					${Ship.TotalActivatedTractorBeams} < ${Ship.TotalTractorBeams} &&\
+					${Ship.ModuleList_TractorBeams.InactiveCount} > 0 &&\
 					${TargetIterator.Value.IsLockedTarget}
 				{
 					UI:Update["obj_Salvage", "Activating tractor beam - ${TargetIterator.Value.Name}", "g"]
-					Ship:ActivateFreeTractorBeam[${TargetIterator.Value.ID}]
+					Ship.ModuleList_TractorBeams:Activate[${TargetIterator.Value.ID}]
 					return FALSE
 				}
-				; if  ${Ship.IsTractoringID[${TargetIterator.Value.ID}]} &&\
-					; ${TargetIterator.Value.Distance} < LOOT_RANGE
-				; {
-					; echo Deactivating: ${TargetIterator.Value.Name}(${TargetIterator.Value.Distance}) - IsTractoringID: ${Ship.IsTractoringID[${TargetIterator.Value.ID}]}  ModuleActiveOn: ${Ship.ModuleActiveOn[ModuleList_TractorBeams, ${TargetIterator.Value.ID}]}
-					; UI:Update["obj_Salvage", "Deactivating tractor beam - ${TargetIterator.Value.Name}", "g"]
-					; Ship:DeactivateTractorBeam[${TargetIterator.Value.ID}]
-				; }
-				if  !${Ship.IsSalvagingID[${TargetIterator.Value.ID}]} &&\
+				if  ${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]} &&\
+					${TargetIterator.Value.Distance} < LOOT_RANGE
+				{
+					UI:Update["obj_Salvage", "Deactivating tractor beam - ${TargetIterator.Value.Name}", "g"]
+					Ship.ModuleList_TractorBeams:Deactivate[${TargetIterator.Value.ID}]
+				}
+				if  !${Ship.ModuleList_Salvagers.IsActiveOn[${TargetIterator.Value.ID}]} &&\
 					${TargetIterator.Value.Distance} < ${Ship.Module_Salvagers_Range} &&\
-					${Ship.TotalActivatedSalvagers} < ${Ship.TotalSalvagers} && \
+					${Ship.ModuleList_Salvagers.InactiveCount} > 0 &&\
 					${TargetIterator.Value.IsLockedTarget}
 				{
 					UI:Update["obj_Salvage", "Activating salvager - ${TargetIterator.Value.Name}", "g"]
-					Ship:ActivateFreeSalvager[${TargetIterator.Value.ID}]
+					Ship.ModuleList_Salvagers:Activate[${TargetIterator.Value.ID}]
 					return FALSE
 				}
 			}
@@ -235,7 +234,7 @@ objectdef obj_LootCans inherits obj_State
 	
 	method Enable()
 	{
-		This:QueueState["Loot", 500]
+		This:QueueState["Loot", 1000]
 	}
 	
 	method Disable()

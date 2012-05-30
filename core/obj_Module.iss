@@ -50,6 +50,7 @@ objectdef obj_Module inherits obj_State
 		}
 		else
 		{
+			echo Activating slot ${Module} on ${target}
 			ModuleList[${Module}]:Activate[${target}]
 			ModuleTarget:Set[${Module}, ${target}]
 		}
@@ -152,7 +153,7 @@ objectdef obj_Module inherits obj_State
 		return ${varActiveCount}
 	}
 
-	member:int InctiveCount()
+	member:int InactiveCount()
 	{
 		variable int varInctiveCount = 0
 		variable iterator ModuleIterator
