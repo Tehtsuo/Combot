@@ -48,11 +48,5 @@ objectdef obj_Client
 		This.NextPulse:Set[${Math.Calc[${LavishScript.RunningTime} + ${delay}]}]
 	}
 	
-	member:int LockedAndLockingTargets()
-	{
-		variable index:entity Targets
-		EVE:QueryEntities[Targets, "IsLockedTarget || BeingTargeted"]
-		
-		return ${Targets.Used}
-	}
+
 }

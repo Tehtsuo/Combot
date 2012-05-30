@@ -111,7 +111,7 @@ objectdef obj_Salvage inherits obj_State
 			LootCans:Enable
 			do
 			{
-				if !${TargetIterator.Value.BeingTargeted} && !${TargetIterator.Value.IsLockedTarget} && ${Client.LockedAndLockingTargets} < ${MaxTarget}
+				if !${TargetIterator.Value.BeingTargeted} && !${TargetIterator.Value.IsLockedTarget} && ${Targets.LockedAndLockingTargets} < ${MaxTarget}
 				{
 					UI:Update["obj_Salvage", "Locking - ${TargetIterator.Value.Name}", "g"]
 					TargetIterator.Value:LockTarget
