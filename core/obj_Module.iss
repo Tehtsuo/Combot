@@ -55,6 +55,35 @@ objectdef obj_Module inherits obj_State
 		}
 		ModuleActive:Set[${Module}, TRUE]
 	}
+
+	method Deactivate(int64 target = -1)
+	{
+		variable iterator ModuleIterator
+		variable int actualTarget
+		if ${target} == -1
+		{
+			actualTarget:Set[${Me.ActiveTarget.ID}]
+		}
+		else
+		{
+			actualTarget:Set[${target}]
+		}
+		ModuleActive:Set[${Module}, TRUE]
+		ModuleTarget:GetIterator[ModuleIterator]
+		if ${ModuleIterator:First(exists)}
+		{
+			do
+			{
+				if (${ModuleIterator.Value} == ${actualTarget}) && (${ModuleActive[${ModuleIterator.Key}]})
+				{
+					ModuleList[${ModuleIterator.Key}]:Deactivate
+					ModuleActive:Set[${ModuleIterator.Key}, FALSE]
+					return
+				}
+			}
+			while ${ModuleIterator:Next(exists)}
+		}
+	}
 	
 	member:bool IsActiveOn(int64 target = -1)
 	{
