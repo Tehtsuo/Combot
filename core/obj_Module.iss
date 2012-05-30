@@ -132,6 +132,24 @@ objectdef obj_Module inherits obj_State
 			while ${ModuleIterator:Next(exists)}
 		}
 	}
+
+	member:int ActiveCount()
+	{
+		variable int ActiveCount = 0
+		ModuleList:GetIterator[ModuleIterator]
+		if ${ModuleIterator:First(exists)}
+		{
+			do
+			{
+				if ${ModuleIterator.Value.IsActive} || ${ModuleActive[${ModuleIterator.Key}]}
+				{
+					ActiveCount:Inc
+				}
+			}
+			while ${ModuleIterator:Next(exists)}
+		}
+		return ${ActiveCount}
+	}
 	
 	member:module GetIndex(int id)
 	{
