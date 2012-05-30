@@ -1,6 +1,6 @@
 objectdef obj_Module inherits obj_State
 {
-	variable index:module ModuleList
+	variable index:module ModList
 	variable index:bool ModuleActive
 	variable index:int ModuleTarget
 	
@@ -13,7 +13,7 @@ objectdef obj_Module inherits obj_State
 	member:int GetInactive()
 	{
 		variable iterator ModuleIterator
-		ModuleList:GetIterator[ModuleIterator]
+		This.ModList:GetIterator[ModuleIterator]
 		if ${ModuleIterator:First(exists)}
 		{
 			do
@@ -36,7 +36,7 @@ objectdef obj_Module inherits obj_State
 		}
 		else
 		{
-			return ${ModuleList[${Key}].IsActive}
+			return ${This.ModList[${Key}].IsActive}
 		}
 	}
 	
@@ -45,12 +45,12 @@ objectdef obj_Module inherits obj_State
 		variable int Module = ${This.GetInactive}
 		if ${target} == -1
 		{
-			ModuleList[${Module}]:Activate
+			This.ModList[${Module}]:Activate
 			ModuleTarget:Set[${Module}, ${Me.ActiveTarget.ID}]
 		}
 		else
 		{
-			ModuleList[${Module}]:Activate
+			This.ModList[${Module}]:Activate
 			ModuleTarget:Set[${Module}, ${target}]
 		}
 		ModuleActive:Set[${Module}, TRUE]
@@ -88,9 +88,9 @@ objectdef obj_Module inherits obj_State
 		{
 			do
 			{
-				if (${ModuleIterator.Value} == ${actualTarget}) && (${ModuleActive[${ModuleIterator.Key}]} || ${ModuleList[${ModuleIterator.Key}].IsActive} )
+				if (${ModuleIterator.Value} == ${actualTarget}) && (${ModuleActive[${ModuleIterator.Key}]} || ${This.ModList[${ModuleIterator.Key}].IsActive} )
 				{
-					ModuleList[${ModuleIterator.Key}]:Deactivate
+					This.ModList[${ModuleIterator.Key}]:Deactivate
 					ModuleActive:Set[${ModuleIterator.Key}, FALSE]
 					return
 				}
@@ -147,7 +147,7 @@ objectdef obj_Module inherits obj_State
 		{
 			return FALSE
 		}
-		ModuleList:GetIterator[ModuleIterator]
+		This.ModList:GetIterator[ModuleIterator]
 		if ${ModuleIterator:First(exists)}
 		{
 			do
@@ -165,7 +165,7 @@ objectdef obj_Module inherits obj_State
 	{
 		variable int varActiveCount = 0
 		variable iterator ModuleIterator
-		ModuleList:GetIterator[ModuleIterator]
+		This.ModList:GetIterator[ModuleIterator]
 		if ${ModuleIterator:First(exists)}
 		{
 			do
@@ -184,7 +184,7 @@ objectdef obj_Module inherits obj_State
 	{
 		variable int varInctiveCount = 0
 		variable iterator ModuleIterator
-		ModuleList:GetIterator[ModuleIterator]
+		This.ModList:GetIterator[ModuleIterator]
 		if ${ModuleIterator:First(exists)}
 		{
 			do
@@ -201,34 +201,34 @@ objectdef obj_Module inherits obj_State
 
 	member:int Count()
 	{
-		return ${ModuleList.Used}
+		return ${This.ModList.Used}
 	}
 	
 	member:double Range()
 	{
-		return ${ModuleList.Get[1].OptimalRange}
+		return ${This.ModList.Get[1].OptimalRange}
 	}
 	
 	member:module GetIndex(int id)
 	{
-		return ${ModuleList[${id}]}
+		return ${This.ModList[${id}]}
 	}
 	
 	method GetIterator(iterator Iterator)
 	{
-		ModuleList:GetIterator[Iterator]
+		This.ModList:GetIterator[Iterator]
 	}
 	
 	method Insert(int64 ID)
 	{
-		ModuleList:Insert[${ID}]
+		This.ModList:Insert[${ID}]
 		ModuleActive:Insert[FALSE]
 		ModuleTarget:Insert[-1]
 	}
 	
 	method Clear()
 	{
-		ModuleList:Clear
+		This.ModList:Clear
 		ModuleActive:Clear
 		ModuleTarget:Clear
 	}
