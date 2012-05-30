@@ -74,7 +74,7 @@ objectdef obj_Module inherits obj_State
 		{
 			do
 			{
-				if (${ModuleIterator.Value} == ${actualTarget}) && (${ModuleActive[${ModuleIterator.Key}]})
+				if (${ModuleIterator.Value} == ${actualTarget}) && (${ModuleActive[${ModuleIterator.Key}]} || ${ModuleList[${ModuleIterator.Key}].IsActive} )
 				{
 					ModuleList[${ModuleIterator.Key}]:Deactivate
 					ModuleActive:Set[${ModuleIterator.Key}, FALSE]
