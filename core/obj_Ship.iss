@@ -18,8 +18,8 @@ objectdef obj_Ship
 	variable index:module ModuleList_Repair_Hull
 	variable index:module ModuleList_AB_MWD
 	variable index:module ModuleList_Passive
-	variable index:module ModuleList_Salvagers
-	variable index:module ModuleList_TractorBeams
+	variable obj_Module ModuleList_Salvagers
+	variable obj_Module ModuleList_TractorBeams
 	variable index:module ModuleList_Cloaks
 	variable index:module ModuleList_StasisWeb
 	variable index:module ModuleList_SensorBoost
