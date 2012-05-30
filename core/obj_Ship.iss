@@ -556,6 +556,7 @@ objectdef obj_Ship
 
 					
 				ModuleIter.Value:Activate[${ID}]
+				return
 			}
 		}
 		while ${ModuleIter:Next(exists)}
@@ -611,6 +612,7 @@ objectdef obj_Ship
 
 					
 				ModuleIter.Value:Activate[${ID}]
+				return
 			}
 		}
 		while ${ModuleIter:Next(exists)}

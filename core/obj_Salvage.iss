@@ -66,7 +66,7 @@ objectdef obj_Salvage inherits obj_State
 			Move:Bookmark[${Target}]
 			This:QueueState["Traveling"]
 			This:QueueState["Log", 1000, "Salvaging at ${Target}"]
-			This:QueueState["SalvageWrecks"]
+			This:QueueState["SalvageWrecks", 100]
 			This:QueueState["DeleteBookmark", 1000, ${Target}]
 			This:QueueState["OpenCargoHold"]
 			This:QueueState["CheckCargoHold", 5000]
@@ -144,7 +144,7 @@ objectdef obj_Salvage inherits obj_State
 					return FALSE
 				}
 				
-				if !${Ship.IsTractoringID[${TargetIterator.Value.ID}]} && ${TargetIterator.Value.Distance} < ${Ship.Module_TractorBeams_Range} && ${Ship.TotalActivatedTractorBeams} < ${Ship.TotalTractorBeams}
+				if !${Ship.IsTractoringID[${TargetIterator.Value.ID}]} && ${TargetIterator.Value.Distance} < ${Ship.Module_TractorBeams_Range} && ${Ship.TotalActivatedTractorBeams} < ${Ship.TotalTractorBeams} && ${TargetIterator.Value.IsLockedTarget}
 				{
 					;ModuleIndex:Set[${Ship.FindUnactiveModule[${Ship.ModuleList_TractorBeams}}]
 					;if ${ModuleIndex} >= 0
@@ -164,7 +164,7 @@ objectdef obj_Salvage inherits obj_State
 				{
 					LootRangeAndTractored:Queue[${TargetIterator.Value.ID}]
 				}
-				if !${Ship.IsModuleActiveOn[${Ship.ModuleList_Salvagers}, ${TargetIterator.Value.ID}]} && ${TargetIterator.Value.Distance} < ${Ship.Module_Salvagers_Range} && ${Ship.TotalActivatedSalvagers} < ${Ship.TotalSalvagers}
+				if !${Ship.IsSalvagingID[${TargetIterator.Value.ID}]} && ${TargetIterator.Value.Distance} < ${Ship.Module_Salvagers_Range} && ${Ship.TotalActivatedSalvagers} < ${Ship.TotalSalvagers} && ${TargetIterator.Value.IsLockedTarget}
 				{
 					;ModuleIndex:Set[${Ship.FindUnactiveModule[${Ship.ModuleList_Salvagers}}]
 					;if ${ModuleIndex} >= 0
