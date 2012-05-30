@@ -50,7 +50,7 @@ objectdef obj_Module inherits obj_State
 		}
 		else
 		{
-			ModuleList[${Module}]:Activate[${target}]
+			ModuleList[${Module}]:Activate
 			ModuleTarget:Set[${Module}, ${target}]
 		}
 		ModuleActive:Set[${Module}, TRUE]
