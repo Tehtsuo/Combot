@@ -36,7 +36,7 @@ objectdef obj_Module inherits obj_State
 		}
 		else
 		{
-			return ${ModuleList[${Key}]}
+			return ${ModuleList[${Key}].IsActive}
 		}
 	}
 	
@@ -202,6 +202,11 @@ objectdef obj_Module inherits obj_State
 	member:int Count()
 	{
 		return ${ModuleList.Used}
+	}
+	
+	member:double Range()
+	{
+		return ${ModuleList
 	}
 	
 	member:module GetIndex(int id)
