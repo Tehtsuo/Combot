@@ -31,16 +31,7 @@ objectdef obj_Salvage inherits obj_State
 		variable string BookmarkTime="24:00"
 		variable bool BookmarkFound
 		
-		; if ${Entity[GroupID == GROUP_WARPGATE](exists)}
-		; {
-			; UI:Update["obj_Salvage", "Gate found, activating", "g"]
-			; Move:Gate[${Entity[GroupID == GROUP_WARPGATE].ID}]
-			; This:QueueState["Traveling"]
-			; This:QueueState["SalvageWrecks"]
-			; This:QueueState["OpenCargoHold"]
-			; This:QueueState["CheckCargoHold", 5000]
-			; return true;
-		; }
+
 		
 		
 		BookmarkFound:Set[FALSE]
@@ -137,12 +128,7 @@ objectdef obj_Salvage inherits obj_State
 				
 				if !${Ship.IsTractoringID[${TargetIterator.Value.ID}]} && ${TargetIterator.Value.Distance} < ${Ship.Module_TractorBeams_Range} && ${Ship.TotalActivatedTractorBeams} < ${Ship.TotalTractorBeams} && ${TargetIterator.Value.IsLockedTarget}
 				{
-					;ModuleIndex:Set[${Ship.FindUnactiveModule[${Ship.ModuleList_TractorBeams}}]
-					;if ${ModuleIndex} >= 0
-					;{
-					
 							UI:Update["obj_Salvage", "Activating tractor beam - ${TargetIterator.Value.Name}", "g"]
-							;Ship.ModuleList_TractorBeams.Get[${ModuleIndex}]:Activate[${TargetIterator.Value.ID}]
 							Ship:ActivateFreeTractorBeam[${TargetIterator.Value.ID}]
 							return FALSE
 					;}
@@ -157,11 +143,7 @@ objectdef obj_Salvage inherits obj_State
 				}
 				if !${Ship.IsSalvagingID[${TargetIterator.Value.ID}]} && ${TargetIterator.Value.Distance} < ${Ship.Module_Salvagers_Range} && ${Ship.TotalActivatedSalvagers} < ${Ship.TotalSalvagers} && ${TargetIterator.Value.IsLockedTarget}
 				{
-					;ModuleIndex:Set[${Ship.FindUnactiveModule[${Ship.ModuleList_Salvagers}}]
-					;if ${ModuleIndex} >= 0
-					;{
 						UI:Update["obj_Salvage", "Activating salvager - ${TargetIterator.Value.Name}", "g"]
-						;Ship.ModuleList_Salvagers.Get[${ModuleIndex}]:Activate[${TargetIterator.Value.ID}]
 						Ship:ActivateFreeSalvager[${TargetIterator.Value.ID}]
 						return FALSE
 					;}
@@ -171,7 +153,16 @@ objectdef obj_Salvage inherits obj_State
 		}
 		else
 		{
-			LootCans:Disable			
+			LootCans:Disable
+			if ${Entity[GroupID == GROUP_WARPGATE](exists)}
+			{
+				UI:Update["obj_Salvage", "Gate found, activating", "g"]
+				Move:Gate[${Entity[GroupID == GROUP_WARPGATE].ID}]
+				This:QueueState["Traveling"]
+				This:QueueState["SalvageWrecks", 500]
+				This:QueueState["OpenCargoHold"]
+				This:QueueState["CheckCargoHold", 5000]
+			}			
 			return TRUE
 		}
 		return FALSE
@@ -251,7 +242,7 @@ objectdef obj_LootCans inherits obj_State
 			return FALSE
 		}
 
-		EVE:QueryEntities[Targets, "(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && HaveLootRights"]
+		EVE:QueryEntities[Targets, "(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && HaveLootRights && !IsWreckEmpty"]
 		Targets:GetIterator[TargetIterator]
 		if ${TargetIterator:First(exists)}
 		{
@@ -263,7 +254,7 @@ objectdef obj_LootCans inherits obj_State
 					EVEWindow[ByItemID, ${TargetIterator.Value}]:LootAll
 					return FALSE
 				}
-				if !${TargetIterator.Value.IsWreckEmpty} && !${EVEWindow[ByItemID, ${TargetIterator.Value}](exists)} && ${TargetIterator.Value.Distance}<LOOT_RANGE
+				if !${EVEWindow[ByItemID, ${TargetIterator.Value}](exists)} && ${TargetIterator.Value.Distance}<LOOT_RANGE
 				{
 					UI:Update["obj_Salvage", "Opening - ${TargetIterator.Value.Name}", "g"]
 					TargetIterator.Value:OpenCargo
