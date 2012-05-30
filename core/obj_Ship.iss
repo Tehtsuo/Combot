@@ -416,7 +416,8 @@ objectdef obj_Ship
 		{
 			do
 			{
-				if !${ModuleIterator.Value.IsActive}
+				if 	!${ModuleIterator.Value.IsActive} && \
+					!${ModuleIterator.Value.IsDeactivating}
 				{
 					return ${ModuleIterator.Key}
 				}
@@ -433,36 +434,33 @@ objectdef obj_Ship
 		{
 			do
 			{
-			if ${ModuleIter.Value.LastTarget(exists)} && \
-				${ModuleIter.Value.LastTarget.ID} == ${ID} && \
-				${ModuleIter.Value.IsActive}
-			
-				if !${ModuleIterator.Value.IsActive} && ${ModuleIterator.Value.TargetID}==${ID}
+				if  ${ModuleIterator.Value.TargetID} == ${ID} && \
+					${ModuleIterator.Value.IsActive} && \
+					!${ModuleIterator.Value.IsDeactivating}
 				{
-					return TRUE
+					return ${ModuleIterator.Key}
 				}
 			}
 			while ${ModuleIterator:Next(exists)}
 		}
-		return FALSE
+		return 0
 	}
-	member:bool ActiveModuleCount(string arg_ModuleList)
+	member:int ActiveModuleCount(string arg_ModuleList)
 	{
 		variable int count=0
-		variable iterator ModuleIter
+		variable iterator ModuleIterator
 
 		${arg_ModuleList}:GetIterator[ModuleIter]
-		if ${ModuleIter:First(exists)}
+		if ${ModuleIterator:First(exists)}
 		do
 		{
-			if ${ModuleIter.Value.IsActive} || \
-				${ModuleIter.Value.IsGoingOnline} || \
-				${ModuleIter.Value.IsDeactivating}
+			if 	${ModuleIterator.Value.IsActive} || \
+				${ModuleIterator.Value.IsDeactivating}
 			{
 				count:Inc
 			}
 		}
-		while ${ModuleIter:Next(exists)}
+		while ${ModuleIterator:Next(exists)}
 
 		return ${count}
 	}	

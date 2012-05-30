@@ -2,7 +2,10 @@
 objectdef obj_Targets
 {
 
-
+	method Initialize()
+	{
+		UI:Update["obj_Targets", "Initialized", "g"]
+	}
 
 
 
