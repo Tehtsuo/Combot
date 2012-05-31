@@ -18,7 +18,7 @@ objectdef obj_Module inherits obj_State
 		{
 			do
 			{
-				if !${This.IsActive[ModuleIterator.Key]}
+				if !${This.IsActive[${ModuleIterator.Key}]}
 				{
 					return ${ModuleIterator.Key}
 				}
