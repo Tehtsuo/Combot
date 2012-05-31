@@ -4,9 +4,11 @@
 #endif
 
 #include core/Defines.iss
+#include core/obj_ComBot.iss
+#include core/obj_Configuration.iss
+
 #include core/obj_ComBotUI.iss
 #include core/obj_ComBot.iss
-
 #include core/obj_Client.iss
 #include core/obj_Move.iss
 #include core/obj_Module.iss
@@ -25,9 +27,11 @@ function main()
 {
 	echo "${Time} ComBot: Starting"
 
-	declarevariable UI obj_ComBotUI script
 	declarevariable ComBot obj_ComBot script
+	declarevariable UI obj_ComBotUI script
+	declarevariable BaseConfig obj_Configuration_BaseConfig script
 
+	declarevariable Config obj_Configuration script
 	declarevariable Client obj_Client script
 	declarevariable Move obj_Move script
 	declarevariable InstaWarp obj_InstaWarp script

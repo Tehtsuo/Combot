@@ -42,7 +42,7 @@ objectdef obj_ComBot
 	{
 		UI:Update["obj_ComBot", "Combot Resumed", "g"]
 		This.Paused:Set[FALSE]
-		${UIElement[ComBot_Mode@Status@ComBotTab@ComBot].SelectedItem.Value}:Start
+		${Config.Common.ComBot_Mode}:Start
 	}
 
 
