@@ -219,11 +219,6 @@ objectdef obj_Module inherits obj_State
 		return ${This.ObjectName}.ModList
 	}
 	
-	method GetIterator(iterator Iterator)
-	{
-		This.ModList:GetIterator[Iterator]
-	}
-	
 	method Insert(int64 ID)
 	{
 		This.ModList:Insert[${ID}]
