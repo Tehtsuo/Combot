@@ -198,7 +198,10 @@ objectdef obj_Salvage inherits obj_State
 	
 	member:bool OpenCargoHold()
 	{
-		MyShip:OpenCargo[]
+		if !${EVEWindow[ByName, "Inventory"](exists)}
+		{
+			MyShip:OpenCargo[]
+		}
 		return TRUE
 	}
 	
