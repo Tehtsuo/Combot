@@ -3,6 +3,7 @@ objectdef obj_Module inherits obj_State
 	variable index:module ModList
 	variable index:bool ModuleActive
 	variable index:int64 ModuleTarget
+	variable index:bool ModuleDeactivating
 	
 	method Initialize()
 	{
@@ -39,6 +40,18 @@ objectdef obj_Module inherits obj_State
 			return ${This.ModList[${Key}].IsActive}
 		}
 	}
+
+	member:bool IsDeactivating(int Key)
+	{
+		if ${ModuleDeactivating[${Key}]}
+		{
+			return TRUE
+		}
+		else
+		{
+			return ${This.ModList[${Key}].IsDeactivating}
+		}
+	}
 	
 	method Activate(int64 target = -1)
 	{
@@ -47,7 +60,7 @@ objectdef obj_Module inherits obj_State
 		if ${target} == -1
 		{
 			This.ModList[${modToActivate}]:Activate
-			ModuleTarget:Set[${modToActivate}, ${Me.ActiveTarget.ID}]
+			ModuleTarget:Set[${modToActivate}, -1]
 		}
 		else
 		{
@@ -74,24 +87,16 @@ objectdef obj_Module inherits obj_State
 	method Deactivate(int64 target = -1)
 	{
 		variable iterator ModuleIterator
-		variable int64 actualTarget
-		if ${target} == -1
-		{
-			actualTarget:Set[${Me.ActiveTarget.ID}]
-		}
-		else
-		{
-			actualTarget:Set[${target}]
-		}
 		ModuleTarget:GetIterator[ModuleIterator]
 		if ${ModuleIterator:First(exists)}
 		{
 			do
 			{
-				if (${ModuleIterator.Value} == ${actualTarget}) && (${ModuleActive[${ModuleIterator.Key}]} || ${This.ModList[${ModuleIterator.Key}].IsActive} )
+				if (${ModuleIterator.Value} == ${target}) && ${This.IsActive[${ModuleIterator.Key}]}
 				{
 					This.ModList[${ModuleIterator.Key}]:Deactivate
 					ModuleActive:Set[${ModuleIterator.Key}, FALSE]
+					ModuleDeactivating:Set[${ModuleIterator.Key}, TRUE]
 					return
 				}
 			}
@@ -113,33 +118,28 @@ objectdef obj_Module inherits obj_State
 		This:Deactivate[${This.ActiveCount}, ${target}]
 	}
 	
-	member:bool IsActiveOn(int64 target = -1)
+	member:int CountActiveOn(int64 target = -1)
 	{
 		variable iterator ModuleIterator
-		variable int64 actualTarget
-		if ${target} == -1
-		{
-			actualTarget:Set[${Me.ActiveTarget.ID}]
-		}
-		else
-		{
-			actualTarget:Set[${target}]
-		}
+		variable int ActiveOnCount = 0
 		ModuleTarget:GetIterator[ModuleIterator]
 		if ${ModuleIterator:First(exists)}
 		{
-			echo ${Entity[${actualTarget}].Name} - ${actualTarget}
 			do
 			{
-				echo if (${ModuleIterator.Value} == ${actualTarget}) && (${This.IsActive[${ModuleIterator.Key}]})
-				if (${ModuleIterator.Value} == ${actualTarget}) && (${This.IsActive[${ModuleIterator.Key}]})
+				if (${ModuleIterator.Value} == ${target}) && (${This.IsActive[${ModuleIterator.Key}]})
 				{
-					return TRUE
+					ActiveOnCount:inc
 				}
 			}
 			while ${ModuleIterator:Next(exists)}
 		}
-		return FALSE
+		return ${ActiveOnCount}
+	}
+	
+	member:bool IsActiveOn(int64 target = -1)
+	{
+		return ${If(${This.CountActiveOn[${target}]}>0,TRUE,FALSE)}
 	}
 	
 	member:bool CheckActives()
@@ -158,10 +158,13 @@ objectdef obj_Module inherits obj_State
 				{
 					ModuleActive:Set[${ModuleIterator.Key}, FALSE]
 				}
+				if ${ModuleIterator.Value.IsDeactivating} || !${ModuleIterator.Value.IsActive}
+				{
+					ModuleDeactivating:Set[${ModuleIterator.Key}, FALSE]
+				}
 			}
 			while ${ModuleIterator:Next(exists)}
 		}
-		return FALSE
 	}
 
 	member:int ActiveCount()
@@ -173,7 +176,7 @@ objectdef obj_Module inherits obj_State
 		{
 			do
 			{
-				if ${ModuleIterator.Value.IsActive} || ${ModuleActive[${ModuleIterator.Key}]}
+				if ${This.IsActive[${ModuleIterator.Key}]}
 				{
 					varActiveCount:Inc
 				}
@@ -192,7 +195,7 @@ objectdef obj_Module inherits obj_State
 		{
 			do
 			{
-				if !${ModuleIterator.Value.IsActive} && !${ModuleActive[${ModuleIterator.Key}]}
+				if !${This.IsActive[${ModuleIterator.Key}]}
 				{
 					varInactiveCount:Inc
 				}
@@ -200,6 +203,25 @@ objectdef obj_Module inherits obj_State
 			while ${ModuleIterator:Next(exists)}
 		}
 		return ${varInactiveCount}
+	}
+	
+	member:int DeactivatingCount()
+	{
+		variable int varDeactivatingCount = 0
+		variable iterator ModuleIterator
+		This.ModList:GetIterator[ModuleIterator]
+		if ${ModuleIterator:First(exists)}
+		{
+			do
+			{
+				if !${This.IsDeactivating[${ModuleIterator.Key}]}
+				{
+					varDeactivatingCount:Inc
+				}
+			}
+			while ${ModuleIterator:Next(exists)}
+		}
+		return ${varDeactivatingCount}
 	}
 
 	member:int Count()
@@ -227,6 +249,7 @@ objectdef obj_Module inherits obj_State
 		This.ModList:Insert[${ID}]
 		ModuleActive:Insert[FALSE]
 		ModuleTarget:Insert[-1]
+		ModuleDeactivating:Insert[FALSE]
 	}
 	
 	method Clear()
@@ -234,5 +257,6 @@ objectdef obj_Module inherits obj_State
 		This.ModList:Clear
 		ModuleActive:Clear
 		ModuleTarget:Clear
+		ModuleDeactivating:Clear
 	}
 }
