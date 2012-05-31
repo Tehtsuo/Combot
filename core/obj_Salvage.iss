@@ -11,8 +11,9 @@ objectdef obj_Salvage inherits obj_State
 	method Start()
 	{
 		UI:Update["obj_Salvage", "Started", "g"]
-		if ${This.States.Used} == 0
+		if ${This.IsIdle}
 		{
+			This:QueueState["OpenCargoHold"]
 			This:QueueState["CheckCargoHold", 5000]
 		}
 	}
@@ -33,6 +34,7 @@ objectdef obj_Salvage inherits obj_State
 		variable string Target
 		variable string BookmarkTime="24:00"
 		variable bool BookmarkFound
+		variable bool ForceBookmarkCycle=FALSE
 		
 
 		
@@ -60,7 +62,7 @@ objectdef obj_Salvage inherits obj_State
 			Move:Bookmark[${Target}]
 			This:QueueState["Traveling"]
 			This:QueueState["Log", 1000, "Salvaging at ${Target}"]
-			This:QueueState["SalvageWrecks", 100]
+			This:QueueState["SalvageWrecks", 1000]
 			This:QueueState["DeleteBookmark", 1000, ${Target}]
 			This:QueueState["OpenCargoHold"]
 			This:QueueState["CheckCargoHold", 5000]
@@ -221,11 +223,32 @@ objectdef obj_Salvage inherits obj_State
 	{
 		Cargo:PopulateCargoList[SHIP]
 		Cargo:MoveCargoList[HANGAR]
+		This:QueueState["Log", 1000, "Idling for 1 minute"]
 		This:QueueState["Idle", 60000]
 		This:QueueState["CheckBookmarks"]
 		return TRUE
 	}
 	
+	
+	member:bool CycleBookmarks()
+	{
+		if ${EVEWindow[addressbook](exists)} && !${ForceBookmarkCycle}
+		{
+			return TRUE
+		}
+		if ${EVEWindow[addressbook](exists)} && ${ForceBookmarkCycle}
+		{
+			EVEWindow[addressbook]:Close
+			ForceBookmarkCycle:Set[FALSE]
+			return TRUE
+		}
+		if !${EVEWindow[addressbook](exists)}
+		{
+			EVE:Execute[OpenPeopleAndPlaces]
+			ForceBookmarkCycle:Set[TRUE]
+			return FALSE
+		}
+	}
 }
 
 

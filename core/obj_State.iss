@@ -19,6 +19,7 @@ objectdef obj_State
 	variable int NextPulse
 	variable int PulseFrequency = 2000
 	variable bool NonGameTiedPulse = false
+	variable bool IsIdle=FALSE
 
 	method Initialize()
 	{
@@ -45,6 +46,7 @@ objectdef obj_State
 			
 			if ${States.Used} == 0
 			{
+				This.IsIdle:Set[TRUE]
 				States:Queue["Idle", 1000];
 			}
 
@@ -64,6 +66,7 @@ objectdef obj_State
 			var_Frequency:Set[${arg_Frequency}]
 		}
 		States:Queue[${arg_Name},${var_Frequency},"${arg_Args.Escape}"]
+		This.IsIdle:Set[TRUE]
 	}
 
 	method Clear()
