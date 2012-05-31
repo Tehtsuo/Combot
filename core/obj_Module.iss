@@ -130,7 +130,7 @@ objectdef obj_Module inherits obj_State
 		{
 			do
 			{
-				if (${ModuleIterator.Value} == ${actualTarget}) && ($This.IsActive[${ModuleIterator.Key}]})
+				if (${ModuleIterator.Value} == ${actualTarget}) && (${This.IsActive[${ModuleIterator.Key}]})
 				{
 					return TRUE
 				}
