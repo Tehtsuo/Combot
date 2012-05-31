@@ -18,6 +18,9 @@ objectdef obj_Module inherits obj_State
 			This:Deactivate
 		}
 		This:QueueState["ActivateOn", 100, ${target}]
+		Activated:Set[TRUE]
+		Deactivated:Set[FALSE]
+		CurrentTarget:Set[${target}]
 	}
 	
 	method Deactivate()
@@ -75,9 +78,6 @@ objectdef obj_Module inherits obj_State
 		{
 			ActualModule:Activate[${target}]
 		}
-		Activated:Set[TRUE]
-		Deactivated:Set[FALSE]
-		CurrentTarget:Set[${target}]
 		This:QueueState["WatchActivation", 100, 10]
 		This:QueueState["WatchFinish", 100]
 	}
