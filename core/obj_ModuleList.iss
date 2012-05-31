@@ -108,6 +108,25 @@ objectdef obj_ModuleList inherits obj_State
 		}
 		return ${ActiveOnCount}
 	}
+
+	member:int GetActiveOn(int64 target = -1)
+	{
+		variable iterator ModuleIterator
+		variable int ActiveOnCount = 0
+		ModuleTarget:GetIterator[ModuleIterator]
+		if ${ModuleIterator:First(exists)}
+		{
+			do
+			{
+				if ${ModuleIterator.Value.IsActiveOn[${target}]}
+				{
+					return ${ModuleIterator.Key}
+				}
+			}
+			while ${ModuleIterator:Next(exists)}
+		}
+		return -1
+	}
 	
 	member:bool IsActiveOn(int64 target = -1)
 	{

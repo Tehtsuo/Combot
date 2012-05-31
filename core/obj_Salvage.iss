@@ -36,9 +36,6 @@ objectdef obj_Salvage inherits obj_State
 		variable string BookmarkTime="24:00"
 		variable bool BookmarkFound
 		
-
-		
-		
 		BookmarkFound:Set[FALSE]
 		
 		EVE:GetBookmarks[Bookmarks]
@@ -98,6 +95,8 @@ objectdef obj_Salvage inherits obj_State
 		variable iterator TargetIterator
 		variable queue:int LootRangeAndTractored
 		variable int MaxTarget = ${MyShip.MaxLockedTargets}
+		variable int ClosestTractorKey
+		variable bool ReactivateTractor = FALSE
 		
 		if ${Targets.NPC}
 		{
@@ -146,12 +145,24 @@ objectdef obj_Salvage inherits obj_State
 					Ship.ModuleList_TractorBeams:Activate[${TargetIterator.Value.ID}]
 					return FALSE
 				}
-				; if  ${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]} &&\
-					; ${TargetIterator.Value.Distance} < LOOT_RANGE
-				; {
+				if  !${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]} &&\
+					${TargetIterator.Value.Distance} < ${Ship.ModuleList_TractorBeams.Range} &&\
+					${TargetIterator.Value.Distance} > LOOT_RANGE &&\
+					${TargetIterator.Value.IsLockedTarget &&\
+					${ReactivateTractor}
+				{
+					UI:Update["obj_Salvage", "Reactivating tractor beam - ${TargetIterator.Value.Name}", "g"]
+					Ship.ModuleList_TractorBeams.Get[${ClosestTractorKey}]:Activate[${TargetIterator.Value.ID}]
+					return FALSE
+				}
+				if  ${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]} &&\
+					${TargetIterator.Value.Distance} < LOOT_RANGE &&\
+					!${ReactivateTractor}
+				{
 					; UI:Update["obj_Salvage", "Deactivating tractor beam - ${TargetIterator.Value.Name}", "g"]
-					; Ship.ModuleList_TractorBeams:Deactivate[${TargetIterator.Value.ID}]
-				; }
+					ClosestTractorKey:Set[${Ship.ModuleList_TractorBeams.GetActiveOn[${TargetIterator.Value.ID}]}]
+					ReactivateTractor:Set[TRUE]
+				}
 				if  !${Ship.ModuleList_Salvagers.IsActiveOn[${TargetIterator.Value.ID}]} &&\
 					${TargetIterator.Value.Distance} < ${Ship.ModuleList_Salvagers.Range} &&\
 					${Ship.ModuleList_Salvagers.InactiveCount} > 0 &&\
