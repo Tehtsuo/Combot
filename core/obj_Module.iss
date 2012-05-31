@@ -42,18 +42,19 @@ objectdef obj_Module inherits obj_State
 	
 	method Activate(int64 target = -1)
 	{
-		variable int Module = ${This.GetInactive}
+		variable int modToActivate
+		modToActivate:Set[${This.GetInactive}]
 		if ${target} == -1
 		{
-			This.ModList[${Module}]:Activate
-			ModuleTarget:Set[${Module}, ${Me.ActiveTarget.ID}]
+			This.ModList[${modToActivate}]:Activate
+			ModuleTarget:Set[${modToActivate}, ${Me.ActiveTarget.ID}]
 		}
 		else
 		{
-			This.ModList[${Module}]:Activate[${target}]
-			ModuleTarget:Set[${Module}, ${target}]
+			This.ModList[${modToActivate}]:Activate[${target}]
+			ModuleTarget:Set[${modToActivate}, ${target}]
 		}
-		ModuleActive:Set[${Module}, TRUE]
+		ModuleActive:Set[${modToActivate}, TRUE]
 	}
 	
 	method ActivateCount(int moduleCount, int64 target = -1)
@@ -82,7 +83,6 @@ objectdef obj_Module inherits obj_State
 		{
 			actualTarget:Set[${target}]
 		}
-		ModuleActive:Set[${Module}, TRUE]
 		ModuleTarget:GetIterator[ModuleIterator]
 		if ${ModuleIterator:First(exists)}
 		{
@@ -180,9 +180,9 @@ objectdef obj_Module inherits obj_State
 		return ${varActiveCount}
 	}
 
-	member:int InctiveCount()
+	member:int InactiveCount()
 	{
-		variable int varInctiveCount = 0
+		variable int varInactiveCount = 0
 		variable iterator ModuleIterator
 		This.ModList:GetIterator[ModuleIterator]
 		if ${ModuleIterator:First(exists)}
@@ -191,12 +191,12 @@ objectdef obj_Module inherits obj_State
 			{
 				if !${ModuleIterator.Value.IsActive} && !${ModuleActive[${ModuleIterator.Key}]}
 				{
-					varInctiveCount:Inc
+					varInactiveCount:Inc
 				}
 			}
 			while ${ModuleIterator:Next(exists)}
 		}
-		return ${varInctiveCount}
+		return ${varInactiveCount}
 	}
 
 	member:int Count()
