@@ -47,7 +47,7 @@ objectdef obj_Module inherits obj_State
 		if ${target} == -1
 		{
 			This.ModList[${modToActivate}]:Activate
-			ModuleTarget:Set[${modToActivate}, ${Me.ActiveTarget.ID}]
+			ModuleTarget:Set[${modToActivate}, -1]
 		}
 		else
 		{
@@ -74,21 +74,12 @@ objectdef obj_Module inherits obj_State
 	method Deactivate(int64 target = -1)
 	{
 		variable iterator ModuleIterator
-		variable int actualTarget
-		if ${target} == -1
-		{
-			actualTarget:Set[${Me.ActiveTarget.ID}]
-		}
-		else
-		{
-			actualTarget:Set[${target}]
-		}
 		ModuleTarget:GetIterator[ModuleIterator]
 		if ${ModuleIterator:First(exists)}
 		{
 			do
 			{
-				if (${ModuleIterator.Value} == ${actualTarget}) && (${ModuleActive[${ModuleIterator.Key}]} || ${This.ModList[${ModuleIterator.Key}].IsActive} )
+				if (${ModuleIterator.Value} == ${target}) && ${This.IsActive[${ModuleIterator.Key}]}
 				{
 					This.ModList[${ModuleIterator.Key}]:Deactivate
 					ModuleActive:Set[${ModuleIterator.Key}, FALSE]
@@ -116,21 +107,12 @@ objectdef obj_Module inherits obj_State
 	member:bool IsActiveOn(int64 target = -1)
 	{
 		variable iterator ModuleIterator
-		variable int64 actualTarget
-		if ${target} == -1
-		{
-			actualTarget:Set[${Me.ActiveTarget.ID}]
-		}
-		else
-		{
-			actualTarget:Set[${target}]
-		}
 		ModuleTarget:GetIterator[ModuleIterator]
 		if ${ModuleIterator:First(exists)}
 		{
 			do
 			{
-				if (${ModuleIterator.Value} == ${actualTarget}) && (${This.IsActive[${ModuleIterator.Key}]})
+				if (${ModuleIterator.Value} == ${target}) && (${This.IsActive[${ModuleIterator.Key}]})
 				{
 					return TRUE
 				}
@@ -170,7 +152,7 @@ objectdef obj_Module inherits obj_State
 		{
 			do
 			{
-				if ${ModuleIterator.Value.IsActive} || ${ModuleActive[${ModuleIterator.Key}]}
+				if ${This.IsActive[${ModuleIterator.Key}]}
 				{
 					varActiveCount:Inc
 				}
@@ -189,7 +171,7 @@ objectdef obj_Module inherits obj_State
 		{
 			do
 			{
-				if !${ModuleIterator.Value.IsActive} && !${ModuleActive[${ModuleIterator.Key}]}
+				if !${This.IsActive[${ModuleIterator.Key}]}
 				{
 					varInactiveCount:Inc
 				}
