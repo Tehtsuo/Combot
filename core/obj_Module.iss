@@ -74,7 +74,7 @@ objectdef obj_Module inherits obj_State
 	method Deactivate(int64 target = -1)
 	{
 		variable iterator ModuleIterator
-		variable int actualTarget
+		variable int64 actualTarget
 		if ${target} == -1
 		{
 			actualTarget:Set[${Me.ActiveTarget.ID}]

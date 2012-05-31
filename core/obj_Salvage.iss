@@ -132,6 +132,7 @@ objectdef obj_Salvage inherits obj_State
 					Move:Approach[${TargetIterator.Value}]
 					return FALSE
 				}
+				echo ${TargetIterator.Value.Name} - ${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]}
 				if  !${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]} &&\
 					${TargetIterator.Value.Distance} < ${Ship.ModuleList_TractorBeams.Range} &&\
 					${TargetIterator.Value.Distance} > LOOT_RANGE &&\
@@ -142,12 +143,12 @@ objectdef obj_Salvage inherits obj_State
 					Ship.ModuleList_TractorBeams:Activate[${TargetIterator.Value.ID}]
 					return FALSE
 				}
-				if  ${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]} &&\
-					${TargetIterator.Value.Distance} < LOOT_RANGE
-				{
-					UI:Update["obj_Salvage", "Deactivating tractor beam - ${TargetIterator.Value.Name}", "g"]
-					Ship.ModuleList_TractorBeams:Deactivate[${TargetIterator.Value.ID}]
-				}
+				; if  ${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]} &&\
+					; ${TargetIterator.Value.Distance} < LOOT_RANGE
+				; {
+					; UI:Update["obj_Salvage", "Deactivating tractor beam - ${TargetIterator.Value.Name}", "g"]
+					; Ship.ModuleList_TractorBeams:Deactivate[${TargetIterator.Value.ID}]
+				; }
 				if  !${Ship.ModuleList_Salvagers.IsActiveOn[${TargetIterator.Value.ID}]} &&\
 					${TargetIterator.Value.Distance} < ${Ship.ModuleList_Salvagers.Range} &&\
 					${Ship.ModuleList_Salvagers.InactiveCount} > 0 &&\
