@@ -65,6 +65,7 @@ objectdef obj_Module inherits obj_State
 			Activated:Set[FALSE]
 			return TRUE
 		}
+		This:SetArgs[${countdown}-1]
 		return FALSE
 	}
 
@@ -106,6 +107,7 @@ objectdef obj_Module inherits obj_State
 			Deactivated:Set[FALSE]
 			return TRUE
 		}
+		This:SetArgs[${countdown}-1]
 		return FALSE
 	}
 	
