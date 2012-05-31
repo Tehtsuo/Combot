@@ -2,7 +2,7 @@ objectdef obj_Module inherits obj_State
 {
 	variable index:module ModList
 	variable index:bool ModuleActive
-	variable index:int ModuleTarget
+	variable index:int64 ModuleTarget
 	
 	method Initialize()
 	{
