@@ -133,7 +133,7 @@ objectdef obj_Salvage inherits obj_State
 					return FALSE
 				}
 				if  !${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]} &&\
-					${TargetIterator.Value.Distance} < ${Ship.Module_TractorBeams_Range} &&\
+					${TargetIterator.Value.Distance} < ${Ship.ModuleList_TractorBeams.Range} &&\
 					${TargetIterator.Value.Distance} > LOOT_RANGE &&\
 					${Ship.ModuleList_TractorBeams.InactiveCount} > 0 &&\
 					${TargetIterator.Value.IsLockedTarget}
@@ -149,7 +149,7 @@ objectdef obj_Salvage inherits obj_State
 					Ship.ModuleList_TractorBeams:Deactivate[${TargetIterator.Value.ID}]
 				}
 				if  !${Ship.ModuleList_Salvagers.IsActiveOn[${TargetIterator.Value.ID}]} &&\
-					${TargetIterator.Value.Distance} < ${Ship.Module_Salvagers_Range} &&\
+					${TargetIterator.Value.Distance} < ${Ship.ModuleList_Salvagers.Range} &&\
 					${Ship.ModuleList_Salvagers.InactiveCount} > 0 &&\
 					${TargetIterator.Value.IsLockedTarget}
 				{
