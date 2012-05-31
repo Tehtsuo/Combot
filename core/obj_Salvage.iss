@@ -57,7 +57,7 @@ objectdef obj_Salvage inherits obj_State
 			Move:Bookmark[${Target}]
 			This:QueueState["Traveling"]
 			This:QueueState["Log", 1000, "Salvaging at ${Target}"]
-			This:QueueState["SalvageWrecks", 1000]
+			This:QueueState["SalvageWrecks", 100]
 			This:QueueState["DeleteBookmark", 1000, ${Target}]
 			This:QueueState["OpenCargoHold"]
 			This:QueueState["CheckCargoHold", 5000]
@@ -69,6 +69,7 @@ objectdef obj_Salvage inherits obj_State
 		Move:Bookmark["Salvager Home Base"]
 		This:QueueState["Traveling"]
 		This:QueueState["Offload"]
+		This:QueueState["Idle", 60000]
 		This:QueueState["CheckBookmarks"]
 		return TRUE
 	}
@@ -111,7 +112,7 @@ objectdef obj_Salvage inherits obj_State
 			MaxTarget:Set[${Me.MaxLockedTargets}]
 		}
 		
-		EVE:QueryEntities[TargetIndex, "(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && HaveLootRights"]
+		EVE:QueryEntities[TargetIndex, "(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && HaveLootRights && !IsAbandoned"]
 		TargetIndex:GetIterator[TargetIterator]
 		if ${TargetIterator:First(exists)}
 		{
@@ -132,6 +133,7 @@ objectdef obj_Salvage inherits obj_State
 					Move:Approach[${TargetIterator.Value}]
 					return FALSE
 				}
+				;echo ${TargetIterator.Value.Name} - ${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]}
 				if  !${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]} &&\
 					${TargetIterator.Value.Distance} < ${Ship.ModuleList_TractorBeams.Range} &&\
 					${TargetIterator.Value.Distance} > LOOT_RANGE &&\
@@ -142,12 +144,12 @@ objectdef obj_Salvage inherits obj_State
 					Ship.ModuleList_TractorBeams:Activate[${TargetIterator.Value.ID}]
 					return FALSE
 				}
-				if  ${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]} &&\
-					${TargetIterator.Value.Distance} < LOOT_RANGE
-				{
-					UI:Update["obj_Salvage", "Deactivating tractor beam - ${TargetIterator.Value.Name}", "g"]
-					Ship.ModuleList_TractorBeams:Deactivate[${TargetIterator.Value.ID}]
-				}
+				; if  ${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]} &&\
+					; ${TargetIterator.Value.Distance} < LOOT_RANGE
+				; {
+					; UI:Update["obj_Salvage", "Deactivating tractor beam - ${TargetIterator.Value.Name}", "g"]
+					; Ship.ModuleList_TractorBeams:Deactivate[${TargetIterator.Value.ID}]
+				; }
 				if  !${Ship.ModuleList_Salvagers.IsActiveOn[${TargetIterator.Value.ID}]} &&\
 					${TargetIterator.Value.Distance} < ${Ship.ModuleList_Salvagers.Range} &&\
 					${Ship.ModuleList_Salvagers.InactiveCount} > 0 &&\
@@ -168,6 +170,7 @@ objectdef obj_Salvage inherits obj_State
 				UI:Update["obj_Salvage", "Gate found, activating", "g"]
 				This:Clear
 				Move:Gate[${Entity[GroupID == GROUP_WARPGATE].ID}]
+				This:QueueState["Idle", 5000]
 				This:QueueState["Traveling"]
 				This:QueueState["SalvageWrecks", 500]
 				This:QueueState["OpenCargoHold"]
@@ -194,7 +197,10 @@ objectdef obj_Salvage inherits obj_State
 	
 	member:bool OpenCargoHold()
 	{
-		MyShip:OpenCargo[]
+		if !${EVEWindow[ByName, "Inventory"](exists)}
+		{
+			MyShip:OpenCargo[]
+		}
 		return TRUE
 	}
 	
@@ -210,10 +216,11 @@ objectdef obj_Salvage inherits obj_State
 		return TRUE;
 	}
 
+	
 	member:bool Offload()
 	{
 		;Transfer stuff to corp hanger
-		return FALSE
+		return TRUE
 	}
 	
 }
@@ -234,7 +241,7 @@ objectdef obj_LootCans inherits obj_State
 	
 	method Enable()
 	{
-		This:QueueState["Loot", 1000]
+		This:QueueState["Loot", 1500]
 	}
 	
 	method Disable()
@@ -246,13 +253,20 @@ objectdef obj_LootCans inherits obj_State
 	{
 		variable index:entity Targets
 		variable iterator TargetIterator
+		variable index:item TargetCargo
+		variable iterator CargoIterator
 	
 		if !${Client.InSpace}
 		{
 			return FALSE
 		}
 
-		EVE:QueryEntities[Targets, "(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && HaveLootRights && !IsWreckEmpty && Distance<LOOT_RANGE"]
+		if ${Entity[(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && IsAbandoned](exists)}
+		{
+			Entity[(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && IsAbandoned]:UnlockTarget
+		}
+		
+		EVE:QueryEntities[Targets, "(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && HaveLootRights && !IsWreckEmpty && Distance<LOOT_RANGE && !IsAbandoned"]
 		Targets:GetIterator[TargetIterator]
 		if ${TargetIterator:First(exists)}
 		{
@@ -260,6 +274,20 @@ objectdef obj_LootCans inherits obj_State
 			{
 				if ${EVEWindow[ByItemID, ${TargetIterator.Value}](exists)}
 				{
+					Entity[${TargetIterator.Value}]:GetCargo[TargetCargo]
+					TargetCargo:GetIterator[CargoIterator]
+					if ${CargoIterator:First(exists)}
+					{
+						do
+						{
+							if ${CargoIterator.Value.IsContraband}
+							{
+								TargetIterator.Value:Abandon
+								return FALSE
+							}
+						}
+						while ${CargoIterator:Next(exists)}
+					}
 					UI:Update["obj_Salvage", "Looting - ${TargetIterator.Value.Name}", "g"]
 					EVEWindow[ByItemID, ${TargetIterator.Value}]:LootAll
 					return FALSE
