@@ -1,6 +1,5 @@
 objectdef obj_Module inherits obj_State
 {
-	variable module ActualModule
 	variable bool Activated = FALSE
 	variable bool Deactivated = FALSE
 	variable int CurrentTarget = -1
@@ -8,7 +7,7 @@ objectdef obj_Module inherits obj_State
 	method Initialize(int64 ID)
 	{
 		This[parent]:Initialize
-		ActualModule:Set[${MyShip.Module[${ID}]}]
+		DeclareVariable ActualModule module object = ${MyShip.Module[${ID}]}
 	}
 
 	method Activate(int64 target = -1)
