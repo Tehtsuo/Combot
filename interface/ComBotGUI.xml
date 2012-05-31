@@ -107,16 +107,24 @@
 							<Y>0</Y>
 							<Height>100%</Height>
 							<Width>100%</Width>
-						 </frame>					
+						</frame>					
+						<Text name='obj_SalvageBookmarkListTitle'> 
+									<X>0</X> 
+									<Y>5%</Y> 
+									<Width>40%</Width> 
+									<Height>5%</Height> 
+									<Alignment>Center</Alignment>
+									<Text>Salvage Bookmarks</Text>
+						</Text>						 
 						<listbox Name="obj_SalvageBookmarkList">
 							<Font template='Console.Font' />
 							<BackgroundColor>FF000000</BackgroundColor>
 							<Border>1</Border>
 							<BorderColor>FFFFFFFF</BorderColor>
 							<X>0</X>
-							<Y>0</Y>
-							<Width>400</Width>
-							<Height>100%</Height>
+							<Y>10%</Y>
+							<Width>40%</Width>
+							<Height>90%</Height>
 						</listbox>
 					</Tab>
 				</Tabs>
