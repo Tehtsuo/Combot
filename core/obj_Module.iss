@@ -139,7 +139,11 @@ objectdef obj_Module inherits obj_State
 	
 	member:bool IsActiveOn(int64 target = -1)
 	{
-		return ${If(${This.CountActiveOn[${target}]}>0,TRUE,FALSE)}
+		if ${This.CountActiveOn[${target}]} > 0
+		{
+			return TRUE
+		}
+		return FALSE
 	}
 	
 	member:bool CheckActives()
@@ -214,7 +218,7 @@ objectdef obj_Module inherits obj_State
 		{
 			do
 			{
-				if !${This.IsDeactivating[${ModuleIterator.Key}]}
+				if !${ModuleIterator.Value.IsDeactivating}
 				{
 					varDeactivatingCount:Inc
 				}
