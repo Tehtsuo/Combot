@@ -204,7 +204,7 @@ objectdef obj_Module inherits obj_State
 		return ${This.ModList.Used}
 	}
 	
-	member:double Range()
+	member:float Range()
 	{
 		return ${This.ModList.Get[1].OptimalRange}
 	}
