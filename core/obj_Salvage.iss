@@ -11,7 +11,7 @@ objectdef obj_Salvage inherits obj_State
 	method Start()
 	{
 		UI:Update["obj_Salvage", "Started", "g"]
-		This:QueueState["CheckBookmarks"]
+		This:QueueState["CheckCargoHold", 5000]
 	}
 	
 	method Stop()
@@ -69,8 +69,6 @@ objectdef obj_Salvage inherits obj_State
 		Move:Bookmark["Salvager Home Base"]
 		This:QueueState["Traveling"]
 		This:QueueState["Offload"]
-		This:QueueState["Idle", 60000]
-		This:QueueState["CheckBookmarks"]
 		return TRUE
 	}
 
@@ -103,7 +101,6 @@ objectdef obj_Salvage inherits obj_State
 			Move:Bookmark["Salvager Home Base"]
 			This:QueueState["Traveling"]
 			This:QueueState["Offload"]
-			This:QueueState["CheckBookmarks"]
 			return TRUE
 		}
 		
@@ -219,7 +216,10 @@ objectdef obj_Salvage inherits obj_State
 	
 	member:bool Offload()
 	{
-		;Transfer stuff to corp hanger
+		Cargo:PopulateCargoList[SHIP]
+		Cargo:MoveCargoList[HANGAR]
+		This:QueueState["Idle", 60000]
+		This:QueueState["CheckBookmarks"]
 		return TRUE
 	}
 	
