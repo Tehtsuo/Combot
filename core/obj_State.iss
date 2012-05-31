@@ -10,6 +10,11 @@ objectdef obj_StateQueue
 		Frequency:Set[${arg_Frequency}]
 		Args:Set["${arg_Args.Escape}"]
 	}
+	
+	method SetArgs(string arg_Args)
+	{
+		Args:Set["${arg_Args.Escape}"]
+	}
 }
 
 objectdef obj_State
@@ -67,6 +72,11 @@ objectdef obj_State
 		}
 		States:Queue[${arg_Name},${var_Frequency},"${arg_Args.Escape}"]
 		This.IsIdle:Set[TRUE]
+	}
+	
+	method SetStateArgs(string arg_Args="")
+	{
+		States.Peek:SetArgs["${arg_Args.Escape}"]
 	}
 
 	method Clear()

@@ -8,24 +8,24 @@ objectdef obj_Ship
 	variable int RetryUpdateModuleList=1
 	
 	variable index:module ModuleList
-	variable obj_Module ModuleList_ShieldTransporters
-	variable obj_Module ModuleList_MiningLaser
-	variable obj_Module ModuleList_Weapon
-	variable obj_Module ModuleList_ECCM
-	variable obj_Module ModuleList_ActiveResists
-	variable obj_Module ModuleList_Regen_Shield
-	variable obj_Module ModuleList_Repair_Armor
-	variable obj_Module ModuleList_Repair_Hull
-	variable obj_Module ModuleList_AB_MWD
+	variable obj_ModuleList ModuleList_ShieldTransporters
+	variable obj_ModuleList ModuleList_MiningLaser
+	variable obj_ModuleList ModuleList_Weapon
+	variable obj_ModuleList ModuleList_ECCM
+	variable obj_ModuleList ModuleList_ActiveResists
+	variable obj_ModuleList ModuleList_Regen_Shield
+	variable obj_ModuleList ModuleList_Repair_Armor
+	variable obj_ModuleList ModuleList_Repair_Hull
+	variable obj_ModuleList ModuleList_AB_MWD
 	variable index:module ModuleList_Passive
-	variable obj_Module ModuleList_Salvagers
-	variable obj_Module ModuleList_TractorBeams
-	variable obj_Module ModuleList_Cloaks
-	variable obj_Module ModuleList_StasisWeb
-	variable obj_Module ModuleList_SensorBoost
-	variable obj_Module ModuleList_TargetPainter
-	variable obj_Module ModuleList_TrackingComputer
-	variable obj_Module ModuleList_GangLinks
+	variable obj_ModuleList ModuleList_Salvagers
+	variable obj_ModuleList ModuleList_TractorBeams
+	variable obj_ModuleList ModuleList_Cloaks
+	variable obj_ModuleList ModuleList_StasisWeb
+	variable obj_ModuleList ModuleList_SensorBoost
+	variable obj_ModuleList ModuleList_TargetPainter
+	variable obj_ModuleList ModuleList_TrackingComputer
+	variable obj_ModuleList ModuleList_GangLinks
 
 	variable float Module_Salvagers_Range
 	variable float Module_TractorBeams_Range
