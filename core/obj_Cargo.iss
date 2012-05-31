@@ -21,7 +21,6 @@ objectdef obj_Cargo
 
 		variable iterator CargoIterator
 
-		TripHauled:Set[0]
 		This.CargoToTransfer:Clear		
 		This.MyCargo:GetIterator[CargoIterator]
 		if ${CargoIterator:First(exists)}
@@ -30,8 +29,27 @@ objectdef obj_Cargo
 			This.CargoToTransfer:Insert[${CargoIterator.Value.ID}]
 		}
 		while ${CargoIterator:Next(exists)}
-
 	}
 
-
+	method MoveCargoList(string location, string foldername="")
+	{
+		switch ${location} 
+		{
+			case SHIP
+				EVE:MoveItemsTo[CargoList, MyShip, CargoHold]
+				break
+			case SHIPCORPORATEHANGAR
+				EVE:MoveItemsTo[CargoList, MyShip, CorpHangars, ${foldername}]
+				break
+			case SHIPOREHOLD
+				EVE:MoveItemsTo[CargoList, MyShip, OreHold]
+				break
+			case HANGAR
+				EVE:MoveItemsTo[CargoList, MyStationHangar, Hangar]
+				break
+			case CORPORATEHANGAR
+				EVE:MoveItemsTo[CargoList, MyStationCorporateHangar, StationCorporateHangar, ${foldername}]
+				break
+		}
+	}
 }
