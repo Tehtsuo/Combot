@@ -8,7 +8,7 @@ objectdef obj_Module inherits obj_State
 	method Initialize(int64 ID)
 	{
 		This[parent]:Initialize
-		ActualModule:Initialize[${ID}]
+		ActualModule:Set[${MyShip.Module[${ID}]}]
 	}
 
 	method Activate(int64 target = -1)
