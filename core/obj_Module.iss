@@ -128,8 +128,10 @@ objectdef obj_Module inherits obj_State
 		ModuleTarget:GetIterator[ModuleIterator]
 		if ${ModuleIterator:First(exists)}
 		{
+			echo ${Entity[${actualTarget}].Name} - ${actualTarget}
 			do
 			{
+				echo if (${ModuleIterator.Value} == ${actualTarget}) && (${This.IsActive[${ModuleIterator.Key}]})
 				if (${ModuleIterator.Value} == ${actualTarget}) && (${This.IsActive[${ModuleIterator.Key}]})
 				{
 					return TRUE
@@ -159,6 +161,7 @@ objectdef obj_Module inherits obj_State
 			}
 			while ${ModuleIterator:Next(exists)}
 		}
+		return FALSE
 	}
 
 	member:int ActiveCount()
