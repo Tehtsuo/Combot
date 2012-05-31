@@ -8,7 +8,6 @@
 #include core/obj_Configuration.iss
 
 #include core/obj_ComBotUI.iss
-#include core/obj_ComBot.iss
 #include core/obj_Client.iss
 #include core/obj_Move.iss
 #include core/obj_Module.iss

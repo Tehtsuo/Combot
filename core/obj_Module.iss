@@ -129,7 +129,7 @@ objectdef obj_Module inherits obj_State
 			{
 				if (${ModuleIterator.Value} == ${target}) && (${This.IsActive[${ModuleIterator.Key}]})
 				{
-					ActiveOnCount:inc
+					ActiveOnCount:Inc
 				}
 			}
 			while ${ModuleIterator:Next(exists)}
@@ -139,7 +139,7 @@ objectdef obj_Module inherits obj_State
 	
 	member:bool IsActiveOn(int64 target = -1)
 	{
-		return ${If(${This.CountActiveOn[${target}]}>0,TRUE,FALSE)}
+		return ${This.CountActiveOn[${target}]}
 	}
 	
 	member:bool CheckActives()
