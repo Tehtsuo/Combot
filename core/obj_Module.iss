@@ -213,6 +213,11 @@ objectdef obj_Module inherits obj_State
 	{
 		return ${This.ModList[${id}]}
 	}
+
+	member:string GetFallthroughObject()
+	{
+		return ${This.ObjectName}.ModList
+	}
 	
 	method GetIterator(iterator Iterator)
 	{
