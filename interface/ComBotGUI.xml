@@ -85,9 +85,9 @@
 						<combobox Name="ComBot_Mode">
 							<BackgroundColor>FF000000</BackgroundColor>
 							<X>1%</X>
-							<Y>91%</Y>
+							<Y>92%</Y>
 							<Width>48%</Width>
-							<Height>8%</Height>
+							<Height>6%</Height>
 							<Items>
 								<Item Value='Salvager'>Dedicated Salvager</Item>
 							</Items>
