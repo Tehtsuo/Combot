@@ -144,6 +144,7 @@ objectdef obj_Move inherits obj_State
 
 	method Gate(int64 ID)
 	{
+		UI:Update["obj_Move", "Movement queued.  Destination: ${Entity[${ID}].Name}", "g"]
 		TargetGate:Set[${ID}]
 		This.Traveling:Set[TRUE]
 		This:QueueState["GateMove"]
@@ -151,13 +152,19 @@ objectdef obj_Move inherits obj_State
 
 	member:bool GateMove()
 	{
-		This:Approach[${TargetGate}, 3000]
-		if ${This.Approaching}
+		echo GATEMOVE
+		if !${This.CheckApproach}
 		{
+			return FALSE
+		}
+		if ${Entity[${TargetGate}].Distance} > 3000
+		{
+			This:Approach[${TargetGate}, 3000]
 			return FALSE
 		}
 		Entity[${TargetGate}]:Activate
 		Client:Wait[5000]
+		This.Traveling:Set[FALSE]
 		return TRUE
 	}
 	
@@ -298,19 +305,20 @@ objectdef obj_Move inherits obj_State
 	
 	method Approach(int64 target, int distance=0)
 	{
+		echo APPROACH - ${target} == ${This.ApproachingID} && ${This.Approaching}
 		;	If we're already approaching the target, ignore the request
 		if ${target} == ${This.ApproachingID} && ${This.Approaching}
 		{
 			return
 		}
-		
+		echo AFTER
 		if !${Entity[${target}](exists)}
 		{
 			UI:Update["obj_Move", "Attempted to approach a target that does not exist", "r"]
 			UI:Update["obj_Move", "Target ID: ${target}", "r"]
 			return
 		}
-		
+		echo EVEN AFTER
 		if ${Entity[${target}].Distance} <= ${distance}
 		{
 			return

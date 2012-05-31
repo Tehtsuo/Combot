@@ -57,7 +57,7 @@ objectdef obj_Salvage inherits obj_State
 			Move:Bookmark[${Target}]
 			This:QueueState["Traveling"]
 			This:QueueState["Log", 1000, "Salvaging at ${Target}"]
-			This:QueueState["SalvageWrecks", 1000]
+			This:QueueState["SalvageWrecks", 500]
 			This:QueueState["DeleteBookmark", 1000, ${Target}]
 			This:QueueState["OpenCargoHold"]
 			This:QueueState["CheckCargoHold", 5000]
@@ -169,6 +169,7 @@ objectdef obj_Salvage inherits obj_State
 				UI:Update["obj_Salvage", "Gate found, activating", "g"]
 				This:Clear
 				Move:Gate[${Entity[GroupID == GROUP_WARPGATE].ID}]
+				This:QueueState["Idle", 5000]
 				This:QueueState["Traveling"]
 				This:QueueState["SalvageWrecks", 500]
 				This:QueueState["OpenCargoHold"]
@@ -235,7 +236,7 @@ objectdef obj_LootCans inherits obj_State
 	
 	method Enable()
 	{
-		This:QueueState["Loot", 1000]
+		This:QueueState["Loot", 1500]
 	}
 	
 	method Disable()
