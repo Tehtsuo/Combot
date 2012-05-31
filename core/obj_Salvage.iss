@@ -11,8 +11,6 @@ objectdef obj_Salvage inherits obj_State
 	method Start()
 	{
 		UI:Update["obj_Salvage", "Started", "g"]
-		This:QueueState["CyclePeopleAndPlaces", 1000]
-		This:QueueState["CyclePeopleAndPlaces", 1000]
 		This:QueueState["CheckBookmarks"]
 	}
 	
@@ -214,17 +212,10 @@ objectdef obj_Salvage inherits obj_State
 			This:QueueState["Traveling"]
 			This:QueueState["Offload"]
 		}
-		This:QueueState["CyclePeopleAndPlaces", 1000]
-		This:QueueState["CyclePeopleAndPlaces", 1000]
 		This:QueueState["CheckBookmarks"]
 		return TRUE;
 	}
 
-	member:bool CyclePeopleAndPlaces()
-	{
-		EVE:Execute[OpenPeopleAndPlaces]
-		return TRUE
-	}
 	
 	member:bool Offload()
 	{
