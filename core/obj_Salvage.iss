@@ -148,7 +148,7 @@ objectdef obj_Salvage inherits obj_State
 				if  !${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]} &&\
 					${TargetIterator.Value.Distance} < ${Ship.ModuleList_TractorBeams.Range} &&\
 					${TargetIterator.Value.Distance} > LOOT_RANGE &&\
-					${TargetIterator.Value.IsLockedTarget &&\
+					${TargetIterator.Value.IsLockedTarget} &&\
 					${ReactivateTractor}
 				{
 					UI:Update["obj_Salvage", "Reactivating tractor beam - ${TargetIterator.Value.Name}", "g"]
