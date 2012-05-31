@@ -11,7 +11,10 @@ objectdef obj_Salvage inherits obj_State
 	method Start()
 	{
 		UI:Update["obj_Salvage", "Started", "g"]
-		This:QueueState["CheckCargoHold", 5000]
+		if ${This.States.Used} == 0
+		{
+			This:QueueState["CheckCargoHold", 5000]
+		}
 	}
 	
 	method Stop()

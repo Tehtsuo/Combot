@@ -71,8 +71,18 @@
 							<X>0</X>
 							<Y>0</Y>
 							<Width>100%</Width>
-							<Height>100%</Height>
+							<Height>90%</Height>
 						</console>
+						<combobox Name="ComBot_Mode">
+							<BackgroundColor>FF000000</BackgroundColor>
+							<X>0</X>
+							<Y>90%</Y>
+							<Width>100%</Width>
+							<Height>10%</Height>
+							<Items>
+								<Item Value='Salvager'>Dedicated Salvager</Item>
+							</Items>
+						</combobox>
 					</Tab>
 					<Tab Name='Salvager'>
 						<frame name='obj_SalvageFillerFrame'>
