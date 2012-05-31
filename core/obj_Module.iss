@@ -42,18 +42,19 @@ objectdef obj_Module inherits obj_State
 	
 	method Activate(int64 target = -1)
 	{
-		variable int Module = ${This.GetInactive}
+		variable int ModuleNumber = ${This.GetInactive}
+		echo Activating slot ${ModuleNumber} - ${target}
 		if ${target} == -1
 		{
-			This.ModList[${Module}]:Activate
-			ModuleTarget:Set[${Module}, ${Me.ActiveTarget.ID}]
+			This.ModList[${ModuleNumber}]:Activate
+			ModuleTarget:Set[${ModuleNumber}, ${Me.ActiveTarget.ID}]
 		}
 		else
 		{
-			This.ModList[${Module}]:Activate
-			ModuleTarget:Set[${Module}, ${target}]
+			This.ModList[${ModuleNumber}]:Activate[${target}]
+			ModuleTarget:Set[${ModuleNumber}, ${target}]
 		}
-		ModuleActive:Set[${Module}, TRUE]
+		ModuleActive:Set[${ModuleNumber}, TRUE]
 	}
 	
 	method ActivateCount(int moduleCount, int64 target = -1)
@@ -180,7 +181,7 @@ objectdef obj_Module inherits obj_State
 		return ${varActiveCount}
 	}
 
-	member:int InctiveCount()
+	member:int InactiveCount()
 	{
 		variable int varInctiveCount = 0
 		variable iterator ModuleIterator
@@ -204,7 +205,7 @@ objectdef obj_Module inherits obj_State
 		return ${This.ModList.Used}
 	}
 	
-	member:double Range()
+	member:float Range()
 	{
 		return ${This.ModList.Get[1].OptimalRange}
 	}
