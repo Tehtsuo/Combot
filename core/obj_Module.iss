@@ -121,6 +121,6 @@ objectdef obj_Module inherits obj_State
 	
 	member:string GetFallthroughObject()
 	{
-		return ${This.ObjectName}.ActualModule
+		return ActualModule
 	}
 }
