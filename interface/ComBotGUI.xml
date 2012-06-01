@@ -117,7 +117,6 @@
 									<Text>Salvage Bookmarks</Text>
 						</Text>						 
 						<listbox Name="obj_SalvageBookmarkList">
-							<Font template='Console.Font' />
 							<BackgroundColor>FF000000</BackgroundColor>
 							<Border>1</Border>
 							<BorderColor>FFFFFFFF</BorderColor>
@@ -125,6 +124,9 @@
 							<Y>10%</Y>
 							<Width>40%</Width>
 							<Height>90%</Height>
+							<OnLoad>
+								echo ${This.FullName}
+							</OnLoad>
 						</listbox>
 					</Tab>
 				</Tabs>

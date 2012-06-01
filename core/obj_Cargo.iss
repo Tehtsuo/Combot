@@ -1,32 +1,41 @@
 
-objectdef obj_Cargo
+objectdef obj_Cargo inherits obj_State
 {
 	variable index:int64 CargoList
+	
+	variable bool Active=FALSE
 
+	method Initialize()
+	{
+		This[parent]:Initialize
+		UI:Update["obj_Cargo", "Initialized", "g"]
+	}
 
+	
 	method PopulateCargoList(string location)
 	{
+		variable index:item MyCargo
 		switch ${location} 
 		{
 			case SHIP
-				Me.Ship:GetCargo[This.MyCargo]
+				Me.Ship:GetCargo[MyCargo]
 				break
 			case SHIPCORPORATEHANGAR
-				Me.Ship:GetCorpHangarsCargo[This.MyCargo]
+				Me.Ship:GetCorpHangarsCargo[MyCargo]
 				break
 			case SHIPOREHOLD
-				Me.Ship:GetOreHoldCargo[This.MyCargo]
+				Me.Ship:GetOreHoldCargo[MyCargo]
 				break
 		}
 
 		variable iterator CargoIterator
 
-		This.CargoToTransfer:Clear		
-		This.MyCargo:GetIterator[CargoIterator]
+		This.CargoList:Clear		
+		MyCargo:GetIterator[CargoIterator]
 		if ${CargoIterator:First(exists)}
 		do
 		{
-			This.CargoToTransfer:Insert[${CargoIterator.Value.ID}]
+			This.CargoList:Insert[${CargoIterator.Value.ID}]
 		}
 		while ${CargoIterator:Next(exists)}
 	}
@@ -36,20 +45,25 @@ objectdef obj_Cargo
 		switch ${location} 
 		{
 			case SHIP
-				EVE:MoveItemsTo[CargoList, MyShip, CargoHold]
+				EVE:MoveItemsTo[This.CargoList, MyShip, CargoHold]
 				break
 			case SHIPCORPORATEHANGAR
-				EVE:MoveItemsTo[CargoList, MyShip, CorpHangars, ${foldername}]
+				EVE:MoveItemsTo[This.CargoList, MyShip, CorpHangars, ${foldername}]
 				break
 			case SHIPOREHOLD
-				EVE:MoveItemsTo[CargoList, MyShip, OreHold]
+				EVE:MoveItemsTo[This.CargoList, MyShip, OreHold]
 				break
 			case HANGAR
-				EVE:MoveItemsTo[CargoList, MyStationHangar, Hangar]
+				EVE:MoveItemsTo[This.CargoList, MyStationHangar, Hangar]
 				break
 			case CORPORATEHANGAR
-				EVE:MoveItemsTo[CargoList, MyStationCorporateHangar, StationCorporateHangar, ${foldername}]
+				EVE:MoveItemsTo[This.CargoList, MyStationCorporateHangar, StationCorporateHangar, ${foldername}]
 				break
 		}
+	}
+	
+	method MoveMax(string From, string To)
+	{
+		
 	}
 }

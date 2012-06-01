@@ -14,6 +14,7 @@
 #include core/obj_Module.iss
 #include core/obj_ModuleList.iss
 #include core/obj_Ship.iss
+#include core/obj_Cargo.iss
 #include core/obj_Salvage.iss
 #include core/obj_Targets.iss
 
@@ -36,6 +37,7 @@ function main()
 	declarevariable Move obj_Move script
 	declarevariable InstaWarp obj_InstaWarp script
 	declarevariable Ship obj_Ship script
+	declarevariable Cargo obj_Cargo script
 	declarevariable Salvager obj_Salvage script
 	declarevariable Targets obj_Targets script
 

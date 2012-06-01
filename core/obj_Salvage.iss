@@ -40,15 +40,19 @@ objectdef obj_Salvage inherits obj_State
 		
 		EVE:GetBookmarks[Bookmarks]
 		Bookmarks:GetIterator[BookmarkIterator]
+		UIElement[obj_SalvageBookmarkList@Salvager@ComBotTab@ComBot]:ClearItems
 		if ${BookmarkIterator:First(exists)}
 		do
-		{
-			
-			if ${BookmarkIterator.Value.Label.Left[8].Upper.Equal["SALVAGE:"]} && ${BookmarkIterator.Value.TimeCreated.Compare[${BookmarkTime}]} < 0
+		{	
+			if ${BookmarkIterator.Value.Label.Left[8].Upper.Equal["SALVAGE:"]}
 			{
-				Target:Set[${BookmarkIterator.Value.Label}]
-				BookmarkTime:Set[${BookmarkIterator.Value.TimeCreated}]
-				BookmarkFound:Set[TRUE]
+				UIElement[obj_SalvageBookmarkList@Salvager@ComBotTab@ComBot]:AddItem[${BookmarkIterator.Value.Label}]
+				if ${BookmarkIterator.Value.TimeCreated.Compare[${BookmarkTime}]} < 0
+				{
+					Target:Set[${BookmarkIterator.Value.Label}]
+					BookmarkTime:Set[${BookmarkIterator.Value.TimeCreated}]
+					BookmarkFound:Set[TRUE]
+				}
 			}
 		}
 		while ${BookmarkIterator:Next(exists)}
@@ -59,7 +63,7 @@ objectdef obj_Salvage inherits obj_State
 			Move:Bookmark[${Target}]
 			This:QueueState["Traveling"]
 			This:QueueState["Log", 1000, "Salvaging at ${Target}"]
-			This:QueueState["SalvageWrecks", 1000]
+			This:QueueState["SalvageWrecks", 500]
 			This:QueueState["DeleteBookmark", 1000, ${Target}]
 			This:QueueState["OpenCargoHold"]
 			This:QueueState["CheckCargoHold", 5000]
@@ -226,7 +230,7 @@ objectdef obj_Salvage inherits obj_State
 			This:QueueState["Traveling"]
 			This:QueueState["Offload"]
 		}
-		;This:QueueState["CycleBookmarks", 3000]
+		This:QueueState["RefreshBookmarks", 3000]
 		This:QueueState["CheckBookmarks"]
 		return TRUE;
 	}
@@ -234,37 +238,24 @@ objectdef obj_Salvage inherits obj_State
 	
 	member:bool Offload()
 	{
+		UI:Update["obj_Salvage", "Unloading cargo", "g"]
 		Cargo:PopulateCargoList[SHIP]
 		Cargo:MoveCargoList[HANGAR]
+		This:Clear
 		This:QueueState["Log", 1000, "Idling for 1 minute"]
 		This:QueueState["Idle", 60000]
-		;This:QueueState["CycleBookmarks", 3000]
+		This:QueueState["RefreshBookmarks", 3000]
 		This:QueueState["CheckBookmarks"]
 		return TRUE
 	}
 	
 	
-	member:bool CycleBookmarks()
+	member:bool RefreshBookmarks()
 	{
-		echo ${EVEWindow[addressbook](exists)} && ${This.ForceBookmarkCycle}
-		if ${EVEWindow[addressbook](exists)} && !${This.ForceBookmarkCycle}
-		{
-			return TRUE
-		}
-		if ${EVEWindow[addressbook](exists)} && ${This.ForceBookmarkCycle}
-		{
-			UI:Update["obj_Salvage", "Closing address book", "g"]
-			EVEWindow[addressbook]:Close
-			This.ForceBookmarkCycle:Set[FALSE]
-			return TRUE
-		}
-		if !${EVEWindow[addressbook](exists)}
-		{
-			UI:Update["obj_Salvage", "Opening address book", "g"]
-			EVE:Execute[OpenPeopleAndPlaces]
-			This.ForceBookmarkCycle:Set[TRUE]
-			return FALSE
-		}
+		UI:Update["obj_Salvage", "Refreshing bookmarks", "g"]
+	
+		EVE:RefreshBookmarks
+		return TRUE
 	}
 }
 

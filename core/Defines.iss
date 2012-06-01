@@ -2,6 +2,16 @@
 #define WARP_RANGE 																								150000
 #define LOOT_RANGE 																								2490
 
+#define CATEGORYID_CELESTIAL																					2
+#define CATEGORYID_STATION 																						3
+#define CATEGORYID_MINERAL 																						4
+#define CATEGORYID_SHIP    																						6
+#define CATEGORYID_CHARGE  																						8
+#define CATEGORYID_ENTITY																						11
+#define CATEGORYID_ORE     																						25
+#define CATEGORYID_GLACIAL_MASS 																				25
+
+
 #define GROUP_AFTERBURNER 																						46
 #define GROUP_SHIELD_BOOSTER 																					40
 #define GROUP_SHIELD_HARDENER 																					77
