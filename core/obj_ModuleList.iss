@@ -17,7 +17,6 @@ objectdef obj_ModuleList
 			{
 				if !${ModuleIterator.Value.IsActive}
 				{
-					echo GetInactive - ${ModuleIterator.Key}
 					return ${ModuleIterator.Key}
 				}
 			}
@@ -28,12 +27,28 @@ objectdef obj_ModuleList
 	
 	method Activate(int64 target=-1)
 	{
-		variable int modToActivate = ${This.GetInactive}
-		if ${modToActivate} == -1
+		This:ActivateCount[1, ${target}]
+	}
+	
+	method ActivateCount(int count, int64 target=-1)
+	{
+		variable int activatedCount
+		if ${ModuleIterator:First(exists)}
 		{
-			return
+			do
+			{
+				if !${ModuleIterator.Value.IsActive}
+				{
+					ModuleIterator.Value:Activate[${target}]
+					activatedCount:Inc
+				}
+				if ${activatedCount} >= ${count}
+				{
+					return
+				}
+			}
+			while ${ModuleIterator:Next(exists)}
 		}
-		Modules[${modToActivate}]:Activate[${target}]
 	}
 	
 	method Reactivate(int ModuleID, int64 target=-1)
