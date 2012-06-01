@@ -17,7 +17,7 @@ objectdef obj_Module inherits obj_State
 		{
 			This:Deactivate
 		}
-		This:QueueState["ActivateOn", 100, ${target}]
+		This:QueueState["ActivateOn", 100, "${target}"]
 		Activated:Set[TRUE]
 		Deactivated:Set[FALSE]
 		CurrentTarget:Set[${target}]
@@ -29,7 +29,7 @@ objectdef obj_Module inherits obj_State
 		Activated:Set[FALSE]
 		Deactivated:Set[TRUE]
 		This:Clear
-		This:QueueState["WatchDeactivation", 100, 10]
+		This:QueueState["WatchDeactivation", 100, "10"]
 		This:QueueState["WatchFinish", 100]
 	}
 
@@ -65,7 +65,8 @@ objectdef obj_Module inherits obj_State
 			Activated:Set[FALSE]
 			return TRUE
 		}
-		This:SetArgs[${countdown}-1]
+		countdown:Dec
+		This:SetArgs["${countdown}"]
 		return FALSE
 	}
 
@@ -80,7 +81,7 @@ objectdef obj_Module inherits obj_State
 ;		{
 ;			MyShip.Modules[${ModuleID}]:Activate[${target}]
 ;		}
-		This:QueueState["WatchActivation", 100, 10]
+		This:QueueState["WatchActivation", 100, "10"]
 		This:QueueState["WatchFinish", 100]
 		return TRUE
 	}
@@ -109,7 +110,8 @@ objectdef obj_Module inherits obj_State
 			Deactivated:Set[FALSE]
 			return TRUE
 		}
-		This:SetArgs[${countdown}-1]
+		countdown:Dec
+		This:SetArgs["${countdown}"]
 		return FALSE
 	}
 	
