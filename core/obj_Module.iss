@@ -71,16 +71,18 @@ objectdef obj_Module inherits obj_State
 
 	member:bool ActivateOn(int64 target = -1)
 	{
-		if ${target} == -1
-		{
-			MyShip.Modules[${ModuleID}]:Activate
-		}
-		else
-		{
-			MyShip.Modules[${ModuleID}]:Activate[${target}]
-		}
+		echo ${target} - ${target(type)}
+;		if ${target} == -1
+;		{
+;			MyShip.Modules[${ModuleID}]:Activate
+;		}
+;		else
+;		{
+;			MyShip.Modules[${ModuleID}]:Activate[${target}]
+;		}
 		This:QueueState["WatchActivation", 100, 10]
 		This:QueueState["WatchFinish", 100]
+		return TRUE
 	}
 
 	member:bool WatchFinish()
