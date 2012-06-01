@@ -14,7 +14,8 @@ objectdef obj_Salvage inherits obj_State
 		UI:Update["obj_Salvage", "Started", "g"]
 		if ${This.IsIdle}
 		{
-			This:QueueState["SalvageWrecks", 2000]
+			This:QueueState["OpenCargoHold"]
+			This:QueueState["CheckCargoHold", 5000]
 		}
 	}
 	
@@ -111,7 +112,7 @@ objectdef obj_Salvage inherits obj_State
 		{
 			MaxTarget:Set[${Me.MaxLockedTargets}]
 		}
-		
+		echo Inactive Tractor Beams - ${Ship.ModuleList_TractorBeams.InactiveCount}
 		EVE:QueryEntities[TargetIndex, "(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && HaveLootRights && !IsAbandoned"]
 		TargetIndex:GetIterator[TargetIterator]
 		if ${TargetIterator:First(exists)}
