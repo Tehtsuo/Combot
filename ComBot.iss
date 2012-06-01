@@ -7,13 +7,13 @@
 #include core/obj_ComBot.iss
 #include core/obj_Configuration.iss
 
+#include core/obj_State.iss
 #include core/obj_ComBotUI.iss
 #include core/obj_Client.iss
 #include core/obj_Move.iss
 #include core/obj_Module.iss
 #include core/obj_ModuleList.iss
 #include core/obj_Ship.iss
-#include core/obj_State.iss
 #include core/obj_Salvage.iss
 #include core/obj_Targets.iss
 

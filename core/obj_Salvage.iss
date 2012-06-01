@@ -14,8 +14,7 @@ objectdef obj_Salvage inherits obj_State
 		UI:Update["obj_Salvage", "Started", "g"]
 		if ${This.IsIdle}
 		{
-			This:QueueState["OpenCargoHold"]
-			This:QueueState["CheckCargoHold", 5000]
+			This:QueueState["SalvageWrecks", 2000]
 		}
 	}
 	
@@ -136,7 +135,7 @@ objectdef obj_Salvage inherits obj_State
 				}
 				;echo ${TargetIterator.Value.Name} - ${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]}
 				if  !${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]} &&\
-					${TargetIterator.Value.Distance} < ${Ship.ModuleList_TractorBeams.Range} &&\
+					${TargetIterator.Value.Distance} < ${Ship.Module_TractorBeams_Range} &&\
 					${TargetIterator.Value.Distance} > LOOT_RANGE &&\
 					${Ship.ModuleList_TractorBeams.InactiveCount} > 0 &&\
 					${TargetIterator.Value.IsLockedTarget}
@@ -145,14 +144,15 @@ objectdef obj_Salvage inherits obj_State
 					Ship.ModuleList_TractorBeams:Activate[${TargetIterator.Value.ID}]
 					return FALSE
 				}
+				echo ${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]} - ${TargetIterator.Value.ID}
 				if  !${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]} &&\
-					${TargetIterator.Value.Distance} < ${Ship.ModuleList_TractorBeams.Range} &&\
+					${TargetIterator.Value.Distance} < ${Ship.Module_TractorBeams_Range} &&\
 					${TargetIterator.Value.Distance} > LOOT_RANGE &&\
 					${TargetIterator.Value.IsLockedTarget} &&\
 					${ReactivateTractor}
 				{
 					UI:Update["obj_Salvage", "Reactivating tractor beam - ${TargetIterator.Value.Name}", "g"]
-					Ship.ModuleList_TractorBeams.Get[${ClosestTractorKey}]:Activate[${TargetIterator.Value.ID}]
+					Ship.ModuleList_TractorBeams:Reactivate[${ClosestTractorKey}, ${TargetIterator.Value.ID}]
 					return FALSE
 				}
 				if  ${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]} &&\
@@ -164,7 +164,7 @@ objectdef obj_Salvage inherits obj_State
 					ReactivateTractor:Set[TRUE]
 				}
 				if  !${Ship.ModuleList_Salvagers.IsActiveOn[${TargetIterator.Value.ID}]} &&\
-					${TargetIterator.Value.Distance} < ${Ship.ModuleList_Salvagers.Range} &&\
+					${TargetIterator.Value.Distance} < ${Ship.Module_Salvagers_Range} &&\
 					${Ship.ModuleList_Salvagers.InactiveCount} > 0 &&\
 					${TargetIterator.Value.IsLockedTarget}
 				{
