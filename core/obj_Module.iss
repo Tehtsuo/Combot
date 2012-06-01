@@ -123,6 +123,6 @@ objectdef obj_Module inherits obj_State
 	
 	member:string GetFallthroughObject()
 	{
-		return ActualModule
+		return MyShip.Module[${ActualModule.ID}]
 	}
 }
