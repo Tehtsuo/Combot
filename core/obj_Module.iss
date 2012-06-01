@@ -8,12 +8,12 @@ objectdef obj_Module inherits obj_State
 	{
 		This[parent]:Initialize
 		DeclareVariable ActualModule module object ${ID}
-		echo Created ${ActualModule.Name}
+		echo Created ${ActualModule.ToItem.Name}
 	}
 
 	method Activate(int64 target = -1)
 	{
-		echo Activating ${ActualModule.Name}
+		echo Activating ${ActualModule.ToItem.Name}
 		if ${IsActive}
 		{
 			This:Deactivate
