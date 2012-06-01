@@ -207,7 +207,7 @@ objectdef obj_ModuleList inherits obj_State
 
 	member:string GetFallthroughObject()
 	{
-		return ${This.ObjectName}.ModList
+		return Ship.${This.ObjectName}.ModList
 	}
 	
 	method Insert(int64 ID)
