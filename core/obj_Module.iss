@@ -1,131 +1,82 @@
 objectdef obj_Module inherits obj_State
 {
-	variable bool Activated = FALSE
-	variable bool Deactivated = FALSE
-	variable int CurrentTarget = -1
+	variable bool Activated
+	variable bool Deactivated
+	variable int64 CurrentTarget
 	variable int64 ModuleID
-
+	
 	method Initialize(int64 ID)
 	{
 		This[parent]:Initialize
 		ModuleID:Set[${ID}]
 	}
-
-	method Activate(int64 target = -1)
-	{
-		if ${This.IsActive}
-		{
-			This:Deactivate
-		}
-		This:QueueState["ActivateOn", 100, "${target}"]
-		Activated:Set[TRUE]
-		Deactivated:Set[FALSE]
-		CurrentTarget:Set[${target}]
-	}
 	
-	method Deactivate()
-	{
-		MyShip.Modules[${ModuleID}]:Deactivate
-		Activated:Set[FALSE]
-		Deactivated:Set[TRUE]
-		This:Clear
-		This:QueueState["WatchDeactivation", 100, "10"]
-		This:QueueState["WatchFinish", 100]
-	}
-
 	member:bool IsActive()
 	{
-		if ${Activated}
-		{
-			return TRUE
-		}
-		return ${MyShip.Modules[${ModuleID}].IsActive}
-	}
-
-	member:bool IsDeactivating()
-	{
-		if ${Deactivated}
-		{
-			return TRUE
-		}
-		return ${MyShip.Modules[${ModuleID}].IsDeactivating}
+		return ${Activated}
 	}
 	
-	
-	
-	member:bool WatchActivation(int countdown)
+	member:bool IsActiveOn(int64 checkTarget)
 	{
-		if ${countdown} <= 0
+		if ${CurrentTarget} == ${checkTarget} && ${This.IsActive}
 		{
-			Activated:Set[FALSE]
 			return TRUE
 		}
-		if ${MyShip.Modules[${ModuleID}].IsActive}
-		{
-			Activated:Set[FALSE]
-			return TRUE
-		}
-		countdown:Dec
-		This:SetArgs["${countdown}"]
 		return FALSE
 	}
-
-	member:bool ActivateOn(int64 target = -1)
+	
+	method Activate(int64 newTarget=-1, bool Deactivate=TRUE)
 	{
-		echo ${target} - ${target(type)}
-;		if ${target} == -1
-;		{
-;			MyShip.Modules[${ModuleID}]:Activate
-;		}
-;		else
-;		{
-;			MyShip.Modules[${ModuleID}]:Activate[${target}]
-;		}
-		This:QueueState["WatchActivation", 100, "10"]
-		This:QueueState["WatchFinish", 100]
+		if ${Deactivate} && ${This.IsActive}
+		{
+			echo "Deactivating"
+			MyShip.Module[${ModuleID}]:Deactivate
+			This:Clear
+			This:QueueState["WaitTillInactive", 100]
+		}
+		echo "QueueActivate on ${newTarget}"
+		This:QueueState["ActivateOn", 100, "${newTarget}"]
+		This:QueueState["WaitTillActive", 100]
+		This:QueueState["WaitTillInactive", 100]
+		if ${Deactivate}
+		{
+			CurrentTarget:Set[${newTarget}]
+			Activated:Set[TRUE]
+			Deactivated:Set[FALSE]
+		}
+	}
+	
+	member:bool ActivateOn(int64 newTarget)
+	{
+		echo "Activating on ${newTarget}"
+		if ${newTarget} == -1
+		{
+			MyShip.Module[${ModuleID}]:Activate
+		}
+		else
+		{
+			MyShip.Module[${ModuleID}]:Activate[${newTarget}]
+		}
+		Activated:Set[TRUE]
+		Deactivated:Set[FALSE]
+		CurrentTarget:Set[${newTarget}]
 		return TRUE
 	}
-
-	member:bool WatchFinish()
+	
+	member:bool WaitTillActive()
 	{
-		if !${MyShip.Modules[${ModuleID}].IsActive}
-		{
-			CurrentTarget:Set[-1]
-			return TRUE
-		}
-		return FALSE
-	}
-
-	member:bool WatchDeactivation(int countdown)
-	{
-		if ${countdown} <= 0
-		{
-			CurrentTarget:Set[-1]
-			Deactivated:Set[FALSE]
-			return TRUE
-		}
-		if !${MyShip.Modules[${ModuleID}].IsActive}
-		{
-			CurrentTarget:Set[-1]
-			Deactivated:Set[FALSE]
-			return TRUE
-		}
-		countdown:Dec
-		This:SetArgs["${countdown}"]
-		return FALSE
+		return ${MyShip.Module[${ModuleID}].IsActive}
 	}
 	
-	member:bool IsActiveOn(int64 target = -1)
+	member:bool WaitTillInactive()
 	{
-		if ${This.IsActive} && ${target} == ${CurrentTarget}
+		if ${MyShip.Module[${ModuleID}].IsActive}
 		{
-			return TRUE
+			return FALSE
 		}
-		return FALSE
-	}
-	
-	member:string GetFallthroughObject()
-	{
-		return MyShip.Module[${ModuleID}]
+		Activated:Set[FALSE]
+		Deactivated:Set[FALSE]
+		CurrentTarget:Set[-1]
+		return TRUE
 	}
 }
