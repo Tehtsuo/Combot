@@ -17,6 +17,7 @@ objectdef obj_ModuleList
 			{
 				if !${ModuleIterator.Value.IsActive}
 				{
+					echo GetInactive - ${ModuleIterator.Key}
 					return ${ModuleIterator.Key}
 				}
 			}
