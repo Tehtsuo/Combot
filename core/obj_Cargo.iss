@@ -1,9 +1,17 @@
 
-objectdef obj_Cargo
+objectdef obj_Cargo inherits obj_State
 {
 	variable index:int64 CargoList
+	
+	variable bool Active=FALSE
 
+	method Initialize()
+	{
+		This[parent]:Initialize
+		UI:Update["obj_Cargo", "Initialized", "g"]
+	}
 
+	
 	method PopulateCargoList(string location)
 	{
 		switch ${location} 
@@ -51,5 +59,10 @@ objectdef obj_Cargo
 				EVE:MoveItemsTo[CargoList, MyStationCorporateHangar, StationCorporateHangar, ${foldername}]
 				break
 		}
+	}
+	
+	method MoveMax(string From, string To)
+	{
+		
 	}
 }
