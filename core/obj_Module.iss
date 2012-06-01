@@ -7,7 +7,7 @@ objectdef obj_Module inherits obj_State
 	method Initialize(int64 ID)
 	{
 		This[parent]:Initialize
-		DeclareVariable ActualModule module object = ${ID}
+		DeclareVariable ActualModule module object ${ID}
 	}
 
 	method Activate(int64 target = -1)
