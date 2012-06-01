@@ -3,11 +3,12 @@ objectdef obj_Module inherits obj_State
 	variable bool Activated = FALSE
 	variable bool Deactivated = FALSE
 	variable int CurrentTarget = -1
+	variable int64 ModuleID
 
 	method Initialize(int64 ID)
 	{
 		This[parent]:Initialize
-		DeclareVariable ActualModule module object ${ID}
+		ModuleID:Set[${ID}]
 	}
 
 	method Activate(int64 target = -1)
@@ -24,7 +25,7 @@ objectdef obj_Module inherits obj_State
 	
 	method Deactivate()
 	{
-		ActualModule:Deactivate
+		MyShip.Modules[${ModuleID}]:Deactivate
 		Activated:Set[FALSE]
 		Deactivated:Set[TRUE]
 		This:Clear
@@ -38,7 +39,7 @@ objectdef obj_Module inherits obj_State
 		{
 			return TRUE
 		}
-		return ${ActualModule.IsActive}
+		return ${MyShip.Modules[${ModuleID}].IsActive}
 	}
 
 	member:bool IsDeactivating()
@@ -47,7 +48,7 @@ objectdef obj_Module inherits obj_State
 		{
 			return TRUE
 		}
-		return ${ActualModule.IsDeactivating}
+		return ${MyShip.Modules[${ModuleID}].IsDeactivating}
 	}
 	
 	
@@ -59,7 +60,7 @@ objectdef obj_Module inherits obj_State
 			Activated:Set[FALSE]
 			return TRUE
 		}
-		if ${ActualModule.IsActive}
+		if ${MyShip.Modules[${ModuleID}].IsActive}
 		{
 			Activated:Set[FALSE]
 			return TRUE
@@ -72,11 +73,11 @@ objectdef obj_Module inherits obj_State
 	{
 		if ${target} == -1
 		{
-			ActualModule:Activate
+			MyShip.Modules[${ModuleID}]:Activate
 		}
 		else
 		{
-			ActualModule:Activate[${target}]
+			MyShip.Modules[${ModuleID}]:Activate[${target}]
 		}
 		This:QueueState["WatchActivation", 100, 10]
 		This:QueueState["WatchFinish", 100]
@@ -84,7 +85,7 @@ objectdef obj_Module inherits obj_State
 
 	member:bool WatchFinish()
 	{
-		if !${ActualModule.IsActive}
+		if !${MyShip.Modules[${ModuleID}].IsActive}
 		{
 			CurrentTarget:Set[-1]
 			return TRUE
@@ -100,7 +101,7 @@ objectdef obj_Module inherits obj_State
 			Deactivated:Set[FALSE]
 			return TRUE
 		}
-		if !${ActualModule.IsActive}
+		if !${MyShip.Modules[${ModuleID}].IsActive}
 		{
 			CurrentTarget:Set[-1]
 			Deactivated:Set[FALSE]
@@ -121,6 +122,6 @@ objectdef obj_Module inherits obj_State
 	
 	member:string GetFallthroughObject()
 	{
-		return MyShip.Module[${ActualModule.ID}]
+		return MyShip.Module[${ModuleID}]
 	}
 }
