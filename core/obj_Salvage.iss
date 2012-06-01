@@ -97,15 +97,15 @@ objectdef obj_Salvage inherits obj_State
 		variable int ClosestTractorKey
 		variable bool ReactivateTractor = FALSE
 		
-;		if ${Targets.NPC}
-;		{
-;			UI:Update["obj_Salvage", "Pocket has NPCs - returning to station", "g"]
-;			This:Clear
-;			Move:Bookmark["Salvager Home Base"]
-;			This:QueueState["Traveling"]
-;			This:QueueState["Offload"]
-;			return TRUE
-;		}
+		if ${Targets.NPC}
+		{
+			UI:Update["obj_Salvage", "Pocket has NPCs - returning to station", "g"]
+			This:Clear
+			Move:Bookmark["Salvager Home Base"]
+			This:QueueState["Traveling"]
+			This:QueueState["Offload"]
+			return TRUE
+		}
 		
 		if ${Me.MaxLockedTargets} < ${MyShip.MaxLockedTargets}
 		{
