@@ -52,7 +52,7 @@ objectdef obj_State
 			if ${States.Used} == 0
 			{
 				This.IsIdle:Set[TRUE]
-				States:Queue["Idle", 1000];
+				This:QueueState["Idle", 100];
 			}
 
 			This.NextPulse:Set[${Math.Calc[${LavishScript.RunningTime} + ${States.Peek.Frequency} + ${Math.Rand[500]}]}]
