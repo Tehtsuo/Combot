@@ -13,7 +13,7 @@ objectdef obj_Module inherits obj_State
 
 	method Activate(int64 target = -1)
 	{
-		if ${IsActive}
+		if ${This.IsActive}
 		{
 			This:Deactivate
 		}
@@ -113,7 +113,7 @@ objectdef obj_Module inherits obj_State
 	
 	member:bool IsActiveOn(int64 target = -1)
 	{
-		if ${IsActive} && ${target} == ${CurrentTarget}
+		if ${This.IsActive} && ${target} == ${CurrentTarget}
 		{
 			return TRUE
 		}
