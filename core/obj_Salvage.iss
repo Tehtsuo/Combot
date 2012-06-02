@@ -15,7 +15,6 @@ objectdef obj_Salvage inherits obj_State
 	method Start()
 	{
 		UI:Update["obj_Salvage", "Started", "g"]
-		echo IDLE:  ${This.IsIdle}
 		if ${This.IsIdle}
 		{
 			This:QueueState["OpenCargoHold"]
@@ -33,7 +32,6 @@ objectdef obj_Salvage inherits obj_State
 
 	member:bool CheckBookmarks()
 	{
-		echo CheckBookmarks
 		variable index:bookmark Bookmarks
 		variable iterator BookmarkIterator
 		variable string Target
@@ -86,6 +84,7 @@ objectdef obj_Salvage inherits obj_State
 				{
 					if ${HoldOffIterator.Value.Equal[${BookmarkIterator.Value.CreatorID}]}
 					{
+						UIElement[obj_SalvageBookmarkList@Salvager@ComBotTab@ComBot].ItemByText[${BookmarkIterator.Value.Label}]:SetTextColor[FFFF0000]
 						InHoldOff:Set[TRUE]
 					}
 				}
@@ -94,6 +93,7 @@ objectdef obj_Salvage inherits obj_State
 				{
 					if (${BookmarkIterator.Value.TimeCreated.Compare[${BookmarkTime}]} < 0 && ${BookmarkIterator.Value.DateCreated.Compare[${BookmarkDate}]} <= 0) || ${BookmarkIterator.Value.DateCreated.Compare[${BookmarkDate}]} < 0
 					{
+						UIElement[obj_SalvageBookmarkList@Salvager@ComBotTab@ComBot].ItemByText[${BookmarkIterator.Value.Label}]:SetTextColor[FF0000FF]
 						Target:Set[${BookmarkIterator.Value.Label}]
 						BookmarkTime:Set[${BookmarkIterator.Value.TimeCreated}]
 						BookmarkDate:Set[${BookmarkIterator.Value.DateCreated}]
@@ -199,7 +199,7 @@ objectdef obj_Salvage inherits obj_State
 				{
 					UI:Update["obj_Salvage", "Locking - ${TargetIterator.Value.Name}", "g"]
 					TargetIterator.Value:LockTarget
-					AlreadySalvaged:Insert[${TargetIterator.Value.ID}]
+					AlreadySalvaged:Add[${TargetIterator.Value.ID}]
 					return FALSE
 				}
 				if ${TargetIterator.Value.Distance} > ${Ship.Module_TractorBeams_Range}
@@ -309,6 +309,9 @@ objectdef obj_Salvage inherits obj_State
 			else
 			{
 				UI:Update["obj_Salvage", "Gate found, but no more bookmarks from player.  Ignoring", "g"]
+				This:Clear
+				This:QueueState["JumpToCelestial"]
+				This:QueueState["Travelling"]
 			}
 		}
 		This:QueueState["OpenCargoHold"]
@@ -325,19 +328,22 @@ objectdef obj_Salvage inherits obj_State
 	
 	member:bool DeleteBookmark(int64 BookmarkCreator)
 	{
+		echo DeleteBookmark
 		variable index:bookmark Bookmarks
+		variable iterator BookmarkIterator
 		EVE:GetBookmarks[Bookmarks]
 		Bookmarks:GetIterator[BookmarkIterator]
 		if ${BookmarkIterator:First(exists)}
 		do
 		{
+			echo ${BookmarkIterator.Value.Label.Left[8].Upper.Equal["SALVAGE:"]} && ${BookmarkIterator.Value.CreatorID.Equal[${BookmarkCreator}]}
 			if ${BookmarkIterator.Value.Label.Left[8].Upper.Equal["SALVAGE:"]} && ${BookmarkIterator.Value.CreatorID.Equal[${BookmarkCreator}]}
 			{
 				if ${BookmarkIterator.Value.JumpsTo} == 0
 				{
 					if ${BookmarkIterator.Value.Distance} < 500000
 					{
-						UI:Update["obj_Salvage", "Finished Salvaging ${BookmarkIterator.Value.Name} - Deleting", "g"]
+						UI:Update["obj_Salvage", "Finished Salvaging ${BookmarkIterator.Value.Label} - Deleting", "g"]
 						BookmarkIterator.Value:Remove
 						return TRUE
 					}
@@ -345,13 +351,12 @@ objectdef obj_Salvage inherits obj_State
 			}
 		}
 		while ${BookmarkIterator:Next(exists)}
-			UI:Update["obj_Salvage", "Gate present: Not removing bookmark - ${bookmarkname}", "g"]
 		return TRUE
 	}
 	
 	member:bool OpenCargoHold()
 	{
-		echo OpenCargoHold
+		UI:Update["obj_Salvage", "Making sure cargo hold is open", "g"]
 		if !${EVEWindow[ByName, "Inventory"](exists)}
 		{
 			MyShip:OpenCargo[]
@@ -361,12 +366,16 @@ objectdef obj_Salvage inherits obj_State
 	
 	member:bool CheckCargoHold()
 	{
-		echo CheckCargoHold
 		if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) > 0.75
 		{
+			UI:Update["obj_Salvage", "Unload trip required", "g"]
 			Move:Bookmark["Salvager Home Base"]
 			This:QueueState["Traveling"]
 			This:QueueState["Offload"]
+		}
+		else
+		{
+			UI:Update["obj_Salvage", "Unload trip not required", "g"]
 		}
 		This:QueueState["RefreshBookmarks", 3000]
 		This:QueueState["CheckBookmarks"]
