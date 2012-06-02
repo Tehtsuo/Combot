@@ -89,7 +89,7 @@ objectdef obj_State
 				if ${This.${CurState.Name}[${CurState.Args}]}
 				{
 					CurState:Set[${States.Peek.Name}, ${States.Peek.Frequency}, "${States.Peek.Args.Escape}"]
-					UIElement[${QueueListbox}]:RemoveItem[1]
+					UIElement[${QueueListbox}].OrderedItem[1]:Remove
 					States:Dequeue
 				}
 			}
