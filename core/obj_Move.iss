@@ -46,7 +46,7 @@ objectdef obj_Move inherits obj_State
 
 	
 	
-	method Warp(int64 ID, int Distance)
+	method Warp(int64 ID, int Distance=0)
 	{
 		Entity[${ID}]:WarpTo[${Distance}]
 		Client:Wait[5000]
