@@ -158,7 +158,7 @@ objectdef obj_Salvage inherits obj_State
 			HoldOffTimer:Insert[${Math.Calc[${LavishScript.RunningTime} + 600000]}]
 			This:Clear
 			This:QueueState["JumpToCelestial"]
-			This:QueueState["Travelling"]
+			This:QueueState["Traveling"]
 			This:QueueState["RefreshBookmarks", 3000]
 			This:QueueState["CheckBookmarks"]
 			return TRUE
@@ -176,6 +176,7 @@ objectdef obj_Salvage inherits obj_State
 			LootCans:Enable
 			do
 			{
+				echo Before Salvage
 				if  !${TargetIterator.Value.BeingTargeted} && \
 					!${TargetIterator.Value.IsLockedTarget} && \
 					${Targets.LockedAndLockingTargets} == ${MaxTarget}
@@ -191,6 +192,7 @@ objectdef obj_Salvage inherits obj_State
 					}
 					return FALSE
 				}
+				echo After Salvage
 				if  !${TargetIterator.Value.BeingTargeted} && \
 					!${TargetIterator.Value.IsLockedTarget} && \
 					${Targets.LockedAndLockingTargets} < ${MaxTarget} && \
@@ -207,7 +209,8 @@ objectdef obj_Salvage inherits obj_State
 					Move:Approach[${TargetIterator.Value}]
 					return FALSE
 				}
-				;echo ${TargetIterator.Value.Name} - ${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]}
+				echo ${TargetIterator.Value.Name} - ${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]}
+				
 				if  !${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]} &&\
 					${TargetIterator.Value.Distance} < ${Ship.Module_TractorBeams_Range} &&\
 					${TargetIterator.Value.Distance} > LOOT_RANGE &&\
@@ -304,14 +307,14 @@ objectdef obj_Salvage inherits obj_State
 				This:QueueState["DeleteBookmark", 1000, "${BookmarkCreator}"]
 				This:QueueState["GateCheck", 1000, "${BookmarkCreator}"]
 				This:QueueState["JumpToCelestial"]
-				This:QueueState["Travelling"]
+				This:QueueState["Traveling"]
 			}
 			else
 			{
 				UI:Update["obj_Salvage", "Gate found, but no more bookmarks from player.  Ignoring", "g"]
 				This:Clear
 				This:QueueState["JumpToCelestial"]
-				This:QueueState["Travelling"]
+				This:QueueState["Traveling"]
 			}
 		}
 		This:QueueState["OpenCargoHold"]
@@ -404,6 +407,8 @@ objectdef obj_Salvage inherits obj_State
 		EVE:RefreshBookmarks
 		return TRUE
 	}
+	
+
 }
 
 
