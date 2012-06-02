@@ -281,12 +281,15 @@ objectdef obj_Salvage inherits obj_State
 			EVE:GetBookmarks[Bookmarks]
 			Bookmarks:GetIterator[BookmarkIterator]
 			if ${BookmarkIterator:First(exists)}
-			do
 			{
-				if ${BookmarkIterator.Value.Label.Left[8].Upper.Equal["SALVAGE:"]} && ${BookmarkIterator.Value.CreatorID.Equal[${BookmarkCreator}]}
+				do
 				{
-					UseJumpGate:Set[True}
+					if ${BookmarkIterator.Value.Label.Left[8].Upper.Equal["SALVAGE:"]} && ${BookmarkIterator.Value.CreatorID.Equal[${BookmarkCreator}]}
+					{
+						UseJumpGate:Set[True}
+					}
 				}
+				while ${BookmarkIterator:Next(exists)}
 			}
 			if ${UseJumpGate}
 			{
