@@ -32,7 +32,9 @@ objectdef obj_ModuleList
 	
 	method ActivateCount(int count, int64 target=-1)
 	{
-		variable int activatedCount
+		variable int activatedCount = 0
+		variable iterator ModuleIterator
+		Modules:GetIterator[ModuleIterator]
 		if ${ModuleIterator:First(exists)}
 		{
 			do

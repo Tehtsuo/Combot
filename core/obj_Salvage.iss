@@ -35,7 +35,7 @@ objectdef obj_Salvage inherits obj_State
 		variable string Target
 		variable string BookmarkTime="24:00"
 		variable bool BookmarkFound
-		
+		variable string BookmarkDate="9999.99.99"
 		BookmarkFound:Set[FALSE]
 		
 		EVE:GetBookmarks[Bookmarks]
@@ -47,10 +47,12 @@ objectdef obj_Salvage inherits obj_State
 			if ${BookmarkIterator.Value.Label.Left[8].Upper.Equal["SALVAGE:"]}
 			{
 				UIElement[obj_SalvageBookmarkList@Salvager@ComBotTab@ComBot]:AddItem[${BookmarkIterator.Value.Label}]
-				if ${BookmarkIterator.Value.TimeCreated.Compare[${BookmarkTime}]} < 0
+				echo ${BookmarkIterator.Value.TimeCreated} - ${BookmarkIterator.Value.DateCreated} - ${BookmarkIterator.Value.TimeCreated.Compare[${BookmarkTime}]} < 0 || ${BookmarkIterator.Value.DateCreated.Compare[${BookmarkDate}]} < 0
+				if ${BookmarkIterator.Value.TimeCreated.Compare[${BookmarkTime}]} < 0 && ${BookmarkIterator.Value.DateCreated.Compare[${BookmarkDate}]} <= 0
 				{
 					Target:Set[${BookmarkIterator.Value.Label}]
 					BookmarkTime:Set[${BookmarkIterator.Value.TimeCreated}]
+					BookmarkDate:Set[${BookmarkIterator.Value.DateCreated}]
 					BookmarkFound:Set[TRUE]
 				}
 			}
@@ -124,6 +126,16 @@ objectdef obj_Salvage inherits obj_State
 			LootCans:Enable
 			do
 			{
+				if  !${TargetIterator.Value.BeingTargeted} && \
+					!${TargetIterator.Value.IsLockedTarget} && \
+					${Targets.LockedAndLockingTargets} == ${MaxTarget}
+				{
+					if ${TargetIterator.Value.Distance} > ${Ship.Module_TractorBeams_Range}
+					{
+						Move:Approach[${TargetIterator.Value}]
+					}
+					return FALSE
+				}
 				if  !${TargetIterator.Value.BeingTargeted} && \
 					!${TargetIterator.Value.IsLockedTarget} && \
 					${Targets.LockedAndLockingTargets} < ${MaxTarget} && \
