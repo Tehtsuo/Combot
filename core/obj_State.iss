@@ -11,6 +11,13 @@ objectdef obj_StateQueue
 		Args:Set["${arg_Args.Escape}"]
 	}
 	
+	method Set(string arg_Name, int arg_Frequency, string arg_Args)
+	{
+		Name:Set[${arg_Name}]
+		Frequency:Set[${arg_Frequency}]
+		Args:Set["${arg_Args.Escape}"]
+	}
+	
 	method SetArgs(string arg_Args)
 	{
 		Args:Set["${arg_Args.Escape}"]
@@ -20,7 +27,8 @@ objectdef obj_StateQueue
 objectdef obj_State
 {
 	variable queue:obj_StateQueue States
-
+	variable obj_StateQueue CurState
+	
 	variable int NextPulse
 	variable int PulseFrequency = 2000
 	variable bool NonGameTiedPulse = false
@@ -28,7 +36,7 @@ objectdef obj_State
 
 	method Initialize()
 	{
-		This:QueueState["Idle", 100]
+		CurState:Set["Idle", 100, ""]
 		Event[ISXEVE_onFrame]:AttachAtom[This:Pulse]
 	}
 
@@ -43,20 +51,19 @@ objectdef obj_State
 		{
 			if (!${ComBot.Paused} && ${Client.Ready}) || ${This.NonGameTiedPulse}
 			{
-				if ${This.${States.Peek.Name}[${States.Peek.Args}]}
+				if ${States.Used} == 0
 				{
-					echo ${States.Peek.Name}
+					This.IsIdle:Set[TRUE]
+					This:QueueState["Idle", 100];
+				}
+				
+				if ${This.${CurState.Name}[${CurState.Args}]}
+				{
+					CurState:Set[${States.Peek.Name}, ${States.Peek.Frequency}, "${States.Peek.Args.Escape}"]
 					States:Dequeue
 				}
 			}
-			
-			if ${States.Used} == 0
-			{
-				This.IsIdle:Set[TRUE]
-				This:QueueState["Idle", 100];
-			}
-
-			This.NextPulse:Set[${Math.Calc[${LavishScript.RunningTime} + ${States.Peek.Frequency} + ${Math.Rand[500]}]}]
+			This.NextPulse:Set[${Math.Calc[${LavishScript.RunningTime} + ${CurState.Frequency} + ${Math.Rand[500]}]}]
 		}
 	}
 
