@@ -28,6 +28,8 @@ objectdef obj_State
 {
 	variable queue:obj_StateQueue States
 	variable obj_StateQueue CurState
+	variable lguilistbox QueueListbox
+	variable bool DisplayStateQueue=FALSE
 	
 	variable int NextPulse
 	variable int PulseFrequency = 2000
@@ -44,7 +46,33 @@ objectdef obj_State
 	method Shutdown()
 	{
 		Event[ISXEVE_onFrame]:DetachAtom[This:Pulse]
-	}	
+	}
+	
+	method AssignStateQueueDisplay(lguilistbox listbox)
+	{
+		variable iterator StateIterator
+		QueueListbox:Set[${listbox}]
+		DisplayStateQueue:Set[TRUE]
+		QueueListbox:ClearItems
+		States:GetIterator[StateIterator]
+		
+		QueueListbox:AddItem[${CurState.Name}]
+		if ${StateIterator:First(exists)}
+		{
+			do
+			{
+				QueueListbox:AddItem[${StateIterator.Value.Name}]
+			}
+			while ${StateIterator:Next(exists)}
+		}
+		
+	}
+	
+	method DeactivateStateQueueDisplay()
+	{
+		QueueListbox:ClearItems
+		DisplayStateQueue:Set[FALSE]
+	}
 
 	method Pulse()
 	{
@@ -55,12 +83,14 @@ objectdef obj_State
 				if ${States.Used} == 0
 				{
 					This:QueueState["Idle", 100];
+					QueueListbox:AddItem["Idle"]
 					IsIdle:Set[TRUE]
 				}
 				
 				if ${This.${CurState.Name}[${CurState.Args}]}
 				{
 					CurState:Set[${States.Peek.Name}, ${States.Peek.Frequency}, "${States.Peek.Args.Escape}"]
+					QueueListbox:RemoveItem[1]
 					States:Dequeue
 				}
 			}
@@ -80,6 +110,7 @@ objectdef obj_State
 			var_Frequency:Set[${arg_Frequency}]
 		}
 		States:Queue[${arg_Name},${var_Frequency},"${arg_Args.Escape}"]
+		QueueListbox:AddItem[${arg_Name}]
 		This.IsIdle:Set[FALSE]
 	}
 	
@@ -91,6 +122,8 @@ objectdef obj_State
 	method Clear()
 	{
 		States:Clear
+		QueueListbox:Clear
+		QueueListbox:AddItem[${CurState.Name}]
 	}
 
 	member:bool Idle()
