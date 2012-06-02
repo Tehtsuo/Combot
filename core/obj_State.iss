@@ -32,11 +32,12 @@ objectdef obj_State
 	variable int NextPulse
 	variable int PulseFrequency = 2000
 	variable bool NonGameTiedPulse = false
-	variable bool IsIdle=FALSE
+	variable bool IsIdle
 
 	method Initialize()
 	{
 		CurState:Set["Idle", 100, ""]
+		IsIdle:Set[TRUE]
 		Event[ISXEVE_onFrame]:AttachAtom[This:Pulse]
 	}
 
@@ -53,8 +54,8 @@ objectdef obj_State
 			{
 				if ${States.Used} == 0
 				{
-					This.IsIdle:Set[TRUE]
 					This:QueueState["Idle", 100];
+					IsIdle:Set[TRUE]
 				}
 				
 				if ${This.${CurState.Name}[${CurState.Args}]}
@@ -79,7 +80,7 @@ objectdef obj_State
 			var_Frequency:Set[${arg_Frequency}]
 		}
 		States:Queue[${arg_Name},${var_Frequency},"${arg_Args.Escape}"]
-		This.IsIdle:Set[TRUE]
+		This.IsIdle:Set[FALSE]
 	}
 	
 	method SetStateArgs(string arg_Args="")

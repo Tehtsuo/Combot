@@ -15,6 +15,7 @@ objectdef obj_Salvage inherits obj_State
 	method Start()
 	{
 		UI:Update["obj_Salvage", "Started", "g"]
+		echo IDLE:  ${This.IsIdle}
 		if ${This.IsIdle}
 		{
 			This:QueueState["OpenCargoHold"]
@@ -32,7 +33,7 @@ objectdef obj_Salvage inherits obj_State
 
 	member:bool CheckBookmarks()
 	{
-	
+		echo CheckBookmarks
 		variable index:bookmark Bookmarks
 		variable iterator BookmarkIterator
 		variable string Target
@@ -350,6 +351,7 @@ objectdef obj_Salvage inherits obj_State
 	
 	member:bool OpenCargoHold()
 	{
+		echo OpenCargoHold
 		if !${EVEWindow[ByName, "Inventory"](exists)}
 		{
 			MyShip:OpenCargo[]
@@ -359,6 +361,7 @@ objectdef obj_Salvage inherits obj_State
 	
 	member:bool CheckCargoHold()
 	{
+		echo CheckCargoHold
 		if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) > 0.75
 		{
 			Move:Bookmark["Salvager Home Base"]
