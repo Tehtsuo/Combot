@@ -9,6 +9,7 @@ objectdef obj_Salvage inherits obj_State
 	method Initialize()
 	{
 		This[parent]:Initialize
+		This:AssignStateQueueDisplay[obj_SalvageStateList@Salvager@ComBotTab@ComBot]
 		UI:Update["obj_Salvage", "Initialized", "g"]
 	}
 
