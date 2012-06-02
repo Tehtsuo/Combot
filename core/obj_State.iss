@@ -83,7 +83,6 @@ objectdef obj_State
 				if ${States.Used} == 0
 				{
 					This:QueueState["Idle", 100];
-					UIElement[${QueueListbox}]:AddItem["Idle"]
 					IsIdle:Set[TRUE]
 				}
 				
