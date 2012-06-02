@@ -409,14 +409,15 @@ objectdef obj_InstaWarp inherits obj_State
 		{
 			return FALSE
 		}
-		if ${Me.ToEntity.Mode} == 3 && ${InstaWarp_Cooldown} && ${Ship.AfterBurner_Active}
+		if ${Me.ToEntity.Mode} == 3 && ${InstaWarp_Cooldown} && ${Ship.ModuleList_AB_MWD.IsActive}
 		{
-			Ship:Deactivate_AfterBurner
+			Ship.ModuleList_AB_MWD:Deactivate
 			return FALSE
 		}
 		if ${Me.ToEntity.Mode} == 3 && !${InstaWarp_Cooldown}
 		{
-			Ship:Activate_AfterBurner
+		echo Warp Check
+			Ship.ModuleList_AB_MWD:Activate
 			InstaWarp_Cooldown:Set[TRUE]
 			return FALSE
 		}

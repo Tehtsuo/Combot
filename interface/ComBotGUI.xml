@@ -124,9 +124,23 @@
 							<Y>10%</Y>
 							<Width>40%</Width>
 							<Height>90%</Height>
-							<OnLoad>
-								echo ${This.FullName}
-							</OnLoad>
+						</listbox>
+						<Text name='obj_SalvageStateListTitle'> 
+									<X>40%</X> 
+									<Y>5%</Y> 
+									<Width>40%</Width> 
+									<Height>5%</Height> 
+									<Alignment>Center</Alignment>
+									<Text>Pending States</Text>
+						</Text>						 
+						<listbox Name="obj_SalvageStateList">
+							<BackgroundColor>FF000000</BackgroundColor>
+							<Border>1</Border>
+							<BorderColor>FFFFFFFF</BorderColor>
+							<X>40%</X>
+							<Y>10%</Y>
+							<Width>40%</Width>
+							<Height>90%</Height>
 						</listbox>
 					</Tab>
 				</Tabs>
