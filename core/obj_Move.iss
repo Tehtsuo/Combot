@@ -151,6 +151,7 @@ objectdef obj_Move inherits obj_State
 		UI:Update["obj_Move", "Movement queued.  Destination: ${Entity[${ID}].Name}", "g"]
 		TargetGate:Set[${ID}]
 		This.Traveling:Set[TRUE]
+		echo QUEUEING GATEMOVE
 		This:QueueState["GateMove"]
 	}
 
@@ -210,8 +211,8 @@ objectdef obj_Move inherits obj_State
 				if ${Entity[GroupID == GROUP_WARPGATE](exists)}
 				{
 					UI:Update["obj_Move", "Gate found, activating", "g"]
-					This:Clear
 					This:Gate[${Entity[GroupID == GROUP_WARPGATE].ID}]
+					return TRUE
 				}			
 				
 				UI:Update["obj_Move", "Warping to ${This.WarpDestination.Bookmark}", "g"]
