@@ -1,18 +1,22 @@
 objectdef obj_WarpDestination
 {
+	variable int Distance
 	variable string Bookmark
 	variable int AgentID
 
-	method Initialize(string arg_Bookmark, int arg_Agent=0)
+	method Initialize(int arg_Distance, string arg_Bookmark, int arg_Agent=0)
 	{
+		Distance:Set[${arg_Distance}]	
 		Bookmark:Set[${arg_Bookmark}]	
 		AgentID:Set[${arg_Agent}]	
 	}
 	
-	method Set(string arg_Bookmark, int arg_Agent=0)
+	method Set(int arg_Distance, string arg_Bookmark, int arg_Agent=0)
 	{
+		Distance:Set[${arg_Distance}]	
 		Bookmark:Set[${arg_Bookmark}]	
 		AgentID:Set[${arg_Agent}]
+		
 	}
 }
 
@@ -42,9 +46,9 @@ objectdef obj_Move inherits obj_State
 
 	
 	
-	method Warp(int64 ID)
+	method Warp(int64 ID, int Distance)
 	{
-		Entity[${ID}]:WarpTo
+		Entity[${ID}]:WarpTo[${Distance}]
 		Client:Wait[5000]
 	}
 	
@@ -102,7 +106,7 @@ objectdef obj_Move inherits obj_State
 	
 	
 	
-	method Bookmark(string DestinationBookmarkLabel)
+	method Bookmark(string DestinationBookmarkLabel, int Distance=0)
 	{
 		if ${This.Traveling}
 		{
@@ -117,7 +121,7 @@ objectdef obj_Move inherits obj_State
 		}
 
 		UI:Update["obj_Move", "Movement queued.  Destination: ${DestinationBookmarkLabel}", "g"]
-		This.WarpDestination:Set[${DestinationBookmarkLabel}]
+		This.WarpDestination:Set[${Distance}, ${DestinationBookmarkLabel}]
 		This.Traveling:Set[TRUE]
 		This:QueueState["BookmarkMove"]
 	}
@@ -137,7 +141,7 @@ objectdef obj_Move inherits obj_State
 		}
 
 		UI:Update["obj_Move", "Movement queued.  Destination: ${AgentName}", "g"]
-		This.WarpDestination:Set["", ${Agent[AgentName].Index}]
+		This.WarpDestination:Set[0, "", ${Agent[AgentName].Index}]
 		This.Traveling:Set[TRUE]
 		This:QueueState["AgentMove"]
 	}	
@@ -203,8 +207,15 @@ objectdef obj_Move inherits obj_State
 		{
 			if ${EVE.Bookmark[${This.WarpDestination.Bookmark}].Distance} > WARP_RANGE
 			{
+				if ${Entity[GroupID == GROUP_WARPGATE](exists)}
+				{
+					UI:Update["obj_Move", "Gate found, activating", "g"]
+					This:Clear
+					This:Gate[${Entity[GroupID == GROUP_WARPGATE].ID}]
+				}			
+				
 				UI:Update["obj_Move", "Warping to ${This.WarpDestination.Bookmark}", "g"]
-				EVE.Bookmark[${This.WarpDestination.Bookmark}]:WarpTo
+				EVE.Bookmark[${This.WarpDestination.Bookmark}]:WarpTo[${This.WarpDestination.Distance}]
 				Client:Wait[5000]
 				return FALSE
 			}
@@ -222,7 +233,7 @@ objectdef obj_Move inherits obj_State
 				if ${EVE.Bookmark[${This.WarpDestination.Bookmark}].ToEntity.Distance} > WARP_RANGE
 				{
 					UI:Update["obj_Move", "Warping to ${This.WarpDestination.Bookmark}", "g"]
-					This:Warp[${EVE.Bookmark[${This.WarpDestination.Bookmark}].ToEntity}]
+					This:Warp[${EVE.Bookmark[${This.WarpDestination.Bookmark}].ToEntity}, ${This.WarpDestination.Distance}]
 					return FALSE
 				}
 				else
@@ -237,14 +248,13 @@ objectdef obj_Move inherits obj_State
 				if ${EVE.Bookmark[${This.WarpDestination.Bookmark}].Distance} > WARP_RANGE
 				{
 					UI:Update["obj_Move", "Warping to ${This.WarpDestination.Bookmark}", "g"]
-					EVE.Bookmark[${This.WarpDestination.Bookmark}]:WarpTo
+					EVE.Bookmark[${This.WarpDestination.Bookmark}]:WarpTo[${This.WarpDestination.Distance}]
 					Client:Wait[5000]
 					return FALSE
 				}
 				else
 				{
-					UI:Update["obj_Move", "Reached ${This.WarpDestination.Bookmark}", "r"]
-					UI:Update["obj_Move", "InSpace: ${EVE.EntitiesCount}", "w"]
+					UI:Update["obj_Move", "Reached ${This.WarpDestination.Bookmark}", "g"]
 					This.Traveling:Set[FALSE]
 					return TRUE
 				}
