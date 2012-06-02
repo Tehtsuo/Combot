@@ -4,6 +4,7 @@ objectdef obj_Salvage inherits obj_State
 	variable bool ForceBookmarkCycle=FALSE
 	variable index:int64 HoldOffPlayer
 	variable index:int HoldOffTimer
+	variable set AlreadySalvaged
 
 	method Initialize()
 	{
@@ -110,6 +111,7 @@ objectdef obj_Salvage inherits obj_State
 			This:QueueState["Traveling"]
 			This:QueueState["Log", 1000, "Salvaging at ${Target}"]
 			This:QueueState["SalvageWrecks", 500, "${BookmarkCreator}"]
+			This:QueueState["ClearAlreadySalvaged", 100]
 			This:QueueState["DeleteBookmark", 1000, "${BookmarkCreator}"]
 			This:QueueState["GateCheck", 1000, "${BookmarkCreator}"]
 			return TRUE
@@ -191,10 +193,12 @@ objectdef obj_Salvage inherits obj_State
 				if  !${TargetIterator.Value.BeingTargeted} && \
 					!${TargetIterator.Value.IsLockedTarget} && \
 					${Targets.LockedAndLockingTargets} < ${MaxTarget} && \
-					${TargetIterator.Value.Distance} < ${MyShip.MaxTargetRange}
+					${TargetIterator.Value.Distance} < ${MyShip.MaxTargetRange} && \
+					!${AlreadySalvaged.Contains[${TargetIterator.Value.ID}]}
 				{
 					UI:Update["obj_Salvage", "Locking - ${TargetIterator.Value.Name}", "g"]
 					TargetIterator.Value:LockTarget
+					AlreadySalvaged:Insert[${TargetIterator.Value.ID}]
 					return FALSE
 				}
 				if ${TargetIterator.Value.Distance} > ${Ship.Module_TractorBeams_Range}
@@ -262,6 +266,12 @@ objectdef obj_Salvage inherits obj_State
 		return FALSE
 	}
 	
+	member:bool ClearAlreadySalvaged()
+	{
+		AlreadySalvaged:Clear
+		return TRUE
+	}
+	
 	member:bool GateCheck(int64 BookmarkCreator)
 	{
 		variable index:bookmark Bookmarks
@@ -286,6 +296,7 @@ objectdef obj_Salvage inherits obj_State
 				This:QueueState["Idle", 5000]
 				This:QueueState["Traveling"]
 				This:QueueState["SalvageWrecks", 500, "${BookmarkCreator}"]
+				This:QueueState["ClearAlreadySalvaged", 100]
 				This:QueueState["DeleteBookmark", 1000, "${BookmarkCreator}"]
 				This:QueueState["GateCheck", 1000, "${BookmarkCreator}"]
 				This:QueueState["JumpToCelestial"]
