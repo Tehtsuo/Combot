@@ -2,6 +2,8 @@ objectdef obj_Salvage inherits obj_State
 {
 	variable obj_LootCans LootCans
 	variable bool ForceBookmarkCycle=FALSE
+	variable index:int64 HoldOffPlayer
+	variable index:int HoldOffTimer
 
 	method Initialize()
 	{
@@ -36,24 +38,66 @@ objectdef obj_Salvage inherits obj_State
 		variable string BookmarkTime="24:00"
 		variable bool BookmarkFound
 		variable string BookmarkDate="9999.99.99"
+		variable int64 BookmarkCreator
+		variable iterator HoldOffIterator
+		variable index:int RemoveHoldOff
+		variable int RemoveDecAmount=0
+		variable bool InHoldOff
 		BookmarkFound:Set[FALSE]
 		
 		EVE:GetBookmarks[Bookmarks]
 		Bookmarks:GetIterator[BookmarkIterator]
 		UIElement[obj_SalvageBookmarkList@Salvager@ComBotTab@ComBot]:ClearItems
+		
+		HoldOffTimer:GetIterator[HoldOffIterator]
+		if ${HoldOffIterator:First(exists)}
+		do
+		{
+			if ${HoldOffIterator.Value} >= ${This.NextPulse}
+			{
+				RemoveHoldOff:Insert[${HoldOffIterator.Key}]
+			}
+		}
+		while ${HoldOffIterator:Next(exists)}
+		
+		RemoveHoldOff:GetIterator[HoldOffIterator]
+		if ${HoldOffIterator:First(exists)}
+		do
+		{
+			HoldOffPlayer:Remove[${Math.Calc[${HoldOffIterator.Value}-${RemoveDecAmount}]}]
+			HoldOffTimer:Remove[${Math.Calc[${HoldOffIterator.Value}-${RemoveDecAmount}]}]
+			RemoveDecAmount:Inc
+		}
+		while ${HoldOffIterator:Next(exists)}
+		
+		HoldOffPlayer:GetIterator[HoldOffIterator]
+		
 		if ${BookmarkIterator:First(exists)}
 		do
 		{	
 			if ${BookmarkIterator.Value.Label.Left[8].Upper.Equal["SALVAGE:"]}
 			{
 				UIElement[obj_SalvageBookmarkList@Salvager@ComBotTab@ComBot]:AddItem[${BookmarkIterator.Value.Label}]
-				echo ${BookmarkIterator.Value.TimeCreated} - ${BookmarkIterator.Value.DateCreated} - ${BookmarkIterator.Value.TimeCreated.Compare[${BookmarkTime}]} < 0 || ${BookmarkIterator.Value.DateCreated.Compare[${BookmarkDate}]} < 0
-				if (${BookmarkIterator.Value.TimeCreated.Compare[${BookmarkTime}]} < 0 && ${BookmarkIterator.Value.DateCreated.Compare[${BookmarkDate}]} <= 0) || ${BookmarkIterator.Value.DateCreated.Compare[${BookmarkDate}]} < 0
+				InHoldOff:Set[FALSE]
+				if ${HoldOffIterator:First(exists)}
+				do
 				{
-					Target:Set[${BookmarkIterator.Value.Label}]
-					BookmarkTime:Set[${BookmarkIterator.Value.TimeCreated}]
-					BookmarkDate:Set[${BookmarkIterator.Value.DateCreated}]
-					BookmarkFound:Set[TRUE]
+					if ${HoldOffIterator.Value.Equal[${BookmarkIterator.Value.CreatorID}]}
+					{
+						InHoldOff:Set[TRUE]
+					}
+				}
+				while ${HoldOffIterator:Next(exists)}
+				if !${InHoldOff}
+				{
+					if (${BookmarkIterator.Value.TimeCreated.Compare[${BookmarkTime}]} < 0 && ${BookmarkIterator.Value.DateCreated.Compare[${BookmarkDate}]} <= 0) || ${BookmarkIterator.Value.DateCreated.Compare[${BookmarkDate}]} < 0
+					{
+						Target:Set[${BookmarkIterator.Value.Label}]
+						BookmarkTime:Set[${BookmarkIterator.Value.TimeCreated}]
+						BookmarkDate:Set[${BookmarkIterator.Value.DateCreated}]
+						BookmarkCreator:Set[${BookmarkIterator.Value.CreatorID}]
+						BookmarkFound:Set[TRUE]
+					}
 				}
 			}
 		}
@@ -65,10 +109,9 @@ objectdef obj_Salvage inherits obj_State
 			Move:Bookmark[${Target}]
 			This:QueueState["Traveling"]
 			This:QueueState["Log", 1000, "Salvaging at ${Target}"]
-			This:QueueState["SalvageWrecks", 500]
+			This:QueueState["SalvageWrecks", 500, "${BookmarkCreator}"]
+			This:QueueState["GateCheck", 1000, "${BookmarkCreator}"]
 			This:QueueState["DeleteBookmark", 1000, ${Target}]
-			This:QueueState["OpenCargoHold"]
-			This:QueueState["CheckCargoHold", 5000]
 			return TRUE
 		}
 
@@ -95,7 +138,7 @@ objectdef obj_Salvage inherits obj_State
 		return TRUE
 	}
 
-	member:bool SalvageWrecks()
+	member:bool SalvageWrecks(int64 BookmarkCreator)
 	{
 		variable index:entity TargetIndex
 		variable iterator TargetIterator
@@ -107,11 +150,12 @@ objectdef obj_Salvage inherits obj_State
 		
 		if ${Targets.NPC}
 		{
-			UI:Update["obj_Salvage", "Pocket has NPCs - returning to station", "g"]
+			UI:Update["obj_Salvage", "Pocket has NPCs - Jumping Clear", "g"]
+			HoldOffPlayer:Insert[${BookmarkCreator}]
+			HoldOffTimer:Insert[${Math.Calc[${LavishScript.RunningTime} + 600000]}]
 			This:Clear
-			Move:Bookmark["Salvager Home Base"]
-			This:QueueState["Traveling"]
-			This:QueueState["Offload"]
+			This:QueueState["JumpToCelestial"]
+			This:QueueState["Travelling"]
 			return TRUE
 		}
 		
@@ -207,17 +251,6 @@ objectdef obj_Salvage inherits obj_State
 		else
 		{
 			LootCans:Disable
-			if ${Entity[GroupID == GROUP_WARPGATE](exists)}
-			{
-				UI:Update["obj_Salvage", "Gate found, activating", "g"]
-				This:Clear
-				Move:Gate[${Entity[GroupID == GROUP_WARPGATE].ID}]
-				This:QueueState["Idle", 5000]
-				This:QueueState["Traveling"]
-				This:QueueState["SalvageWrecks", 500]
-				This:QueueState["OpenCargoHold"]
-				This:QueueState["CheckCargoHold", 5000]
-			}			
 			return TRUE
 		}
 		if !${SalvageMultiTarget.Equal[-1]} && ${Ship.ModuleList_Salvagers.InactiveCount} > 0
@@ -225,6 +258,32 @@ objectdef obj_Salvage inherits obj_State
 			Ship.ModuleList_Salvagers:Activate[${SalvageMultiTarget}]
 		}
 		return FALSE
+	}
+	
+	member:bool GateCheck(int64 BookmarkCreator)
+	{
+		if ${Entity[GroupID == GROUP_WARPGATE](exists)}
+		{
+			UI:Update["obj_Salvage", "Gate found, activating", "g"]
+			This:Clear
+			Move:Gate[${Entity[GroupID == GROUP_WARPGATE].ID}]
+			This:QueueState["Idle", 5000]
+			This:QueueState["Traveling"]
+			This:QueueState["SalvageWrecks", 500, "${BookmarkCreator}"]
+			This:QueueState["GateCheck", 1000, "${BookmarkCreator}"]
+			This:QueueState["JumpToCelestial"]
+			This:QueueState["Travelling"]
+		}
+		This:QueueState["OpenCargoHold"]
+		This:QueueState["CheckCargoHold", 5000]
+		return TRUE
+	}
+	
+	member:bool JumpToCelestial()
+	{
+		variable index:entity CelestialIndex
+		EVE:QueryEntities[CelestialIndex, "CategoryID = CATEGORYID_CELESTIAL"]
+		Move.Approach[${CelestialIndex.Get[1].ID}]
 	}
 	
 	member:bool DeleteBookmark(string bookmarkname)
