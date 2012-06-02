@@ -85,7 +85,7 @@ objectdef obj_State
 	
 	method SetStateArgs(string arg_Args="")
 	{
-		States.Peek:SetArgs["${arg_Args.Escape}"]
+		CurState:SetArgs["${arg_Args.Escape}"]
 	}
 
 	method Clear()

@@ -189,8 +189,8 @@ objectdef obj_Salvage inherits obj_State
 					if !${SalvageMultiTarget.Equal[-1]} && ${Ship.ModuleList_Salvagers.InactiveCount} > 0
 					{
 						Ship.ModuleList_Salvagers:Activate[${SalvageMultiTarget}]
+						return FALSE
 					}
-					return FALSE
 				}
 				echo After Salvage
 				if  !${TargetIterator.Value.BeingTargeted} && \

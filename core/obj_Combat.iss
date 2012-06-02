@@ -17,11 +17,11 @@ objectdef obj_Combat inherits obj_State
 		variable string QueryString="CategoryID = CATEGORYID_ENTITY && IsNPC && !("
 		
 		;Exclude Groups here
-		QueryString:Concat["GroupID = GROUP_CONCORDDRONE &&"]
-		QueryString:Concat["GroupID = GROUP_CONVOYDRONE &&"]
-		QueryString:Concat["GroupID = GROUP_CONVOY &&"]
-		QueryString:Concat["GroupID = GROUP_LARGECOLLIDABLEOBJECT &&"]
-		QueryString:Concat["GroupID = GROUP_LARGECOLLIDABLESHIP &&"]
+		QueryString:Concat["GroupID = GROUP_CONCORDDRONE ||"]
+		QueryString:Concat["GroupID = GROUP_CONVOYDRONE ||"]
+		QueryString:Concat["GroupID = GROUP_CONVOY ||"]
+		QueryString:Concat["GroupID = GROUP_LARGECOLLIDABLEOBJECT ||"]
+		QueryString:Concat["GroupID = GROUP_LARGECOLLIDABLESHIP ||"]
 		QueryString:Concat["GroupID = GROUP_LARGECOLLIDABLESTRUCTURE)"]
 
 		EVE:QueryEntities[enemyTargets, ${QueryString}]
