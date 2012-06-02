@@ -103,6 +103,7 @@ objectdef obj_Salvage inherits obj_State
 		variable int MaxTarget = ${MyShip.MaxLockedTargets}
 		variable int ClosestTractorKey
 		variable bool ReactivateTractor = FALSE
+		variable int64 SalvageMultiTarget = -1
 		
 		if ${Targets.NPC}
 		{
@@ -189,6 +190,12 @@ objectdef obj_Salvage inherits obj_State
 					Ship.ModuleList_Salvagers:Activate[${TargetIterator.Value.ID}]
 					return FALSE
 				}
+				if  ${TargetIterator.Value.Distance} < ${Ship.Module_Salvagers_Range} &&\
+					${Ship.ModuleList_Salvagers.InactiveCount} > 0 &&\
+					${TargetIterator.Value.IsLockedTarget}
+				{
+					SalvageMultiTarget:Set[${TargetIterator.Value.ID}]
+				}
 			}
 			while ${TargetIterator:Next(exists)}
 		}
@@ -207,6 +214,10 @@ objectdef obj_Salvage inherits obj_State
 				This:QueueState["CheckCargoHold", 5000]
 			}			
 			return TRUE
+		}
+		if !${SalvageMultiTarget.Equal[-1]} && ${Ship.ModuleList_Salvagers.InactiveCount} > 0
+		{
+			Ship.ModuleList_Salvagers:Activate[${SalvageMultiTarget}]
 		}
 		return FALSE
 	}
