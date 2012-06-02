@@ -74,7 +74,7 @@ objectdef obj_ComBotUI
 			MSG:Concat[" "]
 		}	
 
-		MSG:Concat["\a${Color}${StatusMessage}"]
+		MSG:Concat["\a${Color}${StatusMessage.Escape}"]
 		
 		UIElement[StatusConsole@Status@ComBotTab@ComBot]:Echo["${MSG}"]
 	}

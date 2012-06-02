@@ -45,6 +45,7 @@ objectdef obj_State
 			{
 				if ${This.${States.Peek.Name}[${States.Peek.Args}]}
 				{
+					echo ${States.Peek.Name}
 					States:Dequeue
 				}
 			}
