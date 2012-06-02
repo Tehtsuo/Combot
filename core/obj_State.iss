@@ -28,7 +28,7 @@ objectdef obj_State
 {
 	variable queue:obj_StateQueue States
 	variable obj_StateQueue CurState
-	variable lguilistbox QueueListbox
+	variable string QueueListbox
 	variable bool DisplayStateQueue=FALSE
 	
 	variable int NextPulse
@@ -48,20 +48,20 @@ objectdef obj_State
 		Event[ISXEVE_onFrame]:DetachAtom[This:Pulse]
 	}
 	
-	method AssignStateQueueDisplay(lguilistbox listbox)
+	method AssignStateQueueDisplay(string listbox)
 	{
 		variable iterator StateIterator
 		QueueListbox:Set[${listbox}]
 		DisplayStateQueue:Set[TRUE]
-		QueueListbox:ClearItems
+		UIElement[${QueueListbox}]:ClearItems
 		States:GetIterator[StateIterator]
 		
-		QueueListbox:AddItem[${CurState.Name}]
+		UIElement[${QueueListbox}]:AddItem[${CurState.Name}]
 		if ${StateIterator:First(exists)}
 		{
 			do
 			{
-				QueueListbox:AddItem[${StateIterator.Value.Name}]
+				UIElement[${QueueListbox}]:AddItem[${StateIterator.Value.Name}]
 			}
 			while ${StateIterator:Next(exists)}
 		}
@@ -70,7 +70,7 @@ objectdef obj_State
 	
 	method DeactivateStateQueueDisplay()
 	{
-		QueueListbox:ClearItems
+		UIElement[${QueueListbox}]:ClearItems
 		DisplayStateQueue:Set[FALSE]
 	}
 
@@ -83,14 +83,14 @@ objectdef obj_State
 				if ${States.Used} == 0
 				{
 					This:QueueState["Idle", 100];
-					QueueListbox:AddItem["Idle"]
+					UIElement[${QueueListbox}]:AddItem["Idle"]
 					IsIdle:Set[TRUE]
 				}
 				
 				if ${This.${CurState.Name}[${CurState.Args}]}
 				{
 					CurState:Set[${States.Peek.Name}, ${States.Peek.Frequency}, "${States.Peek.Args.Escape}"]
-					QueueListbox:RemoveItem[1]
+					UIElement[${QueueListbox}]:RemoveItem[1]
 					States:Dequeue
 				}
 			}
@@ -110,7 +110,7 @@ objectdef obj_State
 			var_Frequency:Set[${arg_Frequency}]
 		}
 		States:Queue[${arg_Name},${var_Frequency},"${arg_Args.Escape}"]
-		QueueListbox:AddItem[${arg_Name}]
+		UIElement[${QueueListbox}]:AddItem[${arg_Name}]
 		This.IsIdle:Set[FALSE]
 	}
 	
@@ -122,8 +122,8 @@ objectdef obj_State
 	method Clear()
 	{
 		States:Clear
-		QueueListbox:Clear
-		QueueListbox:AddItem[${CurState.Name}]
+		UIElement[${QueueListbox}]:Clear
+		UIElement[${QueueListbox}]:AddItem[${CurState.Name}]
 	}
 
 	member:bool Idle()
