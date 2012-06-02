@@ -110,8 +110,8 @@ objectdef obj_Salvage inherits obj_State
 			This:QueueState["Traveling"]
 			This:QueueState["Log", 1000, "Salvaging at ${Target}"]
 			This:QueueState["SalvageWrecks", 500, "${BookmarkCreator}"]
+			This:QueueState["DeleteBookmark", 1000, "${BookmarkCreator}"]
 			This:QueueState["GateCheck", 1000, "${BookmarkCreator}"]
-			This:QueueState["DeleteBookmark", 1000, ${Target}]
 			return TRUE
 		}
 
@@ -264,17 +264,37 @@ objectdef obj_Salvage inherits obj_State
 	
 	member:bool GateCheck(int64 BookmarkCreator)
 	{
+		variable index:bookmark Bookmarks
+		variable bool UseJumpGate=FALSE
 		if ${Entity[GroupID == GROUP_WARPGATE](exists)}
 		{
-			UI:Update["obj_Salvage", "Gate found, activating", "g"]
-			This:Clear
-			Move:Gate[${Entity[GroupID == GROUP_WARPGATE].ID}]
-			This:QueueState["Idle", 5000]
-			This:QueueState["Traveling"]
-			This:QueueState["SalvageWrecks", 500, "${BookmarkCreator}"]
-			This:QueueState["GateCheck", 1000, "${BookmarkCreator}"]
-			This:QueueState["JumpToCelestial"]
-			This:QueueState["Travelling"]
+			EVE:GetBookmarks[Bookmarks]
+			Bookmarks:GetIterator[BookmarkIterator]
+			if ${BookmarkIterator:First(exists)}
+			do
+			{
+				if ${BookmarkIterator.Value.Label.Left[8].Upper.Equal["SALVAGE:"]} && ${BookmarkIterator.Value.CreatorID.Equal[${BookmarkCreator}]}
+				{
+					UseJumpGate:Set[True}
+				}
+			}
+			if ${UseJumpGate}
+			{
+				UI:Update["obj_Salvage", "Gate found, activating", "g"]
+				This:Clear
+				Move:Gate[${Entity[GroupID == GROUP_WARPGATE].ID}]
+				This:QueueState["Idle", 5000]
+				This:QueueState["Traveling"]
+				This:QueueState["SalvageWrecks", 500, "${BookmarkCreator}"]
+				This:QueueState["DeleteBookmark", 1000, "${BookmarkCreator}"]
+				This:QueueState["GateCheck", 1000, "${BookmarkCreator}"]
+				This:QueueState["JumpToCelestial"]
+				This:QueueState["Travelling"]
+			}
+			else
+			{
+				UI:Update["obj_Salvage", "Gate found, but no more bookmarks from player.  Ignoring", "g"]
+			}
 		}
 		This:QueueState["OpenCargoHold"]
 		This:QueueState["CheckCargoHold", 5000]
@@ -288,17 +308,29 @@ objectdef obj_Salvage inherits obj_State
 		return TRUE
 	}
 	
-	member:bool DeleteBookmark(string bookmarkname)
+	member:bool DeleteBookmark(int64 BookmarkCreator)
 	{
-		if !${Entity[GroupID == GROUP_WARPGATE](exists)}
+		variable index:bookmark Bookmarks
+		EVE:GetBookmarks[Bookmarks]
+		Bookmarks:GetIterator[BookmarkIterator]
+		if ${BookmarkIterator:First(exists)}
+		do
 		{
-			UI:Update["obj_Salvage", "Removing bookmark - ${bookmarkname}", "g"]
-			EVE.Bookmark[${bookmarkname}]:Remove
+			if ${BookmarkIterator.Value.Label.Left[8].Upper.Equal["SALVAGE:"]} && ${BookmarkIterator.Value.CreatorID.Equal[${BookmarkCreator}]}
+			{
+				if ${BookmarkIterator.Value.JumpsTo} == 0
+				{
+					if ${BookmarkIterator.Value.Distance} < 500000
+					{
+						UI:Update["obj_Salvage", "Finished Salvaging ${BookmarkIterator.Value.Name} - Deleting", "g"]
+						BookmarkIterator.Value:Remove
+						return TRUE
+					}
+				}
+			}
 		}
-		else
-		{
+		while ${BookmarkIterator:Next(exists)}
 			UI:Update["obj_Salvage", "Gate present: Not removing bookmark - ${bookmarkname}", "g"]
-		}
 		return TRUE
 	}
 	
