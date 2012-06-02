@@ -156,6 +156,8 @@ objectdef obj_Salvage inherits obj_State
 			This:Clear
 			This:QueueState["JumpToCelestial"]
 			This:QueueState["Travelling"]
+			This:QueueState["RefreshBookmarks", 3000]
+			This:QueueState["CheckBookmarks"]
 			return TRUE
 		}
 		
