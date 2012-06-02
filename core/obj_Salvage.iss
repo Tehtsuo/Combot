@@ -48,7 +48,7 @@ objectdef obj_Salvage inherits obj_State
 			{
 				UIElement[obj_SalvageBookmarkList@Salvager@ComBotTab@ComBot]:AddItem[${BookmarkIterator.Value.Label}]
 				echo ${BookmarkIterator.Value.TimeCreated} - ${BookmarkIterator.Value.DateCreated} - ${BookmarkIterator.Value.TimeCreated.Compare[${BookmarkTime}]} < 0 || ${BookmarkIterator.Value.DateCreated.Compare[${BookmarkDate}]} < 0
-				if ${BookmarkIterator.Value.TimeCreated.Compare[${BookmarkTime}]} < 0 && ${BookmarkIterator.Value.DateCreated.Compare[${BookmarkDate}]} <= 0
+				if (${BookmarkIterator.Value.TimeCreated.Compare[${BookmarkTime}]} < 0 && ${BookmarkIterator.Value.DateCreated.Compare[${BookmarkDate}]} <= 0) || ${BookmarkIterator.Value.DateCreated.Compare[${BookmarkDate}]} < 0
 				{
 					Target:Set[${BookmarkIterator.Value.Label}]
 					BookmarkTime:Set[${BookmarkIterator.Value.TimeCreated}]
@@ -134,6 +134,11 @@ objectdef obj_Salvage inherits obj_State
 					if ${TargetIterator.Value.Distance} > ${Ship.Module_TractorBeams_Range}
 					{
 						Move:Approach[${TargetIterator.Value}]
+						return FALSE
+					}
+					if !${SalvageMultiTarget.Equal[-1]} && ${Ship.ModuleList_Salvagers.InactiveCount} > 0
+					{
+						Ship.ModuleList_Salvagers:Activate[${SalvageMultiTarget}]
 					}
 					return FALSE
 				}
