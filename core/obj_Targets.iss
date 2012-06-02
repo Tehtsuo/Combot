@@ -19,17 +19,28 @@ objectdef obj_Targets
 		variable string QueryString="CategoryID = CATEGORYID_ENTITY && IsNPC && !("
 		
 		;Exclude Groups here
-		QueryString:Concat["GroupID = GROUP_CONCORDDRONE &&"]
-		QueryString:Concat["GroupID = GROUP_CONVOYDRONE &&"]
-		QueryString:Concat["GroupID = GROUP_CONVOY &&"]
-		QueryString:Concat["GroupID = GROUP_LARGECOLLIDABLEOBJECT &&"]
-		QueryString:Concat["GroupID = GROUP_LARGECOLLIDABLESHIP &&"]
+		QueryString:Concat["GroupID = GROUP_CONCORDDRONE ||"]
+		QueryString:Concat["GroupID = GROUP_CONVOYDRONE ||"]
+		QueryString:Concat["GroupID = GROUP_CONVOY ||"]
+		QueryString:Concat["GroupID = GROUP_LARGECOLLIDABLEOBJECT ||"]
+		QueryString:Concat["GroupID = GROUP_LARGECOLLIDABLESHIP ||"]
 		QueryString:Concat["GroupID = GROUP_LARGECOLLIDABLESTRUCTURE)"]
 
 		EVE:QueryEntities[tgtIndex, ${QueryString}]
 
 		if ${tgtIndex.Used} > 0
 		{
+			variable iterator Tgts
+			tgtIndex:GetIterator[Tgts]
+			if ${Tgts:First(exists)}
+			{
+				do
+				{
+					echo ${Tgts.Value.Name} - ${Tgts.Value.Group} - ${Tgts.Value.GroupID}
+				}
+				While ${Tgts:Next(exists)}
+			}
+		
 			return TRUE
 		}
 

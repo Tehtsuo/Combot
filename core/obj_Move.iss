@@ -203,6 +203,13 @@ objectdef obj_Move inherits obj_State
 		{
 			if ${EVE.Bookmark[${This.WarpDestination.Bookmark}].Distance} > WARP_RANGE
 			{
+				if ${Entity[GroupID == GROUP_WARPGATE](exists)}
+				{
+					UI:Update["obj_Move", "Gate found, activating", "g"]
+					This:Clear
+					This:Gate[${Entity[GroupID == GROUP_WARPGATE].ID}]
+				}			
+				
 				UI:Update["obj_Move", "Warping to ${This.WarpDestination.Bookmark}", "g"]
 				EVE.Bookmark[${This.WarpDestination.Bookmark}]:WarpTo
 				Client:Wait[5000]
@@ -243,8 +250,7 @@ objectdef obj_Move inherits obj_State
 				}
 				else
 				{
-					UI:Update["obj_Move", "Reached ${This.WarpDestination.Bookmark}", "r"]
-					UI:Update["obj_Move", "InSpace: ${EVE.EntitiesCount}", "w"]
+					UI:Update["obj_Move", "Reached ${This.WarpDestination.Bookmark}", "g"]
 					This.Traveling:Set[FALSE]
 					return TRUE
 				}
