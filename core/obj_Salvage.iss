@@ -285,7 +285,7 @@ objectdef obj_Salvage inherits obj_State
 	{
 		variable index:entity CelestialIndex
 		EVE:QueryEntities[CelestialIndex, "CategoryID = CATEGORYID_CELESTIAL"]
-		Move.Approach[${CelestialIndex.Get[1].ID}]
+		Move:Approach[${CelestialIndex.Get[1].ID}]
 	}
 	
 	member:bool DeleteBookmark(string bookmarkname)
