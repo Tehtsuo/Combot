@@ -283,6 +283,7 @@ objectdef obj_Salvage inherits obj_State
 	
 	member:bool JumpToCelestial()
 	{
+		echo Trying Warp
 		UI:Update["obj_Salvage", "Warping to ${Entity[\"CategoryID = CATEGORYID_CELESTIAL\"].Name}", "g"]
 		Move:Warp[${Entity["CategoryID = CATEGORYID_CELESTIAL"].ID}]
 		return TRUE
