@@ -134,6 +134,11 @@ objectdef obj_Salvage inherits obj_State
 					if ${TargetIterator.Value.Distance} > ${Ship.Module_TractorBeams_Range}
 					{
 						Move:Approach[${TargetIterator.Value}]
+						return FALSE
+					}
+					if !${SalvageMultiTarget.Equal[-1]} && ${Ship.ModuleList_Salvagers.InactiveCount} > 0
+					{
+						Ship.ModuleList_Salvagers:Activate[${SalvageMultiTarget}]
 					}
 					return FALSE
 				}
