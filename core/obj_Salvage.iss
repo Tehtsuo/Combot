@@ -283,9 +283,7 @@ objectdef obj_Salvage inherits obj_State
 	
 	member:bool JumpToCelestial()
 	{
-		variable index:entity CelestialIndex
-		EVE:QueryEntities[CelestialIndex, "CategoryID = CATEGORYID_CELESTIAL"]
-		Move:Approach[${CelestialIndex.Get[1].ID}]
+		Move:Warp[${Entity["CategoryID = CATEGORYID_CELESTIAL"]}]
 		return TRUE
 	}
 	
