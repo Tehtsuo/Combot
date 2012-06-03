@@ -105,7 +105,7 @@
 								<Item Value='Salvager'>Dedicated Salvager</Item>
 							</Items>
 							<OnLoad>
-								This.ItemByValue[${Config.Common.ComBot_Mode}]:Select
+								This.ItemByValue[${Script[ComBot].VariableScope.Config.Common.ComBot_Mode}]:Select
 							</OnLoad>
 							<OnSelect>
 							</OnSelect>

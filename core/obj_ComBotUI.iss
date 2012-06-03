@@ -6,6 +6,8 @@ objectdef obj_ComBotUI
 
 	variable int NextMsgBoxPulse
 	variable int PulseMsgBoxIntervalInMilliSeconds = 15000
+	variable queue:string ConsoleBuffer
+	variable bool Reloaded = FALSE
 
 
 	method Initialize()
@@ -55,6 +57,23 @@ objectdef obj_ComBotUI
 
 	}
 
+	method Reload()
+	{
+		ui -reload interface/ComBotGUI.xml
+		This:WriteQueueToLog
+		This.Reloaded:Set[TRUE]
+	}
+	
+	method WriteQueueToLog()
+	{
+		while ${This.ConsoleBuffer.Peek(exists)}
+		{
+			UIElement[StatusConsole@Status@ComBotTab@ComBot]:Echo[${This.ConsoleBuffer.Peek.Escape}]
+			This.ConsoleBuffer:Dequeue
+		}
+	}
+	
+	
 	method Update(string CallingModule, string StatusMessage, string Color="w")
 	{
 		variable string MSG
@@ -75,8 +94,15 @@ objectdef obj_ComBotUI
 		}	
 
 		MSG:Concat["\a${Color}${StatusMessage.Escape}"]
-		
-		UIElement[StatusConsole@Status@ComBotTab@ComBot]:Echo["${MSG}"]
+
+		if ${This.Reloaded}
+		{
+			UIElement[StatusConsole@Status@ComBotTab@ComBot]:Echo["${MSG}"]
+		}
+		else
+		{
+			This.ConsoleBuffer:Queue["${MSG}"]
+		}
 	}
 
 

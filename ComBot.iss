@@ -28,11 +28,12 @@ function main()
 {
 	echo "${Time} ComBot: Starting"
 
-	declarevariable ComBot obj_ComBot script
 	declarevariable UI obj_ComBotUI script
+	declarevariable ComBot obj_ComBot script
 	declarevariable BaseConfig obj_Configuration_BaseConfig script
-
 	declarevariable Config obj_Configuration script
+	UI:Reload
+	
 	declarevariable Client obj_Client script
 	declarevariable Move obj_Move script
 	declarevariable InstaWarp obj_InstaWarp script
