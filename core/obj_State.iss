@@ -33,14 +33,16 @@ objectdef obj_State
 	
 	variable int NextPulse
 	variable int PulseFrequency = 2000
-	variable bool NonGameTiedPulse = false
+	variable bool NonGameTiedPulse = FALSE
 	variable bool IsIdle
+	variable bool IndependentPulse = FALSE
 
 	method Initialize()
 	{
 		CurState:Set["Idle", 100, ""]
 		IsIdle:Set[TRUE]
 		Event[ISXEVE_onFrame]:AttachAtom[This:Pulse]
+		
 	}
 
 	method Shutdown()
@@ -76,24 +78,42 @@ objectdef obj_State
 
 	method Pulse()
 	{
-		if ${LavishScript.RunningTime} >= ${This.NextPulse}
+		if !${IndependentPulse}
 		{
-			if (!${ComBot.Paused} && ${Client.Ready}) || ${This.NonGameTiedPulse}
+			if ${LavishScript.RunningTime} >= ${This.NextPulse}
 			{
-				if ${States.Used} == 0
+				if (!${ComBot.Paused} && ${Client.Ready}) || ${This.NonGameTiedPulse}
 				{
-					This:QueueState["Idle", 100];
-					IsIdle:Set[TRUE]
+					if ${States.Used} == 0
+					{
+						This:QueueState["Idle", 100];
+						IsIdle:Set[TRUE]
+					}
+					
+					if ${This.${CurState.Name}[${CurState.Args}]}
+					{
+						CurState:Set[${States.Peek.Name}, ${States.Peek.Frequency}, "${States.Peek.Args.Escape}"]
+						UIElement[${QueueListbox}].OrderedItem[1]:Remove
+						States:Dequeue
+					}
 				}
-				
-				if ${This.${CurState.Name}[${CurState.Args}]}
-				{
-					CurState:Set[${States.Peek.Name}, ${States.Peek.Frequency}, "${States.Peek.Args.Escape}"]
-					UIElement[${QueueListbox}].OrderedItem[1]:Remove
-					States:Dequeue
-				}
+				This.NextPulse:Set[${Math.Calc[${LavishScript.RunningTime} + ${CurState.Frequency} + ${Math.Rand[500]}]}]
 			}
-			This.NextPulse:Set[${Math.Calc[${LavishScript.RunningTime} + ${CurState.Frequency} + ${Math.Rand[500]}]}]
+		}
+		else
+		{
+			if ${States.Used} == 0
+			{
+				This:QueueState["Idle", 100];
+				IsIdle:Set[TRUE]
+			}
+			
+			if ${This.${CurState.Name}[${CurState.Args}]}
+			{
+				CurState:Set[${States.Peek.Name}, ${States.Peek.Frequency}, "${States.Peek.Args.Escape}"]
+				UIElement[${QueueListbox}].OrderedItem[1]:Remove
+				States:Dequeue
+			}
 		}
 	}
 
