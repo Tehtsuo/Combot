@@ -179,6 +179,11 @@ objectdef obj_ModuleList
 		return ${countInactive}
 	}
 	
+	member:double Range()
+	{
+		return ${Modules.Get[1].OptimalRange}
+	}
+	
 	member:string GetFallthroughObject()
 	{
 		return "Ship.${This.ObjectName}.Modules"

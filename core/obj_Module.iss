@@ -93,4 +93,9 @@ objectdef obj_Module inherits obj_State
 		CurrentTarget:Set[-1]
 		return TRUE
 	}
+	
+	member:string GetFallthroughObject()
+	{
+		return "MyShip.Module[${ModuleID}]"
+	}
 }
