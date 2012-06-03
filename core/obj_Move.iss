@@ -402,6 +402,20 @@ objectdef obj_Move inherits obj_State
 			This.Approaching:Set[FALSE]
 			return TRUE
 		}
+		
+		if !${Ship.ModuleList_AB_MWD.ActiveCount} && ${MyShip.CapacitorPct} > 30
+		{
+			UI:Update["obj_Move", "Activating propulsion units", "g"]
+			Ship.ModuleList_AB_MWD:Activate
+			return FALSE
+		}
+		if ${Ship.ModuleList_AB_MWD.ActiveCount} && ${MyShip.CapacitorPct} <= 30
+		{
+			UI:Update["obj_Move", "Activating propulsion units", "g"]
+			Ship.ModuleList_AB_MWD:Activate
+			return FALSE
+		}
+		
 		return FALSE
 	}
 
@@ -411,39 +425,42 @@ objectdef obj_Move inherits obj_State
 	
 objectdef obj_InstaWarp inherits obj_State
 {
-	; variable bool InstaWarp_Cooldown=FALSE
+	variable bool InstaWarp_Cooldown=FALSE
 
-	; method Initialize()
-	; {
-		; This[parent]:Initialize
-		; This.NonGameTiedPulse:Set[TRUE]
-		; UI:Update["obj_InstaWarp", "Initialized", "g"]
-		; This:QueueState["InstaWarp_Check", 2000]
-	; }
+	method Initialize()
+	{
+		This[parent]:Initialize
+		This.NonGameTiedPulse:Set[TRUE]
+		UI:Update["obj_InstaWarp", "Initialized", "g"]
+		This:QueueState["InstaWarp_Check", 2000]
+	}
 	
-	; member:bool InstaWarp_Check()
-	; {
-		; if !${Client.InSpace}
-		; {
-			; return FALSE
-		; }
-		; echo ${Ship.ModuleList_AB_MWD.ActiveCount}
-		; if ${Me.ToEntity.Mode} == 3 && ${InstaWarp_Cooldown} && ${Ship.ModuleList_AB_MWD.ActiveCount}
-		; {
-			; echo Deactivating
-			; Ship.ModuleList_AB_MWD:DeactivateAll
-			; return FALSE
-		; }
-		; if ${Me.ToEntity.Mode} == 3 && !${InstaWarp_Cooldown}
-		; {
-			; Ship.ModuleList_AB_MWD:Activate
-			; This:InstaWarp_Cooldown:Set[TRUE]
-			; return FALSE
-		; }
-		; if ${Me.ToEntity.Mode} != 3
-		; {
-			; This:InstaWarp_Cooldown:Set[FALSE]
-			; return FALSE
-		; }
-	; }
+	member:bool InstaWarp_Check()
+	{
+		if !${Client.InSpace}
+		{
+			return FALSE
+		}
+		
+		echo ${Ship.ModuleList_AB_MWD.ActiveCount}
+		if ${Me.ToEntity.Mode} == 3 && ${InstaWarp_Cooldown} && ${Ship.ModuleList_AB_MWD.ActiveCount}
+		{
+			echo DEACTIVATING AB/MWD
+			Ship.ModuleList_AB_MWD:Deactivate
+			return FALSE
+		}
+		
+		if ${Me.ToEntity.Mode} == 3 && !${InstaWarp_Cooldown}
+		{
+			echo ACTIVATING AB/MWD
+			Ship.ModuleList_AB_MWD:Activate
+			InstaWarp_Cooldown:Set[TRUE]
+			return FALSE
+		}
+		if ${Me.ToEntity.Mode} != 3
+		{
+			InstaWarp_Cooldown:Set[FALSE]
+			return FALSE
+		}
+	}
 }

@@ -7,6 +7,7 @@ objectdef obj_Module inherits obj_State
 	method Initialize(int64 ID)
 	{
 		This[parent]:Initialize
+		This.NonGameTiedPulse:Set[TRUE]
 		ModuleID:Set[${ID}]
 		PulseFrequency:Set[50]
 	}

@@ -48,7 +48,7 @@ objectdef obj_Cargo inherits obj_State
 				EVE:MoveItemsTo[This.CargoList, MyShip, CargoHold]
 				break
 			case SHIPCORPORATEHANGAR
-				EVE:MoveItemsTo[This.CargoList, MyShip, CorpHangars, ${foldername}]
+				EVE:MoveItemsTo[This.CargoList, MyShip, CorpHangars, ${foldername.Escape}]
 				break
 			case SHIPOREHOLD
 				EVE:MoveItemsTo[This.CargoList, MyShip, OreHold]
@@ -57,7 +57,8 @@ objectdef obj_Cargo inherits obj_State
 				EVE:MoveItemsTo[This.CargoList, MyStationHangar, Hangar]
 				break
 			case CORPORATEHANGAR
-				EVE:MoveItemsTo[This.CargoList, MyStationCorporateHangar, StationCorporateHangar, ${foldername}]
+				echo EVE:MoveItemsTo[This.CargoList, MyStationCorporateHangar, StationCorporateHangar, ${foldername.Escape}]
+				EVE:MoveItemsTo[This.CargoList, MyStationCorporateHangar, StationCorporateHangar, ${foldername.Escape}]
 				break
 		}
 	}
