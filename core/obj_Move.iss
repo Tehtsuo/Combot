@@ -151,7 +151,6 @@ objectdef obj_Move inherits obj_State
 		UI:Update["obj_Move", "Movement queued.  Destination: ${Entity[${ID}].Name}", "g"]
 		TargetGate:Set[${ID}]
 		This.Traveling:Set[TRUE]
-		echo QUEUEING GATEMOVE
 		This:QueueState["GateMove"]
 	}
 
@@ -161,6 +160,15 @@ objectdef obj_Move inherits obj_State
 		if !${This.CheckApproach}
 		{
 			return FALSE
+		}
+
+		if ${Entity[${TargetGate}].Distance} < 1000
+		{
+			UI:Update["obj_Move", "Too close!  Orbiting ${Entity[${TargetGate}].Name}", "g"]
+			This:Clear
+			This:QueueState["Orbit", 10000, ${Entity[${TargetGate}].ID}]
+			This:QueueState["GateMove"]
+			return TRUE
 		}
 		if ${Entity[${TargetGate}].Distance} > 3000
 		{
@@ -172,7 +180,11 @@ objectdef obj_Move inherits obj_State
 		This.Traveling:Set[FALSE]
 		return TRUE
 	}
-	
+	member:bool Orbit(int64 ID)
+	{
+		Entity[${ID}]:Orbit
+		return TRUE
+	}
 	
 	member:bool BookmarkMove()
 	{
@@ -193,7 +205,12 @@ objectdef obj_Move inherits obj_State
 			}
 		}
 
-		if ${Me.ToEntity.Mode} == 3 || !${Client.InSpace}
+		if !${Client.InSpace}
+		{
+			return FALSE
+		}
+
+		if ${Me.ToEntity.Mode} == 3
 		{
 			return FALSE
 		}
@@ -393,38 +410,39 @@ objectdef obj_Move inherits obj_State
 	
 objectdef obj_InstaWarp inherits obj_State
 {
-	variable bool InstaWarp_Cooldown=FALSE
+	; variable bool InstaWarp_Cooldown=FALSE
 
-	method Initialize()
-	{
-		This[parent]:Initialize
-		This.NonGameTiedPulse:Set[TRUE]
-		UI:Update["obj_InstaWarp", "Initialized", "g"]
-		This:QueueState["InstaWarp_Check"]
-	}
+	; method Initialize()
+	; {
+		; This[parent]:Initialize
+		; This.NonGameTiedPulse:Set[TRUE]
+		; UI:Update["obj_InstaWarp", "Initialized", "g"]
+		; This:QueueState["InstaWarp_Check", 2000]
+	; }
 	
-	member:bool InstaWarp_Check()
-	{
-		if !${Client.InSpace}
-		{
-			return FALSE
-		}
-		if ${Me.ToEntity.Mode} == 3 && ${InstaWarp_Cooldown} && ${Ship.ModuleList_AB_MWD.IsActive}
-		{
-			Ship.ModuleList_AB_MWD:Deactivate
-			return FALSE
-		}
-		if ${Me.ToEntity.Mode} == 3 && !${InstaWarp_Cooldown}
-		{
-		echo Warp Check
-			Ship.ModuleList_AB_MWD:Activate
-			InstaWarp_Cooldown:Set[TRUE]
-			return FALSE
-		}
-		if ${Me.ToEntity.Mode} != 3
-		{
-			InstaWarp_Cooldown:Set[FALSE]
-			return FALSE
-		}
-	}
+	; member:bool InstaWarp_Check()
+	; {
+		; if !${Client.InSpace}
+		; {
+			; return FALSE
+		; }
+		; echo ${Ship.ModuleList_AB_MWD.ActiveCount}
+		; if ${Me.ToEntity.Mode} == 3 && ${InstaWarp_Cooldown} && ${Ship.ModuleList_AB_MWD.ActiveCount}
+		; {
+			; echo Deactivating
+			; Ship.ModuleList_AB_MWD:DeactivateAll
+			; return FALSE
+		; }
+		; if ${Me.ToEntity.Mode} == 3 && !${InstaWarp_Cooldown}
+		; {
+			; Ship.ModuleList_AB_MWD:Activate
+			; This:InstaWarp_Cooldown:Set[TRUE]
+			; return FALSE
+		; }
+		; if ${Me.ToEntity.Mode} != 3
+		; {
+			; This:InstaWarp_Cooldown:Set[FALSE]
+			; return FALSE
+		; }
+	; }
 }

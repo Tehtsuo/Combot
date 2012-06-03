@@ -3,6 +3,18 @@
 	<template name='Console.Font'>	
 		<Name>Terminal</Name>
 		<Size>8</Size>
+		<Color>FFFFFFFF</Color>
+	</template>	
+	<template name='Listbox.Font'>	
+		<Name>FixedSys</Name>
+		<Size>12</Size>
+		<Color>FFFFFFFF</Color>
+	</template>	
+	<template name='Button.Font'>	
+		<Name>Arial</Name>
+		<Size>12</Size>
+		<Color>FF000000</Color>
+		<Bold>TRUE</Bold>
 	</template>	
 
 	<window name='ComBot'>
@@ -20,13 +32,16 @@
 			<BackgroundColor>FF000000</BackgroundColor>
 			<Children>
 				<Text name='ComBot_TitleBar_Title'>
-					<X>200</X>
+					<Alignment>Center</Alignment>
+					<X>0</X>
 					<Y>3</Y>
-					<Width>200</Width>
+					<Width>100%</Width>
 					<Height>20</Height>
-					<Text>ComBot by Tehtsuo</Text>
+					<Text>ComBot by Tehtsuo/Vendan</Text>
 				</Text>
 				<button	Name='Close'>
+					<Font template='Button.Font' />
+					<BackgroundColor>FF000000</BackgroundColor>
 					<X>r40</X>
 					<Y>0</Y>
 					<Width>40</Width>
@@ -37,6 +52,8 @@
 					</OnLeftClick>
 				</button>
 				<button	Name='Run'>
+					<Font template='Button.Font' />
+					<BackgroundColor>FF000000</BackgroundColor>
 					<X>0</X>
 					<Y>0</Y>
 					<Width>40</Width>
@@ -123,7 +140,7 @@
 							<X>0</X>
 							<Y>10%</Y>
 							<Width>40%</Width>
-							<Height>90%</Height>
+							<Height>80%</Height>
 						</listbox>
 						<Text name='obj_SalvageStateListTitle'> 
 									<X>40%</X> 
@@ -134,14 +151,27 @@
 									<Text>Pending States</Text>
 						</Text>						 
 						<listbox Name="obj_SalvageStateList">
+							<Font template='Listbox.Font' />
 							<BackgroundColor>FF000000</BackgroundColor>
 							<Border>1</Border>
 							<BorderColor>FFFFFFFF</BorderColor>
 							<X>40%</X>
 							<Y>10%</Y>
 							<Width>40%</Width>
-							<Height>90%</Height>
+							<Height>80%</Height>
 						</listbox>
+						<button	Name='Config'>
+							<Font template='Button.Font' />
+							<BackgroundColor>FF000000</BackgroundColor>
+							<X>0%</X>
+							<Y>90%</Y>
+							<Width>100%</Width>
+							<Height>10%</Height>
+							<Text>Settings</Text>
+							<OnLeftClick>
+								ui -load interface/ComBotGUI_DedicatedSalvager.xml
+							</OnLeftClick>
+						</button>						
 					</Tab>
 				</Tabs>
 			</TabControl>

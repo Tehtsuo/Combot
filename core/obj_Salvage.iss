@@ -48,6 +48,7 @@ objectdef obj_Salvage inherits obj_State
 		
 		EVE:GetBookmarks[Bookmarks]
 		Bookmarks:GetIterator[BookmarkIterator]
+		UIElement[obj_SalvageBookmarkList@Salvager@ComBotTab@ComBot]:SetSortType[text]
 		UIElement[obj_SalvageBookmarkList@Salvager@ComBotTab@ComBot]:ClearItems
 		
 		HoldOffTimer:GetIterator[HoldOffIterator]
@@ -79,6 +80,7 @@ objectdef obj_Salvage inherits obj_State
 			if ${BookmarkIterator.Value.Label.Left[8].Upper.Equal["SALVAGE:"]}
 			{
 				UIElement[obj_SalvageBookmarkList@Salvager@ComBotTab@ComBot]:AddItem[${BookmarkIterator.Value.Label}]
+				UIElement[obj_SalvageBookmarkList@Salvager@ComBotTab@ComBot]:Sort
 				InHoldOff:Set[FALSE]
 				if ${HoldOffIterator:First(exists)}
 				do
@@ -115,6 +117,7 @@ objectdef obj_Salvage inherits obj_State
 			This:QueueState["SalvageWrecks", 500, "${BookmarkCreator}"]
 			This:QueueState["ClearAlreadySalvaged", 100]
 			This:QueueState["DeleteBookmark", 1000, "${BookmarkCreator}"]
+			This:QueueState["RefreshBookmarks", 3000]
 			This:QueueState["GateCheck", 1000, "${BookmarkCreator}"]
 			return TRUE
 		}
@@ -306,6 +309,7 @@ objectdef obj_Salvage inherits obj_State
 				This:QueueState["SalvageWrecks", 500, "${BookmarkCreator}"]
 				This:QueueState["ClearAlreadySalvaged", 100]
 				This:QueueState["DeleteBookmark", 1000, "${BookmarkCreator}"]
+				This:QueueState["RefreshBookmarks", 3000]
 				This:QueueState["GateCheck", 1000, "${BookmarkCreator}"]
 				This:QueueState["JumpToCelestial"]
 				This:QueueState["Traveling"]

@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ISUI>
+	<template name='Console.Font'>	
+		<Name>Terminal</Name>
+		<Size>8</Size>
+	</template>	
+
+	<window name='ComBot_DedicatedSalvager'>
+		<Visible>1</Visible>
+		<BackGroundColor></BackGroundColor>
+		<Border>0</Border>
+		<X>200</X>
+		<Y>300</Y>
+		<Width>550</Width>
+		<Height>320</Height>
+		<TitleBar>
+			<Width>100%</Width>
+			<Height>20</Height>
+			<Border>0</Border>
+			<BackgroundColor>FF000000</BackgroundColor>
+			<Children>
+				<Text name='ComBot_DedicatedSalvager_TitleBar_Title'>
+					<X>200</X>
+					<Y>3</Y>
+					<Width>200</Width>
+					<Height>20</Height>
+					<Text>Dedicated Salvager Configuration</Text>
+				</Text>
+				<button	Name='Close'>
+					<X>r40</X>
+					<Y>0</Y>
+					<Width>40</Width>
+					<Height>20</Height>
+					<Text>Close</Text>
+					<OnLeftClick>
+						endscript ComBot
+					</OnLeftClick>
+				</button>
+			</Children>
+		</TitleBar>
+		<Children name="ComBot_DedicatedSalvager_Children">
+
+		</Children>
+	</window>
+	
+</ISUI>
