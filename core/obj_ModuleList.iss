@@ -53,6 +53,34 @@ objectdef obj_ModuleList
 		}
 	}
 	
+	method Deactivate(int64 target=-1)
+	{
+		This:DeactivateCount[1, ${target}]
+	}
+	
+	method DeactivateCount(int count, int64 target=-1)
+	{
+		variable int deactivatedCount = 0
+		variable iterator ModuleIterator
+		Modules:GetIterator[ModuleIterator]
+		if ${ModuleIterator:First(exists)}
+		{
+			do
+			{
+				if ${ModuleIterator.Value.IsActiveOn[${target}]}
+				{
+					ModuleIterator.Value:Deactivate
+					deactivatedCount:Inc
+				}
+				if ${deactivatedCount} >= ${count}
+				{
+					return
+				}
+			}
+			while ${ModuleIterator:Next(exists)}
+		}
+	}
+	
 	method Reactivate(int ModuleID, int64 target=-1)
 	{
 		Modules[${ModuleID}]:Activate[${target}]
@@ -111,6 +139,11 @@ objectdef obj_ModuleList
 			while ${ModuleIterator:Next(exists)}
 		}
 		return ${countInactive}
+	}
+	
+	member:double Range()
+	{
+		return ${Modules.Get[1].OptimalRange}
 	}
 	
 	member:string GetFallthroughObject()
