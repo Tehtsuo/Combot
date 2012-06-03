@@ -5,11 +5,7 @@
 		<Size>8</Size>
 		<Color>FFFFFFFF</Color>
 	</template>	
-	<template name='Listbox.Font'>	
-		<Name>FixedSys</Name>
-		<Size>12</Size>
-		<Color>FFFFFFFF</Color>
-	</template>	
+
 	<template name='Button.Font'>	
 		<Name>Arial</Name>
 		<Size>12</Size>

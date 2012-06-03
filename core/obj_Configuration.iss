@@ -40,6 +40,7 @@ objectdef obj_Configuration_BaseConfig
 objectdef obj_Configuration
 {
 	variable obj_Configuration_Common Common
+	variable obj_Configuration_Salvager Salvager
 	
 	method Save()
 	{
@@ -91,3 +92,62 @@ objectdef obj_Configuration_Common
 
 }
 
+objectdef obj_Configuration_Salvager
+{
+	variable string SetName = "Salvager"
+	variable int AboutCount = 0
+
+	method Initialize()
+	{
+		if !${BaseConfig.BaseRef.FindSet[${This.SetName}](exists)}
+		{
+			UI:Update["obj_Configuration", " ${This.SetName} settings missing - initializing", "o"]
+			This:Set_Default_Values[]
+		}
+		UI:Update["obj_Configuration", " ${This.SetName}: Initialized", "-g"]
+	}
+
+	member:settingsetref CommonRef()
+	{
+		return ${BaseConfig.BaseRef.FindSet[${This.SetName}]}
+	}
+
+	method Set_Default_Values()
+	{
+		BaseConfig.BaseRef:AddSet[${This.SetName}]
+
+		This.CommonRef:AddSetting[Salvager_Dropoff_Type,Personal Hangar]
+		This.CommonRef:AddSetting[Salvager_Prefix,Salvage:]
+	}
+
+	member:string Salvager_Prefix()
+	{
+		return ${This.CommonRef.FindSetting[Salvager_Prefix]}
+	}
+
+	method SetSalvager_Prefix(string value)
+	{
+		This.CommonRef:AddSetting[Salvager_Prefix,${value}]
+	}
+	
+	member:string Salvager_Dropoff()
+	{
+		return ${This.CommonRef.FindSetting[Salvager_Dropoff]}
+	}
+
+	method SetSalvager_Dropoff(string value)
+	{
+		This.CommonRef:AddSetting[Salvager_Dropoff,${value}]
+	}
+	
+	member:string Salvager_Dropoff_Type()
+	{
+		return ${This.CommonRef.FindSetting[Salvager_Dropoff_Type]}
+	}
+
+	method SetSalvager_Dropoff_Type(string value)
+	{
+		This.CommonRef:AddSetting[Salvager_Dropoff_Type,${value}]
+	}
+
+}

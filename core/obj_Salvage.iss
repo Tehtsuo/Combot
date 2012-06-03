@@ -27,7 +27,7 @@ objectdef obj_Salvage inherits obj_State
 	{
 		UI:Update["obj_Salvage", "Salvage stopped, setting destination to station", "g"]
 		This:Clear()
-		Move:Bookmark["Salvager Home Base"]
+		Move:Bookmark[${Config.Salvager.Salvager_Dropoff}]
 		This:QueueState["Traveling"]
 	}
 
@@ -77,7 +77,7 @@ objectdef obj_Salvage inherits obj_State
 		if ${BookmarkIterator:First(exists)}
 		do
 		{	
-			if ${BookmarkIterator.Value.Label.Left[8].Upper.Equal["SALVAGE:"]}
+			if ${BookmarkIterator.Value.Label.Left[8].Upper.Equal[${Config.Salvager.Salvager_Prefix}]}
 			{
 				UIElement[obj_SalvageBookmarkList@Salvager@ComBotTab@ComBot]:AddItem[${BookmarkIterator.Value.Label}, ${BookmarkIterator.Value.DateCreated}${BookmarkIterator.Value.TimeCreated}]
 				UIElement[obj_SalvageBookmarkList@Salvager@ComBotTab@ComBot]:Sort
@@ -124,7 +124,7 @@ objectdef obj_Salvage inherits obj_State
 
 		
 		UI:Update["obj_Salvage", "No salvage bookmark found - returning to station", "g"]
-		Move:Bookmark["Salvager Home Base"]
+		Move:Bookmark[${Config.Salvager.Salvager_Dropoff}]
 		This:QueueState["Traveling"]
 		This:QueueState["Offload"]
 		return TRUE
@@ -292,7 +292,7 @@ objectdef obj_Salvage inherits obj_State
 			{
 				do
 				{
-					if ${BookmarkIterator.Value.Label.Left[8].Upper.Equal["SALVAGE:"]} && ${BookmarkIterator.Value.CreatorID.Equal[${BookmarkCreator}]}
+					if ${BookmarkIterator.Value.Label.Left[8].Upper.Equal[${Config.Salvager.Salvager_Prefix}]} && ${BookmarkIterator.Value.CreatorID.Equal[${BookmarkCreator}]}
 					{
 						UseJumpGate:Set[True}
 					}
@@ -344,8 +344,8 @@ objectdef obj_Salvage inherits obj_State
 		if ${BookmarkIterator:First(exists)}
 		do
 		{
-			echo ${BookmarkIterator.Value.Label.Left[8].Upper.Equal["SALVAGE:"]} && ${BookmarkIterator.Value.CreatorID.Equal[${BookmarkCreator}]}
-			if ${BookmarkIterator.Value.Label.Left[8].Upper.Equal["SALVAGE:"]} && ${BookmarkIterator.Value.CreatorID.Equal[${BookmarkCreator}]}
+			echo ${BookmarkIterator.Value.Label.Left[8].Upper.Equal[${Config.Salvager.Salvager_Prefix}]} && ${BookmarkIterator.Value.CreatorID.Equal[${BookmarkCreator}]}
+			if ${BookmarkIterator.Value.Label.Left[8].Upper.Equal[${Config.Salvager.Salvager_Prefix}]} && ${BookmarkIterator.Value.CreatorID.Equal[${BookmarkCreator}]}
 			{
 				if ${BookmarkIterator.Value.JumpsTo} == 0
 				{
@@ -377,7 +377,7 @@ objectdef obj_Salvage inherits obj_State
 		if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) > 0.75
 		{
 			UI:Update["obj_Salvage", "Unload trip required", "g"]
-			Move:Bookmark["Salvager Home Base"]
+			Move:Bookmark[${Config.Salvager.Salvager_Dropoff}]
 			This:QueueState["Traveling"]
 			This:QueueState["Offload"]
 		}
@@ -395,7 +395,27 @@ objectdef obj_Salvage inherits obj_State
 	{
 		UI:Update["obj_Salvage", "Unloading cargo", "g"]
 		Cargo:PopulateCargoList[SHIP]
-		Cargo:MoveCargoList[HANGAR]
+		switch ${Config.Salvager.Salvager_Dropoff_Type}
+		{
+			case Personal Hangar
+				Cargo:MoveCargoList[HANGAR]
+				break
+			case Corporate Hangar Folder 1
+				Cargo:MoveCargoList[CORPORATEHANGAR, "1st Division"]
+			case Corporate Hangar Folder 2
+				Cargo:MoveCargoList[CORPORATEHANGAR, "2nd Division"]
+			case Corporate Hangar Folder 3
+				Cargo:MoveCargoList[CORPORATEHANGAR, "3rd Division"]
+			case Corporate Hangar Folder 4
+				Cargo:MoveCargoList[CORPORATEHANGAR, "4th Division"]
+			case Corporate Hangar Folder 5
+				Cargo:MoveCargoList[CORPORATEHANGAR, "5th Division"]
+			case Corporate Hangar Folder 6
+				Cargo:MoveCargoList[CORPORATEHANGAR, "6th Division"]
+			case Corporate Hangar Folder 7
+				Cargo:MoveCargoList[CORPORATEHANGAR, "7th Division"]
+				break
+		}
 		This:Clear
 		This:QueueState["Log", 1000, "Idling for 1 minute"]
 		This:QueueState["Idle", 60000]
