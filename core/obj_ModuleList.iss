@@ -55,10 +55,10 @@ objectdef obj_ModuleList
 	
 	method Deactivate(int64 target=-1)
 	{
-		This:Deactivate[1, ${target}]
+		This:DeactivateCount[1, ${target}]
 	}
 	
-	method ActivateCount(int count, int64 target=-1)
+	method DeactivateCount(int count, int64 target=-1)
 	{
 		variable int deactivatedCount = 0
 		variable iterator ModuleIterator
@@ -67,9 +67,9 @@ objectdef obj_ModuleList
 		{
 			do
 			{
-				if !${ModuleIterator.Value.IsActiveOn[${target}]}
+				if ${ModuleIterator.Value.IsActiveOn[${target}]}
 				{
-					ModuleIterator.Value:Activate[${target}]
+					ModuleIterator.Value:Deactivate
 					deactivatedCount:Inc
 				}
 				if ${deactivatedCount} >= ${count}
