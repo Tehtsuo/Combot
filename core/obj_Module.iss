@@ -47,6 +47,7 @@ objectdef obj_Module inherits obj_State
 			This:Clear
 			This:QueueState["WaitTillInactive"]
 		}
+		echo "QueueActivate on ${newTarget}"
 		This:QueueState["ActivateOn", 50, "${newTarget}"]
 		This:QueueState["WaitTillActive", 50, 20]
 		This:QueueState["WaitTillInactive"]
