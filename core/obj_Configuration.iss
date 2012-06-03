@@ -2,8 +2,6 @@
 objectdef obj_Configuration_BaseConfig
 {
 	variable filepath CONFIG_PATH = "${Script.CurrentDirectory}/Config"
-	variable string ORG_CONFIG_FILE = "combot.xml"
-	variable string NEW_CONFIG_FILE = "${Me.Name} Config.xml"
 	variable string CONFIG_FILE = "${Me.Name} Config.xml"
 	variable settingsetref BaseRef
 
@@ -13,19 +11,11 @@ objectdef obj_Configuration_BaseConfig
 		LavishSettings:AddSet[ComBotSettings]
 		LavishSettings[ComBotSettings]:AddSet[${Me.Name}]
 
-		CONFIG_FILE:Set["${CONFIG_PATH}/${NEW_CONFIG_FILE}"]
 
-		if !${CONFIG_PATH.FileExists[${NEW_CONFIG_FILE}]}
-		{
-			UI:Update["obj_Configuration", "${CONFIG_FILE} not found - looking for ${ORG_CONFIG_FILE}", "o"]
-			UI:Update["obj_Configuration", "Configuration will be copied from ${ORG_CONFIG_FILE} to ${NEW_CONFIG_FILE}", "o"]
-
-			LavishSettings[EVEBotSettings]:Import[${CONFIG_PATH}/${ORG_CONFIG_FILE}]
-		}
-		else
+		if !${CONFIG_PATH.FileExists["${CONFIG_PATH}/${CONFIG_FILE}"]}
 		{
 			UI:Update["obj_Configuration", "Configuration file is ${CONFIG_FILE}", "g"]
-			LavishSettings[EVEBotSettings]:Import[${CONFIG_FILE}]
+			LavishSettings[ComBotSettings]:Import["${CONFIG_PATH}/${CONFIG_FILE}"]
 		}
 
 		BaseRef:Set[${LavishSettings[ComBotSettings].FindSet[${Me.Name}]}]
@@ -35,12 +25,12 @@ objectdef obj_Configuration_BaseConfig
 	method Shutdown()
 	{
 		This:Save[]
-		LavishSettings[EVEBotSettings]:Clear
+		LavishSettings[ComBotSettings]:Clear
 	}
 
 	method Save()
 	{
-		LavishSettings[EVEBotSettings]:Export[${CONFIG_FILE}]
+		LavishSettings[ComBotSettings]:Export["${CONFIG_PATH}/${CONFIG_FILE}"]
 	}
 }
 

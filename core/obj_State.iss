@@ -121,7 +121,7 @@ objectdef obj_State
 	method Clear()
 	{
 		States:Clear
-		UIElement[${QueueListbox}]:Clear
+		UIElement[${QueueListbox}]:ClearItems
 		UIElement[${QueueListbox}]:AddItem[${CurState.Name}]
 	}
 

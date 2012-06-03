@@ -117,6 +117,7 @@ objectdef obj_Salvage inherits obj_State
 			This:QueueState["SalvageWrecks", 500, "${BookmarkCreator}"]
 			This:QueueState["ClearAlreadySalvaged", 100]
 			This:QueueState["DeleteBookmark", 1000, "${BookmarkCreator}"]
+			This:QueueState["RefreshBookmarks", 3000]
 			This:QueueState["GateCheck", 1000, "${BookmarkCreator}"]
 			return TRUE
 		}
@@ -308,6 +309,7 @@ objectdef obj_Salvage inherits obj_State
 				This:QueueState["SalvageWrecks", 500, "${BookmarkCreator}"]
 				This:QueueState["ClearAlreadySalvaged", 100]
 				This:QueueState["DeleteBookmark", 1000, "${BookmarkCreator}"]
+				This:QueueState["RefreshBookmarks", 3000]
 				This:QueueState["GateCheck", 1000, "${BookmarkCreator}"]
 				This:QueueState["JumpToCelestial"]
 				This:QueueState["Traveling"]
