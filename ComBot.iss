@@ -43,7 +43,6 @@ function main()
 
 	UI:Update["ComBot", "Module initialization complete", "y"]
 	
-	variable index:item Cargo
 	while TRUE
 	{
 		wait 10

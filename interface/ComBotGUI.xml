@@ -169,7 +169,7 @@
 							<Height>10%</Height>
 							<Text>Settings</Text>
 							<OnLeftClick>
-								ui -load interface/ComBotGUI_DedicatedSalvager.xml
+								timedcommand 0 "ui -load \"&filepath;/ComBotGUI_DedicatedSalvager.xml\""
 							</OnLeftClick>
 						</button>						
 					</Tab>

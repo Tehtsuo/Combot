@@ -162,7 +162,7 @@ objectdef obj_Move inherits obj_State
 			return FALSE
 		}
 
-		if ${Entity[${TargetGate}].Distance} < 1000
+		if ${Entity[${TargetGate}].Distance} == 0
 		{
 			UI:Update["obj_Move", "Too close!  Orbiting ${Entity[${TargetGate}].Name}", "g"]
 			This:Clear
@@ -175,6 +175,7 @@ objectdef obj_Move inherits obj_State
 			This:Approach[${TargetGate}, 3000]
 			return FALSE
 		}
+		UI:Update["obj_Move", "Activating ${Entity[${TargetGate}].Name}", "g"]
 		Entity[${TargetGate}]:Activate
 		Client:Wait[5000]
 		This.Traveling:Set[FALSE]
@@ -380,7 +381,7 @@ objectdef obj_Move inherits obj_State
 		;	Find out if we need to approach the target
 		if ${Entity[${This.ApproachingID}].Distance} > ${This.ApproachingDistance} && ${This.TimeStartedApproaching} == -1
 		{
-			UI:Update["obj_Move", "Approaching to within ${ComBot.MetersToKM_Str[${distance}]} of ${Entity[${This.ApproachingID}].Name}", "g"]
+			UI:Update["obj_Move", "Approaching to within ${ComBot.MetersToKM_Str[${This.ApproachingDistance}]} of ${Entity[${This.ApproachingID}].Name}", "g"]
 			Entity[${This.ApproachingID}]:Approach[${distance}]
 			This.TimeStartedApproaching:Set[${Time.Timestamp}]
 			return FALSE

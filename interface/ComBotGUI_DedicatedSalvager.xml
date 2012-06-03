@@ -11,8 +11,8 @@
 		<Border>0</Border>
 		<X>200</X>
 		<Y>300</Y>
-		<Width>550</Width>
-		<Height>320</Height>
+		<Width>800</Width>
+		<Height>600</Height>
 		<TitleBar>
 			<Width>100%</Width>
 			<Height>20</Height>
@@ -20,10 +20,11 @@
 			<BackgroundColor>FF000000</BackgroundColor>
 			<Children>
 				<Text name='ComBot_DedicatedSalvager_TitleBar_Title'>
-					<X>200</X>
+					<X>0</X>
 					<Y>3</Y>
-					<Width>200</Width>
+					<Width>100%</Width>
 					<Height>20</Height>
+					<Alignment>Center</Alignment>
 					<Text>Dedicated Salvager Configuration</Text>
 				</Text>
 				<button	Name='Close'>
@@ -33,13 +34,22 @@
 					<Height>20</Height>
 					<Text>Close</Text>
 					<OnLeftClick>
-						endscript ComBot
+						ui -unload "&filepath;/ComBotGUI_DedicatedSalvager"
 					</OnLeftClick>
 				</button>
 			</Children>
 		</TitleBar>
 		<Children name="ComBot_DedicatedSalvager_Children">
-
+			<Frame name="ComBot_DedicatedSalvager_Frame">
+				<X>0</X>
+				<Y>5</Y>
+				<Width>100%</Width>
+				<Height>100%</Height>
+				<BackgroundColor>FF000000</BackgroundColor>
+				<Border>1</Border>
+				<BorderColor>FFFFFFFF</BorderColor>
+				
+			</Frame>
 		</Children>
 	</window>
 	
