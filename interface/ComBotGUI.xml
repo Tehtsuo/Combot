@@ -32,11 +32,12 @@
 			<BackgroundColor>FF000000</BackgroundColor>
 			<Children>
 				<Text name='ComBot_TitleBar_Title'>
-					<X>200</X>
+					<Alignment>Center</Alignment>
+					<X>0</X>
 					<Y>3</Y>
-					<Width>200</Width>
+					<Width>100%</Width>
 					<Height>20</Height>
-					<Text>ComBot by Tehtsuo & Vendan</Text>
+					<Text>ComBot by Tehtsuo/Vendan</Text>
 				</Text>
 				<button	Name='Close'>
 					<Font template='Button.Font' />
