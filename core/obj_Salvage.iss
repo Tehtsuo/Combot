@@ -401,19 +401,19 @@ objectdef obj_Salvage inherits obj_State
 				Cargo:MoveCargoList[HANGAR]
 				break
 			case Corporate Hangar Folder 1
-				Cargo:MoveCargoList[CORPORATEHANGAR, "1st Division"]
+				Cargo:MoveCargoList[CORPORATEHANGAR, "Corporation Folder 1"]
 			case Corporate Hangar Folder 2
-				Cargo:MoveCargoList[CORPORATEHANGAR, "2nd Division"]
+				Cargo:MoveCargoList[CORPORATEHANGAR, "Corporation Folder 2"]
 			case Corporate Hangar Folder 3
-				Cargo:MoveCargoList[CORPORATEHANGAR, "3rd Division"]
+				Cargo:MoveCargoList[CORPORATEHANGAR, "Corporation Folder 3"]
 			case Corporate Hangar Folder 4
-				Cargo:MoveCargoList[CORPORATEHANGAR, "4th Division"]
+				Cargo:MoveCargoList[CORPORATEHANGAR, "Corporation Folder 4"]
 			case Corporate Hangar Folder 5
-				Cargo:MoveCargoList[CORPORATEHANGAR, "5th Division"]
+				Cargo:MoveCargoList[CORPORATEHANGAR, "Corporation Folder 5"]
 			case Corporate Hangar Folder 6
-				Cargo:MoveCargoList[CORPORATEHANGAR, "6th Division"]
+				Cargo:MoveCargoList[CORPORATEHANGAR, "Corporation Folder 6"]
 			case Corporate Hangar Folder 7
-				Cargo:MoveCargoList[CORPORATEHANGAR, "7th Division"]
+				Cargo:MoveCargoList[CORPORATEHANGAR, "Corporation Folder 7"]
 				break
 		}
 		This:Clear
