@@ -54,7 +54,7 @@ objectdef obj_Salvage inherits obj_State
 		if ${HoldOffIterator:First(exists)}
 		do
 		{
-			if ${HoldOffIterator.Value} >= ${This.NextPulse}
+			if ${LavishScript.RunningTime} >= ${HoldOffIterator.Value}
 			{
 				RemoveHoldOff:Insert[${HoldOffIterator.Key}]
 			}
