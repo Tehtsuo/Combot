@@ -224,7 +224,7 @@ objectdef obj_Ship
 		}
 		while ${ModuleIter:Next(exists)}
 
-		UI:Update["obj_Ship", "Ship Module Inventory", "u"]
+		UI:Update["obj_Ship", "Ship Module Inventory", "y"]
 		
 		This.ModuleList_Weapon:GetIterator[ModuleIter]
 		if ${ModuleIter:First(exists)}
