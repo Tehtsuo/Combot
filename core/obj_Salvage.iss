@@ -96,7 +96,7 @@ objectdef obj_Salvage inherits obj_State
 				{
 					if (${BookmarkIterator.Value.TimeCreated.Compare[${BookmarkTime}]} < 0 && ${BookmarkIterator.Value.DateCreated.Compare[${BookmarkDate}]} <= 0) || ${BookmarkIterator.Value.DateCreated.Compare[${BookmarkDate}]} < 0
 					{
-						UIElement[obj_SalvageBookmarkList@Salvager@ComBotTab@ComBot].ItemByText[${BookmarkIterator.Value.Label}]:SetTextColor[FF0000FF]
+						UIElement[obj_SalvageBookmarkList@Salvager@ComBotTab@ComBot].ItemByText[${BookmarkIterator.Value.Label}]:SetTextColor[FF00FF00]
 						Target:Set[${BookmarkIterator.Value.Label}]
 						BookmarkTime:Set[${BookmarkIterator.Value.TimeCreated}]
 						BookmarkDate:Set[${BookmarkIterator.Value.DateCreated}]
