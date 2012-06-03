@@ -48,7 +48,7 @@ objectdef obj_Salvage inherits obj_State
 		
 		EVE:GetBookmarks[Bookmarks]
 		Bookmarks:GetIterator[BookmarkIterator]
-		UIElement[obj_SalvageBookmarkList@Salvager@ComBotTab@ComBot]:SetSortType[text]
+		UIElement[obj_SalvageBookmarkList@Salvager@ComBotTab@ComBot]:SetSortType[value]
 		UIElement[obj_SalvageBookmarkList@Salvager@ComBotTab@ComBot]:ClearItems
 		
 		HoldOffTimer:GetIterator[HoldOffIterator]
@@ -79,7 +79,7 @@ objectdef obj_Salvage inherits obj_State
 		{	
 			if ${BookmarkIterator.Value.Label.Left[8].Upper.Equal["SALVAGE:"]}
 			{
-				UIElement[obj_SalvageBookmarkList@Salvager@ComBotTab@ComBot]:AddItem[${BookmarkIterator.Value.Label}]
+				UIElement[obj_SalvageBookmarkList@Salvager@ComBotTab@ComBot]:AddItem[${BookmarkIterator.Value.Label}, ${BookmarkIterator.Value.DateCreated}${BookmarkIterator.Value.TimeCreated}]
 				UIElement[obj_SalvageBookmarkList@Salvager@ComBotTab@ComBot]:Sort
 				InHoldOff:Set[FALSE]
 				if ${HoldOffIterator:First(exists)}
