@@ -3,20 +3,22 @@ objectdef obj_WarpDestination
 	variable int Distance
 	variable string Bookmark
 	variable int AgentID
+	variable int64 SolarSystemID
 
-	method Initialize(int arg_Distance, string arg_Bookmark, int arg_Agent=0)
+	method Initialize(int arg_Distance, string arg_Bookmark, int arg_Agent=0, int64 arg_SolarSystemID=0)
 	{
 		Distance:Set[${arg_Distance}]	
 		Bookmark:Set[${arg_Bookmark}]	
 		AgentID:Set[${arg_Agent}]	
+		SolarSystemID:Set[${arg_SolarSystemID}]	
 	}
 	
-	method Set(int arg_Distance, string arg_Bookmark, int arg_Agent=0)
+	method Set(int arg_Distance, string arg_Bookmark, int arg_Agent=0, int64 arg_SolarSystemID=0)
 	{
 		Distance:Set[${arg_Distance}]	
 		Bookmark:Set[${arg_Bookmark}]	
 		AgentID:Set[${arg_Agent}]
-		
+		SolarSystemID:Set[${arg_SolarSystemID}]	
 	}
 }
 
@@ -126,6 +128,27 @@ objectdef obj_Move inherits obj_State
 		This:QueueState["BookmarkMove"]
 	}
 
+	method System(string SystemID, int Distance=0)
+	{
+		if ${This.Traveling}
+		{
+			return
+		}
+		
+		if !${Universe[SystemID](exists)}
+		{
+			UI:Update["obj_Move", "Attempted to travel to a system which does not exist", "r"]
+			UI:Update["obj_Move", "System ID: ${SystemID}", "r"]
+			return
+		}
+
+		UI:Update["obj_Move", "Movement queued.  Destination: ${Universe[SystemID]}.Name", "g"]
+		This.WarpDestination:Set[0, "", "", ${SystemID}]
+		This.Traveling:Set[TRUE]
+		This:QueueState["SystemMove"]
+	}
+	
+	
 	method AgentName(string AgentName)
 	{
 		if ${This.Traveling}
@@ -330,6 +353,43 @@ objectdef obj_Move inherits obj_State
 		}
 	}
 
+	member:bool SystemMove()
+	{
+
+		if ${Me.InStation}
+		{
+			if ${Me.SolarSystemID} == ${This.WarpDestination.SolarSystemID}
+			{
+				UI:Update["obj_Move", "Reached ${Universe[This.WarpDestination.SolarSystemID}].Name", "g"]
+				This.Traveling:Set[FALSE]
+				return TRUE
+			}
+			else
+			{
+				UI:Update["obj_Move", "Undocking from ${Me.Station.Name}", "g"]
+				This:Undock
+				return FALSE
+			}
+		}
+
+		if !${Client.InSpace}
+		{
+			return FALSE
+		}
+
+		if ${Me.ToEntity.Mode} == 3
+		{
+			return FALSE
+		}
+		
+		if  ${EVE.Bookmark[${This.WarpDestination.Bookmark}].SolarSystemID} != ${Me.SolarSystemID}
+		{
+			This:TravelToSystem[${EVE.Bookmark[${This.WarpDestination.Bookmark}].SolarSystemID}]
+			return FALSE
+		}
+		This.Traveling:Set[FALSE]
+		return TRUE
+	}
 	
 	
 	method Approach(int64 target, int distance=0)

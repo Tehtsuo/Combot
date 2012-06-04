@@ -38,11 +38,8 @@ objectdef obj_Miner
 			This:QueueState["Traveling"]
 			This:QueueState["Offload"]
 		}
-		if ${EVE.Bookmark[${Config.Miner.MiningSystemBookmark}].SolarSystemID} != ${Me.SolarSystemID}
-		{
-			This:QueueState["GoToMiningSystem"]
-		}
-		
+
+		This:QueueState["GoToMiningSystem"]
 		return TRUE;
 	}
 
@@ -78,7 +75,7 @@ objectdef obj_Miner
 		{
 			UI:Update["obj_Miner", "No mining system defined!  Check your settings", "r"]
 		}
-		Move:Bookmark[${Config.Miner.MiningSystemBookmark}]
+		Move:System[${EVE.Bookmark[${Config.Miner.MiningSystemBookmark}].SolarSystemID}]
 		This:QueueState["Traveling"]
 		return TRUE
 	}
