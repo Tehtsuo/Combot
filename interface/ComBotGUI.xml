@@ -130,10 +130,12 @@
 								This.ItemByValue[${Script[ComBot].VariableScope.Config.Common.ComBot_Mode}]:Select
 							</OnLoad>
 							<OnSelect>
-								Script[ComBot].VariableScope.Config.Common:SetComBot_Mode[${This.SelectedItem.Text}]
+								Script[ComBot].VariableScope.Config.Common:SetComBot_Mode[${This.SelectedItem.Value}]
 							</OnSelect>
 						</combobox>
 					</Tab>
+
+
 					<Tab Name='Salvager'>
 						<frame name='obj_SalvageFillerFrame'>
 							<BackgroundColor>FF000000</BackgroundColor>
@@ -189,6 +191,66 @@
 							<Text>Settings</Text>
 							<OnLeftClick>
 								timedcommand 0 "ui -load \"&filepath;/ComBotGUI_DedicatedSalvager.xml\""
+							</OnLeftClick>
+						</button>						
+					</Tab>
+
+
+					<Tab Name='Miner'>
+						<frame name='obj_MinerFillerFrame'>
+							<BackgroundColor>FF000000</BackgroundColor>
+							<Border>1</Border>
+							<BorderColor>FFFFFFFF</BorderColor>
+							<X>0</X>
+							<Y>0</Y>
+							<Height>100%</Height>
+							<Width>100%</Width>
+						</frame>					
+						<Text name='obj_MinerBookmarkListTitle'> 
+									<X>0</X> 
+									<Y>5%</Y> 
+									<Width>40%</Width> 
+									<Height>5%</Height> 
+									<Alignment>Center</Alignment>
+									<Text>Miner Bookmarks</Text>
+						</Text>						 
+						<listbox Name="obj_MinerBookmarkList">
+							<BackgroundColor>FF000000</BackgroundColor>
+							<Border>1</Border>
+							<BorderColor>FFFFFFFF</BorderColor>
+							<X>0</X>
+							<Y>10%</Y>
+							<Width>40%</Width>
+							<Height>80%</Height>
+						</listbox>
+						<Text name='obj_MinerStateListTitle'> 
+									<X>40%</X> 
+									<Y>5%</Y> 
+									<Width>40%</Width> 
+									<Height>5%</Height> 
+									<Alignment>Center</Alignment>
+									<Text>Pending States</Text>
+						</Text>						 
+						<listbox Name="obj_MinerStateList">
+							<Font template='Listbox.Font' />
+							<BackgroundColor>FF000000</BackgroundColor>
+							<Border>1</Border>
+							<BorderColor>FFFFFFFF</BorderColor>
+							<X>40%</X>
+							<Y>10%</Y>
+							<Width>40%</Width>
+							<Height>80%</Height>
+						</listbox>
+						<button	Name='Config'>
+							<Font template='Button.Font' />
+							<BackgroundColor>FF000000</BackgroundColor>
+							<X>0%</X>
+							<Y>90%</Y>
+							<Width>100%</Width>
+							<Height>10%</Height>
+							<Text>Settings</Text>
+							<OnLeftClick>
+								timedcommand 0 "ui -load \"&filepath;/ComBotGUI_Miner.xml\""
 							</OnLeftClick>
 						</button>						
 					</Tab>

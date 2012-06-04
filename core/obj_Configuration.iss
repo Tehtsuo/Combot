@@ -41,6 +41,7 @@ objectdef obj_Configuration
 {
 	variable obj_Configuration_Common Common
 	variable obj_Configuration_Salvager Salvager
+	variable obj_Configuration_Miner Miner
 	
 	method Save()
 	{
@@ -128,16 +129,6 @@ objectdef obj_Configuration_Salvager
 		This.CommonRef:AddSetting[Salvager_Prefix,${value}]
 	}
 	
-	member:string Salvager_Dropoff()
-	{
-		return ${This.CommonRef.FindSetting[Salvager_Dropoff]}
-	}
-
-	method SetSalvager_Dropoff(string value)
-	{
-		This.CommonRef:AddSetting[Salvager_Dropoff,${value}]
-	}
-	
 	member:string Salvager_Dropoff_Type()
 	{
 		return ${This.CommonRef.FindSetting[Salvager_Dropoff_Type]}
@@ -149,6 +140,54 @@ objectdef obj_Configuration_Salvager
 	}
 }
 	
+
+objectdef obj_Configuration_Miner
+{
+	variable string SetName = "Miner"
+
+	method Initialize()
+	{
+		if !${BaseConfig.BaseRef.FindSet[${This.SetName}](exists)}
+		{
+			UI:Update["obj_Configuration", " ${This.SetName} settings missing - initializing", "o"]
+			This:Set_Default_Values[]
+		}
+		UI:Update["obj_Configuration", " ${This.SetName}: Initialized", "-g"]
+	}
+
+	member:settingsetref CommonRef()
+	{
+		return ${BaseConfig.BaseRef.FindSet[${This.SetName}]}
+	}
+
+	method Set_Default_Values()
+	{
+		BaseConfig.BaseRef:AddSet[${This.SetName}]
+
+		This.CommonRef:AddSetting[Miner_Dropoff,Personal Hangar]
+}
+
+	member:string MiningSystem()
+	{
+		return ${This.CommonRef.FindSetting[MiningSystem]}
+	}
+
+	method SetMiningSystem(string value)
+	{
+		This.CommonRef:AddSetting[MiningSystem,${value}]
+	}
+
+	member:string Miner_Dropoff()
+	{
+		return ${This.CommonRef.FindSetting[Miner_Dropoff]}
+	}
+
+	method SetMiner_Dropoff(string value)
+	{
+		This.CommonRef:AddSetting[Miner_Dropoff,${value}]
+	}
+	
+}
 	
 	
 	
