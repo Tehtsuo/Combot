@@ -401,27 +401,9 @@ objectdef obj_Salvage inherits obj_State
 			case Personal Hangar
 				Cargo:MoveCargoList[HANGAR]
 				break
-			case Corporate Hangar Folder 1
-				Cargo:MoveCargoList[CORPORATEHANGAR, Corporation Folder 1]
-				break
-			case Corporate Hangar Folder 2
-				Cargo:MoveCargoList[CORPORATEHANGAR, Corporation Folder 2]
-				break
-			case Corporate Hangar Folder 3
-				Cargo:MoveCargoList[CORPORATEHANGAR, Corporation Folder 3]
-				break
-			case Corporate Hangar Folder 4
-				Cargo:MoveCargoList[CORPORATEHANGAR, Corporation Folder 4]
-				break
-			case Corporate Hangar Folder 5
-				Cargo:MoveCargoList[CORPORATEHANGAR, Corporation Folder 5]
-				break
-			case Corporate Hangar Folder 6
-				Cargo:MoveCargoList[CORPORATEHANGAR, Corporation Folder 6]
-				break
-			case Corporate Hangar Folder 7
-				Cargo:MoveCargoList[CORPORATEHANGAR, Corporation Folder 7]
-				break
+
+			Cargo:MoveCargoList[CORPORATEHANGAR, ${Config.Miner.Salvager_Dropoff_Type}]
+			break
 		}
 		This:Clear
 		This:QueueState["Log", 1000, "Idling for 1 minute"]

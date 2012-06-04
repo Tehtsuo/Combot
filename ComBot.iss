@@ -17,6 +17,8 @@
 #include core/obj_Cargo.iss
 #include core/obj_Salvage.iss
 #include core/obj_Targets.iss
+#include core/obj_Asteroids.iss
+#include core/obj_Miner.iss
 
 
 function atexit()
@@ -41,6 +43,8 @@ function main()
 	declarevariable Cargo obj_Cargo script
 	declarevariable Salvager obj_Salvage script
 	declarevariable Targets obj_Targets script
+	declarevariable Asteroids obj_Asteroids script
+	declarevariable Miner obj_Miner script
 
 	UI:Update["ComBot", "Module initialization complete", "y"]
 	
