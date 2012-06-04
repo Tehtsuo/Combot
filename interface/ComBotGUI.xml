@@ -47,6 +47,27 @@
 						endscript ComBot
 					</OnLeftClick>
 				</button>
+				<button	Name='Hide'>
+					<Font template='Button.Font' />
+					<BackgroundColor>FF000000</BackgroundColor>
+					<X>r80</X>
+					<Y>0</Y>
+					<Width>40</Width>
+					<Height>20</Height>
+					<Text>Hide</Text>
+					<OnLeftClick>
+						if ${UIElement[ComBotTab@ComBot].Visible}
+						{
+							UIElement[ComBotTab@ComBot]:Hide
+							This:SetText[Show]
+						}
+						else
+						{
+							UIElement[ComBotTab@ComBot]:Show
+							This:SetText[Hide]
+						}
+					</OnLeftClick>
+				</button>
 				<button	Name='Run'>
 					<Font template='Button.Font' />
 					<BackgroundColor>FF000000</BackgroundColor>
