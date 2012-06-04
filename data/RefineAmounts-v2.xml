@@ -28934,4 +28934,10 @@
      <Refine item="Medium Ancillary Shield Booster" typeID="32772" refinetypeID="37" quantity="102"/>
      <Refine item="Small Ancillary Shield Booster" typeID="32774" refinetypeID="34" quantity="1194"/>
      <Refine item="Small Ancillary Shield Booster" typeID="32774" refinetypeID="35" quantity="433"/>
-     <Refine item="Small Ancillary Shield Booster" typeID="32774" refine
+     <Refine item="Small Ancillary Shield Booster" typeID="32774" refinetypeID="36" quantity="102"/>
+     <Refine item="X-Large Ancillary Shield Booster" typeID="32780" refinetypeID="37" quantity="1194"/>
+     <Refine item="X-Large Ancillary Shield Booster" typeID="32780" refinetypeID="38" quantity="433"/>
+     <Refine item="X-Large Ancillary Shield Booster" typeID="32780" refinetypeID="39" quantity="103"/>
+     <Refine item="Light Defender Missile I" typeID="32782" refinetypeID="34" quantity="58"/>
+     <Refine item="Light Defender Missile I" typeID="32782" refinetypeID="36" quantity="6"/>
+</Refines>
