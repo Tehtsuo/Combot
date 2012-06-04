@@ -1,7 +1,7 @@
 
 objectdef obj_Configuration_BaseConfig
 {
-	variable filepath CONFIG_PATH = "${Script.CurrentDirectory}/Config"
+	variable filepath CONFIG_PATH = "${Script.CurrentDirectory}/config"
 	variable string CONFIG_FILE = "${Me.Name} Config.xml"
 	variable settingsetref BaseRef
 
@@ -56,7 +56,6 @@ objectdef obj_Configuration
 objectdef obj_Configuration_Common
 {
 	variable string SetName = "Common"
-	variable int AboutCount = 0
 
 	method Initialize()
 	{
@@ -95,7 +94,6 @@ objectdef obj_Configuration_Common
 objectdef obj_Configuration_Salvager
 {
 	variable string SetName = "Salvager"
-	variable int AboutCount = 0
 
 	method Initialize()
 	{
@@ -148,6 +146,72 @@ objectdef obj_Configuration_Salvager
 	method SetSalvager_Dropoff_Type(string value)
 	{
 		This.CommonRef:AddSetting[Salvager_Dropoff_Type,${value}]
+	}
+}
+	
+	
+	
+	
+objectdef obj_Configuration_RefineData
+{
+	variable string SetName = "Refine Amounts"
+
+	variable filepath CONFIG_PATH = "${Script.CurrentDirectory}/data"
+	variable string CONFIG_FILE = "RefineAmounts.xml"
+	variable settingsetref BaseRef
+
+	method Initialize()
+	{
+		UI:Update["obj_Configuration", " ${This.SetName}: Load on demand", "-g"]
+	}
+
+	method Shutdown()
+	{
+		LavishSettings[RefineData]:Clear
+	}
+
+	method Load()
+	{
+		LavishSettings[RefineData]:Clear
+		LavishSettings:AddSet[RefineData]
+		LavishSettings[RefineData]:AddSet[${Me.Name}]
+
+		if !${CONFIG_PATH.FileExists["${CONFIG_PATH}/${CONFIG_FILE}"]}
+		{
+			LavishSettings[RefineData]:Import["${CONFIG_PATH}/${CONFIG_FILE}"]
+		}
+		BaseRef:Set[${LavishSettings[RefineData].FindSet[Refines]}]
+
+		UI:Update["obj_Configuration", " ${This.SetName}: Initialized", "-g"]
+	}
+	
+	member:int Tritanium(int ID)
+	{
+		return ${This.BaseRef.FindSet["${ID}"].FindSetting["34"]}
+	}
+	member:int Pyerite(int ID)
+	{
+		return ${This.BaseRef.FindSet["${ID}"].FindSetting["35"]}
+	}
+	member:int Mexallon(int ID)
+	{
+		return ${This.BaseRef.FindSet["${ID}"].FindSetting["36"]}
+	}
+	member:int Isogen(int ID)
+	{
+		return ${This.BaseRef.FindSet["${ID}"].FindSetting["37"]}
+	}
+	member:int Nocxium(int ID)
+	{
+		return ${This.BaseRef.FindSet["${ID}"].FindSetting["38"]}
+	}
+	member:int Zydrine(int ID)
+	{
+		return ${This.BaseRef.FindSet["${ID}"].FindSetting["39"]}
+	}
+	member:int Megacyte(int ID)
+	{
+		return ${This.BaseRef.FindSet["${ID}"].FindSetting["40"]}
 	}
 
 }
