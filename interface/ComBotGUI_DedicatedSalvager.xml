@@ -131,13 +131,13 @@
 						<Height>40%</Height>
 						<Items>
 							<Item>Personal Hangar</Item>
-							<Item>Corporate Hangar Folder 1</Item>
-							<Item>Corporate Hangar Folder 2</Item>
-							<Item>Corporate Hangar Folder 3</Item>
-							<Item>Corporate Hangar Folder 4</Item>
-							<Item>Corporate Hangar Folder 5</Item>
-							<Item>Corporate Hangar Folder 6</Item>
-							<Item>Corporate Hangar Folder 7</Item>
+							<Item>Corporation Folder 1</Item>
+							<Item>Corporation Folder 2</Item>
+							<Item>Corporation Folder 3</Item>
+							<Item>Corporation Folder 4</Item>
+							<Item>Corporation Folder 5</Item>
+							<Item>Corporation Folder 6</Item>
+							<Item>Corporation Folder 7</Item>
 						</Items>
 						<OnLoad>
 							This.ItemByText[${Script[ComBot].VariableScope.Config.Salvager.Salvager_Dropoff_Type}]:Select
