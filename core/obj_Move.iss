@@ -178,7 +178,7 @@ objectdef obj_Move inherits obj_State
 		UI:Update["obj_Move", "Activating ${Entity[${TargetGate}].Name}", "g"]
 		Entity[${TargetGate}]:Activate
 		Client:Wait[5000]
-		This.Traveling:Set[FALSE]
+		This:QueueState["BookmarkMove"]
 		return TRUE
 	}
 	member:bool Orbit(int64 ID)
