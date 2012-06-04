@@ -283,6 +283,7 @@ objectdef obj_Salvage inherits obj_State
 	member:bool GateCheck(int64 BookmarkCreator)
 	{
 		variable index:bookmark Bookmarks
+		variable iterator BookmarkIterator
 		variable bool UseJumpGate=FALSE
 		if ${Entity[GroupID == GROUP_WARPGATE](exists)}
 		{
