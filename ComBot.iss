@@ -45,6 +45,7 @@ function main()
 	declarevariable Targets obj_Targets script
 	declarevariable Asteroids obj_Asteroids script
 	declarevariable Miner obj_Miner script
+	declarevariable RefineData obj_Configuration_RefineData script
 
 	UI:Update["ComBot", "Module initialization complete", "y"]
 	
