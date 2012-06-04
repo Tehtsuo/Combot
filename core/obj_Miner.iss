@@ -73,10 +73,10 @@ objectdef obj_Miner
 	}
 	
 	member:bool GoToMiningSystem()
-	{
+	{fs
 		if !${EVE.Bookmark[${Config.Miner.MiningSystemBookmark}](exists)}
 		{
-			UI:Update["obj_Miner", "No mining system defined!  Check your settings", "g"]
+			UI:Update["obj_Miner", "No mining system defined!  Check your settings", "r"]
 		}
 		Move:Bookmark[${Config.Miner.MiningSystemBookmark}]
 		This:QueueState["Traveling"]

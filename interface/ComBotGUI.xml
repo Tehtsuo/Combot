@@ -130,6 +130,7 @@
 								This.ItemByValue[${Script[ComBot].VariableScope.Config.Common.ComBot_Mode}]:Select
 							</OnLoad>
 							<OnSelect>
+								Script[ComBot].VariableScope.Config.Common:SetComBot_Mode[${This.SelectedItem.Text}]
 							</OnSelect>
 						</combobox>
 					</Tab>
