@@ -5,7 +5,7 @@ objectdef obj_Miner
 	method Initialize()
 	{
 		This[parent]:Initialize
-		;This:AssignStateQueueDisplay[obj_SalvageStateList@Salvager@ComBotTab@ComBot]
+		This:AssignStateQueueDisplay[obj_MinerStateList@Miner@ComBotTab@ComBot]
 		UI:Update["obj_Miner", "Initialized", "g"]
 	}
 
