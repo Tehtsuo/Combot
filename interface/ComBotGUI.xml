@@ -125,6 +125,7 @@
 							<Items>
 								<Item Value='Salvager'>Dedicated Salvager</Item>
 								<Item Value='Miner'>Miner</Item>
+								<Item Value='HangerSale'>Hanger Sale</Item>
 							</Items>
 							<OnLoad>
 								This.ItemByValue[${Script[ComBot].VariableScope.Config.Common.ComBot_Mode}]:Select
