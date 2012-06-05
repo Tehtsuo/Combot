@@ -5,11 +5,13 @@ objectdef obj_HangerSale inherits obj_State
 	variable collection:float MineralPrices
 	variable collection:string MineralNames
 	
+	variable float ProfitOverReprocess=0
+	
 	method Initialize()
 	{
 		This[parent]:Initialize
 		;This:AssignStateQueueDisplay[obj_SalvageStateList@Salvager@ComBotTab@ComBot]
-		PulseFrequency:Set[2000]
+		PulseFrequency:Set[1000]
 		UI:Update["obj_HangerSale", "Initialized", "g"]
 	}
 	
@@ -29,20 +31,20 @@ objectdef obj_HangerSale inherits obj_State
 			RefineData:Load
 			This:QueueState["OpenHanger"]
 ;			This:QueueState["OpenMarket"]
-			This:QueueState["GetMarket", 5000, "34"]
-			This:QueueState["GetPrice", 5000, "34"]
-			This:QueueState["GetMarket", 5000, "35"]
-			This:QueueState["GetPrice", 5000, "35"]
-			This:QueueState["GetMarket", 5000, "36"]
-			This:QueueState["GetPrice", 5000, "36"]
-			This:QueueState["GetMarket", 5000, "37"]
-			This:QueueState["GetPrice", 5000, "37"]
-			This:QueueState["GetMarket", 5000, "38"]
-			This:QueueState["GetPrice", 5000, "38"]
-			This:QueueState["GetMarket", 5000, "39"]
-			This:QueueState["GetPrice", 5000, "39"]
-			This:QueueState["GetMarket", 5000, "40"]
-			This:QueueState["GetPrice", 5000, "40"]
+			This:QueueState["GetMarket", 1000, "34"]
+			This:QueueState["GetPrice", 2000, "34"]
+			This:QueueState["GetMarket", 1000, "35"]
+			This:QueueState["GetPrice", 2000, "35"]
+			This:QueueState["GetMarket", 1000, "36"]
+			This:QueueState["GetPrice", 2000, "36"]
+			This:QueueState["GetMarket", 1000, "37"]
+			This:QueueState["GetPrice", 2000, "37"]
+			This:QueueState["GetMarket", 1000, "38"]
+			This:QueueState["GetPrice", 2000, "38"]
+			This:QueueState["GetMarket", 1000, "39"]
+			This:QueueState["GetPrice", 2000, "39"]
+			This:QueueState["GetMarket", 1000, "40"]
+			This:QueueState["GetPrice", 2000, "40"]
 			This:QueueState["CheckHanger"]
 		}
 	}
@@ -99,7 +101,7 @@ objectdef obj_HangerSale inherits obj_State
 		if ${HangerIterator:First(exists)}
 		{
 			This:QueueState["GetMarket", 1000, ${HangerIterator.Value.TypeID}]
-			This:QueueState["SellIfAboveValue", 5000]
+			This:QueueState["SellIfAboveValue", 2000]
 			This:QueueState["CheckItem"]
 		}
 		return TRUE
@@ -110,8 +112,12 @@ objectdef obj_HangerSale inherits obj_State
 		if ${HangerIterator:Next(exists)}
 		{
 			This:QueueState["GetMarket", 1000, ${HangerIterator.Value.TypeID}]
-			This:QueueState["SellIfAboveValue", 5000]
+			This:QueueState["SellIfAboveValue", 2000]
 			This:QueueState["CheckItem"]
+		}
+		else
+		{
+			UI:Update["obj_HangerSale", "Selling Done, Profit over Reprocessing is ${ProfitOverReprocess}", "g"]
 		}
 		return TRUE
 	}
@@ -147,14 +153,16 @@ objectdef obj_HangerSale inherits obj_State
 						UI:Update["obj_HangerSale", "Better then Value - ${orderIterator.Value.Price}", "g"]
 						if ${orderIterator.Value.QuantityRemaining} >= ${remainingQuantity}
 						{
-							This:InsertState["PlaceSellOrder", 5000, "${orderIterator.Value.Price}, ${remainingQuantity}"]
+							This:InsertState["PlaceSellOrder", 1000, "${orderIterator.Value.Price}, ${remainingQuantity}"]
 							UI:Update["obj_HangerSale", "None left above raw value", "g"]
+							ProfitOverReprocess:Inc[${Math.Calc[${remainingQuantity} * (${orderIterator.Value.Price} - ${itemValue})]}]
 							return TRUE
 						}
 						else
 						{
 							remainingQuantity:Dec[${orderIterator.Value.QuantityRemaining}]
-							This:InsertState["PlaceSellOrder", 5000, "${orderIterator.Value.Price}, ${orderIterator.Value.QuantityRemaining}"]
+							This:InsertState["PlaceSellOrder", 1000, "${orderIterator.Value.Price}, ${orderIterator.Value.QuantityRemaining}"]
+							ProfitOverReprocess:Inc[${Math.Calc[${orderIterator.Value.QuantityRemaining} * (${orderIterator.Value.Price} - ${itemValue})]}]
 						}
 					}
 				}
