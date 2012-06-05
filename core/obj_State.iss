@@ -133,6 +133,49 @@ objectdef obj_State
 		This.IsIdle:Set[FALSE]
 	}
 	
+	method InsertState(string arg_Name, int arg_Frequency=-1, string arg_Args="")
+	{
+		variable queue:obj_StateQueue tempStates
+		variable iterator StateIterator
+		States:GetIterator[StateIterator]
+		if ${StateIterator:First(exists)}
+		{
+			do
+			{
+				tempStates:Queue[${StateIterator.Value.Name},${StateIterator.Value.Frequency},"${StateIterator.Value.Args.Escape}"]
+			}
+			while ${StateIterator:Next(exists)}
+		}
+		States:Clear
+		
+		
+		variable int var_Frequency
+		if ${arg_Frequency} == -1
+		{
+			var_Frequency:Set[${This.PulseFrequency}]
+		}
+		else
+		{
+			var_Frequency:Set[${arg_Frequency}]
+		}
+		States:Queue[${arg_Name},${var_Frequency},"${arg_Args.Escape}"]
+		
+		UIElement[${QueueListbox}]:AddItem[${arg_Name}]
+		
+		tempStates:GetIterator[StateIterator]
+		if ${StateIterator:First(exists)}
+		{
+			do
+			{
+				States:Queue[${StateIterator.Value.Name},${StateIterator.Value.Frequency},"${StateIterator.Value.Args.Escape}"]
+				UIElement[${QueueListbox}]:AddItem[${StateIterator.Value.Name}]
+			}
+			while ${StateIterator:Next(exists)}
+		}
+		
+		This.IsIdle:Set[FALSE]
+	}
+	
 	method SetStateArgs(string arg_Args="")
 	{
 		CurState:SetArgs["${arg_Args.Escape}"]
