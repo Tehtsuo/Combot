@@ -129,6 +129,16 @@ objectdef obj_Configuration_Salvager
 		This.CommonRef:AddSetting[Salvager_Prefix,${value}]
 	}
 	
+	member:string Salvager_Dropoff()
+	{
+		return ${This.CommonRef.FindSetting[Salvager_Dropoff]}
+	}
+
+	method SetSalvager_Dropoff(string value)
+	{
+		This.CommonRef:AddSetting[Salvager_Dropoff,${value}]
+	}
+
 	member:string Salvager_Dropoff_Type()
 	{
 		return ${This.CommonRef.FindSetting[Salvager_Dropoff_Type]}
