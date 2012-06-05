@@ -176,8 +176,24 @@ objectdef obj_HangerSale inherits obj_State
 	
 	member:bool PlaceSellOrder(float Price, int Quantity)
 	{
+		variable index:item FreshItems
+		variable iterator FreshIterator
 		UI:Update["obj_HangerSale", "Sale of ${Quantity} for ${Price}", "g"]
-		HangerIterator.Value:PlaceSellOrder[${Price}, ${Quantity}, 1]
+		
+		Me:GetHangarItems[FreshItems]
+		FreshItems:GetIterator[FreshIterator]
+		
+		if ${FreshIterator:First(exists)}
+		{
+			do
+			{
+				if ${FreshIterator.Value.TypeID} == ${HangerIterator.Value.TypeID} && ${FreshIterator.Value.Quantity} >= ${Quantity}
+				{
+					FreshIterator.Value:PlaceSellOrder[${Price}, ${Quantity}, 1]
+				}
+			}
+			while ${FreshIterator:Next(exists)}
+		}
 		return TRUE
 	}
 	
