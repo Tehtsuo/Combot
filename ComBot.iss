@@ -52,6 +52,7 @@ function main()
 	UI:Update["ComBot", "Module initialization complete", "y"]
 	UI:Update["ComBot", "Paused", "r"]
 	
+
 	while TRUE
 	{
 		wait 10

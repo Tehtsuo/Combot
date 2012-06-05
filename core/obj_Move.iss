@@ -100,7 +100,7 @@ objectdef obj_Move inherits obj_State
 		UI:Update["obj_Move", "Movement queued.  Destination: ${DestinationBookmarkLabel}", "g"]
 		This.Traveling:Set[TRUE]
 		This.Distance:Set[${Dist}]
-		This:QueueState["BookmarkMove", ${DestinationBookmarkLabel}]
+		This:QueueState["BookmarkMove", 2000, ${DestinationBookmarkLabel}]
 	}
 
 	method System(string SystemID)
@@ -119,7 +119,7 @@ objectdef obj_Move inherits obj_State
 
 		UI:Update["obj_Move", "Movement queued.  Destination: ${Universe[SystemID]}.Name", "g"]
 		This.Traveling:Set[TRUE]
-		This:QueueState["SystemMove", ${SystemID}]
+		This:QueueState["SystemMove", 2000, ${SystemID}]
 	}
 	
 	
@@ -139,14 +139,14 @@ objectdef obj_Move inherits obj_State
 
 		UI:Update["obj_Move", "Movement queued.  Destination: ${AgentName}", "g"]
 		This.Traveling:Set[TRUE]
-		This:QueueState["AgentMove", ${Agent[AgentName].Index}]
+		This:QueueState["AgentMove", 2000, ${Agent[AgentName].Index}]
 	}	
 
 	method Gate(int64 ID)
 	{
 		UI:Update["obj_Move", "Movement queued.  Destination: ${Entity[${ID}].Name}", "g"]
 		This.Traveling:Set[TRUE]
-		This:QueueState["GateMove", ${ID}]
+		This:QueueState["GateMove", 2000, ${ID}]
 	}
 
 	member:bool GateMove(int64 ID)

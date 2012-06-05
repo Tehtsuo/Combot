@@ -30,7 +30,7 @@ objectdef obj_HangerSale inherits obj_State
 			MineralNames:Set[40, "Megacyte"]
 			RefineData:Load
 			This:QueueState["OpenHanger"]
-;			This:QueueState["OpenMarket"]
+			This:QueueState["OpenMarket"]
 			This:QueueState["GetMarket", 1000, "34"]
 			This:QueueState["GetPrice", 2000, "34"]
 			This:QueueState["GetMarket", 1000, "35"]
@@ -51,17 +51,26 @@ objectdef obj_HangerSale inherits obj_State
 	
 	member:bool OpenHanger()
 	{
-		if !${EVEWindow[ByName, "Item Hanger"](exists)}
+		if !${EVEWindow[ByName, "Inventory"](exists)}
 		{
-			UI:Update["obj_HangerSale", "Opening Item Hanger", "g"]
-			EVE:Execute[OpenHangarFloor]
+			UI:Update["obj_HangerSale", "Making sure inventory is open", "g"]
+			MyShip:OpenCargo
+			return FALSE
+		}
+		if !${EVEWindow[byCaption, "Item Hangar"](exists)}
+		{
+			EVEWindow[byName,"Inventory"]:MakeChildActive[StationItems]
 		}
 		return TRUE
 	}
 	
 	member:bool OpenMarket()
 	{
-		EVE:Execute[OpenMarket]
+		if !${EVEWindow[ByName, Market](exists)}
+		{
+			UI:Update["obj_HangerSale", "Opening Market", "g"]
+			EVE:Execute[OpenMarket]
+		}
 		return TRUE
 	}
 	
@@ -95,6 +104,19 @@ objectdef obj_HangerSale inherits obj_State
 	
 	member:bool CheckHanger()
 	{
+		variable index:item ListIndex
+		variable iterator ListIterator
+		Me:GetHangarItems[ListIndex]
+		ListIndex:GetIterator[ListIterator]
+		if ${ListIterator:First(exists)}
+		do
+		{
+				UIElement[obj_HangerSaleList@Hangar_Sale@ComBotTab@ComBot]:AddItem[${ListIterator.Value.Name}]
+		}
+		while ${ListIterator:Next(exists)}
+			
+		
+	
 		HangerItems:Clear
 		Me:GetHangarItems[HangerItems]
 		HangerItems:GetIterator[HangerIterator]

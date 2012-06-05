@@ -256,7 +256,7 @@
 						</button>						
 					</Tab>
 					
-					<Tab Name='Hangar Sale'>
+					<Tab Name='Hangar_Sale'>
 						<frame name='obj_HangerSaleFillerFrame'>
 							<BackgroundColor>FF000000</BackgroundColor>
 							<Border>1</Border>
@@ -272,7 +272,7 @@
 									<Width>40%</Width> 
 									<Height>5%</Height> 
 									<Alignment>Center</Alignment>
-									<Text>Miner Bookmarks</Text>
+									<Text>Sales List</Text>
 						</Text>						 
 						<listbox Name="obj_HangerSaleList">
 							<BackgroundColor>FF000000</BackgroundColor>
