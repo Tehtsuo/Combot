@@ -177,6 +177,7 @@ objectdef obj_Salvage inherits obj_State
 		TargetIndex:GetIterator[TargetIterator]
 		if ${TargetIterator:First(exists)}
 		{
+			Ship.ModuleList_SensorBoost:Activate
 			LootCans:Enable
 			do
 			{

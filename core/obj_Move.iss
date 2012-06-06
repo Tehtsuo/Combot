@@ -438,13 +438,11 @@ objectdef obj_Move inherits obj_State
 		
 		if !${Ship.ModuleList_AB_MWD.ActiveCount} && ${MyShip.CapacitorPct} > 30
 		{
-			UI:Update["obj_Move", "Activating propulsion units", "g"]
 			Ship.ModuleList_AB_MWD:Activate
 			return FALSE
 		}
 		if ${Ship.ModuleList_AB_MWD.ActiveCount} && ${MyShip.CapacitorPct} <= 30
 		{
-			UI:Update["obj_Move", "Activating propulsion units", "g"]
 			Ship.ModuleList_AB_MWD:Activate
 			return FALSE
 		}

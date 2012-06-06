@@ -107,6 +107,9 @@
 							<Y>0</Y>
 							<Height>100%</Height>
 							<Width>100%</Width>
+							<OnLoad>
+								This:SetLeftClickThru[TRUE]
+							</OnLoad>
 						 </frame>					
 						<console Name="StatusConsole">
 							<Font template='Console.Font' />
@@ -146,6 +149,9 @@
 							<Y>0</Y>
 							<Height>100%</Height>
 							<Width>100%</Width>
+							<OnLoad>
+								This:SetLeftClickThru[TRUE]
+							</OnLoad>
 						</frame>					
 						<Text name='obj_SalvageBookmarkListTitle'> 
 									<X>0</X> 
@@ -206,6 +212,9 @@
 							<Y>0</Y>
 							<Height>100%</Height>
 							<Width>100%</Width>
+							<OnLoad>
+								This:SetLeftClickThru[TRUE]
+							</OnLoad>
 						</frame>					
 						<Text name='obj_MinerBookmarkListTitle'> 
 									<X>0</X> 
@@ -265,6 +274,9 @@
 							<Y>0</Y>
 							<Height>100%</Height>
 							<Width>100%</Width>
+							<OnLoad>
+								This:SetLeftClickThru[TRUE]
+							</OnLoad>
 						</frame>					
 						<Text name='obj_HangerSaleListTitle'> 
 									<X>0</X> 
@@ -275,6 +287,7 @@
 									<Text>Sales List</Text>
 						</Text>						 
 						<listbox Name="obj_HangerSaleList">
+							<Font template='Console.Font' />
 							<BackgroundColor>FF000000</BackgroundColor>
 							<Border>1</Border>
 							<BorderColor>FFFFFFFF</BorderColor>
