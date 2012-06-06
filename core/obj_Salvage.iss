@@ -18,8 +18,8 @@ objectdef obj_Salvage inherits obj_State
 		UI:Update["obj_Salvage", "Started", "g"]
 		if ${This.IsIdle}
 		{
-			This:QueueState["OpenCargoHold"]
-			This:QueueState["CheckCargoHold", 5000]
+			This:QueueState["OpenCargoHold", 500]
+			This:QueueState["CheckCargoHold", 500]
 		}
 	}
 	
@@ -324,8 +324,8 @@ objectdef obj_Salvage inherits obj_State
 				This:QueueState["Traveling"]
 			}
 		}
-		This:QueueState["OpenCargoHold"]
-		This:QueueState["CheckCargoHold", 5000]
+		This:QueueState["OpenCargoHold", 500]
+		This:QueueState["CheckCargoHold", 500]
 		return TRUE
 	}
 	
