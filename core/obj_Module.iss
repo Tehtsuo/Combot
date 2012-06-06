@@ -1,6 +1,7 @@
 objectdef obj_Module inherits obj_State
 {
 	variable bool Activated = FALSE
+	variable bool Deactivated = FALSE
 	variable int64 CurrentTarget = -1
 	variable int64 ModuleID
 	
@@ -16,6 +17,11 @@ objectdef obj_Module inherits obj_State
 	member:bool IsActive()
 	{
 		return ${Activated}
+	}
+	
+	member:bool IsDeactivating()
+	{
+		return ${Deactivated}
 	}
 	
 	member:bool IsActiveOn(int64 checkTarget)
@@ -35,19 +41,20 @@ objectdef obj_Module inherits obj_State
 	
 	method Deactivate()
 	{
-		MyShip.Module[${ModuleID}]:Deactivate
-		This:Clear
-		This:QueueState["WaitTillInactive"]
+		if !${Deactivated}
+		{
+			MyShip.Module[${ModuleID}]:Deactivate
+			Deactivated:Set[TRUE]
+			This:Clear
+			This:QueueState["WaitTillInactive"]
+		}
 	}
 	
 	method Activate(int64 newTarget=-1, bool DoDeactivate=TRUE)
 	{
 		if ${DoDeactivate} && ${This.IsActive}
 		{
-			echo "Deactivating"
-			MyShip.Module[${ModuleID}]:Deactivate
-			This:Clear
-			This:QueueState["WaitTillInactive"]
+			This:Deactivate
 		}
 		This:QueueState["ActivateOn", 50, "${newTarget}"]
 		This:QueueState["WaitTillActive", 50, 20]
@@ -92,6 +99,7 @@ objectdef obj_Module inherits obj_State
 			return FALSE
 		}
 		Activated:Set[FALSE]
+		Deactivated:Set[FALSE]
 		CurrentTarget:Set[-1]
 		return TRUE
 	}
