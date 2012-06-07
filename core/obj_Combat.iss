@@ -12,7 +12,7 @@ objectdef obj_Combat inherits obj_State
 	method Start()
 	{
 		This:QueueState["ClearPocket"]
-		
+		This:QueueState["ClearTargetAddedList"]
 	}
 	
 	member:bool ClearPocket()
@@ -52,6 +52,11 @@ objectdef obj_Combat inherits obj_State
 		return FALSE
 	}
 	
+	member:bool ClearTargetAddedList()
+	{
+		KillTargets.AlreadyAdded:Clear
+		return TRUE
+	}
 	
 	
 }
@@ -60,7 +65,6 @@ objectdef obj_KillTargetList
 {
 	variable collection:obj_KillTarget KillTargets
 	variable set AlreadyAdded
-	variable set PrimaryTargets
 	variable int MaxPrimaries = 1
 	
 	method AddTarget(int64 NewTarget)
@@ -84,7 +88,7 @@ objectdef obj_KillTargetList
 				KillTargetIterator.Value:Pulse
 				if ${KillTargetIterator.Value.ActionTaken}
 				{
-					return FALSE
+					return
 				}
 			}
 			while ${KillTargetIterator:Next(exists)}
@@ -93,14 +97,32 @@ objectdef obj_KillTargetList
 	
 	method SetPrimaries()
 	{
+		variable iterator PrimaryIterator
+		variable int PrimaryCount = 0
+		KillTargets:GetIterator[PrimaryIterator]
 		
+		if ${PrimaryIterator:First(exists)}
+		{
+			do
+			{
+				if !${PrimaryIterator.Value.IsPrimary}
+				{
+					PrimaryCount:Inc
+				}
+			}
+			while ${PrimaryIterator:Next(exists)}
+		}
 		
+		if ${PrimaryTargets.Used} < ${MaxPrimaries}
+		{
+			KillTargets.Element[${This.GetClosest[TRUE]}].IsPrimary:Set[TRUE]
+		}
 	}
 	
-	member:string GetClosest(bool NonPrimary = FALSE)
+	member:int64 GetClosest(bool NonPrimary = FALSE)
 	{
 		variable float curDistance = 999999999999
-		variable string Closest
+		variable int64 Closest = -1
 		variable iterator KillTargetIterator
 		KillTargets:GetIterator[KillTargetIterator]
 		if ${KillTargetIterator:First(exists)}
@@ -108,10 +130,12 @@ objectdef obj_KillTargetList
 			do
 			{
 				if !${NonPrimary} || !${Entity[${KillTargetIterator.Value.Target}].IsPrimary}
-				if ${Entity[${KillTargetIterator.Value.Target}].Distance} < curDistance
 				{
-					curDistance:Set[${Entity[${KillTargetIterator.Value.Target}].Distance}]
-					Closest:Set[${KillTargetIterator.Value.Target}]
+					if ${Entity[${KillTargetIterator.Value.Target}].Distance} < curDistance
+					{
+						curDistance:Set[${Entity[${KillTargetIterator.Value.Target}].Distance}]
+						Closest:Set[${KillTargetIterator.Value.Target}]
+					}
 				}
 			}
 			while ${KillTargetIterator:Next(exists)}
