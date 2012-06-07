@@ -249,7 +249,10 @@ objectdef obj_Configuration_Miner
 		This.IceTypesRef:AddSetting[Enriched Clear Icicle, 1]
 		This.IceTypesRef:AddSetting[Blue Ice, 1]
 		
-		This.CommonRef:AddSetting[Miner_Dropoff,Personal Hangar]
+		This.CommonRef:AddSetting[Miner_Dropoff_Type,Personal Hangar]
+		This.CommonRef:AddSetting[BeltPrefix,Belt:]
+		This.CommonRef:AddSetting[IceBeltPrefix,Ice Belt:]
+		
 }
 
 	member:string MiningSystem()
@@ -271,6 +274,17 @@ objectdef obj_Configuration_Miner
 	{
 		This.CommonRef:AddSetting[Miner_Dropoff,${value}]
 	}
+
+	member:string Miner_Dropoff_Type()
+	{
+		return ${This.CommonRef.FindSetting[Miner_Dropoff_Type]}
+	}
+
+	method SetMiner_Dropoff_Type(string value)
+	{
+		This.CommonRef:AddSetting[Miner_Dropoff_Type,${value}]
+	}
+	
 	member:bool IceMining()
 	{
 		return ${This.CommonRef.FindSetting[IceMining]}
@@ -281,6 +295,35 @@ objectdef obj_Configuration_Miner
 		This.CommonRef:AddSetting[IceMining,${value}]
 	}
 	
+	member:bool UseBookmarks()
+	{
+		return ${This.CommonRef.FindSetting[UseBookmarks]}
+	}
+
+	method SetUseBookmarks(bool value)
+	{
+		This.CommonRef:AddSetting[UseBookmarks,${value}]
+	}
+	
+	member:string BeltPrefix()
+	{
+		return ${This.CommonRef.FindSetting[BeltPrefix]}
+	}
+
+	method SetBeltPrefix(string value)
+	{
+		This.CommonRef:AddSetting[BeltPrefix,${value}]
+	}
+
+	member:string IceBeltPrefix()
+	{
+		return ${This.CommonRef.FindSetting[IceBeltPrefix]}
+	}
+
+	method SetIceBeltPrefix(string value)
+	{
+		This.CommonRef:AddSetting[IceBeltPrefix,${value}]
+	}
 }
 	
 	
