@@ -90,6 +90,15 @@ objectdef obj_Configuration_Common
 		This.CommonRef:AddSetting[ComBot_Mode,${value}]
 	}
 
+	member:bool AutoStart()
+	{
+		return ${This.CommonRef.FindSetting[AutoStart]}
+	}
+
+	method SetAutoStart(bool value)
+	{
+		This.CommonRef:AddSetting[AutoStart,${value}]
+	}
 }
 
 objectdef obj_Configuration_Salvager

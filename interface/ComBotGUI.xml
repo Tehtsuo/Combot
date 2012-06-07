@@ -137,6 +137,22 @@
 								Script[ComBot].VariableScope.Config.Common:SetComBot_Mode[${This.SelectedItem.Value}]
 							</OnSelect>
 						</combobox>
+						<Checkbox name='AutoStart'>
+							<X>51%</X>
+							<Y>92%</Y>
+							<Width>48%</Width> 
+							<Height>6%</Height> 
+							<Text>Start automatically</Text>
+							<OnLoad>
+								if ${Script[ComBot].VariableScope.Config.Common.AutoStart}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[ComBot].VariableScope.Config.Common:SetAutoStart[${This.Checked}]
+							</OnLeftClick>
+						</Checkbox>
 					</Tab>
 
 

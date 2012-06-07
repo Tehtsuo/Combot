@@ -50,7 +50,16 @@ function main()
 	declarevariable RefineData obj_Configuration_RefineData script
 
 	UI:Update["ComBot", "Module initialization complete", "y"]
-	UI:Update["ComBot", "Paused", "r"]
+	
+	if ${Config.Common.AutoStart}
+	{
+		ComBot.Paused:Set[FALSE]
+		${Config.Common.ComBot_Mode}:Start
+	}
+	else
+	{
+		UI:Update["ComBot", "Paused", "r"]
+	}
 	
 
 	while TRUE
