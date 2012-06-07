@@ -37,13 +37,13 @@ objectdef obj_Combat inherits obj_State
 
 	member:bool WaitForAgro(int cooldown=15)
 	{
-		if ${cooldown} = 0
+		if ${cooldown} == 0
 		{
 			return TRUE
 		}
 		cooldown:Dec
 		This:SetStateArgs[${cooldown}]
-		if ${Me.TargetedByCount} = 0
+		if ${Me.TargetedByCount} == 0
 		{
 			return FALSE
 		}
@@ -53,6 +53,44 @@ objectdef obj_Combat inherits obj_State
 	member:bool KillAgro()
 	{
 		return This.KillQueryString["CategoryID = CATEGORYID_ENTITY && IsNPC && IsTargetingMe"]
+	}
+	
+	member:bool AddTargetByName(string Name)
+	{
+		return This.AddQueryString[CategoryID = CATEGORYID_ENTITY && IsNPC && Name -= "${Name}"]
+	}
+
+	member:bool AddQueryString(string QueryString)
+	{
+		variable index:entity enemyTargets
+		variable iterator enemyIterator
+		
+		EVE:QueryEntities[enemyTargets, ${QueryString}]
+	
+		enemyTargets:GetIterator[enemyIterator]
+		if ${enemyIterator:First(exists)}
+		{
+			do
+			{
+				KillTargets:AddTarget[${enemyIterator.Value.ID}]
+			}
+			while ${enemyIterator:Next(exists)}
+		}
+		KillTargets:SetPrimaries
+		KillTargets:PulseTargets
+		
+		return TRUE
+	}
+	
+	member:bool KillCurrentTargets()
+	{
+		KillTargets:SetPrimaries
+		KillTargets:PulseTargets
+		if ${KillTargets.KillTargets.Used} == 0
+		{
+			return TRUE
+		}
+		return FALSE
 	}
 	
 	member:bool KillQueryString(string QueryString)
@@ -144,11 +182,11 @@ objectdef obj_KillTargetList
 		
 		if ${PrimaryTargets.Used} < ${MaxPrimaries}
 		{
-			KillTargets.Element[${This.GetClosest[TRUE]}].IsPrimary:Set[TRUE]
+			KillTargets.Element[${This.GetClosest[TRUE, FALSE]}].IsPrimary:Set[TRUE]
 		}
 	}
 	
-	member:int64 GetClosest(bool NonPrimary = FALSE)
+	member:int64 GetClosest(bool NonPrimary = FALSE, bool NonReady = TRUE)
 	{
 		variable float curDistance = 999999999999
 		variable int64 Closest = -1
@@ -160,10 +198,13 @@ objectdef obj_KillTargetList
 			{
 				if !${NonPrimary} || !${Entity[${KillTargetIterator.Value.Target}].IsPrimary}
 				{
-					if ${Entity[${KillTargetIterator.Value.Target}].Distance} < curDistance
+					if ${NonReady} || ${Entity[${KillTargetIterator.Value.Target}].ReadyTarget}
 					{
-						curDistance:Set[${Entity[${KillTargetIterator.Value.Target}].Distance}]
-						Closest:Set[${KillTargetIterator.Value.Target}]
+						if ${Entity[${KillTargetIterator.Value.Target}].Distance} < curDistance
+						{
+							curDistance:Set[${Entity[${KillTargetIterator.Value.Target}].Distance}]
+							Closest:Set[${KillTargetIterator.Value.Target}]
+						}
 					}
 				}
 			}
