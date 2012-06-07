@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <ISUI>
 	<template name='Console.Font'>	
 		<Name>Terminal</Name>
@@ -129,6 +129,7 @@
 								<Item Value='Salvager'>Dedicated Salvager</Item>
 								<Item Value='Miner'>Miner</Item>
 								<Item Value='HangerSale'>Hanger Sale</Item>
+								<Item Value='Combat'>Simple Clear Agro and Pocket</Item>
 							</Items>
 							<OnLoad>
 								This.ItemByValue[${Script[ComBot].VariableScope.Config.Common.ComBot_Mode}]:Select

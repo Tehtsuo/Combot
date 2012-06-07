@@ -20,6 +20,7 @@
 #include core/obj_Asteroids.iss
 #include core/obj_Miner.iss
 #include core/obj_HangerSale.iss
+#include core/obj_Combat.iss
 
 
 function atexit()
@@ -48,6 +49,7 @@ function main()
 	declarevariable Miner obj_Miner script
 	declarevariable HangerSale obj_HangerSale script
 	declarevariable RefineData obj_Configuration_RefineData script
+	declarevariable Combat obj_Combat script
 
 	UI:Update["ComBot", "Module initialization complete", "y"]
 	UI:Update["ComBot", "Paused", "r"]

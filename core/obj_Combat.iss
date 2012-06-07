@@ -11,10 +11,13 @@ objectdef obj_Combat inherits obj_State
 	
 	method Start()
 	{
-		This:QueueState["WaitForAgro"]
-		This:QueueState["KillAgro"]
-		This:QueueState["ClearPocket"]
-		This:QueueState["ClearTargetAddedList"]
+		if ${This.IsIdle}
+		{
+			This:QueueState["WaitForAgro"]
+			This:QueueState["KillAgro"]
+			This:QueueState["ClearPocket"]
+			This:QueueState["ClearTargetAddedList"]
+		}
 	}
 	
 	member:bool ClearPocket()
