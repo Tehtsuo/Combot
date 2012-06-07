@@ -11,15 +11,14 @@ objectdef obj_Combat inherits obj_State
 	
 	method Start()
 	{
+		This:QueueState["WaitForAgro"]
+		This:QueueState["KillAgro"]
 		This:QueueState["ClearPocket"]
 		This:QueueState["ClearTargetAddedList"]
 	}
 	
 	member:bool ClearPocket()
 	{
-		variable index:entity enemyTargets
-		variable iterator enemyIterator
-
 		variable string QueryString="CategoryID = CATEGORYID_ENTITY && IsNPC && !("
 		
 		;Exclude Groups here
@@ -29,9 +28,36 @@ objectdef obj_Combat inherits obj_State
 		QueryString:Concat["GroupID = GROUP_LARGECOLLIDABLEOBJECT ||"]
 		QueryString:Concat["GroupID = GROUP_LARGECOLLIDABLESHIP ||"]
 		QueryString:Concat["GroupID = GROUP_LARGECOLLIDABLESTRUCTURE)"]
-
-		EVE:QueryEntities[enemyTargets, ${QueryString}]
 		
+		return This.KillQueryString(${QueryString})
+	}
+
+	member:bool WaitForAgro(int cooldown=15)
+	{
+		if ${cooldown} = 0
+		{
+			return TRUE
+		}
+		cooldown:Dec
+		This:SetStateArgs[${cooldown}]
+		if ${Me.TargetedByCount} = 0
+		{
+			return FALSE
+		}
+		return TRUE
+	}
+	
+	member:bool KillAgro()
+	{
+		return This.KillQueryString["CategoryID = CATEGORYID_ENTITY && IsNPC && IsTargetingMe"]
+	}
+	
+	member:bool KillQueryString(string QueryString)
+	{
+		variable index:entity enemyTargets
+		variable iterator enemyIterator
+		
+		EVE:QueryEntities[enemyTargets, ${QueryString}]
 	
 		enemyTargets:GetIterator[enemyIterator]
 		if ${enemyIterator:First(exists)}
