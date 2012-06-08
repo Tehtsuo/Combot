@@ -670,6 +670,26 @@ objectdef obj_Configuration_Security
 		This.CommonRef:AddSetting[Break_Interval,${value}]
 	}
 	
+	member:bool OverrideFleeBookmark_Enabled()
+	{
+		return ${This.CommonRef.FindSetting[OverrideFleeBookmark_Enabled]}
+	}
+
+	method SetOverrideFleeBookmark_Enabled(bool value)
+	{
+		This.CommonRef:AddSetting[OverrideFleeBookmark_Enabled,${value}]
+	}
+
+	member:string OverrideFleeBookmark()
+	{
+		return ${This.CommonRef.FindSetting[OverrideFleeBookmark]}
+	}
+
+	method SetOverrideFleeBookmark(string value)
+	{
+		This.CommonRef:AddSetting[OverrideFleeBookmark,${value}]
+	}
+	
 }	
 	
 objectdef obj_Configuration_RefineData

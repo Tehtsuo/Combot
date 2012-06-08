@@ -766,7 +766,51 @@
 						<OnSelect>
 							Script[ComBot].VariableScope.Config.Security:SetBreak_Interval[${This.SelectedItem.Value}]
 						</OnSelect>
-					</Combobox>		
+					</Combobox>
+					<Checkbox name='obj_Security_OverrideFleeBookmark_Enabled'>
+						<X>1%</X>
+						<Y>52%</Y>
+						<Width>30%</Width> 
+						<Height>2%</Height> 
+						<Text>Override active module - flee to this bookmark</Text>
+						<OnLoad>
+							if ${Script[ComBot].VariableScope.Config.Security.OverrideFleeBookmark_Enabled}
+							{
+								This:SetChecked
+							}
+						</OnLoad>
+						<OnLeftClick>
+							Script[ComBot].VariableScope.Config.Security:SetOverrideFleeBookmark_Enabled[${This.Checked}]
+						</OnLeftClick>
+					</Checkbox>		
+					<Listbox Name="obj_Security_OverrideFleeBookmark">
+						<BackgroundColor>FF000000</BackgroundColor>
+						<Border>1</Border>
+						<BorderColor>FFFFFFFF</BorderColor>
+						<X>1%</X>
+						<Y>54%</Y>
+						<Width>30%</Width>
+						<Height>40%</Height>
+						<OnLoad>
+							variable index:bookmark Bookmarks
+							variable iterator BookmarkIterator
+
+							EVE:GetBookmarks[Bookmarks]
+							Bookmarks:GetIterator[BookmarkIterator]
+
+							if ${BookmarkIterator:First(exists)}
+								do
+								{	
+									This:AddItem[${BookmarkIterator.Value.Label}]
+								}
+								while ${BookmarkIterator:Next(exists)}
+							This.ItemByText[${Script[ComBot].VariableScope.Config.Security.OverrideFleeBookmark}]:Select
+						</OnLoad>
+						<OnSelect>
+							Script[ComBot].VariableScope.Config.Security:SetOverrideFleeBookmark[${This.SelectedItem.Text}]
+						</OnSelect>
+					</Listbox>
+					
 				</Children>
 			</Frame>
 		</Children>
