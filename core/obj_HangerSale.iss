@@ -214,7 +214,7 @@ objectdef obj_HangerSale inherits obj_State
 			{
 				if ${FreshIterator.Value.TypeID} == ${HangerIterator.Value.TypeID} && ${FreshIterator.Value.Quantity} >= ${Quantity}
 				{
-					FreshIterator.Value:PlaceSellOrder[${Price}, ${Quantity}, 1]
+					FreshIterator.Value:PlaceSellOrder[${Price}, ${Quantity}, 0]
 				}
 			}
 			while ${FreshIterator:Next(exists)}

@@ -13,8 +13,9 @@ objectdef obj_Combat inherits obj_State
 	{
 		if ${This.IsIdle}
 		{
-			This:QueueState["WaitForAgro"]
-			This:QueueState["KillAgro"]
+			UI:Update["obj_Combat", "Started", "g"]
+			;This:QueueState["WaitForAgro"]
+			;This:QueueState["KillAgro"]
 			This:QueueState["ClearPocket"]
 			This:QueueState["ClearTargetAddedList"]
 		}
@@ -32,11 +33,12 @@ objectdef obj_Combat inherits obj_State
 		QueryString:Concat["GroupID = GROUP_LARGECOLLIDABLESHIP ||"]
 		QueryString:Concat["GroupID = GROUP_LARGECOLLIDABLESTRUCTURE)"]
 		
-		return This.KillQueryString(${QueryString})
+		return ${This.KillQueryString[${QueryString}]}
 	}
 
 	member:bool WaitForAgro(int cooldown=15)
 	{
+		UI:Update["obj_Combat", "Cooldown ${cooldown}", "r"]
 		if ${cooldown} == 0
 		{
 			return TRUE
@@ -52,17 +54,18 @@ objectdef obj_Combat inherits obj_State
 	
 	member:bool KillAgro()
 	{
-		return This.KillQueryString["CategoryID = CATEGORYID_ENTITY && IsNPC && IsTargetingMe"]
+		echo "KillAgro"
+		return ${This.KillQueryString["CategoryID = CATEGORYID_ENTITY && IsNPC && IsTargetingMe"]}
 	}
 	
 	member:bool AddTargetByName(string Name, int priority = 0)
 	{
-		return This.AddQueryString["CategoryID = CATEGORYID_ENTITY && IsNPC && Name =- \"${Name}\"", ${priority}]
+		return ${This.AddQueryString["CategoryID = CATEGORYID_ENTITY && IsNPC && Name =- \"${Name}\"", ${priority}]}
 	}
 
 	member:bool AddTargetByExactName(string Name, int priority = 0)
 	{
-		return This.AddQueryString["CategoryID = CATEGORYID_ENTITY && IsNPC && Name == \"${Name}\"", ${priority}]
+		return ${This.AddQueryString["CategoryID = CATEGORYID_ENTITY && IsNPC && Name == \"${Name}\"", ${priority}]}
 	}
 
 	member:bool AddQueryString(string QueryString, int priority = 0)
@@ -104,7 +107,6 @@ objectdef obj_Combat inherits obj_State
 		variable iterator enemyIterator
 		
 		EVE:QueryEntities[enemyTargets, ${QueryString}]
-	
 		enemyTargets:GetIterator[enemyIterator]
 		if ${enemyIterator:First(exists)}
 		{
@@ -202,9 +204,9 @@ objectdef obj_KillTargetList
 		{
 			do
 			{
-				if !${NonPrimary} || !${Entity[${KillTargetIterator.Value.Target}].IsPrimary}
+				if !${NonPrimary} || !${KillTargetIterator.Value.IsPrimary}
 				{
-					if ${NonReady} || ${Entity[${KillTargetIterator.Value.Target}].ReadyTarget}
+					if ${NonReady} || ${KillTargetIterator.Value.ReadyTarget}
 					{
 						if (${Entity[${KillTargetIterator.Value.Target}].Distance} < ${curDistance}) || (${ByPriority} && (${KillTargetIterator.Value.Priority} > ${BestPriority}))
 						{

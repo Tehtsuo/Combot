@@ -159,7 +159,7 @@ objectdef obj_State
 			var_Frequency:Set[${arg_Frequency}]
 		}
 		States:Queue[${arg_Name},${var_Frequency},"${arg_Args.Escape}"]
-		
+		UIElement[${QueueListbox}]:ClearItems
 		UIElement[${QueueListbox}]:AddItem[${arg_Name}]
 		
 		tempStates:GetIterator[StateIterator]

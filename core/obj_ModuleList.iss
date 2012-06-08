@@ -160,8 +160,9 @@ objectdef obj_ModuleList
 		return ${countInactive}
 	}
 	
-	member:double Range()
+	member:float Range()
 	{
+		return ${Math.Calc[${Modules.Get[1].Charge.MaxFlightTime} * ${Modules.Get[1].Charge.MaxVelocity}]}
 		return ${Modules.Get[1].OptimalRange}
 	}
 	
