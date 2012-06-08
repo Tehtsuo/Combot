@@ -1,0 +1,122 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ISUI>
+	<template name='Information.Font'>	
+		<Name>Terminal</Name>
+		<Size>8</Size>
+		<Color>FFFFFFFF</Color>
+	</template>	
+
+	<window name='ComBot_Combat'>
+		<Visible>1</Visible>
+		<BackGroundColor></BackGroundColor>
+		<Border>0</Border>
+		<X>200</X>
+		<Y>300</Y>
+		<Width>800</Width>
+		<Height>600</Height>
+		<TitleBar>
+			<Width>100%</Width>
+			<Height>20</Height>
+			<Border>0</Border>
+			<BackgroundColor>FF000000</BackgroundColor>
+			<Children>
+				<Text name='Combat_Miner_TitleBar_Title'>
+					<X>0</X>
+					<Y>3</Y>
+					<Width>100%</Width>
+					<Height>20</Height>
+					<Alignment>Center</Alignment>
+					<Text>Combat Configuration</Text>
+				</Text>
+				<button	Name='Close'>
+					<X>r40</X>
+					<Y>0</Y>
+					<Width>40</Width>
+					<Height>20</Height>
+					<Text>Close</Text>
+					<OnLeftClick>
+						ui -unload "&filepath;/ComBotGUI_Combat"
+					</OnLeftClick>
+				</button>
+			</Children>
+		</TitleBar>
+		<Children name="ComBot_Combat_Children">
+			<Frame name="ComBot_Combat_Frame">
+				<X>0</X>
+				<Y>5</Y>
+				<Width>100%</Width>
+				<Height>100%</Height>
+				<BackgroundColor>FF000000</BackgroundColor>
+				<Border>1</Border>
+				<BorderColor>FFFFFFFF</BorderColor>
+				<Children name="ComBot_Combat_Frame_Children">
+					<Text name='obj_CombatInformation'> 
+						<Font template='Information.Font' />
+						<X>1%</X> 
+						<Y>1%</Y> 
+						<Width>98%</Width> 
+						<Height>18%</Height> 
+						<Wrap />
+						<Text></Text>
+					</Text>						 
+					<Text name='obj_Combat_AgentListTitle'> 
+						<X>1%</X> 
+						<Y>28%</Y> 
+						<Width>30%</Width> 
+						<Height>2%</Height> 
+						<Alignment>Center</Alignment>
+						<Text>Agent List</Text>
+					</Text>		
+					<combobox Name="Combat_AgentLevel">
+						<BackgroundColor>FF000000</BackgroundColor>
+						<X>1%</X>
+						<Y>30%</Y>
+						<Width>30%</Width>
+						<Height>5%</Height>
+						<Items>
+							<Item value='1'>Level 1</Item>
+							<Item value='2'>Level 2</Item>
+							<Item value='3'>Level 3</Item>
+							<Item value='4'>Level 4</Item>
+						</Items>
+						<OnLoad>
+							This.ItemByValue[1]:Select
+						</OnLoad>
+						<OnSelect>
+							UIElement[obj_Combat_AgentList@ComBot_Combat_Frame@ComBot_Combat]:ClearItems
+							variable index:being Agents
+							variable iterator Ag
+							EVE:GetAgents[Agents]
+							Agents:GetIterator[Ag]
+							<!--if ${Ag:First(exists)}
+								do
+								{
+									echo ${AG.Value.Name}
+									if ${This.Value} == ${Agent[${Ag.Value.ID}].Level}
+									{
+										UIElement[obj_Combat_AgentList@ComBot_Combat_Frame@ComBot_Combat]:AddItem[${Ag.Value.Name}]
+									}
+								}
+								while ${Ag:Next(exists)}-->
+						</OnSelect>
+					</combobox>
+					
+					
+					<listbox Name="obj_Combat_AgentList">
+						<BackgroundColor>FF000000</BackgroundColor>
+						<Border>1</Border>
+						<BorderColor>FFFFFFFF</BorderColor>
+						<X>1%</X>
+						<Y>35%</Y>
+						<Width>30%</Width>
+						<Height>20%</Height>
+						<OnSelect>
+						</OnSelect>
+					</listbox>
+
+				</Children>
+			</Frame>
+		</Children>
+	</window>
+	
+</ISUI>

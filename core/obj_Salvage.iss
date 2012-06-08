@@ -294,6 +294,7 @@ objectdef obj_Salvage inherits obj_State
 			{
 				do
 				{
+					echo if ${BookmarkIterator.Value.Label.Left[8].Upper.Equal[${Config.Salvager.Salvager_Prefix}]} && ${BookmarkIterator.Value.CreatorID.Equal[${BookmarkCreator}]}
 					if ${BookmarkIterator.Value.Label.Left[8].Upper.Equal[${Config.Salvager.Salvager_Prefix}]} && ${BookmarkIterator.Value.CreatorID.Equal[${BookmarkCreator}]}
 					{
 						UseJumpGate:Set[True}
@@ -311,7 +312,7 @@ objectdef obj_Salvage inherits obj_State
 				This:QueueState["SalvageWrecks", 500, "${BookmarkCreator}"]
 				This:QueueState["ClearAlreadySalvaged", 100]
 				This:QueueState["DeleteBookmark", 1000, "${BookmarkCreator}"]
-				This:QueueState["RefreshBookmarks", 3000]
+				This:QueueState["RefreshBookmarks", 1000]
 				This:QueueState["GateCheck", 1000, "${BookmarkCreator}"]
 				This:QueueState["JumpToCelestial"]
 				This:QueueState["Traveling"]
