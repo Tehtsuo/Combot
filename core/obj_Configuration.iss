@@ -358,6 +358,16 @@ objectdef obj_Configuration_Security
 	{
 		BaseConfig.BaseRef:AddSet[${This.SetName}]
 
+		This.CommonRef:AddSetting[MeToPilot_Inverse,FALSE]
+		This.CommonRef:AddSetting[MeToCorp_Inverse,FALSE]
+		This.CommonRef:AddSetting[MeToAlliance_Inverse,FALSE]
+		This.CommonRef:AddSetting[CorpToPilot_Inverse,FALSE]
+		This.CommonRef:AddSetting[CorpToCorp_Inverse,FALSE]
+		This.CommonRef:AddSetting[CorpToAlliance_Inverse,FALSE]
+		This.CommonRef:AddSetting[AllianceToPilot_Inverse,FALSE]
+		This.CommonRef:AddSetting[AllianceToCorp_Inverse,FALSE]
+		This.CommonRef:AddSetting[AllianceToAlliance_Inverse,FALSE]
+		
 	}
 
 	member:bool MeToPilot()
