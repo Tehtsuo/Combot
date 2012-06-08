@@ -57,7 +57,12 @@ objectdef obj_Combat inherits obj_State
 	
 	member:bool AddTargetByName(string Name, int priority = 0)
 	{
-		return This.AddQueryString["CategoryID = CATEGORYID_ENTITY && IsNPC && Name -= \"${Name}\"", ${priority}]
+		return This.AddQueryString["CategoryID = CATEGORYID_ENTITY && IsNPC && Name =- \"${Name}\"", ${priority}]
+	}
+
+	member:bool AddTargetByExactName(string Name, int priority = 0)
+	{
+		return This.AddQueryString["CategoryID = CATEGORYID_ENTITY && IsNPC && Name == \"${Name}\"", ${priority}]
 	}
 
 	member:bool AddQueryString(string QueryString, int priority = 0)
