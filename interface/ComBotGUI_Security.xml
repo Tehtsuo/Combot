@@ -59,19 +59,11 @@
 						<Wrap />
 						<Text>The Security module is responsible for keeping your bot safe.  It handles all Flee actions, as well as actions meant to make your pilot behave more like a human.</Text>
 					</Text>						 
-					<Text name='obj_Security_ModeTitle'> 
-						<X>1%</X> 
-						<Y>20%</Y> 
-						<Width>30%</Width> 
-						<Height>2%</Height> 
-						<Alignment>Center</Alignment>
-						<Text>Flee Settings</Text>
-					</Text>	
 					<Checkbox name='obj_Security_MeToPilot'>
 						<X>1%</X>
-						<Y>22%</Y>
+						<Y>20%</Y>
 						<Width>30%</Width> 
-						<Height>2%</Height> 
+						<Height>3%</Height> 
 						<Text>Pilot's standing to me</Text>
 						<OnLoad>
 							if ${Script[ComBot].VariableScope.Config.Security.MeToPilot}
@@ -85,9 +77,9 @@
 					</Checkbox>
 					<Checkbox name='obj_Security_MeToCorp'>
 						<X>1%</X>
-						<Y>24%</Y>
+						<Y>23%</Y>
 						<Width>30%</Width> 
-						<Height>2%</Height> 
+						<Height>3%</Height> 
 						<Text>Corporation's standing to me</Text>
 						<OnLoad>
 							if ${Script[ComBot].VariableScope.Config.Security.MeToCorp}
@@ -103,7 +95,7 @@
 						<X>1%</X>
 						<Y>26%</Y>
 						<Width>30%</Width> 
-						<Height>2%</Height> 
+						<Height>3%</Height> 
 						<Text>Alliance's standing to me</Text>
 						<OnLoad>
 							if ${Script[ComBot].VariableScope.Config.Security.MeToAlliance}
@@ -119,7 +111,7 @@
 						<X>1%</X>
 						<Y>30%</Y>
 						<Width>30%</Width> 
-						<Height>2%</Height> 
+						<Height>3%</Height> 
 						<Text>Pilot's standing to my corporation</Text>
 						<OnLoad>
 							if ${Script[ComBot].VariableScope.Config.Security.CorpToPilot}
@@ -133,9 +125,9 @@
 					</Checkbox>
 					<Checkbox name='obj_Security_CorpToCorp'>
 						<X>1%</X>
-						<Y>32%</Y>
+						<Y>33%</Y>
 						<Width>30%</Width> 
-						<Height>2%</Height> 
+						<Height>3%</Height> 
 						<Text>Corporation's standing to my corporation</Text>
 						<OnLoad>
 							if ${Script[ComBot].VariableScope.Config.Security.CorpToCorp}
@@ -149,9 +141,9 @@
 					</Checkbox>
 					<Checkbox name='obj_Security_CorpToAlliance'>
 						<X>1%</X>
-						<Y>34%</Y>
+						<Y>36%</Y>
 						<Width>30%</Width> 
-						<Height>2%</Height> 
+						<Height>3%</Height> 
 						<Text>Alliance's standing to my corporation</Text>
 						<OnLoad>
 							if ${Script[ComBot].VariableScope.Config.Security.CorpToAlliance}
@@ -165,9 +157,9 @@
 					</Checkbox>
 					<Checkbox name='obj_Security_AllianceToPilot'>
 						<X>1%</X>
-						<Y>38%</Y>
+						<Y>40%</Y>
 						<Width>30%</Width> 
-						<Height>2%</Height> 
+						<Height>3%</Height> 
 						<Text>Pilot's standing to my alliance</Text>
 						<OnLoad>
 							if ${Script[ComBot].VariableScope.Config.Security.AllianceToPilot}
@@ -181,9 +173,9 @@
 					</Checkbox>
 					<Checkbox name='obj_Security_AllianceToCorp'>
 						<X>1%</X>
-						<Y>40%</Y>
+						<Y>43%</Y>
 						<Width>30%</Width> 
-						<Height>2%</Height> 
+						<Height>3%</Height> 
 						<Text>Corporation's standing to my alliance</Text>
 						<OnLoad>
 							if ${Script[ComBot].VariableScope.Config.Security.AllianceToCorp}
@@ -197,9 +189,9 @@
 					</Checkbox>
 					<Checkbox name='obj_Security_AllianceToAlliance'>
 						<X>1%</X>
-						<Y>42%</Y>
+						<Y>46%</Y>
 						<Width>30%</Width> 
-						<Height>2%</Height> 
+						<Height>3%</Height> 
 						<Text>Alliance's standing to my alliance</Text>
 						<OnLoad>
 							if ${Script[ComBot].VariableScope.Config.Security.AllianceToAlliance}
@@ -213,15 +205,15 @@
 					</Checkbox>
 					<Combobox Name="obj_Security_MeToPilot_Value">
 						<BackgroundColor>FF000000</BackgroundColor>
-						<X>20%</X>
-						<Y>22%</Y>
-						<Width>20%</Width>
-						<Height>2%</Height>
+						<X>32%</X>
+						<Y>20%</Y>
+						<Width>7%</Width>
+						<Height>3%</Height>
 						<OnLoad>
 							variable int counter
-							for ( counter:Set[-10] ; ${counter} = 10 ; counter:Inc )
+							for ( counter:Set[-10] ; ${counter} &lt;= 10 ; counter:Inc )
 							{
-								This:AddItem[${counter}]
+								This:AddItem["${counter}"]
 							}
 							
 							This.ItemByText[${Script[ComBot].VariableScope.Config.Security.MeToPilot_Value}]:Select
@@ -232,13 +224,13 @@
 					</Combobox>					
 					<Combobox Name="obj_Security_MeToCorp_Value">
 						<BackgroundColor>FF000000</BackgroundColor>
-						<X>20%</X>
-						<Y>24%</Y>
-						<Width>20%</Width>
-						<Height>2%</Height>
+						<X>32%</X>
+						<Y>23%</Y>
+						<Width>7%</Width>
+						<Height>3%</Height>
 						<OnLoad>
 							variable int counter
-							for ( counter:Set[-10] ; ${counter} = 10 ; counter:Inc )
+							for ( counter:Set[-10] ; ${counter} &lt;= 10 ; counter:Inc )
 							{
 								This:AddItem[${counter}]
 							}
@@ -251,13 +243,13 @@
 					</Combobox>					
 					<Combobox Name="obj_Security_MeToAlliance_Value">
 						<BackgroundColor>FF000000</BackgroundColor>
-						<X>20%</X>
+						<X>32%</X>
 						<Y>26%</Y>
-						<Width>20%</Width>
-						<Height>2%</Height>
+						<Width>7%</Width>
+						<Height>3%</Height>
 						<OnLoad>
 							variable int counter
-							for ( counter:Set[-10] ; ${counter} = 10 ; counter:Inc )
+							for ( counter:Set[-10] ; ${counter} &lt;= 10 ; counter:Inc )
 							{
 								This:AddItem[${counter}]
 							}
@@ -270,13 +262,13 @@
 					</Combobox>					
 					<Combobox Name="obj_Security_CorpToPilot_Value">
 						<BackgroundColor>FF000000</BackgroundColor>
-						<X>20%</X>
+						<X>32%</X>
 						<Y>30%</Y>
-						<Width>20%</Width>
-						<Height>2%</Height>
+						<Width>7%</Width>
+						<Height>3%</Height>
 						<OnLoad>
 							variable int counter
-							for ( counter:Set[-10] ; ${counter} = 10 ; counter:Inc )
+							for ( counter:Set[-10] ; ${counter} &lt;= 10 ; counter:Inc )
 							{
 								This:AddItem[${counter}]
 							}
@@ -289,13 +281,13 @@
 					</Combobox>					
 					<Combobox Name="obj_Security_CorpToCorp_Value">
 						<BackgroundColor>FF000000</BackgroundColor>
-						<X>20%</X>
-						<Y>32%</Y>
-						<Width>20%</Width>
-						<Height>2%</Height>
+						<X>32%</X>
+						<Y>33%</Y>
+						<Width>7%</Width>
+						<Height>3%</Height>
 						<OnLoad>
 							variable int counter
-							for ( counter:Set[-10] ; ${counter} = 10 ; counter:Inc )
+							for ( counter:Set[-10] ; ${counter} &lt;= 10 ; counter:Inc )
 							{
 								This:AddItem[${counter}]
 							}
@@ -308,13 +300,13 @@
 					</Combobox>					
 					<Combobox Name="obj_Security_CorpToAlliance_Value">
 						<BackgroundColor>FF000000</BackgroundColor>
-						<X>20%</X>
-						<Y>34%</Y>
-						<Width>20%</Width>
-						<Height>2%</Height>
+						<X>32%</X>
+						<Y>36%</Y>
+						<Width>7%</Width>
+						<Height>3%</Height>
 						<OnLoad>
 							variable int counter
-							for ( counter:Set[-10] ; ${counter} = 10 ; counter:Inc )
+							for ( counter:Set[-10] ; ${counter} &lt;= 10 ; counter:Inc )
 							{
 								This:AddItem[${counter}]
 							}
@@ -327,13 +319,13 @@
 					</Combobox>	
 					<Combobox Name="obj_Security_AllianceToPilot_Value">
 						<BackgroundColor>FF000000</BackgroundColor>
-						<X>20%</X>
-						<Y>38%</Y>
-						<Width>20%</Width>
-						<Height>2%</Height>
+						<X>32%</X>
+						<Y>40%</Y>
+						<Width>7%</Width>
+						<Height>3%</Height>
 						<OnLoad>
 							variable int counter
-							for ( counter:Set[-10] ; ${counter} = 10 ; counter:Inc )
+							for ( counter:Set[-10] ; ${counter} &lt;= 10 ; counter:Inc )
 							{
 								This:AddItem[${counter}]
 							}
@@ -346,13 +338,13 @@
 					</Combobox>					
 					<Combobox Name="obj_Security_AllianceToCorp_Value">
 						<BackgroundColor>FF000000</BackgroundColor>
-						<X>20%</X>
-						<Y>40%</Y>
-						<Width>20%</Width>
-						<Height>2%</Height>
+						<X>32%</X>
+						<Y>43%</Y>
+						<Width>7%</Width>
+						<Height>3%</Height>
 						<OnLoad>
 							variable int counter
-							for ( counter:Set[-10] ; ${counter} = 10 ; counter:Inc )
+							for ( counter:Set[-10] ; ${counter} &lt;= 10 ; counter:Inc )
 							{
 								This:AddItem[${counter}]
 							}
@@ -365,13 +357,13 @@
 					</Combobox>					
 					<Combobox Name="obj_Security_AllianceToAlliance_Value">
 						<BackgroundColor>FF000000</BackgroundColor>
-						<X>20%</X>
-						<Y>42%</Y>
-						<Width>20%</Width>
-						<Height>2%</Height>
+						<X>32%</X>
+						<Y>46%</Y>
+						<Width>7%</Width>
+						<Height>3%</Height>
 						<OnLoad>
 							variable int counter
-							for ( counter:Set[-10] ; ${counter} = 10 ; counter:Inc )
+							for ( counter:Set[-10] ; ${counter} &lt;= 10 ; counter:Inc )
 							{
 								This:AddItem[${counter}]
 							}
@@ -385,10 +377,10 @@
 
 					<Checkbox name='obj_Security_FleeWaitTime_Enabled'>
 						<X>1%</X>
-						<Y>45%</Y>
+						<Y>50%</Y>
 						<Width>30%</Width> 
-						<Height>2%</Height> 
-						<Text>Wait at safe place after fleeing</Text>
+						<Height>3%</Height> 
+						<Text>Wait at safe place after fleeing for</Text>
 						<OnLoad>
 							if ${Script[ComBot].VariableScope.Config.Security.FleeWaitTime_Enabled}
 							{
@@ -401,9 +393,9 @@
 					</Checkbox>		
 					<Combobox name='obj_Security_FleeWaitTime'>
 						<X>30%</X>
-						<Y>45%</Y>
-						<Width>30%</Width> 
-						<Height>2%</Height> 
+						<Y>50%</Y>
+						<Width>15%</Width> 
+						<Height>3%</Height> 
 						<Items>
 							<Item value="5">5 Minutes</Item>
 							<Item value="10">10 Minutes</Item>
@@ -421,9 +413,9 @@
 					
 					<Checkbox name='obj_Security_Break_Enabled'>
 						<X>1%</X>
-						<Y>49%</Y>
+						<Y>55%</Y>
 						<Width>30%</Width> 
-						<Height>2%</Height> 
+						<Height>3%</Height> 
 						<Text>Take a break for</Text>
 						<OnLoad>
 							if ${Script[ComBot].VariableScope.Config.Security.Break_Enabled}
@@ -436,10 +428,10 @@
 						</OnLeftClick>
 					</Checkbox>		
 					<Combobox name='obj_Security_Break_Duration'>
-						<X>30%</X>
-						<Y>49%</Y>
-						<Width>10%</Width> 
-						<Height>2%</Height> 
+						<X>15%</X>
+						<Y>55%</Y>
+						<Width>15%</Width> 
+						<Height>3%</Height> 
 						<Items>
 							<Item value="30">30 Minutes</Item>
 							<Item value="60">1 Hour</Item>
@@ -453,17 +445,17 @@
 						</OnSelect>
 					</Combobox>		
 					<Text name='obj_Security_Break_Text'>
-						<X>40%</X>
-						<Y>49%</Y>
-						<Width>10%</Width> 
-						<Height>2%</Height>
+						<X>31%</X>
+						<Y>55%</Y>
+						<Width>6%</Width> 
+						<Height>3%</Height>
 						<Text>every</Text>
 					</Text>
 					<Combobox name='obj_Security_Break_Interval'>
-						<X>50%</X>
-						<Y>49%</Y>
-						<Width>10%</Width> 
-						<Height>2%</Height> 
+						<X>37%</X>
+						<Y>55%</Y>
+						<Width>15%</Width> 
+						<Height>3%</Height> 
 						<Items>
 							<Item value="60">1 Hour</Item>
 							<Item value="120">2 Hours</Item>
@@ -481,10 +473,10 @@
 					</Combobox>
 					<Checkbox name='obj_Security_OverrideFleeBookmark_Enabled'>
 						<X>1%</X>
-						<Y>52%</Y>
+						<Y>60%</Y>
 						<Width>30%</Width> 
-						<Height>2%</Height> 
-						<Text>Override active module - flee to this bookmark</Text>
+						<Height>3%</Height> 
+						<Text>Override active module - flee to:</Text>
 						<OnLoad>
 							if ${Script[ComBot].VariableScope.Config.Security.OverrideFleeBookmark_Enabled}
 							{
@@ -500,9 +492,9 @@
 						<Border>1</Border>
 						<BorderColor>FFFFFFFF</BorderColor>
 						<X>1%</X>
-						<Y>54%</Y>
+						<Y>63%</Y>
 						<Width>30%</Width>
-						<Height>40%</Height>
+						<Height>36%</Height>
 						<OnLoad>
 							variable index:bookmark Bookmarks
 							variable iterator BookmarkIterator
