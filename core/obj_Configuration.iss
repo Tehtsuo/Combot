@@ -262,7 +262,7 @@ objectdef obj_Configuration_Miner
 		This.CommonRef:AddSetting[BeltPrefix,Belt:]
 		This.CommonRef:AddSetting[IceBeltPrefix,Ice Belt:]
 		
-}
+	}
 
 	member:string MiningSystem()
 	{
@@ -335,7 +335,342 @@ objectdef obj_Configuration_Miner
 	}
 }
 	
+objectdef obj_Configuration_Security
+{
+	variable string SetName = "Security"
+
+	method Initialize()
+	{
+		if !${BaseConfig.BaseRef.FindSet[${This.SetName}](exists)}
+		{
+			UI:Update["obj_Configuration", " ${This.SetName} settings missing - initializing", "o"]
+			This:Set_Default_Values[]
+		}
+		UI:Update["obj_Configuration", " ${This.SetName}: Initialized", "-g"]
+	}
+
+	member:settingsetref CommonRef()
+	{
+		return ${BaseConfig.BaseRef.FindSet[${This.SetName}]}
+	}
+
+	method Set_Default_Values()
+	{
+		BaseConfig.BaseRef:AddSet[${This.SetName}]
+
+	}
+
+	member:bool MeToPilot()
+	{
+		return ${This.CommonRef.FindSetting[MeToPilot]}
+	}
+
+	method SetMeToPilot(bool value)
+	{
+		This.CommonRef:AddSetting[MeToPilot,${value}]
+	}
+
+	member:bool MeToCorp()
+	{
+		return ${This.CommonRef.FindSetting[MeToCorp]}
+	}
+
+	method SetMeToCorp(bool value)
+	{
+		This.CommonRef:AddSetting[MeToCorp,${value}]
+	}
+
+	member:bool MeToAlliance()
+	{
+		return ${This.CommonRef.FindSetting[MeToAlliance]}
+	}
+
+	method SetMeToAlliance(bool value)
+	{
+		This.CommonRef:AddSetting[MeToAlliance,${value}]
+	}
+
+	member:bool CorpToPilot()
+	{
+		return ${This.CommonRef.FindSetting[CorpToPilot]}
+	}
+
+	method SetCorpToPilot(bool value)
+	{
+		This.CommonRef:AddSetting[CorpToPilot,${value}]
+	}
+
+	member:bool CorpToCorp()
+	{
+		return ${This.CommonRef.FindSetting[CorpToCorp]}
+	}
+
+	method SetCorpToCorp(bool value)
+	{
+		This.CommonRef:AddSetting[CorpToCorp,${value}]
+	}
+
+	member:bool CorpToAlliance()
+	{
+		return ${This.CommonRef.FindSetting[CorpToAlliance]}
+	}
+
+	method SetCorpToAlliance(bool value)
+	{
+		This.CommonRef:AddSetting[CorpToAlliance,${value}]
+	}
 	
+	member:bool AllianceToPilot()
+	{
+		return ${This.CommonRef.FindSetting[AllianceToPilot]}
+	}
+
+	method SetAllianceToPilot(bool value)
+	{
+		This.CommonRef:AddSetting[AllianceToPilot,${value}]
+	}
+
+	member:bool AllianceToCorp()
+	{
+		return ${This.CommonRef.FindSetting[AllianceToCorp]}
+	}
+
+	method SetAllianceToCorp(bool value)
+	{
+		This.CommonRef:AddSetting[AllianceToCorp,${value}]
+	}
+
+	member:bool AllianceToAlliance()
+	{
+		return ${This.CommonRef.FindSetting[AllianceToAlliance]}
+	}
+
+	method SetAllianceToAlliance(bool value)
+	{
+		This.CommonRef:AddSetting[AllianceToAlliance,${value}]
+	}
+	
+	member:int MeToPilot_Value()
+	{
+		return ${This.CommonRef.FindSetting[MeToPilot_Value]}
+	}
+
+	method SetMeToPilot_Value(int value)
+	{
+		This.CommonRef:AddSetting[MeToPilot_Value,${value}]
+	}
+	
+	member:int MeToCorp_Value()
+	{
+		return ${This.CommonRef.FindSetting[MeToCorp_Value]}
+	}
+
+	method SetMeToCorp_Value(int value)
+	{
+		This.CommonRef:AddSetting[MeToCorp_Value,${value}]
+	}
+	
+	member:int MeToAlliance_Value()
+	{
+		return ${This.CommonRef.FindSetting[MeToAlliance_Value]}
+	}
+
+	method SetMeToAlliance_Value(int value)
+	{
+		This.CommonRef:AddSetting[MeToAlliance_Value,${value}]
+	}
+	
+	member:int CorpToPilot_Value()
+	{
+		return ${This.CommonRef.FindSetting[CorpToPilot_Value]}
+	}
+
+	method SetCorpToPilot_Value(int value)
+	{
+		This.CommonRef:AddSetting[CorpToPilot_Value,${value}]
+	}
+	
+	member:int CorpToCorp_Value()
+	{
+		return ${This.CommonRef.FindSetting[CorpToCorp_Value]}
+	}
+
+	method SetCorpToCorp_Value(int value)
+	{
+		This.CommonRef:AddSetting[CorpToCorp_Value,${value}]
+	}
+	
+	member:int CorpToAlliance_Value()
+	{
+		return ${This.CommonRef.FindSetting[CorpToAlliance_Value]}
+	}
+
+	method SetCorpToAlliance_Value(int value)
+	{
+		This.CommonRef:AddSetting[CorpToAlliance_Value,${value}]
+	}
+	
+	member:int AllianceToPilot_Value()
+	{
+		return ${This.CommonRef.FindSetting[AllianceToPilot_Value]}
+	}
+
+	method SetAllianceToPilot_Value(int value)
+	{
+		This.CommonRef:AddSetting[AllianceToPilot_Value,${value}]
+	}
+	
+	member:int AllianceToCorp_Value()
+	{
+		return ${This.CommonRef.FindSetting[AllianceToCorp_Value]}
+	}
+
+	method SetAllianceToCorp_Value(int value)
+	{
+		This.CommonRef:AddSetting[AllianceToCorp_Value,${value}]
+	}
+	
+	member:int AllianceToAlliance_Value()
+	{
+		return ${This.CommonRef.FindSetting[AllianceToAlliance_Value]}
+	}
+
+	method SetAllianceToAlliance_Value(int value)
+	{
+		This.CommonRef:AddSetting[AllianceToAlliance_Value,${value}]
+	}
+	
+	member:bool MeToPilot_Inverse()
+	{
+		return ${This.CommonRef.FindSetting[MeToPilot_Inverse]}
+	}
+
+	method SetMeToPilot_Inverse(bool value)
+	{
+		This.CommonRef:AddSetting[MeToPilot_Inverse,${value}]
+	}
+
+	member:bool MeToCorp_Inverse()
+	{
+		return ${This.CommonRef.FindSetting[MeToCorp_Inverse]}
+	}
+
+	method SetMeToCorp_Inverse(bool value)
+	{
+		This.CommonRef:AddSetting[MeToCorp_Inverse,${value}]
+	}
+
+	member:bool MeToAlliance_Inverse()
+	{
+		return ${This.CommonRef.FindSetting[MeToAlliance_Inverse]}
+	}
+
+	method SetMeToAlliance_Inverse(bool value)
+	{
+		This.CommonRef:AddSetting[MeToAlliance_Inverse,${value}]
+	}
+
+	member:bool CorpToPilot_Inverse()
+	{
+		return ${This.CommonRef.FindSetting[CorpToPilot_Inverse]}
+	}
+
+	method SetCorpToPilot_Inverse(bool value)
+	{
+		This.CommonRef:AddSetting[CorpToPilot_Inverse,${value}]
+	}
+
+	member:bool CorpToCorp_Inverse()
+	{
+		return ${This.CommonRef.FindSetting[CorpToCorp_Inverse]}
+	}
+
+	method SetCorpToCorp_Inverse(bool value)
+	{
+		This.CommonRef:AddSetting[CorpToCorp_Inverse,${value}]
+	}
+
+	member:bool CorpToAlliance_Inverse()
+	{
+		return ${This.CommonRef.FindSetting[CorpToAlliance_Inverse]}
+	}
+
+	method SetCorpToAlliance_Inverse(bool value)
+	{
+		This.CommonRef:AddSetting[CorpToAlliance_Inverse,${value}]
+	}
+	
+	member:bool AllianceToPilot_Inverse()
+	{
+		return ${This.CommonRef.FindSetting[AllianceToPilot_Inverse]}
+	}
+
+	method SetAllianceToPilot_Inverse(bool value)
+	{
+		This.CommonRef:AddSetting[AllianceToPilot_Inverse,${value}]
+	}
+
+	member:bool AllianceToCorp_Inverse()
+	{
+		return ${This.CommonRef.FindSetting[AllianceToCorp_Inverse]}
+	}
+
+	method SetAllianceToCorp_Inverse(bool value)
+	{
+		This.CommonRef:AddSetting[AllianceToCorp_Inverse,${value}]
+	}
+
+	member:bool FleeWaitTime_Enabled()
+	{
+		return ${This.CommonRef.FindSetting[FleeWaitTime_Enabled]}
+	}
+
+	method SetFleeWaitTime_Enabled(bool value)
+	{
+		This.CommonRef:AddSetting[FleeWaitTime_Enabled,${value}]
+	}
+
+	member:int FleeWaitTime()
+	{
+		return ${This.CommonRef.FindSetting[FleeWaitTime]}
+	}
+
+	method SetFleeWaitTime(int value)
+	{
+		This.CommonRef:AddSetting[FleeWaitTime,${value}]
+	}
+	
+	member:bool Break_Enabled()
+	{
+		return ${This.CommonRef.FindSetting[Break_Enabled]}
+	}
+
+	method SetBreak_Enabled(bool value)
+	{
+		This.CommonRef:AddSetting[Break_Enabled,${value}]
+	}
+
+	member:int Break_Duration()
+	{
+		return ${This.CommonRef.FindSetting[Break_Duration]}
+	}
+
+	method SetBreak_Duration(int value)
+	{
+		This.CommonRef:AddSetting[Break_Duration,${value}]
+	}
+	
+	member:int Break_Interval()
+	{
+		return ${This.CommonRef.FindSetting[Break_Interval]}
+	}
+
+	method SetBreak_Interval(int value)
+	{
+		This.CommonRef:AddSetting[Break_Interval,${value}]
+	}
+	
+}	
 	
 objectdef obj_Configuration_RefineData
 {

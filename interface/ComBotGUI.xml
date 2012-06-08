@@ -405,7 +405,71 @@
 								timedcommand 0 "ui -load \"&filepath;/ComBotGUI_Combat.xml\""
 							</OnLeftClick>
 						</button>						
-					</Tab>					
+					</Tab>
+					
+					
+					<Tab Name='Security'>
+						<frame name='obj_SecurityFillerFrame'>
+							<BackgroundColor>FF000000</BackgroundColor>
+							<Border>1</Border>
+							<BorderColor>FFFFFFFF</BorderColor>
+							<X>0</X>
+							<Y>0</Y>
+							<Height>100%</Height>
+							<Width>100%</Width>
+							<OnLoad>
+								This:SetLeftClickThru[TRUE]
+							</OnLoad>
+						</frame>					
+						<Text name='obj_SecurityListTitle'> 
+									<X>0</X> 
+									<Y>5%</Y> 
+									<Width>40%</Width> 
+									<Height>5%</Height> 
+									<Alignment>Center</Alignment>
+									<Text>Security Risks</Text>
+						</Text>						 
+						<listbox Name="obj_SecurityList">
+							<Font template='Console.Font' />
+							<BackgroundColor>FF000000</BackgroundColor>
+							<Border>1</Border>
+							<BorderColor>FFFFFFFF</BorderColor>
+							<X>0</X>
+							<Y>10%</Y>
+							<Width>40%</Width>
+							<Height>80%</Height>
+						</listbox>
+						<Text name='obj_SecurityStateListTitle'> 
+									<X>40%</X> 
+									<Y>5%</Y> 
+									<Width>40%</Width> 
+									<Height>5%</Height> 
+									<Alignment>Center</Alignment>
+									<Text>Pending States</Text>
+						</Text>						 
+						<listbox Name="obj_SecurityStateList">
+							<Font template='Listbox.Font' />
+							<BackgroundColor>FF000000</BackgroundColor>
+							<Border>1</Border>
+							<BorderColor>FFFFFFFF</BorderColor>
+							<X>40%</X>
+							<Y>10%</Y>
+							<Width>40%</Width>
+							<Height>80%</Height>
+						</listbox>
+						<button	Name='Config'>
+							<Font template='Button.Font' />
+							<BackgroundColor>FF000000</BackgroundColor>
+							<X>0%</X>
+							<Y>90%</Y>
+							<Width>100%</Width>
+							<Height>10%</Height>
+							<Text>Settings</Text>
+							<OnLeftClick>
+								timedcommand 0 "ui -load \"&filepath;/ComBotGUI_Security.xml\""
+							</OnLeftClick>
+						</button>						
+					</Tab>
 				</Tabs>
 			</TabControl>
 		</Children>
