@@ -55,12 +55,12 @@ objectdef obj_Combat inherits obj_State
 		return This.KillQueryString["CategoryID = CATEGORYID_ENTITY && IsNPC && IsTargetingMe"]
 	}
 	
-	member:bool AddTargetByName(string Name)
+	member:bool AddTargetByName(string Name, int priority = 0)
 	{
-		return This.AddQueryString[CategoryID = CATEGORYID_ENTITY && IsNPC && Name -= "${Name}"]
+		return This.AddQueryString["CategoryID = CATEGORYID_ENTITY && IsNPC && Name -= \"${Name}\"", ${priority}]
 	}
 
-	member:bool AddQueryString(string QueryString)
+	member:bool AddQueryString(string QueryString, int priority = 0)
 	{
 		variable index:entity enemyTargets
 		variable iterator enemyIterator
@@ -72,7 +72,7 @@ objectdef obj_Combat inherits obj_State
 		{
 			do
 			{
-				KillTargets:AddTarget[${enemyIterator.Value.ID}]
+				KillTargets:AddTarget[${enemyIterator.Value.ID}, ${priority}]
 			}
 			while ${enemyIterator:Next(exists)}
 		}
@@ -186,10 +186,11 @@ objectdef obj_KillTargetList
 		}
 	}
 	
-	member:int64 GetClosest(bool NonPrimary = FALSE, bool NonReady = TRUE)
+	member:int64 GetClosest(bool NonPrimary = FALSE, bool NonReady = TRUE, bool ByPriority = FALSE)
 	{
 		variable float curDistance = 999999999999
 		variable int64 Closest = -1
+		variable int BestPriority = -999999
 		variable iterator KillTargetIterator
 		KillTargets:GetIterator[KillTargetIterator]
 		if ${KillTargetIterator:First(exists)}
@@ -200,7 +201,7 @@ objectdef obj_KillTargetList
 				{
 					if ${NonReady} || ${Entity[${KillTargetIterator.Value.Target}].ReadyTarget}
 					{
-						if ${Entity[${KillTargetIterator.Value.Target}].Distance} < curDistance
+						if (${Entity[${KillTargetIterator.Value.Target}].Distance} < curDistance) || (${ByPriority} && (${KillTargetIterator.Value.Priority} > ${BestPriority}))
 						{
 							curDistance:Set[${Entity[${KillTargetIterator.Value.Target}].Distance}]
 							Closest:Set[${KillTargetIterator.Value.Target}]
@@ -220,8 +221,9 @@ objectdef obj_KillTarget inherits obj_State
 	variable bool ActionTaken = FALSE
 	variable bool TargetReady = FALSE
 	variable bool IsPrimary = FALSE
+	variable int Priority = 0
 	
-	method Initialize(int64 TargetID)
+	method Initialize(int64 TargetID, int MyPriority = 0)
 	{
 		This[parent]:Initialize
 		UI:Update["obj_KillTarget", "Initialized on ${Entity[${TargetID}].Name}", "g"]
@@ -229,6 +231,7 @@ objectdef obj_KillTarget inherits obj_State
 		This:IndependentPulse
 		This:QueueState["LockTarget"]
 		This:QueueState["WaitForLock"]
+		This.Priority:Set[${MyPriority}]
 	}
 	
 	member:bool LockTarget()
