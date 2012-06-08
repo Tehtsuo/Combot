@@ -358,15 +358,6 @@ objectdef obj_Configuration_Security
 	{
 		BaseConfig.BaseRef:AddSet[${This.SetName}]
 
-		This.CommonRef:AddSetting[MeToPilot_Inverse,FALSE]
-		This.CommonRef:AddSetting[MeToCorp_Inverse,FALSE]
-		This.CommonRef:AddSetting[MeToAlliance_Inverse,FALSE]
-		This.CommonRef:AddSetting[CorpToPilot_Inverse,FALSE]
-		This.CommonRef:AddSetting[CorpToCorp_Inverse,FALSE]
-		This.CommonRef:AddSetting[CorpToAlliance_Inverse,FALSE]
-		This.CommonRef:AddSetting[AllianceToPilot_Inverse,FALSE]
-		This.CommonRef:AddSetting[AllianceToCorp_Inverse,FALSE]
-		This.CommonRef:AddSetting[AllianceToAlliance_Inverse,FALSE]
 		
 	}
 
@@ -550,86 +541,6 @@ objectdef obj_Configuration_Security
 		This.CommonRef:AddSetting[AllianceToAlliance_Value,${value}]
 	}
 	
-	member:bool MeToPilot_Inverse()
-	{
-		return ${This.CommonRef.FindSetting[MeToPilot_Inverse]}
-	}
-
-	method SetMeToPilot_Inverse(bool value)
-	{
-		This.CommonRef:AddSetting[MeToPilot_Inverse,${value}]
-	}
-
-	member:bool MeToCorp_Inverse()
-	{
-		return ${This.CommonRef.FindSetting[MeToCorp_Inverse]}
-	}
-
-	method SetMeToCorp_Inverse(bool value)
-	{
-		This.CommonRef:AddSetting[MeToCorp_Inverse,${value}]
-	}
-
-	member:bool MeToAlliance_Inverse()
-	{
-		return ${This.CommonRef.FindSetting[MeToAlliance_Inverse]}
-	}
-
-	method SetMeToAlliance_Inverse(bool value)
-	{
-		This.CommonRef:AddSetting[MeToAlliance_Inverse,${value}]
-	}
-
-	member:bool CorpToPilot_Inverse()
-	{
-		return ${This.CommonRef.FindSetting[CorpToPilot_Inverse]}
-	}
-
-	method SetCorpToPilot_Inverse(bool value)
-	{
-		This.CommonRef:AddSetting[CorpToPilot_Inverse,${value}]
-	}
-
-	member:bool CorpToCorp_Inverse()
-	{
-		return ${This.CommonRef.FindSetting[CorpToCorp_Inverse]}
-	}
-
-	method SetCorpToCorp_Inverse(bool value)
-	{
-		This.CommonRef:AddSetting[CorpToCorp_Inverse,${value}]
-	}
-
-	member:bool CorpToAlliance_Inverse()
-	{
-		return ${This.CommonRef.FindSetting[CorpToAlliance_Inverse]}
-	}
-
-	method SetCorpToAlliance_Inverse(bool value)
-	{
-		This.CommonRef:AddSetting[CorpToAlliance_Inverse,${value}]
-	}
-	
-	member:bool AllianceToPilot_Inverse()
-	{
-		return ${This.CommonRef.FindSetting[AllianceToPilot_Inverse]}
-	}
-
-	method SetAllianceToPilot_Inverse(bool value)
-	{
-		This.CommonRef:AddSetting[AllianceToPilot_Inverse,${value}]
-	}
-
-	member:bool AllianceToCorp_Inverse()
-	{
-		return ${This.CommonRef.FindSetting[AllianceToCorp_Inverse]}
-	}
-
-	method SetAllianceToCorp_Inverse(bool value)
-	{
-		This.CommonRef:AddSetting[AllianceToCorp_Inverse,${value}]
-	}
-
 	member:bool FleeWaitTime_Enabled()
 	{
 		return ${This.CommonRef.FindSetting[FleeWaitTime_Enabled]}
