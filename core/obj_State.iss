@@ -84,14 +84,13 @@ objectdef obj_State
 			{
 				if (!${ComBot.Paused} && ${Client.Ready}) || ${This.NonGameTiedPulse}
 				{
-					if ${States.Used} == 0
-					{
-						This:QueueState["Idle", 100];
-						IsIdle:Set[TRUE]
-					}
-					
 					if ${This.${CurState.Name}[${CurState.Args}]}
 					{
+						if ${States.Used} == 0
+						{
+							This:QueueState["Idle", 100];
+							IsIdle:Set[TRUE]
+						}
 						CurState:Set[${States.Peek.Name}, ${States.Peek.Frequency}, "${States.Peek.Args.Escape}"]
 						UIElement[${QueueListbox}].OrderedItem[1]:Remove
 						States:Dequeue
@@ -136,6 +135,7 @@ objectdef obj_State
 	method InsertState(string arg_Name, int arg_Frequency=-1, string arg_Args="")
 	{
 		variable queue:obj_StateQueue tempStates
+		tempStates:Clear
 		variable iterator StateIterator
 		States:GetIterator[StateIterator]
 		if ${StateIterator:First(exists)}

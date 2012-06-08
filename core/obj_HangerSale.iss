@@ -239,7 +239,7 @@ objectdef obj_HangerSale inherits obj_State
 	
 	member:float GetRefineLoss()
 	{
-		return 0.83755
+		return 0.995
 		
 	}
 	

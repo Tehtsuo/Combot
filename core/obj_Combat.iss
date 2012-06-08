@@ -206,7 +206,7 @@ objectdef obj_KillTargetList
 				{
 					if ${NonReady} || ${Entity[${KillTargetIterator.Value.Target}].ReadyTarget}
 					{
-						if (${Entity[${KillTargetIterator.Value.Target}].Distance} < curDistance) || (${ByPriority} && (${KillTargetIterator.Value.Priority} > ${BestPriority}))
+						if (${Entity[${KillTargetIterator.Value.Target}].Distance} < ${curDistance}) || (${ByPriority} && (${KillTargetIterator.Value.Priority} > ${BestPriority}))
 						{
 							curDistance:Set[${Entity[${KillTargetIterator.Value.Target}].Distance}]
 							Closest:Set[${KillTargetIterator.Value.Target}]
