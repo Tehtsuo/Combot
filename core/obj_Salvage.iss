@@ -167,6 +167,17 @@ objectdef obj_Salvage inherits obj_State
 			This:QueueState["CheckBookmarks"]
 			return TRUE
 		}
+
+		if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) > 0.95
+		{
+			UI:Update["obj_Salvage", "Unload trip required", "g"]
+			Move:Bookmark[${Config.Salvager.Salvager_Dropoff}]
+			This:QueueState["Traveling"]
+			This:QueueState["Offload"]
+			This:QueueState["RefreshBookmarks", 3000]
+			This:QueueState["CheckBookmarks"]
+			return TRUE
+		}		
 		
 		if ${Me.MaxLockedTargets} < ${MyShip.MaxLockedTargets}
 		{
@@ -202,7 +213,8 @@ objectdef obj_Salvage inherits obj_State
 					!${TargetIterator.Value.IsLockedTarget} && \
 					${Targets.LockedAndLockingTargets} < ${MaxTarget} && \
 					${TargetIterator.Value.Distance} < ${MyShip.MaxTargetRange} && \
-					!${AlreadySalvaged.Contains[${TargetIterator.Value.ID}]}
+					!${AlreadySalvaged.Contains[${TargetIterator.Value.ID}]} && \
+					!${Target.Value.Name.Equal["Cargo Container"]}
 				{
 					UI:Update["obj_Salvage", "Locking - ${TargetIterator.Value.Name}", "g"]
 					TargetIterator.Value:LockTarget
@@ -413,6 +425,7 @@ objectdef obj_Salvage inherits obj_State
 			break
 		}
 		This:Clear
+		This:QueueState["StackItemHangar"]
 		This:QueueState["Log", 1000, "Idling for 1 minute"]
 		This:QueueState["Idle", 60000]
 		This:QueueState["RefreshBookmarks", 3000]
@@ -420,7 +433,32 @@ objectdef obj_Salvage inherits obj_State
 		return TRUE
 	}
 	
-	
+	member:bool StackItemHangar()
+	{
+		if !${EVEWindow[ByName, "Inventory"](exists)}
+		{
+			UI:Update["obj_Salvage", "Making sure inventory is open", "g"]
+			MyShip:OpenCargo
+			return FALSE
+		}
+		if !${EVEWindow[byCaption, "Item Hangar"](exists)}
+		{
+			UI:Update["obj_Salvage", "Changing to Item Hangar", "g"]
+			EVEWindow[byName,"Inventory"]:MakeChildActive[StationItems]
+			return FALSE
+		}
+		if ${EVEWindow[byCaption, "Item Hangar"](exists)}
+		{
+			UI:Update["obj_Salvage", "Stacking Item Hangar", "g"]
+			EVEWindow[byName,"Inventory"]:StackAll
+			return TRUE
+		}
+		else
+		{
+			return FALSE
+		}
+	}
+
 	member:bool RefreshBookmarks()
 	{
 		UI:Update["obj_Salvage", "Refreshing bookmarks", "g"]
