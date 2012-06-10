@@ -19,6 +19,7 @@
 #include core/obj_Targets.iss
 #include core/obj_Asteroids.iss
 #include core/obj_Miner.iss
+#include core/obj_Agents.iss
 #include core/obj_HangerSale.iss
 
 
@@ -46,10 +47,13 @@ function main()
 	declarevariable Targets obj_Targets script
 	declarevariable Asteroids obj_Asteroids script
 	declarevariable Miner obj_Miner script
+	declarevariable Agents obj_Agents script
 	declarevariable HangerSale obj_HangerSale script
 	declarevariable RefineData obj_Configuration_RefineData script
 
 	UI:Update["ComBot", "Module initialization complete", "y"]
+	
+	
 	
 	if ${Config.Common.AutoStart}
 	{

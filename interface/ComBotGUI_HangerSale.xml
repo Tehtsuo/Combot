@@ -6,7 +6,7 @@
 		<Color>FFFFFFFF</Color>
 	</template>	
 
-	<window name='ComBot_Miner'>
+	<window name='ComBot_HangarSale'>
 		<Visible>1</Visible>
 		<BackGroundColor></BackGroundColor>
 		<Border>0</Border>
@@ -26,7 +26,7 @@
 					<Width>100%</Width>
 					<Height>20</Height>
 					<Alignment>Center</Alignment>
-					<Text>Miner Configuration</Text>
+					<Text>HangarSale Configuration</Text>
 				</Text>
 				<button	Name='Close'>
 					<X>r40</X>
@@ -35,13 +35,13 @@
 					<Height>20</Height>
 					<Text>Close</Text>
 					<OnLeftClick>
-						ui -unload "&filepath;/ComBotGUI_Miner"
+						ui -unload "&filepath;/ComBotGUI_HangerSale"
 					</OnLeftClick>
 				</button>
 			</Children>
 		</TitleBar>
-		<Children name="ComBot_Miner_Children">
-			<Frame name="ComBot_Miner_Frame">
+		<Children name="ComBot_HangarSale_Children">
+			<Frame name="ComBot_HangarSale_Frame">
 				<X>0</X>
 				<Y>5</Y>
 				<Width>100%</Width>
@@ -49,25 +49,25 @@
 				<BackgroundColor>FF000000</BackgroundColor>
 				<Border>1</Border>
 				<BorderColor>FFFFFFFF</BorderColor>
-				<Children name="ComBot_Miner_Frame_Children">
-					<Text name='obj_MinerInformation'> 
+				<Children name="ComBot_HangarSale_Frame_Children">
+					<Text name='obj_HangarSaleInformation'> 
 						<Font template='Information.Font' />
 						<X>1%</X> 
 						<Y>1%</Y> 
 						<Width>98%</Width> 
 						<Height>18%</Height> 
 						<Wrap />
-						<Text></Text>
+						<Text>HangarSale is a full-functioned item sales system.  It uses API calls from EVE-Central to determine if the sale of an item would be more profitable than refining the item based on your refinery skill and station standing.  It also is a full-function freighting system which will pick up items for movement to a sale system.  Items which are not determined to be profitable in the sale system based on refinery efficiency in the source system will be refined to reduce capacity requirements.  Upon arrival at the sale system, items which have been determined to be profitable will be sold to the highest available buy order.</Text>
 					</Text>						 
-					<Text name='obj_Miner_MiningSystemTitle'> 
+					<Text name='obj_HangarSale_SaleSystemTitle'> 
 						<X>1%</X> 
 						<Y>28%</Y> 
 						<Width>30%</Width> 
 						<Height>2%</Height> 
 						<Alignment>Center</Alignment>
-						<Text>Mining System Bookmark</Text>
+						<Text>Selling System Bookmark</Text>
 					</Text>						 
-					<listbox Name="obj_Miner_MiningSystem">
+					<listbox Name="obj_HangarSale_SaleSystem">
 						<BackgroundColor>FF000000</BackgroundColor>
 						<Border>1</Border>
 						<BorderColor>FFFFFFFF</BorderColor>
@@ -88,45 +88,14 @@
 									This:AddItem[${BookmarkIterator.Value.Label}]
 								}
 								while ${BookmarkIterator:Next(exists)}
-							This.ItemByText[${Script[ComBot].VariableScope.Config.Miner.MiningSystem}]:Select
+							This.ItemByText[${Script[ComBot].VariableScope.Config.HangarSale.SaleSystem}]:Select
 						</OnLoad>
 						<OnSelect>
-							Script[ComBot].VariableScope.Config.Miner:SetMiningSystem[${This.SelectedItem.Text}]
+							Script[ComBot].VariableScope.Config.HangarSale:SetSaleSystem[${This.SelectedItem.Text}]
 						</OnSelect>
 					</listbox>
-					<Text name='obj_MinerDropoffBookmarkTypeTitle'> 
-						<X>31%</X> 
-						<Y>28%</Y> 
-						<Width>30%</Width> 
-						<Height>2%</Height> 
-						<Alignment>Center</Alignment>
-						<Text>Dropoff Location</Text>
-					</Text>
-					<listbox Name="obj_MinerDropoffBookmarkType">
-						<BackgroundColor>FF000000</BackgroundColor>
-						<Border>1</Border>
-						<BorderColor>FFFFFFFF</BorderColor>
-						<X>31%</X>
-						<Y>30%</Y>
-						<Width>30%</Width>
-						<Height>20%</Height>
-						<Items>
-							<Item>Personal Hangar</Item>
-							<Item>Corporation Folder 1</Item>
-							<Item>Corporation Folder 2</Item>
-							<Item>Corporation Folder 3</Item>
-							<Item>Corporation Folder 4</Item>
-							<Item>Corporation Folder 5</Item>
-							<Item>Corporation Folder 6</Item>
-							<Item>Corporation Folder 7</Item>
-						</Items>
-						<OnLoad>
-							This.ItemByText[${Script[ComBot].VariableScope.Config.Miner.Miner_Dropoff}]:Select
-						</OnLoad>
-						<OnSelect>
-							Script[ComBot].VariableScope.Config.Miner:SetMiner_Dropoff[${This.SelectedItem.Text}]
-						</OnSelect>
-					</listbox>
+
+
 				</Children>
 			</Frame>
 		</Children>

@@ -42,7 +42,8 @@ objectdef obj_Configuration
 	variable obj_Configuration_Common Common
 	variable obj_Configuration_Salvager Salvager
 	variable obj_Configuration_Miner Miner
-	
+	variable obj_Configuration_Security Security
+	variable obj_Configuration_HangarSale HangarSale
 	method Save()
 	{
 		BaseConfig:Save[]
@@ -156,6 +157,42 @@ objectdef obj_Configuration_Salvager
 	method SetSalvager_Dropoff_Type(string value)
 	{
 		This.CommonRef:AddSetting[Salvager_Dropoff_Type,${value}]
+	}
+}
+
+objectdef obj_Configuration_HangarSale
+{
+	variable string SetName = "HangarSale"
+
+	method Initialize()
+	{
+		if !${BaseConfig.BaseRef.FindSet[${This.SetName}](exists)}
+		{
+			UI:Update["obj_Configuration", " ${This.SetName} settings missing - initializing", "o"]
+			This:Set_Default_Values[]
+		}
+		UI:Update["obj_Configuration", " ${This.SetName}: Initialized", "-g"]
+	}
+
+	member:settingsetref CommonRef()
+	{
+		return ${BaseConfig.BaseRef.FindSet[${This.SetName}]}
+	}
+
+	method Set_Default_Values()
+	{
+		BaseConfig.BaseRef:AddSet[${This.SetName}]
+
+	}
+
+	member:string SaleSystem()
+	{
+		return ${This.CommonRef.FindSetting[SaleSystem]}
+	}
+
+	method SetSaleSystem(string value)
+	{
+		This.CommonRef:AddSetting[SaleSystem,${value}]
 	}
 }
 	
