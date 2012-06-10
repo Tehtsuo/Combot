@@ -44,6 +44,12 @@ objectdef obj_State
 		Event[ISXEVE_onFrame]:AttachAtom[This:Pulse]
 		
 	}
+	
+	method IndependentPulse()
+	{
+		IndependentPulse:Set[TRUE]
+		Event[ISXEVE_onFrame]:DetachAtom[This:Pulse]
+	}
 
 	method Shutdown()
 	{

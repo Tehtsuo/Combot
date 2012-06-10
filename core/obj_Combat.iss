@@ -14,8 +14,8 @@ objectdef obj_Combat inherits obj_State
 		if ${This.IsIdle}
 		{
 			UI:Update["obj_Combat", "Started", "g"]
-			;This:QueueState["WaitForAgro"]
-			;This:QueueState["KillAgro"]
+			This:QueueState["WaitForAgro"]
+			This:QueueState["KillAgro"]
 			This:QueueState["ClearPocket"]
 			This:QueueState["ClearTargetAddedList"]
 		}
@@ -160,9 +160,14 @@ objectdef obj_KillTargetList
 			{
 				KillTargetIterator.Value.ActionTaken:Set[FALSE]
 				KillTargetIterator.Value:Pulse
+				echo ${KillTargetIterator.Value.ActionTaken}
 				if ${KillTargetIterator.Value.ActionTaken}
 				{
 					return
+				}
+				if ${KillTargetIterator.Value.TargetDone}
+				{
+					KillTargets:Erase[${KillTargetIterator.Key}]
 				}
 			}
 			while ${KillTargetIterator:Next(exists)}
@@ -179,7 +184,7 @@ objectdef obj_KillTargetList
 		{
 			do
 			{
-				if !${PrimaryIterator.Value.IsPrimary}
+				if ${PrimaryIterator.Value.IsPrimary}
 				{
 					PrimaryCount:Inc
 				}
@@ -187,9 +192,10 @@ objectdef obj_KillTargetList
 			while ${PrimaryIterator:Next(exists)}
 		}
 		
-		if ${PrimaryTargets.Used} < ${MaxPrimaries}
+		if ${PrimaryCount} < ${MaxPrimaries}
 		{
-			KillTargets.Element[${This.GetClosest[TRUE, FALSE]}].IsPrimary:Set[TRUE]
+			echo "Getting Primary - ${This.GetClosest[TRUE, FALSE, TRUE]}"
+			KillTargets.Element[${This.GetClosest[TRUE, FALSE, TRUE]}].IsPrimary:Set[TRUE]
 		}
 	}
 	
@@ -206,7 +212,7 @@ objectdef obj_KillTargetList
 			{
 				if !${NonPrimary} || !${KillTargetIterator.Value.IsPrimary}
 				{
-					if ${NonReady} || ${KillTargetIterator.Value.ReadyTarget}
+					if ${NonReady} || ${KillTargetIterator.Value.TargetReady}
 					{
 						if (${Entity[${KillTargetIterator.Value.Target}].Distance} < ${curDistance}) || (${ByPriority} && (${KillTargetIterator.Value.Priority} > ${BestPriority}))
 						{
@@ -228,6 +234,7 @@ objectdef obj_KillTarget inherits obj_State
 	variable bool ActionTaken = FALSE
 	variable bool TargetReady = FALSE
 	variable bool IsPrimary = FALSE
+	variable bool TargetDone = FALSE
 	variable int Priority = 0
 	
 	method Initialize(int64 TargetID, int MyPriority = 0)
@@ -291,6 +298,7 @@ objectdef obj_KillTarget inherits obj_State
 		TargetReady:Set[FALSE]
 		if ${Entity[${Target}].Distance} < ${Ship.ModuleList_Weapon.Range}
 		{
+			UI:Update["obj_KillTarget", "${Entity[${Target}].Name} In Range", "g"]
 			return TRUE
 		}
 		return FALSE
@@ -306,6 +314,7 @@ objectdef obj_KillTarget inherits obj_State
 	{
 		if ${IsPrimary}
 		{
+			UI:Update["obj_KillTarget", "${Entity[${Target}].Name} Is Primary", "g"]
 			return TRUE
 		}
 		return FALSE
@@ -321,19 +330,21 @@ objectdef obj_KillTarget inherits obj_State
 		{
 			This:Clear
 			This:QueueState["LockTarget"]
-			This:QueueState["WaitForTarget"]
+			This:QueueState["WaitForLock"]
 			return TRUE
 		}
 		if ${Ship.ModuleList_Weapon.InactiveCount} > 0
 		{
 			Ship.ModuleList_Weapon:Activate[${Target}]
-			ActionTaken:Set[TRUE]
+			This.ActionTaken:Set[TRUE]
 		}
 		return FALSE
 	}
 	
 	member:bool Done()
 	{
-		Combat.KillTargets:Erase[${Target}]
+		TargetDone:Set[TRUE]
+		TargetReady:Set[FALSE]
+		IsPrimary:Set[FALSE]
 	}
 }

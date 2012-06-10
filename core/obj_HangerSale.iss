@@ -2,7 +2,7 @@ objectdef obj_HangerSale inherits obj_State
 {
 	variable index:item HangerItems
 	variable iterator HangerIterator
-	variable collection:float MineralPrices
+	variable collection:float Prices
 	variable collection:string MineralNames
 	
 	variable float ProfitOverReprocess=0
@@ -31,20 +31,14 @@ objectdef obj_HangerSale inherits obj_State
 			RefineData:Load
 			This:QueueState["OpenHanger"]
 			This:QueueState["OpenMarket"]
-			This:QueueState["GetMarket", 1000, "34"]
-			This:QueueState["GetPrice", 1000, "34"]
-			This:QueueState["GetMarket", 1000, "35"]
-			This:QueueState["GetPrice", 1000, "35"]
-			This:QueueState["GetMarket", 1000, "36"]
-			This:QueueState["GetPrice", 1000, "36"]
-			This:QueueState["GetMarket", 1000, "37"]
-			This:QueueState["GetPrice", 1000, "37"]
-			This:QueueState["GetMarket", 1000, "38"]
-			This:QueueState["GetPrice", 1000, "38"]
-			This:QueueState["GetMarket", 1000, "39"]
-			This:QueueState["GetPrice", 1000, "39"]
-			This:QueueState["GetMarket", 1000, "40"]
-			This:QueueState["GetPrice", 1000, "40"]
+			This:QueueState["FetchPrice", 1000, "34"]
+			This:QueueState["FetchPrice", 1000, "35"]
+			This:QueueState["FetchPrice", 1000, "36"]
+			This:QueueState["FetchPrice", 1000, "37"]
+			This:QueueState["FetchPrice", 1000, "38"]
+			This:QueueState["FetchPrice", 1000, "39"]
+			This:QueueState["FetchPrice", 1000, "40"]
+			
 			This:QueueState["CheckHanger"]
 		}
 	}
@@ -64,42 +58,12 @@ objectdef obj_HangerSale inherits obj_State
 		return TRUE
 	}
 	
-	member:bool OpenMarket()
-	{
-		if !${EVEWindow[ByName, Market](exists)}
-		{
-			UI:Update["obj_HangerSale", "Opening Market", "g"]
-			EVE:Execute[OpenMarket]
-		}
-		return TRUE
-	}
+;	Jita = 30000142
 	
-	member:bool GetMarket(int TypeID)
+	member:bool FetchPrice(int TypeID)
 	{
-		EVE:FetchMarketOrders[${TypeID}]
-		return TRUE
-	}
-	
-	member:bool GetPrice(int TypeID)
-	{
-		variable index:marketorder orders
-		variable iterator orderIterator
-		EVE:GetMarketOrders[orders, ${TypeID}, "buy"]
-		orders:GetIterator[orderIterator]
-		if ${orderIterator:First(exists)}
-		{
-			do
-			{
-				if ${orderIterator.Value.Jumps} <= ${orderIterator.Value.Range}
-				{
-					MineralPrices:Set[${TypeID}, ${orderIterator.Value.Price}]
-					UI:Update["obj_HangerSale", "Best price for ${MineralNames[${TypeID}]} is ${orderIterator.Value.Price}", "g"]
-					return TRUE
-				}
-			}
-			while ${orderIterator:Next(exists)}
-		}
-		return TRUE
+		
+		
 	}
 	
 	member:bool CheckHanger()
@@ -197,29 +161,6 @@ objectdef obj_HangerSale inherits obj_State
 		UIElement[obj_HangerSaleList@Hangar_Sale@ComBotTab@ComBot].ItemByText["${orderIterator.Value.Name}"]:Remove
 		return TRUE
 		
-	}
-	
-	member:bool PlaceSellOrder(float Price, int Quantity)
-	{
-		variable index:item FreshItems
-		variable iterator FreshIterator
-		UI:Update["obj_HangerSale", "Sale of ${Quantity} for ${Price}", "g"]
-		
-		Me:GetHangarItems[FreshItems]
-		FreshItems:GetIterator[FreshIterator]
-		
-		if ${FreshIterator:First(exists)}
-		{
-			do
-			{
-				if ${FreshIterator.Value.TypeID} == ${HangerIterator.Value.TypeID} && ${FreshIterator.Value.Quantity} >= ${Quantity}
-				{
-					FreshIterator.Value:PlaceSellOrder[${Price}, ${Quantity}, 0]
-				}
-			}
-			while ${FreshIterator:Next(exists)}
-		}
-		return TRUE
 	}
 	
 	member:float GetItemValue(int TypeID, int PortionSize)
