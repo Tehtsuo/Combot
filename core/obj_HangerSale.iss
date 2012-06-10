@@ -2,8 +2,10 @@ objectdef obj_HangerSale inherits obj_State
 {
 	variable index:item HangerItems
 	variable iterator HangerIterator
-	variable collection:float Prices
+	variable collection:float MineralPrices
 	variable collection:string MineralNames
+	variable float LatestPrice
+	variable bool PriceGot = FALSE
 	
 	variable float ProfitOverReprocess=0
 	
@@ -13,6 +15,7 @@ objectdef obj_HangerSale inherits obj_State
 		This:AssignStateQueueDisplay[obj_HangerSaleStateList@Hangar_Sale@ComBotTab@ComBot]
 		PulseFrequency:Set[1000]
 		UI:Update["obj_HangerSale", "Initialized", "g"]
+		Event[isxGames_onHTTPResponse]:AttachAtom[This:ParsePrice]
 	}
 	
 	method Start()
@@ -30,15 +33,20 @@ objectdef obj_HangerSale inherits obj_State
 			MineralNames:Set[40, "Megacyte"]
 			RefineData:Load
 			This:QueueState["OpenHanger"]
-			This:QueueState["OpenMarket"]
-			This:QueueState["FetchPrice", 1000, "34"]
-			This:QueueState["FetchPrice", 1000, "35"]
-			This:QueueState["FetchPrice", 1000, "36"]
-			This:QueueState["FetchPrice", 1000, "37"]
-			This:QueueState["FetchPrice", 1000, "38"]
-			This:QueueState["FetchPrice", 1000, "39"]
-			This:QueueState["FetchPrice", 1000, "40"]
-			
+			This:QueueState["FetchPrice", 100, "34"]
+			This:QueueState["SavePrice", 100, "34"]
+			This:QueueState["FetchPrice", 100, "35"]
+			This:QueueState["SavePrice", 100, "35"]
+			This:QueueState["FetchPrice", 100, "36"]
+			This:QueueState["SavePrice", 100, "36"]
+			This:QueueState["FetchPrice", 100, "37"]
+			This:QueueState["SavePrice", 100, "37"]
+			This:QueueState["FetchPrice", 100, "38"]
+			This:QueueState["SavePrice", 100, "38"]
+			This:QueueState["FetchPrice", 100, "39"]
+			This:QueueState["SavePrice", 100, "39"]
+			This:QueueState["FetchPrice", 100, "40"]
+			This:QueueState["SavePrice", 100, "40"]
 			This:QueueState["CheckHanger"]
 		}
 	}
@@ -62,8 +70,32 @@ objectdef obj_HangerSale inherits obj_State
 	
 	member:bool FetchPrice(int TypeID)
 	{
-		
-		
+		GetURL http://api.eve-central.com/api/marketstat?typeid=${TypeID}&usesystem=30000142
+		This:InsertState["WaitForPrice", 100]
+		return TRUE
+	}
+	
+	method ParsePrice(int Size, string URL, string IPAddress, int ResponseCode, float TransferTime, string ResponseText, string ParsedBody)
+	{
+		LatestPrice:Set[${ResponseText.Token[9,">"].Token[1,"<"]}]
+		PriceGot:Set[TRUE]
+	}
+	
+	member:bool WaitForPrice()
+	{
+		if ${PriceGot}
+		{
+			PriceGot:Set[FALSE]
+			return TRUE
+		}
+		return FALSE
+	}
+	
+	member:bool SavePrice(int TypeID)
+	{
+		MineralPrices:Set[${TypeID}, ${LatestPrice}]
+		UI:Update["obj_HangerSale", "Good price for ${MineralNames[${TypeID}]} is ${LatestPrice}", "g"]
+		return TRUE
 	}
 	
 	member:bool CheckHanger()
@@ -86,9 +118,9 @@ objectdef obj_HangerSale inherits obj_State
 		HangerItems:GetIterator[HangerIterator]
 		if ${HangerIterator:First(exists)}
 		{
-			This:QueueState["GetMarket", 1000, ${HangerIterator.Value.TypeID}]
-			This:QueueState["SellIfAboveValue", 2000]
-			This:QueueState["CheckItem"]
+			This:QueueState["FetchPrice", 100, ${HangerIterator.Value.TypeID}]
+			This:QueueState["SellIfAboveValue", 100]
+			This:QueueState["CheckItem", 100]
 		}
 		return TRUE
 	}
@@ -97,9 +129,9 @@ objectdef obj_HangerSale inherits obj_State
 	{
 		if ${HangerIterator:Next(exists)}
 		{
-			This:QueueState["GetMarket", 1000, ${HangerIterator.Value.TypeID}]
-			This:QueueState["SellIfAboveValue", 1000]
-			This:QueueState["CheckItem", 1000]
+			This:QueueState["FetchPrice", 100, ${HangerIterator.Value.TypeID}]
+			This:QueueState["SellIfAboveValue", 100]
+			This:QueueState["CheckItem", 100]
 		}
 		else
 		{
@@ -115,50 +147,15 @@ objectdef obj_HangerSale inherits obj_State
 		variable int remainingQuantity
 		variable float itemValue
 		
-		EVE:GetMarketOrders[orders, ${HangerIterator.Value.TypeID}, "buy"]
-		orders:GetIterator[orderIterator]
-		
-		itemValue:Set[${This.GetItemValue[${HangerIterator.Value.TypeID}, ${HangerIterator.Value.PortionSize}]}]
-		remainingQuantity:Set[${HangerIterator.Value.Quantity}]
-		
-		UI:Update["obj_HangerSale", "Raw Value for ${HangerIterator.Value.Name} is ${itemValue}", "g"]
-		
-		if ${orderIterator:First(exists)}
+		if ${This.GetItemValue[${HangerIterator.Value.TypeID}, ${HangerIterator.Value.PortionSize}]} < ${LatestPrice}
 		{
-			do
-			{
-				if ${orderIterator.Value.Price} < ${itemValue}
-				{
-					UI:Update["obj_HangerSale", "None left above raw value", "g"]
-					UIElement[obj_HangerSaleList@Hangar_Sale@ComBotTab@ComBot].ItemByText["${orderIterator.Value.Name}"]:Remove
-					return TRUE
-				}
-				if ${orderIterator.Value.Jumps} <= ${orderIterator.Value.Range}
-				{
-					if ${orderIterator.Value.MinQuantityToBuy} <= ${remainingQuantity}
-					{
-						UI:Update["obj_HangerSale", "Better then Value - ${orderIterator.Value.Price}", "g"]
-						if ${orderIterator.Value.QuantityRemaining} >= ${remainingQuantity}
-						{
-							This:InsertState["PlaceSellOrder", 1000, "${orderIterator.Value.Price}, ${remainingQuantity}"]
-							UI:Update["obj_HangerSale", "None left above raw value", "g"]
-							ProfitOverReprocess:Inc[${Math.Calc[${remainingQuantity} * (${orderIterator.Value.Price} - ${itemValue})]}]
-							UIElement[obj_HangerSaleList@Hangar_Sale@ComBotTab@ComBot].ItemByText["${orderIterator.Value.Name}"]:Remove
-							return TRUE
-						}
-						else
-						{
-							remainingQuantity:Dec[${orderIterator.Value.QuantityRemaining}]
-							This:InsertState["PlaceSellOrder", 1000, "${orderIterator.Value.Price}, ${orderIterator.Value.QuantityRemaining}"]
-							ProfitOverReprocess:Inc[${Math.Calc[${orderIterator.Value.QuantityRemaining} * (${orderIterator.Value.Price} - ${itemValue})]}]
-						}
-					}
-				}
-			}
-			while ${orderIterator:Next(exists)}
+			UI:Update["obj_HangerSale", "Sell ${HangerIterator.Value.Name} - RAW ${This.GetItemValue[${HangerIterator.Value.TypeID}, ${HangerIterator.Value.PortionSize}]} - MARKET ${LatestPrice}", "g"]
 		}
-		UI:Update["obj_HangerSale", "None left above raw value", "g"]
-		UIElement[obj_HangerSaleList@Hangar_Sale@ComBotTab@ComBot].ItemByText["${orderIterator.Value.Name}"]:Remove
+		else
+		{
+			UI:Update["obj_HangerSale", "Don't Sell ${HangerIterator.Value.Name} - RAW ${This.GetItemValue[${HangerIterator.Value.TypeID}, ${HangerIterator.Value.PortionSize}]} - MARKET ${LatestPrice}", "g"]
+		}
+		
 		return TRUE
 		
 	}
