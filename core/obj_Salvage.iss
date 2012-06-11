@@ -379,7 +379,7 @@ objectdef obj_Salvage inherits obj_State
 	
 	member:bool OpenCargoHold()
 	{
-		if !${EVEWindow[byCaption, "wreck"](exists)}
+		if ${EVEWindow[byCaption, "wreck"](exists)}
 		{
 			UI:Update["obj_Salvage", "Bugged inventory window found, closing", "y"]
 			EVEWindow[byCaption, "wreck"]:Close
