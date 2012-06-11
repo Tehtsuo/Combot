@@ -5,7 +5,10 @@ objectdef obj_HangerSale inherits obj_State
 	variable collection:float MineralPrices
 	variable collection:string MineralNames
 	variable float LatestPrice
+	variable float LowestSellPrice
 	variable bool PriceGot = FALSE
+	variable collection:float SellItems
+	variable int CurrentSellOrders = 0
 	
 	variable float ProfitOverReprocess=0
 	
@@ -71,14 +74,23 @@ objectdef obj_HangerSale inherits obj_State
 	member:bool FetchPrice(int TypeID)
 	{
 		GetURL http://api.eve-central.com/api/marketstat?typeid=${TypeID}&usesystem=30000142
+		echo Fetching ${TypeID}
 		This:InsertState["WaitForPrice", 100]
 		return TRUE
 	}
 	
 	method ParsePrice(int Size, string URL, string IPAddress, int ResponseCode, float TransferTime, string ResponseText, string ParsedBody)
 	{
-		LatestPrice:Set[${ResponseText.Token[9,">"].Token[1,"<"]}]
-		PriceGot:Set[TRUE]
+		if ${ResponseCode} >= 400
+		{
+			GetURL ${URL}
+		}
+		else
+		{
+			LatestPrice:Set[${ResponseText.Token[9,">"].Token[1,"<"]}]
+			LowestSellPrice:Set[${ResponseText.Token[29,">"].Token[1,"<"]}]
+			PriceGot:Set[TRUE]
+		}
 	}
 	
 	member:bool WaitForPrice()
@@ -110,16 +122,14 @@ objectdef obj_HangerSale inherits obj_State
 				UIElement[obj_HangerSaleList@Hangar_Sale@ComBotTab@ComBot]:AddItem[${ListIterator.Value.Name}]
 		}
 		while ${ListIterator:Next(exists)}
-			
 		
-	
 		HangerItems:Clear
 		Me:GetHangarItems[HangerItems]
 		HangerItems:GetIterator[HangerIterator]
 		if ${HangerIterator:First(exists)}
 		{
 			This:QueueState["FetchPrice", 100, ${HangerIterator.Value.TypeID}]
-			This:QueueState["SellIfAboveValue", 100]
+			This:QueueState["AddToSellIfAboveValue", 100]
 			This:QueueState["CheckItem", 100]
 		}
 		return TRUE
@@ -130,34 +140,129 @@ objectdef obj_HangerSale inherits obj_State
 		if ${HangerIterator:Next(exists)}
 		{
 			This:QueueState["FetchPrice", 100, ${HangerIterator.Value.TypeID}]
-			This:QueueState["SellIfAboveValue", 100]
+			This:QueueState["AddToSellIfAboveValue", 100]
 			This:QueueState["CheckItem", 100]
 		}
 		else
 		{
-			UI:Update["obj_HangerSale", "Selling Done, Profit over Reprocessing is ${ProfitOverReprocess}", "g"]
+			This:QueueState["UpdateCurrentOrderCount"]
+			This:QueueState["ProcessSells", 10000]
+			UI:Update["obj_HangerSale", "Ready to sell ${SellItems.Used} item(s)", "g"]
 		}
 		return TRUE
 	}
 	
-	member:bool SellIfAboveValue()
+	member:bool AddToSellIfAboveValue()
 	{
 		variable index:marketorder orders
 		variable iterator orderIterator
 		variable int remainingQuantity
-		variable float itemValue
+		variable float sellPrice
+		variable float discount
 		
-		if ${This.GetItemValue[${HangerIterator.Value.TypeID}, ${HangerIterator.Value.PortionSize}]} < ${LatestPrice}
+		discount:Set[${Math.Calc[${LowestSellPrice}*0.01]}]
+		if ${discount} > 1000
 		{
-			UI:Update["obj_HangerSale", "Sell ${HangerIterator.Value.Name} - RAW ${This.GetItemValue[${HangerIterator.Value.TypeID}, ${HangerIterator.Value.PortionSize}]} - MARKET ${LatestPrice}", "g"]
+			discount:Set[1000]
+		}
+		sellPrice:Set[${Math.Calc[${LowestSellPrice} - ${discount}]}]
+		if ${This.GetItemValue[${HangerIterator.Value.TypeID}, ${HangerIterator.Value.PortionSize}]} < ${sellPrice}
+		{
+			SellItems:Set[${HangerIterator.Value.TypeID}, ${sellPrice}]
+			UI:Update["obj_HangerSale", "Selling ${HangerIterator.Value.Name} for ${sellPrice}", "g"]
 		}
 		else
 		{
-			UI:Update["obj_HangerSale", "Don't Sell ${HangerIterator.Value.Name} - RAW ${This.GetItemValue[${HangerIterator.Value.TypeID}, ${HangerIterator.Value.PortionSize}]} - MARKET ${LatestPrice}", "g"]
+			UI:Update["obj_HangerSale", "Not Selling ${HangerIterator.Value.Name}", "g"]
+		}
+		return TRUE
+	}
+	
+	member:bool ProcessSells()
+	{
+		variable index:item ItemList
+		variable iterator ItemIterator
+		variable int SellItem
+		echo ${CurrentSellOrders} >= ${This.MaxOrders}
+		
+		if ${CurrentSellOrders} >= ${This.MaxOrders}
+		{
+			return TRUE
 		}
 		
-		return TRUE
+		SellItem:Set[${This.GetHighestSell}]
 		
+		UI:Update["obj_HangerSale", "Trying to sell ${SellItem} for ${SellItems.Element[${SellItem}]}", "g"]
+		Me:GetHangarItems[ItemList]
+		ItemList:GetIterator[ItemIterator]
+		if ${ItemIterator:First(exists)}
+		{
+			do
+			{
+				if ${ItemIterator.Value.TypeID} == ${SellItem}
+				{
+					ItemIterator.Value:PlaceSellOrder[${SellItems.Element[${SellItem}]}, ${ItemIterator.Value.Quantity}, 1]
+					CurrentSellOrders:Inc
+					SellItems:Erase[${SellItem}]
+					return FALSE
+				}
+			}
+			while ${ItemIterator:Next(exists)}
+		}
+		return TRUE
+	}
+	
+	member:int GetHighestSell()
+	{
+		variable iterator SellIterator
+		variable float HighestPrice = 0
+		variable int HighestKey = -1
+		
+		SellItems:GetIterator[SellIterator]
+		
+		if ${SellIterator:First(exists)}
+		{
+			do
+			{
+				if ${SellIterator.Value} > ${HighestPrice}
+				{
+					HighestPrice:Set[${SellIterator.Value}]
+					HighestKey:Set[${SellIterator.Key}]
+				}
+			}
+			while ${SellIterator:Next(exists)}
+		}
+		return ${HighestKey}
+	}
+	
+	member:int MaxOrders()
+	{
+		variable int OrderMax = 5
+		OrderMax:Inc[${Math.Calc[${Me.Skill[Trade].Level}*4]}]
+		OrderMax:Inc[${Math.Calc[${Me.Skill[Retail].Level}*8]}]
+		OrderMax:Inc[${Math.Calc[${Me.Skill[Wholesale].Level}*16]}]
+		OrderMax:Inc[${Math.Calc[${Me.Skill[Tycoon].Level}*32]}]
+		
+		return ${OrderMax}
+	}
+	
+	member:bool UpdateCurrentOrderCount()
+	{
+		Me:UpdateMyOrders
+		This:InsertState["FetchCurrentOrderCount"]
+		return TRUE
+	}
+	
+	member:bool FetchCurrentOrderCount()
+	{
+		variable index:myorder OrderIndex
+		if ${Me:GetMyOrders[OrderIndex]}
+		{
+			CurrentSellOrders:Set[${OrderIndex.Used}]
+			UI:Update["obj_HangerSale", "${CurrentSellOrders} current sell orders out of ${This.MaxOrders}", "g"]
+			return TRUE
+		}
+		return FALSE
 	}
 	
 	member:float GetItemValue(int TypeID, int PortionSize)
