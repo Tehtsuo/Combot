@@ -21,6 +21,8 @@
 #include core/obj_Miner.iss
 #include core/obj_Agents.iss
 #include core/obj_HangerSale.iss
+#include core/obj_Combat.iss
+#include core/obj_AgentDialog.iss
 
 
 function atexit()
@@ -50,6 +52,8 @@ function main()
 	declarevariable Agents obj_Agents script
 	declarevariable HangerSale obj_HangerSale script
 	declarevariable RefineData obj_Configuration_RefineData script
+	declarevariable Combat obj_Combat script
+	declarevariable AgentDialog obj_AgentDialog script
 
 	UI:Update["ComBot", "Module initialization complete", "y"]
 	
