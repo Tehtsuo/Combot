@@ -24,6 +24,7 @@ objectdef obj_Targets
 		QueryString:Concat["GroupID = GROUP_CONVOY ||"]
 		QueryString:Concat["GroupID = GROUP_LARGECOLLIDABLEOBJECT ||"]
 		QueryString:Concat["GroupID = GROUP_LARGECOLLIDABLESHIP ||"]
+		QueryString:Concat["GroupID = GROUP_SPAWNCONTAINER ||"]
 		QueryString:Concat["GroupID = GROUP_LARGECOLLIDABLESTRUCTURE)"]
 
 		EVE:QueryEntities[tgtIndex, ${QueryString}]
