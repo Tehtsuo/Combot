@@ -17,6 +17,16 @@ objectdef obj_ItemInformation
 		Percentile:Set[${arg_Percentile}]
 	
 	}
+	method Set(float arg_Average, float arg_Max, float arg_Min, float arg_StdDev, float arg_Median, float arg_Percentile)
+	{
+		Average:Set[${arg_Average}]
+		Max:Set[${arg_Max}]
+		Min:Set[${arg_Min}]
+		StdDev:Set[${arg_StdDev}]
+		Median:Set[${arg_Median}]
+		Percentile:Set[${arg_Percentile}]
+	
+	}
 }
 
 objectdef obj_HangerSale inherits obj_State
