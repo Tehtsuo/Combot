@@ -96,18 +96,16 @@ objectdef obj_HangerSale inherits obj_State
 		variable iterator TypeIterator
 		variable string TypeIDQuery = ""
 		variable string Seperator = ""
+		variable int TypeCount = 1
 		
 		TypeIDs:GetIterator[TypeIterator]
 
-		if ${TypeIterator:First(exists)}
+		for(${TypeCount}<=${TypeIDs.Used}; TypeCount:Inc)
 		{
-			do
-			{
-				TypeIDQuery:Append["${Seperator}typeid=${TypeIterator.Value}"]
-				Seperator:Set["&"]
-			}
-			while ${TypeIterator:Next(exists)}
+			TypeIDQuery:Concat["${Seperator}typeid=${TypeIDs[${TypeCount}]}"]
+			Seperator:Set["&"]
 		}
+		echo ${TypeIDQuery}
 		GetURL http://api.eve-central.com/api/marketstat?${TypeIDQuery}&usesystem=30000142
 		echo Fetching ${TypeIDs.Used} item(s)
 		This:InsertState["WaitForPrice", 100]
