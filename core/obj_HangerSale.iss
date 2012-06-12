@@ -195,12 +195,12 @@ objectdef obj_HangerSale inherits obj_State
 		variable float sellPrice
 		variable float discount
 		
-		discount:Set[${Math.Calc[${Prices[${TypeID}].Lowest}*0.01]}]
+		discount:Set[${Math.Calc[${Prices[${TypeID}].Min}*0.01]}]
 		if ${discount} > 1000
 		{
 			discount:Set[1000]
 		}
-		sellPrice:Set[${Math.Calc[${Prices[${TypeID}].Lowest} - ${discount}]}]
+		sellPrice:Set[${Math.Calc[${Prices[${TypeID}].Min} - ${discount}]}]
 		if ${This.GetItemValue[${TypeID}, ${PortionSize}]} < ${sellPrice}
 		{
 			SellItems:Set[${TypeID}, ${sellPrice}]
