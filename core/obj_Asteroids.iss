@@ -14,7 +14,8 @@ objectdef obj_Asteroids inherits obj_State
 	method Initialize()
 	{
 		This[parent]:Initialize
-		PulseFrequency:Set[5]
+		PulseFrequency:Set[10]
+		RandomDelta:Set[0]
 
 		UI:Update["obj_Asteroids", "Initialized", "g"]
 	}
@@ -33,12 +34,12 @@ objectdef obj_Asteroids inherits obj_State
 
 		if ${OreTypeQueue.Used} == 0
 		{
+			echo Completing Update
 			This:PopulateAsteroidList
 			This:PopulateOreTypeQueue
 			return
 		}
 		
-		echo EVE:QueryEntities[asteroid_index, "CategoryID==CATEGORYID_ORE && Name =- \"${OreTypeQueue.Peek}\""]		
 		EVE:QueryEntities[asteroid_index, "CategoryID==CATEGORYID_ORE && Name =- \"${OreTypeQueue.Peek}\""]		
 		asteroid_index:GetIterator[asteroid_iterator]
 		if ${asteroid_iterator:First(exists)}
@@ -52,7 +53,6 @@ objectdef obj_Asteroids inherits obj_State
 				else
 				{
 					This.OORAsteroidListBuffer:Insert[${asteroid_iterator.Value.ID}]
-					echo Inserting OOR ${asteroid_iterator.Value.ID}
 				}
 			}
 			while ${asteroid_iterator:Next(exists)}

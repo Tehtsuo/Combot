@@ -15,8 +15,7 @@ objectdef obj_Miner inherits obj_State
 		if ${This.IsIdle}
 		{
 			Asteroids:QueueState["UpdateList"]
-			This:QueueState["OpenCargoHold"]
-			This:QueueState["CheckCargoHold"]
+			This:QueueState["Idle", 2000]
 			This:QueueState["Mine", 50]
 		}
 	}
@@ -102,13 +101,13 @@ objectdef obj_Miner inherits obj_State
 	
 		if ${Config.Miner.UseFieldBookmarks}
 		{
-			variable index:bookmark Bookmarks
+			variable index:bookmark BookmarkIndex
 			variable int RandomBelt
-			EVE:GetBookmarks[Bookmarks]
+			EVE:GetBookmarks[BookmarkIndex]
 
-			while ${Bookmarks.Used} > 0
+			while ${BookmarkIndex.Used} > 0
 			{
-				RandomBelt:Set[${Math.Rand[${Bookmarks.Used}]:Inc[1]}]
+				RandomBelt:Set[${Math.Rand[${BookmarkIndex.Used}]:Inc[1]}]
 
 				if ${Config.Miner.IceMining}
 				{
@@ -119,23 +118,28 @@ objectdef obj_Miner inherits obj_State
 					prefix:Set[${Config.Miner.BeltPrefix}]
 				}
 
-				Label:Set[${Bookmarks[${RandomBelt}].Label}]
+				Label:Set[${BookmarkIndex[${RandomBelt}].Label}]
 
-				if (${Bookmarks[${RandomBelt}].SolarSystemID} != ${Me.SolarSystemID} || \
+				if (${BookmarkIndex[${RandomBelt}].SolarSystemID} != ${Me.SolarSystemID} || \
 					${Label.Left[${prefix.Length}].NotEqual[${prefix}]})
 				{
-					Bookmarks:Remove[${RandomBelt}]
-					Bookmarks:Collapse
+					BookmarkIndex:Remove[${RandomBelt}]
+					BookmarkIndex:Collapse
 					continue
 				}
 
-				Move:Bookmark[${BeltBookMarkList[${Bookmarks}].Label}]
+				Move:Bookmark[${BeltBookMarkList[${BookmarkIndex}].Label}]
 
 				return TRUE
 			}	
 		}
 		else
 		{
+			if !${Client.InSpace}
+			{
+				Move:Undock
+				return FALSE
+			}
 			variable int curBelt
 			variable index:entity Belts
 			variable string beltsubstring
@@ -174,6 +178,13 @@ objectdef obj_Miner inherits obj_State
 	
 	member:bool Mine()
 	{
+		if !${Client.InSpace}
+		{
+			This:QueueState["OpenCargoHold"]
+			This:QueueState["CheckCargoHold"]
+			This:QueueState["GoToMiningSystem"]
+			return TRUE
+		}
 		if ${Asteroids.AsteroidList.Used} == 0
 		{
 			UI:Update["obj_Miner", "${Asteroids.AsteroidList.Used} asteroids found, moving to another belt", "g"]
@@ -206,7 +217,6 @@ objectdef obj_Miner inherits obj_State
 		if ${Roid:First(exists)}
 		do
 		{
-			;if ${Ship.ModuleList_MiningLaser.Range}
 			if  !${Roid.Value.BeingTargeted} && \
 				!${Roid.Value.IsLockedTarget} && \
 				${Targets.LockedAndLockingTargets} < ${MaxTarget} && \
@@ -215,6 +225,13 @@ objectdef obj_Miner inherits obj_State
 			{
 				UI:Update["obj_Miner", "Locking - ${Roid.Value.Name}", "g"]
 				Roid.Value:LockTarget
+				return FALSE
+			}
+			if  ${Roid.Value.Distance} > ${Ship.ModuleList_MiningLaser.Range} &&\
+				(${Roid.Value.IsLockedTarget} || ${Roid.Value.BeingTargeted})
+			
+			{
+				Move:Approach[${Roid.Value}, ${Ship.ModuleList_MiningLaser.Range}]
 				return FALSE
 			}
 
@@ -227,6 +244,9 @@ objectdef obj_Miner inherits obj_State
 				Ship.ModuleList_MiningLaser:Activate[${Roid.Value.ID}]
 				return FALSE
 			}
+			
+
+			
 			
 		}
 		while ${Roid:Next(exists)}
