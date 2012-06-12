@@ -121,7 +121,8 @@ objectdef obj_HangerSale inherits obj_State
 		}
 		else
 		{
-			This:GetPrices[${ResponseText.Escape}]
+			This:GetBuyPrices[${ResponseText.Escape}]
+			This:GetSellPrices[${ResponseText.Escape}]
 			PriceGot:Set[TRUE]
 		}
 	}
@@ -176,7 +177,7 @@ objectdef obj_HangerSale inherits obj_State
 				TypeIDs:Concat["${Seperator}${HangerIterator.Value.TypeID}"]
 				Seperator:Set[", "]
 			}
-			while ${HangerIterator:Next(exists)} && ${ItemCount} <= 10
+			while ${HangerIterator:Next(exists)} && ${ItemCount} <= 99
 			This:QueueState["CheckItem", 10]
 			This:InsertState["FetchPrice", 10, "${TypeIDs.Escape}"]
 		}
@@ -198,12 +199,12 @@ objectdef obj_HangerSale inherits obj_State
 		variable float sellPrice
 		variable float discount
 		
-		discount:Set[${Math.Calc[${Prices[${TypeID}].Min}*0.01]}]
+		discount:Set[${Math.Calc[${SellPrices[${TypeID}].Min}*0.01]}]
 		if ${discount} > 1000
 		{
 			discount:Set[1000]
 		}
-		sellPrice:Set[${Math.Calc[${Prices[${TypeID}].Min} - ${discount}]}]
+		sellPrice:Set[${Math.Calc[${SellPrices[${TypeID}].Min} - ${discount}]}]
 		if ${This.GetItemValue[${TypeID}, ${PortionSize}]} < ${sellPrice}
 		{
 			SellItems:Set[${TypeID}, ${sellPrice}]
@@ -307,13 +308,13 @@ objectdef obj_HangerSale inherits obj_State
 	{
 		variable float ItemValue=0
 		
-		ItemValue:Inc[${Math.Calc[${RefineData.Tritanium[${TypeID}]} * ${This.GetRefineLoss} * ${Prices["34"].Average}]}]
-		ItemValue:Inc[${Math.Calc[${RefineData.Pyerite[${TypeID}]} * ${This.GetRefineLoss} * ${Prices["35"].Average}]}]
-		ItemValue:Inc[${Math.Calc[${RefineData.Mexallon[${TypeID}]} * ${This.GetRefineLoss} * ${Prices["36"].Average}]}]
-		ItemValue:Inc[${Math.Calc[${RefineData.Isogen[${TypeID}]} * ${This.GetRefineLoss} * ${Prices["37"].Average}]}]
-		ItemValue:Inc[${Math.Calc[${RefineData.Nocxium[${TypeID}]} * ${This.GetRefineLoss} * ${Prices["38"].Average}]}]
-		ItemValue:Inc[${Math.Calc[${RefineData.Zydrine[${TypeID}]} * ${This.GetRefineLoss} * ${Prices["39"].Average}]}]
-		ItemValue:Inc[${Math.Calc[${RefineData.Megacyte[${TypeID}]} * ${This.GetRefineLoss} * ${Prices["40"].Average}]}]
+		ItemValue:Inc[${Math.Calc[${RefineData.Tritanium[${TypeID}]} * ${This.GetRefineLoss} * ${BuyPrices["34"].Average}]}]
+		ItemValue:Inc[${Math.Calc[${RefineData.Pyerite[${TypeID}]} * ${This.GetRefineLoss} * ${BuyPrices["35"].Average}]}]
+		ItemValue:Inc[${Math.Calc[${RefineData.Mexallon[${TypeID}]} * ${This.GetRefineLoss} * ${BuyPrices["36"].Average}]}]
+		ItemValue:Inc[${Math.Calc[${RefineData.Isogen[${TypeID}]} * ${This.GetRefineLoss} * ${BuyPrices["37"].Average}]}]
+		ItemValue:Inc[${Math.Calc[${RefineData.Nocxium[${TypeID}]} * ${This.GetRefineLoss} * ${BuyPrices["38"].Average}]}]
+		ItemValue:Inc[${Math.Calc[${RefineData.Zydrine[${TypeID}]} * ${This.GetRefineLoss} * ${BuyPrices["39"].Average}]}]
+		ItemValue:Inc[${Math.Calc[${RefineData.Megacyte[${TypeID}]} * ${This.GetRefineLoss} * ${BuyPrices["40"].Average}]}]
 		echo ${ItemValue}
 		return ${Math.Calc[${ItemValue} / ${PortionSize}]}
 	}
