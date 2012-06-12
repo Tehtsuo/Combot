@@ -60,7 +60,7 @@ objectdef obj_Cargo inherits obj_State
 		while ${CargoIterator:Next(exists)}
 	}
 
-	method MoveCargoList(string location, string foldername="")
+	method MoveCargoList(string location, string folder="")
 	{
 		switch ${location} 
 		{
@@ -68,7 +68,7 @@ objectdef obj_Cargo inherits obj_State
 				EVE:MoveItemsTo[This.CargoList, MyShip, CargoHold]
 				break
 			case SHIPCORPORATEHANGAR
-				EVE:MoveItemsTo[This.CargoList, MyShip, CorpHangars, ${foldername.Escape}]
+				EVE:MoveItemsTo[This.CargoList, MyShip, CorpHangars, ${folder.Escape}]
 				break
 			case SHIPOREHOLD
 				EVE:MoveItemsTo[This.CargoList, MyShip, OreHold]
@@ -77,8 +77,8 @@ objectdef obj_Cargo inherits obj_State
 				EVE:MoveItemsTo[This.CargoList, MyStationHangar, Hangar]
 				break
 			case CORPORATEHANGAR
-				echo EVE:MoveItemsTo[This.CargoList, MyStationCorporateHangar, StationCorporateHangar, ${foldername.Escape}]
-				EVE:MoveItemsTo[This.CargoList, MyStationCorporateHangar, StationCorporateHangar, ${foldername.Escape}]
+				echo EVE:MoveItemsTo[This.CargoList, MyStationCorporateHangar, StationCorporateHangar, "${folder.Escape}"]
+				EVE:MoveItemsTo[This.CargoList, MyStationCorporateHangar, StationCorporateHangar, ${folder.Escape}]
 				break
 		}
 	}

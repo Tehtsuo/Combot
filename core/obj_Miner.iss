@@ -26,6 +26,7 @@ objectdef obj_Miner inherits obj_State
 	{
 		This[parent]:Initialize
 		This:AssignStateQueueDisplay[obj_MinerStateList@Miner@ComBotTab@ComBot]
+		PulseFrequency:Set[20]
 		UI:Update["obj_Miner", "Initialized", "g"]
 	}
 
@@ -36,7 +37,7 @@ objectdef obj_Miner inherits obj_State
 		{
 			Asteroids:QueueState["UpdateList"]
 			This:QueueState["Idle", 2000]
-			This:QueueState["Mine", 50]
+			This:QueueState["Mine"]
 		}
 	}
 	
@@ -57,15 +58,17 @@ objectdef obj_Miner inherits obj_State
 	
 	member:bool CheckCargoHold()
 	{
-		if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) > 0.75
+		if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) > 0.95
 		{
 			UI:Update["obj_Miner", "Unload trip required", "g"]
 			This:Clear
 			Move:Bookmark[${Config.Miner.Miner_Dropoff}]
-			This:QueueState["Traveling"]
-			This:QueueState["Offload"]
-			This:QueueState["GoToMiningSystem"]
+			This:QueueState["Traveling", 1000]
+			This:QueueState["Offload", 1000]
+			This:QueueState["StackItemHangar", 1000]
+			This:QueueState["GoToMiningSystem", 1000]
 		}
+		This:QueueState["Mine"]
 		return TRUE;
 	}
 
@@ -82,16 +85,37 @@ objectdef obj_Miner inherits obj_State
 	{
 		UI:Update["obj_Miner", "Unloading cargo", "g"]
 		Cargo:PopulateCargoList[SHIP]
-		switch ${Config.Miner.Dropoff_Type}
+		switch ${Config.Miner.Miner_Dropoff_Type}
 		{
 			case Personal Hangar
 				Cargo:MoveCargoList[HANGAR]
 				break
-
-			Cargo:MoveCargoList[CORPORATEHANGAR, ${Config.Miner.Dropoff_Type}]
-			break
+			default
+				Cargo:MoveCargoList[CORPORATEHANGAR, ${Config.Miner.Miner_Dropoff_Type}]
+				break
 		}
-		This:QueueState["GoToMiningSystem"]
+		return TRUE
+	}
+	
+	member:bool StackItemHangar()
+	{
+		if !${EVEWindow[ByName, "Inventory"](exists)}
+		{
+			UI:Update["obj_Miner", "Making sure inventory is open", "g"]
+			MyShip:Open
+			return FALSE
+		}
+
+		UI:Update["obj_Miner", "Stacking dropoff container", "g"]
+		switch ${Config.Miner.Miner_Dropoff_Type}
+		{
+			case Personal Hangar
+				EVE:StackItems[MyStationHangar, Hangar]
+				break
+			default
+				EVE:StackItems[MyStationCorporateHangar, StationCorporateHangar, "${Config.Miner.Miner_Dropoff_Type.Escape}"]
+				break
+		}
 		return TRUE
 	}
 	
@@ -101,10 +125,11 @@ objectdef obj_Miner inherits obj_State
 		{
 			UI:Update["obj_Miner", "No mining system defined!  Check your settings", "r"]
 		}
+		This:Clear
 		Move:System[${EVE.Bookmark[${Config.Miner.MiningSystem}].SolarSystemID}]
-		This:QueueState["Traveling"]
-		This:QueueState["MoveToBelt"]
-		This:QueueState["Traveling"]
+		This:QueueState["Traveling", 1000]
+		This:QueueState["MoveToBelt", 1000]
+		This:QueueState["Traveling", 1000]
 		This:QueueState["Mine"]
 		return TRUE
 	}
@@ -199,17 +224,17 @@ objectdef obj_Miner inherits obj_State
 	{
 		if !${Client.InSpace}
 		{
-			This:QueueState["OpenCargoHold"]
-			This:QueueState["CheckCargoHold"]
-			This:QueueState["GoToMiningSystem"]
+			This:QueueState["OpenCargoHold", 1000]
+			This:QueueState["CheckCargoHold", 1000]
+			This:QueueState["GoToMiningSystem", 1000]
 			return TRUE
 		}
 		if ${Asteroids.AsteroidList.Used} == 0
 		{
 			UI:Update["obj_Miner", "${Asteroids.AsteroidList.Used} asteroids found, moving to another belt", "g"]
-			This:QueueState["OpenCargoHold"]
-			This:QueueState["CheckCargoHold"]
-			This:QueueState["GoToMiningSystem"]
+			This:QueueState["OpenCargoHold", 1000]
+			This:QueueState["CheckCargoHold", 1000]
+			This:QueueState["GoToMiningSystem", 1000]
 			return TRUE
 		}
 		if ${Ship.ModuleList_MiningLaser.InactiveCount} > 0
@@ -219,7 +244,8 @@ objectdef obj_Miner inherits obj_State
 			return TRUE
 		}
 		
-		
+		This:QueueState["CheckCargoHold"]
+		return TRUE
 	}
 	
 	member:bool ActivateLaser()
@@ -262,7 +288,7 @@ objectdef obj_Miner inherits obj_State
 			{
 				UI:Update["obj_Miner", "Activating mining laser - ${Roid.Value.Name}", "g"]
 				Ship.ModuleList_MiningLaser:Activate[${Roid.Value.ID}]
-				return FALSE
+				return TRUE
 			}
 			
 

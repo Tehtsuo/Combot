@@ -47,16 +47,13 @@ objectdef obj_Module inherits obj_State
 	
 	member:bool IsActiveOn(int64 checkTarget)
 	{
-		echo IsActiveOn ${This.CurrentTarget} == ${checkTarget}
 		if (${This.CurrentTarget.Equal[${checkTarget}]})
 		{
 			if ${This.IsActive}
 			{
-				echo TRUE
 				return TRUE
 			}
 		}
-		echo FALSE
 		return FALSE
 	}
 	
@@ -89,7 +86,6 @@ objectdef obj_Module inherits obj_State
 	
 	member:bool ActivateOn(int64 newTarget)
 	{
-		echo "Activating on ${newTarget}"
 		if ${newTarget} == -1
 		{
 			MyShip.Module[${ModuleID}]:Activate

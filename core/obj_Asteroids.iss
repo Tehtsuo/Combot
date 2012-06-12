@@ -54,7 +54,6 @@ objectdef obj_Asteroids inherits obj_State
 
 		if ${OreTypeQueue.Used} == 0
 		{
-			echo Completing Update
 			This:PopulateAsteroidList
 			This:PopulateOreTypeQueue
 			return

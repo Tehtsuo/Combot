@@ -35,9 +35,8 @@ objectdef obj_ComBotUI
 		ui -load interface/ComBotGUI.xml
 		This:Update["ComBot", "ComBot  Copyright © 2012  Tehtsuo and Vendan", "o"]
 		This:Update["ComBot", "This program comes with ABSOLUTELY NO WARRANTY", "o"]
-		This:Update["ComBot", "This is free software, and you are welcome to redistribute it", "o"]
+		This:Update["ComBot", "This is free software and you are welcome to redistribute it", "o"]
 		This:Update["ComBot", "under certain conditions.  See the 'About' tab for details", "o"]
-		This:Update[" ", " ", "g"]
 
 		
 		This:Update["ComBot", "Initializing modules", "y"]
@@ -124,7 +123,7 @@ objectdef obj_ComBotUI
 
 		if ${This.Reloaded}
 		{
-			UIElement[StatusConsole@Status@ComBotTab@ComBot]:Echo["${MSG}"]
+			UIElement[StatusConsole@Status@ComBotTab@ComBot]:Echo["${MSG.Escape}"]
 		}
 		else
 		{
