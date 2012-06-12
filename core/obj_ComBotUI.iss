@@ -1,3 +1,23 @@
+/*
+
+ComBot  Copyright © 2012  Tehtsuo and Vendan
+
+This file is part of ComBot.
+
+ComBot is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ComBot is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
+
+*/
 
 objectdef obj_ComBotUI
 {
@@ -13,7 +33,14 @@ objectdef obj_ComBotUI
 	method Initialize()
 	{
 		ui -load interface/ComBotGUI.xml
-		This:Update["Combot", "Initializing modules", "y"]
+		This:Update["ComBot", "ComBot  Copyright © 2012  Tehtsuo and Vendan", "o"]
+		This:Update["ComBot", "This program comes with ABSOLUTELY NO WARRANTY", "o"]
+		This:Update["ComBot", "This is free software, and you are welcome to redistribute it", "o"]
+		This:Update["ComBot", "under certain conditions.  See the 'About' tab for details", "o"]
+		This:Update[" ", " ", "g"]
+
+		
+		This:Update["ComBot", "Initializing modules", "y"]
 
 		Event[ISXEVE_onFrame]:AttachAtom[This:Pulse]
 		This:Update["obj_ComBotUI", "Initialized", "g"]
