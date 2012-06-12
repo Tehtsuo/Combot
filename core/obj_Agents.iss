@@ -29,7 +29,7 @@ objectdef obj_Agents inherits obj_State
 		UI:Update["obj_Agents", "Initialized", "g"]
 		;This.NonGameTiedPulse:Set[TRUE]
 		
-		This:QueueState["CheckJournal"]
+		;This:QueueState["CheckJournal"]
 	}
 
 	member:bool CheckJournal()
