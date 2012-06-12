@@ -27,7 +27,7 @@ objectdef obj_Combat inherits obj_State
 	{
 		This[parent]:Initialize
 		UI:Update["obj_Combat", "Initialized", "g"]
-		PulseFrequency:Set[2000]
+		PulseFrequency:Set[500]
 	}
 	
 	method Start()
@@ -52,6 +52,7 @@ objectdef obj_Combat inherits obj_State
 		QueryString:Concat["GroupID = GROUP_CONVOY ||"]
 		QueryString:Concat["GroupID = GROUP_LARGECOLLIDABLEOBJECT ||"]
 		QueryString:Concat["GroupID = GROUP_LARGECOLLIDABLESHIP ||"]
+		QueryString:Concat["GroupID = GROUP_SPAWNCONTAINER ||"]
 		QueryString:Concat["GroupID = GROUP_LARGECOLLIDABLESTRUCTURE)"]
 		
 		return ${This.KillQueryString[${QueryString}]}
@@ -257,6 +258,7 @@ objectdef obj_KillTarget inherits obj_State
 	variable bool IsPrimary = FALSE
 	variable bool TargetDone = FALSE
 	variable int Priority = 0
+	variable int ModuleActivation = 0
 	
 	method Initialize(int64 TargetID, int MyPriority = 0)
 	{
@@ -354,10 +356,15 @@ objectdef obj_KillTarget inherits obj_State
 			This:QueueState["WaitForLock"]
 			return TRUE
 		}
-		if ${Ship.ModuleList_Weapon.InactiveCount} > 0
+		if ${Ship.ModuleList_Weapon.InactiveCount} > 0 && ${ModuleActivation} <= 0
 		{
 			Ship.ModuleList_Weapon:Activate[${Target}]
 			This.ActionTaken:Set[TRUE]
+			ModuleActivation:Set[4]
+		}
+		if ${ModuleActivation} >= 0
+		{
+			ModuleActivation:Dec
 		}
 		return FALSE
 	}

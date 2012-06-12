@@ -60,6 +60,9 @@ objectdef obj_HangerSale inherits obj_State
 	variable bool PriceGot = FALSE
 	variable collection:float SellItems
 	variable int CurrentSellOrders = 0
+	variable string XMLString = ""
+	variable index:myorder MyOrderIndex
+	variable iterator MyOrderIterator
 	
 	variable collection:obj_ItemInformation BuyPrices
 	variable collection:obj_ItemInformation SellPrices
@@ -269,6 +272,11 @@ objectdef obj_HangerSale inherits obj_State
 			{
 				if ${ItemIterator.Value.TypeID} == ${SellItem}
 				{
+					if ${ItemIterator.Value.IsRepackable}
+					{
+						ItemIterator.Value:Repackage
+						return FALSE
+					}
 					ItemIterator.Value:PlaceSellOrder[${SellItems.Element[${SellItem}]}, ${ItemIterator.Value.Quantity}, 1]
 					CurrentSellOrders:Inc
 					SellItems:Erase[${SellItem}]
@@ -323,14 +331,45 @@ objectdef obj_HangerSale inherits obj_State
 	
 	member:bool FetchCurrentOrderCount()
 	{
-		variable index:myorder OrderIndex
-		if ${Me:GetMyOrders[OrderIndex]}
+		if ${Me:GetMyOrders[MyOrderIndex]}
 		{
-			CurrentSellOrders:Set[${OrderIndex.Used}]
+			CurrentSellOrders:Set[${MyOrderIndex.Used}]
 			UI:Update["obj_HangerSale", "${CurrentSellOrders} current sell orders out of ${This.MaxOrders}", "g"]
+			MyOrderIndex:GetIterator[MyOrderIterator]
+			if ${MyOrderIterator:First(exists)}
+			{
+				This:InsertState["UpdateOrders", 100]
+				This:InsertState["FetchPrice", 100, "${MyOrderIterator.Value.TypeID}"]
+			}
 			return TRUE
 		}
 		return FALSE
+	}
+	
+	member:bool UpdateOrders()
+	{
+		variable int delay = 100
+		variable float discount
+		variable float sellPrice
+		discount:Set[${Math.Calc[${SellPrices[${MyOrderIterator.Value.TypeID}].Min}*0.01]}]
+		if ${discount} > 1000
+		{
+			discount:Set[1000]
+		}
+		sellPrice:Set[${Math.Calc[${SellPrices[${MyOrderIterator.Value.TypeID}].Min} - ${discount}]}]
+		if ${Math.Calc[${MyOrderIterator.Value.Price}-5]} > ${SellPrices[${MyOrderIterator.Value.TypeID}].Min}
+		{
+			UI:Update["obj_HangerSale", "Repricing ${MyOrderIterator.Value.Name} from ${MyOrderIterator.Value.Price} to ${sellPrice}", "g"]
+			MyOrderIterator.Value:Modify[${sellPrice}]
+			delay:Set[10000]
+		}
+		if ${MyOrderIterator:Next(exists)}
+		{
+			This:InsertState["UpdateOrders", ${delay}]
+			This:InsertState["FetchPrice", 100, "${MyOrderIterator.Value.TypeID}"]
+			return TRUE
+		}
+		return TRUE
 	}
 	
 	member:float GetItemValue(int TypeID, int PortionSize)
