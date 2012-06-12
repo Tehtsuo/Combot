@@ -41,7 +41,8 @@ objectdef obj_HangerSale inherits obj_State
 	variable int CurrentSellOrders = 0
 	variable string XMLString = ""
 	
-	variable collection:obj_ItemInformation Prices
+	variable collection:obj_ItemInformation BuyPrices
+	variable collection:obj_ItemInformation SellPrices
 	
 	variable float ProfitOverReprocess=0
 	
@@ -323,11 +324,8 @@ objectdef obj_HangerSale inherits obj_State
 		
 	}
 	
-	method GetPrices(string XMLString)
+	method GetBuyPrices(string XMLString)
 	{
-		;echo ${XMLString.Right[${Math.Calc[-9-${XMLString.Find[<type id=]}]}].Escape}
-		; echo ${XMLString}
-		; return
 		variable int typeID
 		variable float avg
 		variable float max
@@ -356,7 +354,47 @@ objectdef obj_HangerSale inherits obj_State
 
 				echo ${typeID}, ${avg}, ${max}, ${min}, ${stddev}, ${median}, ${percentile}
 				
-				Prices:Set[${typeID}, ${avg}, ${max}, ${min}, ${stddev}, ${median}, ${percentile}]
+				BuyPrices:Set[${typeID}, ${avg}, ${max}, ${min}, ${stddev}, ${median}, ${percentile}]
+			}
+			while ${XMLString.Escape.Find[<type id=](exists)}	
+		}
+		else
+		{
+			echo Nothing in XMLString
+		}
+	}
+	method GetSellPrices(string XMLString)
+	{
+		variable int typeID
+		variable float avg
+		variable float max
+		variable float min
+		variable float stddev
+		variable float median
+		variable float percentile
+		if ${XMLString.Escape.Find[<type id=](exists)}
+		{
+			do
+			{
+				XMLString:Set[${XMLString.Right[${Math.Calc[-9-${XMLString.Find[<type id=]}]}].Escape}]
+				typeID:Set[${XMLString.Left[${Math.Calc[${XMLString.Find[\"]}-1]}]}]
+				XMLString:Set[${XMLString.Right[${Math.Calc[-${XMLString.Find[<sell>]}]}].Escape}]
+				XMLString:Set[${XMLString.Right[${Math.Calc[-${XMLString.Find[<avg>]}-4]}].Escape}]
+				avg:Set[${XMLString.Left[${Math.Calc[${XMLString.Find[<]}-1]}]}]
+				XMLString:Set[${XMLString.Right[${Math.Calc[-${XMLString.Find[<max>]}-4]}].Escape}]
+				max:Set[${XMLString.Left[${Math.Calc[${XMLString.Find[<]}-1]}]}]
+				XMLString:Set[${XMLString.Right[${Math.Calc[-${XMLString.Find[<min>]}-4]}].Escape}]
+				min:Set[${XMLString.Left[${Math.Calc[${XMLString.Find[<]}-1]}]}]
+				XMLString:Set[${XMLString.Right[${Math.Calc[-${XMLString.Find[<stddev>]}-7]}].Escape}]
+				stddev:Set[${XMLString.Left[${Math.Calc[${XMLString.Find[<]}-1]}]}]
+				XMLString:Set[${XMLString.Right[${Math.Calc[-${XMLString.Find[<median>]}-7]}].Escape}]
+				median:Set[${XMLString.Left[${Math.Calc[${XMLString.Find[<]}-1]}]}]
+				XMLString:Set[${XMLString.Right[${Math.Calc[-${XMLString.Find[<percentile>]}-11]}].Escape}]
+				percentile:Set[${XMLString.Left[${Math.Calc[${XMLString.Find[<]}-1]}]}]
+
+				echo ${typeID}, ${avg}, ${max}, ${min}, ${stddev}, ${median}, ${percentile}
+				
+				SellPrices:Set[${typeID}, ${avg}, ${max}, ${min}, ${stddev}, ${median}, ${percentile}]
 			}
 			while ${XMLString.Escape.Find[<type id=](exists)}	
 		}
