@@ -153,9 +153,10 @@ objectdef obj_HangerSale inherits obj_State
 		HangerItems:GetIterator[HangerIterator]
 		if ${HangerIterator:First(exists)}
 		{
-			This:QueueState["FetchPrice", 100, ${HangerIterator.Value.TypeID}]
-			This:QueueState["AddToSellIfAboveValue", 100, "${HangerIterator.Value.TypeID}, ${HangerIterator.Value.PortionSize}, \"${HangerIterator.Value.Name.Escape}\""]
-			This:QueueState["CheckItem", 100]
+			RandomDelta:Set[0]
+			This:QueueState["FetchPrice", 10, ${HangerIterator.Value.TypeID}]
+			This:QueueState["AddToSellIfAboveValue", 10, "${HangerIterator.Value.TypeID}, ${HangerIterator.Value.PortionSize}, \"${HangerIterator.Value.Name.Escape}\""]
+			This:QueueState["CheckItem", 10]
 		}
 		return TRUE
 	}
@@ -169,17 +170,18 @@ objectdef obj_HangerSale inherits obj_State
 		{
 			do
 			{
-				This:QueueState["AddToSellIfAboveValue", 100, "${HangerIterator.Value.TypeID}, ${HangerIterator.Value.PortionSize}, \"${HangerIterator.Value.Name.Escape}\""]
+				This:QueueState["AddToSellIfAboveValue", 10, "${HangerIterator.Value.TypeID}, ${HangerIterator.Value.PortionSize}, \"${HangerIterator.Value.Name.Escape}\""]
 				ItemCount:Inc
 				TypeIDs:Concat["${Seperator}${HangerIterator.Value.TypeID}"]
 				Seperator:Set[", "]
 			}
 			while ${HangerIterator:Next(exists)} && ${ItemCount} <= 10
-			This:QueueState["CheckItem", 100]
-			This:InsertState["FetchPrice", 100, "${TypeIDs.Escape}"]
+			This:QueueState["CheckItem", 10]
+			This:InsertState["FetchPrice", 10, "${TypeIDs.Escape}"]
 		}
 		else
 		{
+			RandomDelta:Set[1000]
 			This:QueueState["UpdateCurrentOrderCount"]
 			This:QueueState["ProcessSells", 10000]
 			UI:Update["obj_HangerSale", "Ready to sell ${SellItems.Used} item(s)", "g"]
