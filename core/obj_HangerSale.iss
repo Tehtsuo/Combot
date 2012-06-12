@@ -39,12 +39,16 @@ objectdef obj_HangerSale inherits obj_State
 	variable bool PriceGot = FALSE
 	variable collection:float SellItems
 	variable int CurrentSellOrders = 0
-	variable string XMLString = ""
 	
 	variable collection:obj_ItemInformation BuyPrices
 	variable collection:obj_ItemInformation SellPrices
 	
+	variable string CombinedXMLInput=""
+	
 	variable float ProfitOverReprocess=0
+	
+	variable string LogFile="./config/logs/${Me.Name}.log"
+
 	
 	method Initialize()
 	{
@@ -70,7 +74,10 @@ objectdef obj_HangerSale inherits obj_State
 			MineralNames:Set[40, "Megacyte"]
 			RefineData:Load
 			This:QueueState["OpenHanger"]
-			This:QueueState["FetchPrice", 100, "34, 35, 36, 37, 38, 39, 40"]
+			This:QueueState["FetchPrice", 100, "34, 35"]
+			This:QueueState["FetchPrice", 100, "36, 37"]
+			This:QueueState["FetchPrice", 100, "38, 39"]
+			This:QueueState["FetchPrice", 100, "40"]
 			This:QueueState["CheckHanger"]
 		}
 	}
@@ -106,9 +113,7 @@ objectdef obj_HangerSale inherits obj_State
 			TypeIDQuery:Concat["${Seperator}typeid=${TypeIDs[${TypeCount}]}"]
 			Seperator:Set["&"]
 		}
-		echo ${TypeIDQuery}
 		GetURL http://api.eve-central.com/api/marketstat?${TypeIDQuery}&usesystem=30000142
-		echo Fetching ${TypeIDs.Used} item(s)
 		This:InsertState["WaitForPrice", 100]
 		return TRUE
 	}
@@ -121,9 +126,11 @@ objectdef obj_HangerSale inherits obj_State
 		}
 		else
 		{
-			This:GetBuyPrices[${ResponseText.Escape}]
-			This:GetSellPrices[${ResponseText.Escape}]
-			PriceGot:Set[TRUE]
+			CombinedXMLInput:Concat[${ResponseText.Escape}]
+			if ${ResponseText.Find[</evec_api>](exists)}
+			{
+				PriceGot:Set[TRUE]
+			}
 		}
 	}
 	
@@ -131,6 +138,10 @@ objectdef obj_HangerSale inherits obj_State
 	{
 		if ${PriceGot}
 		{
+			;redirect -append "${This.LogFile}" Echo ${CombinedXMLInput}
+		
+			This:GetPrices[${CombinedXMLInput}]
+			CombinedXMLInput:Set[""]
 			PriceGot:Set[FALSE]
 			return TRUE
 		}
@@ -139,19 +150,11 @@ objectdef obj_HangerSale inherits obj_State
 	
 	member:bool CheckHanger()
 	{
-		variable index:item ListIndex
-		variable iterator ListIterator
-		Me:GetHangarItems[ListIndex]
-		ListIndex:GetIterator[ListIterator]
-		if ${ListIterator:First(exists)}
-		do
-		{
-				UIElement[obj_HangerSaleList@Hangar_Sale@ComBotTab@ComBot]:AddItem[${ListIterator.Value.Name}]
-		}
-		while ${ListIterator:Next(exists)}
-		
 		HangerItems:Clear
 		Me:GetHangarItems[HangerItems]
+		
+		UIElement[obj_HangerSaleProcessingText@Hangar_Sale@ComBotTab@ComBot]:SetText[Processing ${HangerItems.Used} items from EVE-Central]
+		
 		HangerItems:GetIterator[HangerIterator]
 		if ${HangerIterator:First(exists)}
 		{
@@ -177,9 +180,9 @@ objectdef obj_HangerSale inherits obj_State
 				TypeIDs:Concat["${Seperator}${HangerIterator.Value.TypeID}"]
 				Seperator:Set[", "]
 			}
-			while ${HangerIterator:Next(exists)} && ${ItemCount} <= 99
+			while ${HangerIterator:Next(exists)} && ${ItemCount} <= 2
 			This:QueueState["CheckItem", 10]
-			This:InsertState["FetchPrice", 10, "${TypeIDs.Escape}"]
+			This:InsertState["FetchPrice", 100, "${TypeIDs.Escape}"]
 		}
 		else
 		{
@@ -325,7 +328,6 @@ objectdef obj_HangerSale inherits obj_State
 		ItemValue:Inc[${Math.Calc[${RefineData.Nocxium[${TypeID}]} * ${This.GetRefineLoss} * ${BuyPrices["38"].Average}]}]
 		ItemValue:Inc[${Math.Calc[${RefineData.Zydrine[${TypeID}]} * ${This.GetRefineLoss} * ${BuyPrices["39"].Average}]}]
 		ItemValue:Inc[${Math.Calc[${RefineData.Megacyte[${TypeID}]} * ${This.GetRefineLoss} * ${BuyPrices["40"].Average}]}]
-		echo ${ItemValue}
 		return ${Math.Calc[${ItemValue} / ${PortionSize}]}
 	}
 	
@@ -335,7 +337,7 @@ objectdef obj_HangerSale inherits obj_State
 		
 	}
 	
-	method GetBuyPrices(string XMLString)
+	method GetPrices(string XMLString)
 	{
 		variable int typeID
 		variable float avg
@@ -344,7 +346,7 @@ objectdef obj_HangerSale inherits obj_State
 		variable float stddev
 		variable float median
 		variable float percentile
-		if ${XMLString.Escape.Find[<type id=](exists)}
+		if ${XMLString.Find[<type id=](exists)}
 		{
 			do
 			{
@@ -363,33 +365,9 @@ objectdef obj_HangerSale inherits obj_State
 				XMLString:Set[${XMLString.Right[${Math.Calc[-${XMLString.Find[<percentile>]}-11]}].Escape}]
 				percentile:Set[${XMLString.Left[${Math.Calc[${XMLString.Find[<]}-1]}]}]
 
-				echo ${typeID}, ${avg}, ${max}, ${min}, ${stddev}, ${median}, ${percentile}
 				
 				BuyPrices:Set[${typeID}, ${avg}, ${max}, ${min}, ${stddev}, ${median}, ${percentile}]
-			}
-			while ${XMLString.Escape.Find[<type id=](exists)}	
-		}
-		else
-		{
-			echo Nothing in XMLString
-		}
-	}
-	method GetSellPrices(string XMLString)
-	{
-		variable int typeID
-		variable float avg
-		variable float max
-		variable float min
-		variable float stddev
-		variable float median
-		variable float percentile
-		if ${XMLString.Escape.Find[<type id=](exists)}
-		{
-			do
-			{
-				XMLString:Set[${XMLString.Right[${Math.Calc[-9-${XMLString.Find[<type id=]}]}].Escape}]
-				typeID:Set[${XMLString.Left[${Math.Calc[${XMLString.Find[\"]}-1]}]}]
-				XMLString:Set[${XMLString.Right[${Math.Calc[-${XMLString.Find[<sell>]}]}].Escape}]
+
 				XMLString:Set[${XMLString.Right[${Math.Calc[-${XMLString.Find[<avg>]}-4]}].Escape}]
 				avg:Set[${XMLString.Left[${Math.Calc[${XMLString.Find[<]}-1]}]}]
 				XMLString:Set[${XMLString.Right[${Math.Calc[-${XMLString.Find[<max>]}-4]}].Escape}]
@@ -403,15 +381,13 @@ objectdef obj_HangerSale inherits obj_State
 				XMLString:Set[${XMLString.Right[${Math.Calc[-${XMLString.Find[<percentile>]}-11]}].Escape}]
 				percentile:Set[${XMLString.Left[${Math.Calc[${XMLString.Find[<]}-1]}]}]
 
-				echo ${typeID}, ${avg}, ${max}, ${min}, ${stddev}, ${median}, ${percentile}
-				
 				SellPrices:Set[${typeID}, ${avg}, ${max}, ${min}, ${stddev}, ${median}, ${percentile}]
 			}
-			while ${XMLString.Escape.Find[<type id=](exists)}	
+			while ${XMLString.Find[<type id=](exists)}	
 		}
 		else
 		{
-			echo Nothing in XMLString
+			echo Nothing in XMLString for GetPrices
 		}
 	}
 }

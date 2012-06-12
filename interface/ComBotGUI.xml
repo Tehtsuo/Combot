@@ -283,36 +283,14 @@
 					</Tab>
 					
 					<Tab Name='Hangar_Sale'>
-						<frame name='obj_HangerSaleFillerFrame'>
-							<BackgroundColor>FF000000</BackgroundColor>
-							<Border>1</Border>
-							<BorderColor>FFFFFFFF</BorderColor>
-							<X>0</X>
-							<Y>0</Y>
-							<Height>100%</Height>
-							<Width>100%</Width>
-							<OnLoad>
-								This:SetLeftClickThru[TRUE]
-							</OnLoad>
-						</frame>					
-						<Text name='obj_HangerSaleListTitle'> 
-									<X>0</X> 
+						<Text name='obj_HangerSaleProcessingText'> 
+									<X>0%</X> 
 									<Y>5%</Y> 
 									<Width>40%</Width> 
 									<Height>5%</Height> 
-									<Alignment>Center</Alignment>
-									<Text>Sales List</Text>
+									<Text>Processing XXX items from EVE-Central</Text>
 						</Text>						 
-						<listbox Name="obj_HangerSaleList">
-							<Font template='Console.Font' />
-							<BackgroundColor>FF000000</BackgroundColor>
-							<Border>1</Border>
-							<BorderColor>FFFFFFFF</BorderColor>
-							<X>0</X>
-							<Y>10%</Y>
-							<Width>40%</Width>
-							<Height>80%</Height>
-						</listbox>
+						
 						<Text name='obj_HangerSaleStateListTitle'> 
 									<X>40%</X> 
 									<Y>5%</Y> 
