@@ -22,6 +22,7 @@
 #include core/obj_Agents.iss
 #include core/obj_HangerSale.iss
 #include core/obj_Combat.iss
+#include core/obj_Bookmarks.iss
 #include core/obj_AgentDialog.iss
 
 
@@ -49,6 +50,7 @@ function main()
 	declarevariable Targets obj_Targets script
 	declarevariable Asteroids obj_Asteroids script
 	declarevariable Miner obj_Miner script
+	declarevariable Bookmarks obj_Bookmarks script
 	declarevariable Agents obj_Agents script
 	declarevariable HangerSale obj_HangerSale script
 	declarevariable RefineData obj_Configuration_RefineData script

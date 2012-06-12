@@ -216,7 +216,7 @@ objectdef obj_Configuration_Miner
 		return ${BaseConfig.BaseRef.FindSet[${This.SetName}]}
 	}
 
-		member:settingsetref OreTypesRef()
+	member:settingsetref OreTypesRef()
 	{
 		return ${BaseConfig.BaseRef.FindSet[${This.SetName}].FindSet[Ore_Types]}
 	}

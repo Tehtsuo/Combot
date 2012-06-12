@@ -110,18 +110,29 @@ objectdef obj_Move inherits obj_State
 			return
 		}
 		
-		if !${Universe[SystemID](exists)}
+		if !${Universe[${SystemID}](exists)}
 		{
 			UI:Update["obj_Move", "Attempted to travel to a system which does not exist", "r"]
 			UI:Update["obj_Move", "System ID: ${SystemID}", "r"]
 			return
 		}
 
-		UI:Update["obj_Move", "Movement queued.  Destination: ${Universe[SystemID]}.Name", "g"]
+		UI:Update["obj_Move", "Movement queued.  Destination: ${Universe[${SystemID]}}.Name", "g"]
 		This.Traveling:Set[TRUE]
 		This:QueueState["SystemMove", 2000, ${SystemID}]
 	}
-	
+
+	method Object(int64 ID)
+	{
+		if ${This.Traveling}
+		{
+			return
+		}
+		
+		UI:Update["obj_Move", "Movement to object queued.  Destination: ${ID}", "g"]
+		This.Traveling:Set[TRUE]
+		This:QueueState["ObjectMove", 2000, ${ID}]
+	}	
 	
 	method Agent(string AgentName)
 	{
@@ -363,6 +374,42 @@ objectdef obj_Move inherits obj_State
 		This.Traveling:Set[FALSE]
 		return TRUE
 	}
+
+	member:bool ObjectMove(int64 ID)
+	{
+
+		if ${Me.InStation}
+		{
+			UI:Update["obj_Move", "Undocking from ${Me.Station.Name}", "g"]
+			This:Undock
+			return FALSE
+		}
+
+		if !${Client.InSpace}
+		{
+			return FALSE
+		}
+
+		if ${Me.ToEntity.Mode} == 3
+		{
+			return FALSE
+		}
+		
+		if !${Entity[${ID}](exists)}
+		{
+			UI:Update["obj_Move", "Attempted to warp to object ${ID} which does not exist", "r"]
+		}
+		
+		if  ${Entity[${ID}].Distance} > WARP_RANGE
+		{
+			This:Warp[${ID}]
+			return FALSE
+		}
+		
+		This.Traveling:Set[FALSE]
+		return TRUE
+	}
+
 	
 	
 	method Approach(int64 target, int distance=0)
