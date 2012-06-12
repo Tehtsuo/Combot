@@ -23,13 +23,13 @@ objectdef obj_HangerSale inherits obj_State
 {
 	variable index:item HangerItems
 	variable iterator HangerIterator
-	variable collection:float MineralPrices
 	variable collection:string MineralNames
 	variable float LatestPrice
 	variable float LowestSellPrice
 	variable bool PriceGot = FALSE
 	variable collection:float SellItems
 	variable int CurrentSellOrders = 0
+	variable string XMLString = ""
 	
 	variable collection:obj_ItemInformation Prices
 	
@@ -59,20 +59,7 @@ objectdef obj_HangerSale inherits obj_State
 			MineralNames:Set[40, "Megacyte"]
 			RefineData:Load
 			This:QueueState["OpenHanger"]
-			This:QueueState["FetchPrice", 100, "34"]
-			This:QueueState["SavePrice", 100, "34"]
-			This:QueueState["FetchPrice", 100, "35"]
-			This:QueueState["SavePrice", 100, "35"]
-			This:QueueState["FetchPrice", 100, "36"]
-			This:QueueState["SavePrice", 100, "36"]
-			This:QueueState["FetchPrice", 100, "37"]
-			This:QueueState["SavePrice", 100, "37"]
-			This:QueueState["FetchPrice", 100, "38"]
-			This:QueueState["SavePrice", 100, "38"]
-			This:QueueState["FetchPrice", 100, "39"]
-			This:QueueState["SavePrice", 100, "39"]
-			This:QueueState["FetchPrice", 100, "40"]
-			This:QueueState["SavePrice", 100, "40"]
+			This:QueueState["FetchPrice", 100, "34, 35, 36, 37, 38, 39, 40"]
 			This:QueueState["CheckHanger"]
 		}
 	}
@@ -94,10 +81,25 @@ objectdef obj_HangerSale inherits obj_State
 	
 ;	Jita = 30000142
 	
-	member:bool FetchPrice(int TypeID)
+	member:bool FetchPrice(... TypeIDs)
 	{
-		GetURL http://api.eve-central.com/api/marketstat?typeid=${TypeID}&usesystem=30000142
-		echo Fetching ${TypeID}
+		variable iterator TypeIterator
+		variable string TypeIDQuery = ""
+		variable string Seperator = ""
+		
+		TypeIDs:GetIterator[TypeIterator]
+		
+		if ${TypeIterator:First(exists)}
+		{
+			do
+			{
+				TypeIDQuery:Append["${Seperator}typeid=${TypeIterator.Value}"]
+				Seperator:Set["&"]
+			}
+			while ${TypeIterator:Next(exists)}
+		}
+		GetURL http://api.eve-central.com/api/marketstat?${TypeIDQuery}&usesystem=30000142
+		echo Fetching ${TypeIDs.Used} item(s)
 		This:InsertState["WaitForPrice", 100]
 		return TRUE
 	}
@@ -110,9 +112,7 @@ objectdef obj_HangerSale inherits obj_State
 		}
 		else
 		{
-			LatestPrice:Set[${ResponseText.Token[9,">"].Token[1,"<"]}]
-			LowestSellPrice:Set[${ResponseText.Token[29,">"].Token[1,"<"]}]
-			PriceGot:Set[TRUE]
+			This:GetPrices[${ResponseText.Escape}]
 		}
 	}
 	
@@ -124,13 +124,6 @@ objectdef obj_HangerSale inherits obj_State
 			return TRUE
 		}
 		return FALSE
-	}
-	
-	member:bool SavePrice(int TypeID)
-	{
-		MineralPrices:Set[${TypeID}, ${LatestPrice}]
-		UI:Update["obj_HangerSale", "Good price for ${MineralNames[${TypeID}]} is ${LatestPrice}", "g"]
-		return TRUE
 	}
 	
 	member:bool CheckHanger()
@@ -183,12 +176,12 @@ objectdef obj_HangerSale inherits obj_State
 		variable float sellPrice
 		variable float discount
 		
-		discount:Set[${Math.Calc[${LowestSellPrice}*0.01]}]
+		discount:Set[${Math.Calc[${Prices[${HangerIterator.Value.TypeID}].Lowest}*0.01]}]
 		if ${discount} > 1000
 		{
 			discount:Set[1000]
 		}
-		sellPrice:Set[${Math.Calc[${LowestSellPrice} - ${discount}]}]
+		sellPrice:Set[${Math.Calc[${Prices[${HangerIterator.Value.TypeID}].Lowest} - ${discount}]}]
 		if ${This.GetItemValue[${HangerIterator.Value.TypeID}, ${HangerIterator.Value.PortionSize}]} < ${sellPrice}
 		{
 			SellItems:Set[${HangerIterator.Value.TypeID}, ${sellPrice}]
@@ -292,13 +285,13 @@ objectdef obj_HangerSale inherits obj_State
 	{
 		variable float ItemValue=0
 		
-		ItemValue:Inc[${Math.Calc[${RefineData.Tritanium[${TypeID}]} * ${This.GetRefineLoss} * ${MineralPrices["34"]}]}]
-		ItemValue:Inc[${Math.Calc[${RefineData.Pyerite[${TypeID}]} * ${This.GetRefineLoss} * ${MineralPrices["35"]}]}]
-		ItemValue:Inc[${Math.Calc[${RefineData.Mexallon[${TypeID}]} * ${This.GetRefineLoss} * ${MineralPrices["36"]}]}]
-		ItemValue:Inc[${Math.Calc[${RefineData.Isogen[${TypeID}]} * ${This.GetRefineLoss} * ${MineralPrices["37"]}]}]
-		ItemValue:Inc[${Math.Calc[${RefineData.Nocxium[${TypeID}]} * ${This.GetRefineLoss} * ${MineralPrices["38"]}]}]
-		ItemValue:Inc[${Math.Calc[${RefineData.Zydrine[${TypeID}]} * ${This.GetRefineLoss} * ${MineralPrices["39"]}]}]
-		ItemValue:Inc[${Math.Calc[${RefineData.Megacyte[${TypeID}]} * ${This.GetRefineLoss} * ${MineralPrices["40"]}]}]
+		ItemValue:Inc[${Math.Calc[${RefineData.Tritanium[${TypeID}]} * ${This.GetRefineLoss} * ${Prices["34"].Average}]}]
+		ItemValue:Inc[${Math.Calc[${RefineData.Pyerite[${TypeID}]} * ${This.GetRefineLoss} * ${Prices["35"].Average}]}]
+		ItemValue:Inc[${Math.Calc[${RefineData.Mexallon[${TypeID}]} * ${This.GetRefineLoss} * ${Prices["36"].Average}]}]
+		ItemValue:Inc[${Math.Calc[${RefineData.Isogen[${TypeID}]} * ${This.GetRefineLoss} * ${Prices["37"].Average}]}]
+		ItemValue:Inc[${Math.Calc[${RefineData.Nocxium[${TypeID}]} * ${This.GetRefineLoss} * ${Prices["38"].Average}]}]
+		ItemValue:Inc[${Math.Calc[${RefineData.Zydrine[${TypeID}]} * ${This.GetRefineLoss} * ${Prices["39"].Average}]}]
+		ItemValue:Inc[${Math.Calc[${RefineData.Megacyte[${TypeID}]} * ${This.GetRefineLoss} * ${Prices["40"].Average}]}]
 		echo ${ItemValue}
 		return ${Math.Calc[${ItemValue} / ${PortionSize}]}
 	}
