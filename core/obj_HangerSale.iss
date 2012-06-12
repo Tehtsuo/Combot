@@ -154,7 +154,7 @@ objectdef obj_HangerSale inherits obj_State
 		if ${HangerIterator:First(exists)}
 		{
 			This:QueueState["FetchPrice", 100, ${HangerIterator.Value.TypeID}]
-			This:QueueState["AddToSellIfAboveValue", 100]
+			This:QueueState["AddToSellIfAboveValue", 100, "${HangerIterator.Value.TypeID}, ${HangerIterator.Value.PortionSize}, \"${HangerIterator.Value.Name.Escape}\""]
 			This:QueueState["CheckItem", 100]
 		}
 		return TRUE
@@ -162,11 +162,21 @@ objectdef obj_HangerSale inherits obj_State
 	
 	member:bool CheckItem()
 	{
+		variable int ItemCount = 0
+		variable string TypeIDs = ""
+		variable string Seperator = ""
 		if ${HangerIterator:Next(exists)}
 		{
-			This:QueueState["FetchPrice", 100, ${HangerIterator.Value.TypeID}]
-			This:QueueState["AddToSellIfAboveValue", 100]
+			do
+			{
+				This:QueueState["AddToSellIfAboveValue", 100, "${HangerIterator.Value.TypeID}, ${HangerIterator.Value.PortionSize}, \"${HangerIterator.Value.Name.Escape}\""]
+				ItemCount:Inc
+				TypeIDs:Concat["${Seperator}${HangerIterator.Value.TypeID}"]
+				Seperator:Set[", "]
+			}
+			while ${HangerIterator:Next(exists)} && ${ItemCount} <= 10
 			This:QueueState["CheckItem", 100]
+			This:InsertState["FetchPrice", 100, "${TypeIDs.Escape}"]
 		}
 		else
 		{
@@ -177,7 +187,7 @@ objectdef obj_HangerSale inherits obj_State
 		return TRUE
 	}
 	
-	member:bool AddToSellIfAboveValue()
+	member:bool AddToSellIfAboveValue(int TypeID, int PortionSize, string Name)
 	{
 		variable index:marketorder orders
 		variable iterator orderIterator
@@ -185,20 +195,20 @@ objectdef obj_HangerSale inherits obj_State
 		variable float sellPrice
 		variable float discount
 		
-		discount:Set[${Math.Calc[${Prices[${HangerIterator.Value.TypeID}].Lowest}*0.01]}]
+		discount:Set[${Math.Calc[${Prices[${TypeID}].Lowest}*0.01]}]
 		if ${discount} > 1000
 		{
 			discount:Set[1000]
 		}
-		sellPrice:Set[${Math.Calc[${Prices[${HangerIterator.Value.TypeID}].Lowest} - ${discount}]}]
-		if ${This.GetItemValue[${HangerIterator.Value.TypeID}, ${HangerIterator.Value.PortionSize}]} < ${sellPrice}
+		sellPrice:Set[${Math.Calc[${Prices[${TypeID}].Lowest} - ${discount}]}]
+		if ${This.GetItemValue[${TypeID}, ${PortionSize}]} < ${sellPrice}
 		{
-			SellItems:Set[${HangerIterator.Value.TypeID}, ${sellPrice}]
-			UI:Update["obj_HangerSale", "Selling ${HangerIterator.Value.Name} for ${sellPrice}", "g"]
+			SellItems:Set[${TypeID}, ${sellPrice}]
+			UI:Update["obj_HangerSale", "Selling ${Name} for ${sellPrice}", "g"]
 		}
 		else
 		{
-			UI:Update["obj_HangerSale", "Not Selling ${HangerIterator.Value.Name}", "g"]
+			UI:Update["obj_HangerSale", "Not Selling ${Name}", "g"]
 		}
 		return TRUE
 	}
