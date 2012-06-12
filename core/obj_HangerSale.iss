@@ -98,7 +98,7 @@ objectdef obj_HangerSale inherits obj_State
 		variable string Seperator = ""
 		
 		TypeIDs:GetIterator[TypeIterator]
-		
+
 		if ${TypeIterator:First(exists)}
 		{
 			do
@@ -314,6 +314,9 @@ objectdef obj_HangerSale inherits obj_State
 	
 	method GetPrices(string XMLString)
 	{
+		;echo ${XMLString.Right[${Math.Calc[-9-${XMLString.Find[<type id=]}]}].Escape}
+		; echo ${XMLString}
+		; return
 		variable int typeID
 		variable float avg
 		variable float max
@@ -321,25 +324,34 @@ objectdef obj_HangerSale inherits obj_State
 		variable float stddev
 		variable float median
 		variable float percentile
-		do
+		if ${XMLString.Escape.Find[<type id=](exists)}
 		{
-			XMLString:Set[${XMLString.Escape.Right[${Math.Calc[-${XMLString.Find[<type id=]}-9]}]}]
-			typeID:Set[${XMLString.Escape.Left[${Math.Calc[${XMLString.Find[\"]}-1]}]}]
-			XMLString:Set[${XMLString.Escape.Right[${Math.Calc[-${XMLString.Find[<avg>]}-4]}].Escape}]
-			avg:Set[${XMLString.Escape.Left[${Math.Calc[${XMLString.Find[<]}-1]}]}]
-			XMLString:Set[${XMLString.Escape.Right[${Math.Calc[-${XMLString.Find[<max>]}-4]}].Escape}]
-			max:Set[${XMLString.Escape.Left[${Math.Calc[${XMLString.Find[<]}-1]}]}]
-			XMLString:Set[${XMLString.Escape.Right[${Math.Calc[-${XMLString.Find[<min>]}-4]}].Escape}]
-			min:Set[${XMLString.Escape.Left[${Math.Calc[${XMLString.Find[<]}-1]}]}]
-			XMLString:Set[${XMLString.Escape.Right[${Math.Calc[-${XMLString.Find[<stddev>]}-7]}].Escape}]
-			stddev:Set[${XMLString.Escape.Left[${Math.Calc[${XMLString.Find[<]}-1]}]}]
-			XMLString:Set[${XMLString.Escape.Right[${Math.Calc[-${XMLString.Find[<median>]}-7]}].Escape}]
-			median:Set[${XMLString.Escape.Left[${Math.Calc[${XMLString.Find[<]}-1]}]}]
-			XMLString:Set[${XMLString.Escape.Right[${Math.Calc[-${XMLString.Find[<percentile>]}-11]}].Escape}]
-			percentile:Set[${XMLString.Escape.Left[${Math.Calc[${XMLString.Find[<]}-1]}]}]
+			do
+			{
+				XMLString:Set[${XMLString.Right[${Math.Calc[-9-${XMLString.Find[<type id=]}]}].Escape}]
+				typeID:Set[${XMLString.Left[${Math.Calc[${XMLString.Find[\"]}-1]}]}]
+				XMLString:Set[${XMLString.Right[${Math.Calc[-${XMLString.Find[<avg>]}-4]}].Escape}]
+				avg:Set[${XMLString.Left[${Math.Calc[${XMLString.Find[<]}-1]}]}]
+				XMLString:Set[${XMLString.Right[${Math.Calc[-${XMLString.Find[<max>]}-4]}].Escape}]
+				max:Set[${XMLString.Left[${Math.Calc[${XMLString.Find[<]}-1]}]}]
+				XMLString:Set[${XMLString.Right[${Math.Calc[-${XMLString.Find[<min>]}-4]}].Escape}]
+				min:Set[${XMLString.Left[${Math.Calc[${XMLString.Find[<]}-1]}]}]
+				XMLString:Set[${XMLString.Right[${Math.Calc[-${XMLString.Find[<stddev>]}-7]}].Escape}]
+				stddev:Set[${XMLString.Left[${Math.Calc[${XMLString.Find[<]}-1]}]}]
+				XMLString:Set[${XMLString.Right[${Math.Calc[-${XMLString.Find[<median>]}-7]}].Escape}]
+				median:Set[${XMLString.Left[${Math.Calc[${XMLString.Find[<]}-1]}]}]
+				XMLString:Set[${XMLString.Right[${Math.Calc[-${XMLString.Find[<percentile>]}-11]}].Escape}]
+				percentile:Set[${XMLString.Left[${Math.Calc[${XMLString.Find[<]}-1]}]}]
 
-			Prices:Set[${typeID}, ${avg}, ${max}, ${min}, ${stddev}, ${median}, ${percentile}]
+				echo ${typeID}, ${avg}, ${max}, ${min}, ${stddev}, ${median}, ${percentile}
+				
+				Prices:Set[${typeID}, ${avg}, ${max}, ${min}, ${stddev}, ${median}, ${percentile}]
+			}
+			while ${XMLString.Escape.Find[<type id=](exists)}	
 		}
-		while ${XMLString.Escape.Find[<type id=](exists)}
+		else
+		{
+			echo Nothing in XMLString
+		}
 	}
 }
