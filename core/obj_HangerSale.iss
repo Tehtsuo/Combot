@@ -150,19 +150,11 @@ objectdef obj_HangerSale inherits obj_State
 	
 	member:bool CheckHanger()
 	{
-		variable index:item ListIndex
-		variable iterator ListIterator
-		Me:GetHangarItems[ListIndex]
-		ListIndex:GetIterator[ListIterator]
-		if ${ListIterator:First(exists)}
-		do
-		{
-				UIElement[obj_HangerSaleList@Hangar_Sale@ComBotTab@ComBot]:AddItem[${ListIterator.Value.Name}]
-		}
-		while ${ListIterator:Next(exists)}
-		
 		HangerItems:Clear
 		Me:GetHangarItems[HangerItems]
+		
+		UIElement[obj_HangerSaleProcessingText@Hangar_Sale@ComBotTab@ComBot]:SetText[Processing ${HangerItems.Used} items from EVE-Central]
+		
 		HangerItems:GetIterator[HangerIterator]
 		if ${HangerIterator:First(exists)}
 		{
