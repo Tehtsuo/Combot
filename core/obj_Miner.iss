@@ -170,7 +170,6 @@ objectdef obj_Miner inherits obj_State
 			while ( !${Belts[${curBelt}].Name.Find[${beltsubstring}](exists)} || \
 					${This.IsBeltEmpty[${Belts[${curBelt}].Name}]} )
 
-			UI:Update["obj_Miner", "Warping to ${Entity[${Belts[${curBelt}].ID}]}", "g"]
 			Move:Object[${Entity[${Belts[${curBelt}].ID}]}]
 			return TRUE
 		}
@@ -227,6 +226,7 @@ objectdef obj_Miner inherits obj_State
 				Roid.Value:LockTarget
 				return FALSE
 			}
+			
 			if  ${Roid.Value.Distance} > ${Ship.ModuleList_MiningLaser.Range} &&\
 				(${Roid.Value.IsLockedTarget} || ${Roid.Value.BeingTargeted})
 			
