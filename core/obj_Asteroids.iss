@@ -14,6 +14,8 @@ objectdef obj_Asteroids inherits obj_State
 	method Initialize()
 	{
 		This[parent]:Initialize
+		PulseFrequency:Set[10]
+		RandomDelta:Set[0]
 
 		UI:Update["obj_Asteroids", "Initialized", "g"]
 	}
@@ -32,6 +34,7 @@ objectdef obj_Asteroids inherits obj_State
 
 		if ${OreTypeQueue.Used} == 0
 		{
+			echo Completing Update
 			This:PopulateAsteroidList
 			This:PopulateOreTypeQueue
 			return

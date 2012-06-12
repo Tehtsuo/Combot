@@ -1,5 +1,5 @@
 
-objectdef obj_Miner
+objectdef obj_Miner inherits obj_State
 {
 
 	method Initialize()
@@ -14,8 +14,9 @@ objectdef obj_Miner
 		UI:Update["obj_Miner", "Started", "g"]
 		if ${This.IsIdle}
 		{
-			This:QueueState["OpenCargoHold"]
-			This:QueueState["CheckCargoHold", 5000]
+			Asteroids:QueueState["UpdateList"]
+			This:QueueState["Idle", 2000]
+			This:QueueState["Mine", 50]
 		}
 	}
 	
@@ -25,6 +26,11 @@ objectdef obj_Miner
 		{
 			UI:Update["obj_Miner", "Opening inventory", "g"]
 			MyShip:OpenCargo[]
+			return FALSE
+		}
+		if !${EVEWindow[byCaption, "active ship"](exists)}
+		{
+			EVEWindow[byName,"Inventory"]:MakeChildActive[ShipCargo]
 		}
 		return TRUE
 	}
@@ -34,12 +40,12 @@ objectdef obj_Miner
 		if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) > 0.75
 		{
 			UI:Update["obj_Miner", "Unload trip required", "g"]
-			Move:Bookmark[${Config.Salvager.Salvager_Dropoff}]
+			This:Clear
+			Move:Bookmark[${Config.Miner.Miner_Dropoff}]
 			This:QueueState["Traveling"]
 			This:QueueState["Offload"]
+			This:QueueState["GoToMiningSystem"]
 		}
-
-		This:QueueState["GoToMiningSystem"]
 		return TRUE;
 	}
 
@@ -71,77 +77,179 @@ objectdef obj_Miner
 	
 	member:bool GoToMiningSystem()
 	{
-		if !${EVE.Bookmark[${Config.Miner.MiningSystemBookmark}](exists)}
+		if !${EVE.Bookmark[${Config.Miner.MiningSystem}](exists)}
 		{
 			UI:Update["obj_Miner", "No mining system defined!  Check your settings", "r"]
 		}
-		Move:System[${EVE.Bookmark[${Config.Miner.MiningSystemBookmark}].SolarSystemID}]
+		Move:System[${EVE.Bookmark[${Config.Miner.MiningSystem}].SolarSystemID}]
 		This:QueueState["Traveling"]
+		This:QueueState["MoveToBelt"]
+		This:QueueState["Traveling"]
+		This:QueueState["Mine"]
 		return TRUE
 	}
-	
-	method MoveToField()
-	{
-		variable int curBelt
-		variable index:entity Belts
-		variable iterator BeltIterator
-		variable int TryCount
 
-		variable string beltsubstring
-		if ${Config.Miner.IceMining}
+	member:bool MoveToBelt()
+	{
+		if ${Bookmarks.StoredLocationExists}
 		{
-			beltsubstring:Set["ICE FIELD"]
+			UI:Update["obj_Miner","Returning to last location (${Bookmarks.StoredLocation})", "g"]
+			Move:Bookmark["${Bookmarks.StoredLocation}"]
+			Bookmarks:RemoveStoredLocation
+			return TRUE
+		}
+	
+		if ${Config.Miner.UseFieldBookmarks}
+		{
+			variable index:bookmark BookmarkIndex
+			variable int RandomBelt
+			EVE:GetBookmarks[BookmarkIndex]
+
+			while ${BookmarkIndex.Used} > 0
+			{
+				RandomBelt:Set[${Math.Rand[${BookmarkIndex.Used}]:Inc[1]}]
+
+				if ${Config.Miner.IceMining}
+				{
+					prefix:Set[${Config.Miner.IceBeltPrefix}]
+				}
+				else
+				{
+					prefix:Set[${Config.Miner.BeltPrefix}]
+				}
+
+				Label:Set[${BookmarkIndex[${RandomBelt}].Label}]
+
+				if (${BookmarkIndex[${RandomBelt}].SolarSystemID} != ${Me.SolarSystemID} || \
+					${Label.Left[${prefix.Length}].NotEqual[${prefix}]})
+				{
+					BookmarkIndex:Remove[${RandomBelt}]
+					BookmarkIndex:Collapse
+					continue
+				}
+
+				Move:Bookmark[${BeltBookMarkList[${BookmarkIndex}].Label}]
+
+				return TRUE
+			}	
 		}
 		else
 		{
-			beltsubstring:Set["ASTEROID BELT"]
-		}
-
-		EVE:QueryEntities[Belts, "GroupID = GROUP_ASTEROIDBELT"]
-		Belts:GetIterator[BeltIterator]
-		if ${BeltIterator:First(exists)}
-		{
-			; if (${Config.Miner.BookMarkLastPosition} && \
-				; ${Bookmarks.StoredLocationExists})
-			; {
-				; /* We have a stored location, we should return to it. */
-				; UI:UpdateConsole["Returning to last location (${Bookmarks.StoredLocation})"]
-				; Ship:New_WarpToBookmark["${Bookmarks.StoredLocation}", ${FleetWarp}]
-				; This.BeltArrivalTime:Set[${Time.Timestamp}]
-				; Bookmarks:RemoveStoredLocation
-				; return
-			; }
-
-			if ${Config.Miner.UseFieldBookmarks}
+			if !${Client.InSpace}
 			{
-				This:MoveToRandomBeltBookMark[${FleetWarp}]
-				return
+				Move:Undock
+				return FALSE
+			}
+			variable int curBelt
+			variable index:entity Belts
+			variable string beltsubstring
+			variable int TryCount
+			if ${Config.Miner.IceMining}
+			{
+				beltsubstring:Set["ICE FIELD"]
+			}
+			else
+			{
+				beltsubstring:Set["ASTEROID BELT"]
 			}
 
-			; We're not at a field already, so find one
+			EVE:QueryEntities[Belts, "GroupID = GROUP_ASTEROIDBELT"]
+			Belts:GetIterator[BeltIterator]
+
 			do
 			{
 				curBelt:Set[${Math.Rand[${Belts.Used}]:Inc[1]}]
 				TryCount:Inc
 				if ${TryCount} > ${Math.Calc[${Belts.Used} * 10]}
 				{
-					UI:UpdateConsole["All belts empty!"]
-					call ChatIRC.Say "All belts empty!"
-					EVEBot.ReturnToStation:Set[TRUE]
-					return
+					UI:Update["obj_Miner", "All belts empty!", "r"]
+
+					return TRUE
 				}
 			}
 			while ( !${Belts[${curBelt}].Name.Find[${beltsubstring}](exists)} || \
 					${This.IsBeltEmpty[${Belts[${curBelt}].Name}]} )
 
-			UI:UpdateConsole["EVEBot thinks we're not at a belt.  Warping to Asteroid Belt: ${Belts[${curBelt}].Name}"]
-			Ship:WarpToID[${Belts[${curBelt}].ID}, 0, ${FleetWarp}]
-			This.BeltArrivalTime:Set[${Time.Timestamp}]
-			This.UsingBookMarks:Set[TRUE]
-			This.LastBeltIndex:Set[${curBelt}]
+			UI:Update["obj_Miner", "Warping to ${Entity[${Belts[${curBelt}].ID}]}", "g"]
+			Move:Object[${Entity[${Belts[${curBelt}].ID}]}]
+			return TRUE
 		}
-	}	
+	}
 	
+	member:bool Mine()
+	{
+		if !${Client.InSpace}
+		{
+			This:QueueState["OpenCargoHold"]
+			This:QueueState["CheckCargoHold"]
+			This:QueueState["GoToMiningSystem"]
+			return TRUE
+		}
+		if ${Asteroids.AsteroidList.Used} == 0
+		{
+			UI:Update["obj_Miner", "${Asteroids.AsteroidList.Used} asteroids found, moving to another belt", "g"]
+			This:QueueState["OpenCargoHold"]
+			This:QueueState["CheckCargoHold"]
+			This:QueueState["GoToMiningSystem"]
+			return TRUE
+		}
+		if ${Ship.ModuleList_MiningLaser.InactiveCount} > 0
+		{
+			This:QueueState["ActivateLaser"]
+			This:QueueState["Mine"]
+			return TRUE
+		}
+		
+		
+	}
 	
+	member:bool ActivateLaser()
+	{
+		variable int MaxTarget = ${MyShip.MaxLockedTargets}
+		variable iterator Roid
+
+		if ${Me.MaxLockedTargets} < ${MyShip.MaxLockedTargets}
+		{
+			MaxTarget:Set[${Me.MaxLockedTargets}]
+		}
+
+		Asteroids.AsteroidList:GetIterator[Roid]
+		if ${Roid:First(exists)}
+		do
+		{
+			if  !${Roid.Value.BeingTargeted} && \
+				!${Roid.Value.IsLockedTarget} && \
+				${Targets.LockedAndLockingTargets} < ${MaxTarget} && \
+				${Roid.Value.Distance} < ${MyShip.MaxTargetRange} && \
+				${Targets.LockedAndLockingTargets} < ${Ship.ModuleList_MiningLaser.Used}
+			{
+				UI:Update["obj_Miner", "Locking - ${Roid.Value.Name}", "g"]
+				Roid.Value:LockTarget
+				return FALSE
+			}
+			if  ${Roid.Value.Distance} > ${Ship.ModuleList_MiningLaser.Range} &&\
+				(${Roid.Value.IsLockedTarget} || ${Roid.Value.BeingTargeted})
+			
+			{
+				Move:Approach[${Roid.Value}, ${Ship.ModuleList_MiningLaser.Range}]
+				return FALSE
+			}
+
+			if  !${Ship.ModuleList_MiningLaser.IsActiveOn[${Roid.Value.ID}]} &&\
+				${Roid.Value.Distance} < ${Ship.ModuleList_MiningLaser.Range} &&\
+				${Ship.ModuleList_MiningLaser.InactiveCount} > 0 &&\
+				${Roid.Value.IsLockedTarget}
+			{
+				UI:Update["obj_Miner", "Activating mining laser - ${Roid.Value.Name}", "g"]
+				Ship.ModuleList_MiningLaser:Activate[${Roid.Value.ID}]
+				return FALSE
+			}
+			
+
+			
+			
+		}
+		while ${Roid:Next(exists)}
+	}
 	
 }	
