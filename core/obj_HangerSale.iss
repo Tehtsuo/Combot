@@ -121,6 +121,7 @@ objectdef obj_HangerSale inherits obj_State
 		else
 		{
 			This:GetPrices[${ResponseText.Escape}]
+			PriceGot:Set[TRUE]
 		}
 	}
 	
