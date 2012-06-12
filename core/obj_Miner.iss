@@ -227,16 +227,16 @@ objectdef obj_Miner inherits obj_State
 				return FALSE
 			}
 			
-			if  ${Roid.Value.Distance} > ${Ship.ModuleList_MiningLaser.Range} &&\
+			if  ${Roid.Value.Distance} > ${Ship.Module_MiningLaser_Range} &&\
 				(${Roid.Value.IsLockedTarget} || ${Roid.Value.BeingTargeted})
 			
 			{
-				Move:Approach[${Roid.Value}, ${Ship.ModuleList_MiningLaser.Range}]
+				Move:Approach[${Roid.Value}, ${Ship.Module_MiningLaser_Range}]
 				return FALSE
 			}
 
 			if  !${Ship.ModuleList_MiningLaser.IsActiveOn[${Roid.Value.ID}]} &&\
-				${Roid.Value.Distance} < ${Ship.ModuleList_MiningLaser.Range} &&\
+				${Roid.Value.Distance} < ${Ship.Module_MiningLaser_Range} &&\
 				${Ship.ModuleList_MiningLaser.InactiveCount} > 0 &&\
 				${Roid.Value.IsLockedTarget}
 			{

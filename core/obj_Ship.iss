@@ -29,6 +29,7 @@ objectdef obj_Ship
 
 	variable float Module_Salvagers_Range
 	variable float Module_TractorBeams_Range
+	variable float Module_MiningLaser_Range
 
 
 	
@@ -137,6 +138,7 @@ objectdef obj_Ship
 			
 			if ${ModuleIter.Value.MiningAmount(exists)}
 			{
+				This.Module_MiningLaser_Range:Set[${ModuleIter.Value.OptimalRange}]
 				This.ModuleList_MiningLaser:Insert[${ModuleIter.Value.ID}]
 				continue
 			}
