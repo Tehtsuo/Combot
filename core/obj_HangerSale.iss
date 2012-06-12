@@ -245,6 +245,11 @@ objectdef obj_HangerSale inherits obj_State
 			{
 				if ${ItemIterator.Value.TypeID} == ${SellItem}
 				{
+					if ${ItemIterator.Value.IsRepackable}
+					{
+						ItemIterator.Value:Repackage
+						return FALSE
+					}
 					ItemIterator.Value:PlaceSellOrder[${SellItems.Element[${SellItem}]}, ${ItemIterator.Value.Quantity}, 1]
 					CurrentSellOrders:Inc
 					SellItems:Erase[${SellItem}]
