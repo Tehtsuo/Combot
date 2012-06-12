@@ -36,6 +36,7 @@ objectdef obj_State
 	variable bool NonGameTiedPulse = FALSE
 	variable bool IsIdle
 	variable bool IndependentPulse = FALSE
+	variable int RandomDelta = 500
 
 	method Initialize()
 	{
@@ -102,7 +103,7 @@ objectdef obj_State
 						States:Dequeue
 					}
 				}
-				This.NextPulse:Set[${Math.Calc[${LavishScript.RunningTime} + ${CurState.Frequency} + ${Math.Rand[500]}]}]
+				This.NextPulse:Set[${Math.Calc[${LavishScript.RunningTime} + ${CurState.Frequency} + ${Math.Rand[${RandomDelta}]}]}]
 			}
 		}
 		else
