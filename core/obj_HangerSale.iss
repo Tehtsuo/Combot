@@ -231,6 +231,11 @@ objectdef obj_HangerSale inherits obj_State
 		
 		SellItem:Set[${This.GetHighestSell}]
 		
+		if ${SellItem} == -1
+		{
+			return TRUE
+		}
+		
 		UI:Update["obj_HangerSale", "Trying to sell ${SellItem} for ${SellItems.Element[${SellItem}]}", "g"]
 		Me:GetHangarItems[ItemList]
 		ItemList:GetIterator[ItemIterator]
