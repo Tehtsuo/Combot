@@ -101,12 +101,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					<OnLeftClick>
 						if ${Script[ComBot].VariableScope.ComBot.Paused}
 						{
-							This:SetText[Stop]
 							Script[ComBot].VariableScope.ComBot:Resume
 						}
 						else
 						{
-							This:SetText[Run]
 							Script[ComBot].VariableScope.ComBot:Pause
 						}
 					</OnLeftClick>

@@ -103,6 +103,7 @@ objectdef obj_ComBotUI
 	method Update(string CallingModule, string StatusMessage, string Color="w")
 	{
 		variable string MSG
+		variable string MSGRemainder
 		MSG:Set["\aw["]
 		if ${CallingModule.Length} > 15
 		{
@@ -120,15 +121,34 @@ objectdef obj_ComBotUI
 		}	
 
 		MSG:Concat["\a${Color}${StatusMessage.Escape}"]
-
-		if ${This.Reloaded}
+		
+		if ${MSG.Length} > 85
 		{
-			UIElement[StatusConsole@Status@ComBotTab@ComBot]:Echo["${MSG.Escape}"]
+			MSGRemainder:Set[${MSG.Right[-85].Escape}]
+			MSG:Set[${MSG.Left[85].Escape}]
+			if ${This.Reloaded}
+			{
+				UIElement[StatusConsole@Status@ComBotTab@ComBot]:Echo["${MSG.Escape}"]
+				UIElement[StatusConsole@Status@ComBotTab@ComBot]:Echo["-                 \a${Color}${MSGRemainder.Escape}"]
+			}
+			else
+			{
+				This.ConsoleBuffer:Queue["${MSG}"]
+				This.ConsoleBuffer:Queue["-                 \a${Color}${MSGRemainder.Escape}"]
+			}
 		}
 		else
 		{
-			This.ConsoleBuffer:Queue["${MSG}"]
+			if ${This.Reloaded}
+			{
+				UIElement[StatusConsole@Status@ComBotTab@ComBot]:Echo["${MSG.Escape}"]
+			}
+			else
+			{
+				This.ConsoleBuffer:Queue["${MSG}"]
+			}
 		}
+
 	}
 
 
