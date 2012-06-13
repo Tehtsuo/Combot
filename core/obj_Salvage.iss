@@ -1,3 +1,24 @@
+/*
+
+ComBot  Copyright © 2012  Tehtsuo and Vendan
+
+This file is part of ComBot.
+
+ComBot is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ComBot is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
+
+*/
+
 objectdef obj_Salvage inherits obj_State
 {
 	variable obj_LootCans LootCans
@@ -426,9 +447,9 @@ objectdef obj_Salvage inherits obj_State
 			case Personal Hangar
 				Cargo:MoveCargoList[HANGAR]
 				break
-
-			Cargo:MoveCargoList[CORPORATEHANGAR, ${Config.Miner.Salvager_Dropoff_Type}]
-			break
+			default
+				Cargo:MoveCargoList[CORPORATEHANGAR, ${Config.Salvager.Salvager_Dropoff_Type}]
+				break
 		}
 		This:Clear
 		This:QueueState["StackItemHangar"]
@@ -444,25 +465,22 @@ objectdef obj_Salvage inherits obj_State
 		if !${EVEWindow[ByName, "Inventory"](exists)}
 		{
 			UI:Update["obj_Salvage", "Making sure inventory is open", "g"]
-			MyShip:OpenCargo
+			MyShip:Open
 			return FALSE
 		}
-		if !${EVEWindow[byCaption, "Item Hangar"](exists)}
+
+		UI:Update["obj_Salvage", "Stacking dropoff container", "g"]
+		switch ${Config.Salvager.Salvager_Dropoff_Type}
 		{
-			UI:Update["obj_Salvage", "Changing to Item Hangar", "g"]
-			EVEWindow[byName,"Inventory"]:MakeChildActive[StationItems]
-			return FALSE
+			case Personal Hangar
+				EVE:StackItems[MyStationHangar, Hangar]
+				break
+			default
+				EVE:StackItems[MyStationCorporateHangar, StationCorporateHangar, "${Config.Salvager.Salvager_Dropoff_Type.Escape}"]
+				break
 		}
-		if ${EVEWindow[byCaption, "Item Hangar"](exists)}
-		{
-			UI:Update["obj_Salvage", "Stacking Item Hangar", "g"]
-			EVEWindow[byName,"Inventory"]:StackAll
-			return TRUE
-		}
-		else
-		{
-			return FALSE
-		}
+		
+		return TRUE
 	}
 
 	member:bool RefreshBookmarks()

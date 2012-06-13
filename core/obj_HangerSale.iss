@@ -1,3 +1,24 @@
+/*
+
+ComBot  Copyright © 2012  Tehtsuo and Vendan
+
+This file is part of ComBot.
+
+ComBot is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ComBot is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
+
+*/
+
 objectdef obj_ItemInformation
 {
 	variable float Average
@@ -214,7 +235,7 @@ objectdef obj_HangerSale inherits obj_State
 		if ${This.GetItemValue[${TypeID}, ${PortionSize}]} < ${sellPrice}
 		{
 			SellItems:Set[${TypeID}, ${sellPrice}]
-			UI:Update["obj_HangerSale", "Selling ${Name} for ${sellPrice}", "g"]
+			UI:Update["obj_HangerSale", "Selling ${Name} for ${ComBot.ISK_To_Str[${sellPrice}]}", "g"]
 		}
 		else
 		{
@@ -232,6 +253,8 @@ objectdef obj_HangerSale inherits obj_State
 		
 		if ${CurrentSellOrders} >= ${This.MaxOrders}
 		{
+			UI:Update["obj_HangerSale", "Operations complete", "o"]
+			ComBot:Pause
 			return TRUE
 		}
 		
@@ -239,10 +262,12 @@ objectdef obj_HangerSale inherits obj_State
 		
 		if ${SellItem} == -1
 		{
+			UI:Update["obj_HangerSale", "Operations complete", "o"]
+			ComBot:Pause
 			return TRUE
 		}
 		
-		UI:Update["obj_HangerSale", "Trying to sell ${SellItem} for ${SellItems.Element[${SellItem}]}", "g"]
+		UI:Update["obj_HangerSale", "Trying to sell ${SellItem} for ${ComBot.ISK_To_Str[${SellItems.Element[${SellItem}]}]}", "g"]
 		Me:GetHangarItems[ItemList]
 		ItemList:GetIterator[ItemIterator]
 		if ${ItemIterator:First(exists)}
@@ -266,6 +291,8 @@ objectdef obj_HangerSale inherits obj_State
 			}
 			while ${ItemIterator:Next(exists)}
 		}
+		UI:Update["obj_HangerSale", "Operations complete", "o"]
+		ComBot:Pause
 		return TRUE
 	}
 	
@@ -344,11 +371,16 @@ objectdef obj_HangerSale inherits obj_State
 			discount:Set[1000]
 		}
 		sellPrice:Set[${Math.Calc[${SellPrices[${MyOrderIterator.Value.TypeID}].Min} - ${discount}]}]
+		UI:Update["obj_HangerSale", "${MyOrderIterator.Value.Name}", "y"]
 		if ${Math.Calc[${MyOrderIterator.Value.Price}-5]} > ${SellPrices[${MyOrderIterator.Value.TypeID}].Min}
 		{
-			UI:Update["obj_HangerSale", "Repricing ${MyOrderIterator.Value.Name} from ${MyOrderIterator.Value.Price} to ${sellPrice}", "g"]
+			UI:Update["obj_HangerSale", "Repricing from \ar${ComBot.ISK_To_Str[${MyOrderIterator.Value.Price}]} \ayto \ag${ComBot.ISK_To_Str[${sellPrice}]}", "y"]
 			MyOrderIterator.Value:Modify[${sellPrice}]
 			delay:Set[10000]
+		}
+		else
+		{
+			UI:Update["obj_HangerSale", "Repricing unneccessary", "y"]
 		}
 		if ${MyOrderIterator:Next(exists)}
 		{

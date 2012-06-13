@@ -1,3 +1,24 @@
+/*
+
+ComBot  Copyright © 2012  Tehtsuo and Vendan
+
+This file is part of ComBot.
+
+ComBot is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ComBot is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
+
+*/
+
 objectdef obj_Module inherits obj_State
 {
 	variable bool Activated = FALSE
@@ -26,16 +47,13 @@ objectdef obj_Module inherits obj_State
 	
 	member:bool IsActiveOn(int64 checkTarget)
 	{
-		echo IsActiveOn ${This.CurrentTarget} == ${checkTarget}
 		if (${This.CurrentTarget.Equal[${checkTarget}]})
 		{
 			if ${This.IsActive}
 			{
-				echo TRUE
 				return TRUE
 			}
 		}
-		echo FALSE
 		return FALSE
 	}
 	
@@ -68,7 +86,6 @@ objectdef obj_Module inherits obj_State
 	
 	member:bool ActivateOn(int64 newTarget)
 	{
-		echo "Activating on ${newTarget}"
 		if ${newTarget} == -1
 		{
 			MyShip.Module[${ModuleID}]:Activate
