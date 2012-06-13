@@ -271,7 +271,7 @@ objectdef obj_HangerSale inherits obj_State
 	
 	member:bool AcceptRepackage()
 	{
-		EVEWindow[ByCaption, "Repackage"]:ClickButtonYes
+		EVEWindow[ByName, modal]:ClickButtonYes
 		return TRUE
 	}
 	
