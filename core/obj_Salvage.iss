@@ -1,6 +1,6 @@
 /*
 
-ComBot  Copyright © 2012  Tehtsuo and Vendan
+ComBot  Copyright ï¿½ 2012  Tehtsuo and Vendan
 
 This file is part of ComBot.
 
@@ -25,7 +25,7 @@ objectdef obj_Salvage inherits obj_State
 	variable bool ForceBookmarkCycle=FALSE
 	variable index:int64 HoldOffPlayer
 	variable index:int HoldOffTimer
-	variable set AlreadySalvaged
+	variable collection:int64 AlreadySalvaged
 
 	method Initialize()
 	{
@@ -234,12 +234,12 @@ objectdef obj_Salvage inherits obj_State
 					!${TargetIterator.Value.IsLockedTarget} && \
 					${Targets.LockedAndLockingTargets} < ${MaxTarget} && \
 					${TargetIterator.Value.Distance} < ${MyShip.MaxTargetRange} && \
-					!${AlreadySalvaged.Contains[${TargetIterator.Value.ID}]} && \
+					!${AlreadySalvaged.Element[${TargetIterator.Value.ID}] >= ${LavishScript.RunningTime}} && \
 					!${Target.Value.Name.Equal["Cargo Container"]}
 				{
 					UI:Update["obj_Salvage", "Locking - ${TargetIterator.Value.Name}", "g"]
 					TargetIterator.Value:LockTarget
-					AlreadySalvaged:Add[${TargetIterator.Value.ID}]
+					AlreadySalvaged:Set[${TargetIterator.Value.ID}, ${Math.Calc[${LavishScript.RunningTime} + 5000]}]
 					return FALSE
 				}
 				if ${TargetIterator.Value.Distance} > ${Ship.Module_TractorBeams_Range}
