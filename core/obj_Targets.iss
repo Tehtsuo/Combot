@@ -19,12 +19,18 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-objectdef obj_Targets
+objectdef obj_Targets inherits obj_State
 {
+	variable index:entity LockedAndLocking
 
 	method Initialize()
 	{
 		UI:Update["obj_Targets", "Initialized", "g"]
+		
+		This[parent]:Initialize
+		RandomDelta:Set[0]
+
+		This:QueueState["UpdateLockedAndLocking", 100]
 	}
 
 
@@ -69,12 +75,20 @@ objectdef obj_Targets
 	}
 	
 
-	member:int LockedAndLockingTargets()
+	member:int LockedAndLockingCount()
 	{
-		variable index:entity Targets
-		EVE:QueryEntities[Targets, "IsLockedTarget || BeingTargeted"]
-		
-		return ${Targets.Used}
+		return ${LockedAndLocking.Used}
+	}
+	
+	member:bool UpdateLockedAndLocking()
+	{
+		if !${Client.InSpace}
+		{
+			return FALSE
+		}
+		EVE:QueryEntities[LockedAndLocking, "IsLockedTarget || BeingTargeted"]
+		echo ${LockedAndLocking.Used}
+		return FALSE
 	}
 
 }

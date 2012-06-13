@@ -434,20 +434,17 @@ objectdef obj_Move inherits obj_State
 	
 	method Approach(int64 target, int distance=0)
 	{
-		echo APPROACH - ${target} == ${This.ApproachingID} && ${This.Approaching}
 		;	If we're already approaching the target, ignore the request
 		if ${target} == ${This.ApproachingID} && ${This.Approaching}
 		{
 			return
 		}
-		echo AFTER
 		if !${Entity[${target}](exists)}
 		{
 			UI:Update["obj_Move", "Attempted to approach a target that does not exist", "r"]
 			UI:Update["obj_Move", "Target ID: ${target}", "r"]
 			return
 		}
-		echo EVEN AFTER
 		if ${Entity[${target}].Distance} <= ${distance}
 		{
 			return

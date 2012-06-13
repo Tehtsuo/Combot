@@ -229,6 +229,18 @@ objectdef obj_Miner inherits obj_State
 			This:QueueState["GoToMiningSystem", 1000]
 			return TRUE
 		}
+		
+		if ${Ship.ModuleList_Regen_Shield.InactiveCount} && ${MyShip.ShieldPct} < 95
+		{
+			Ship.ModuleList_Regen_Shield:ActivateCount[${Ship.ModuleList_Regen_Shield.InactiveCount}]
+			return FALSE
+		}
+		if ${Ship.ModuleList_Regen_Shield.ActiveCount} && ${MyShip.ShieldPct} > 95
+		{
+			Ship.ModuleList_Regen_Shield:DeactivateCount[${Ship.ModuleList_Regen_Shield.ActiveCount}]
+			return FALSE
+		}
+		
 		if ${Asteroids.AsteroidList.Used} == 0
 		{
 			UI:Update["obj_Miner", "${Asteroids.AsteroidList.Used} asteroids found, moving to another belt", "g"]
@@ -237,9 +249,9 @@ objectdef obj_Miner inherits obj_State
 			This:QueueState["GoToMiningSystem", 1000]
 			return TRUE
 		}
+		
 		if ${Ship.ModuleList_MiningLaser.InactiveCount} > 0
 		{
-			This:QueueState["ActivateLaser"]
 			This:QueueState["Mine"]
 			return TRUE
 		}
@@ -248,54 +260,5 @@ objectdef obj_Miner inherits obj_State
 		return TRUE
 	}
 	
-	member:bool ActivateLaser()
-	{
-		variable int MaxTarget = ${MyShip.MaxLockedTargets}
-		variable iterator Roid
-
-		if ${Me.MaxLockedTargets} < ${MyShip.MaxLockedTargets}
-		{
-			MaxTarget:Set[${Me.MaxLockedTargets}]
-		}
-
-		Asteroids.AsteroidList:GetIterator[Roid]
-		if ${Roid:First(exists)}
-		do
-		{
-			if  !${Roid.Value.BeingTargeted} && \
-				!${Roid.Value.IsLockedTarget} && \
-				${Targets.LockedAndLockingTargets} < ${MaxTarget} && \
-				${Roid.Value.Distance} < ${MyShip.MaxTargetRange} && \
-				${Targets.LockedAndLockingTargets} < ${Ship.ModuleList_MiningLaser.Used}
-			{
-				UI:Update["obj_Miner", "Locking - ${Roid.Value.Name}", "g"]
-				Roid.Value:LockTarget
-				return FALSE
-			}
-			
-			if  ${Roid.Value.Distance} > ${Ship.Module_MiningLaser_Range} &&\
-				(${Roid.Value.IsLockedTarget} || ${Roid.Value.BeingTargeted})
-			
-			{
-				Move:Approach[${Roid.Value}, ${Ship.Module_MiningLaser_Range}]
-				return FALSE
-			}
-
-			if  !${Ship.ModuleList_MiningLaser.IsActiveOn[${Roid.Value.ID}]} &&\
-				${Roid.Value.Distance} < ${Ship.Module_MiningLaser_Range} &&\
-				${Ship.ModuleList_MiningLaser.InactiveCount} > 0 &&\
-				${Roid.Value.IsLockedTarget}
-			{
-				UI:Update["obj_Miner", "Activating mining laser - ${Roid.Value.Name}", "g"]
-				Ship.ModuleList_MiningLaser:Activate[${Roid.Value.ID}]
-				return TRUE
-			}
-			
-
-			
-			
-		}
-		while ${Roid:Next(exists)}
-	}
 	
 }	

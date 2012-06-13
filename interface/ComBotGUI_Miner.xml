@@ -132,6 +132,22 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							Script[ComBot].VariableScope.Config.Miner:SetUseBookmarks[${This.Checked}]
 						</OnLeftClick>
 					</Checkbox>
+					<Checkbox name='obj_MinerAlwaysShieldBoost'>
+						<X>1%</X>
+						<Y>88%</Y>
+						<Width>20%</Width> 
+						<Height>20</Height> 
+						<Text>Always Shield Boost</Text>
+						<OnLoad>
+							if ${Script[ComBot].VariableScope.Config.Miner.AlwaysShieldBoost}
+							{
+								This:SetChecked
+							}
+						</OnLoad>
+						<OnLeftClick>
+							Script[ComBot].VariableScope.Config.Miner:SetAlwaysShieldBoost[${This.Checked}]
+						</OnLeftClick>
+					</Checkbox>
 					<Text name='obj_MinerOrePrefixTitle'>
 						<X>1%</X>
 						<Y>79%</Y>

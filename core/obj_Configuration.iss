@@ -370,6 +370,16 @@ objectdef obj_Configuration_Miner
 	{
 		This.CommonRef:AddSetting[UseBookmarks,${value}]
 	}
+
+	member:bool AlwaysShieldBoost()
+	{
+		return ${This.CommonRef.FindSetting[AlwaysShieldBoost]}
+	}
+
+	method SetAlwaysShieldBoost(bool value)
+	{
+		This.CommonRef:AddSetting[AlwaysShieldBoost,${value}]
+	}
 	
 	member:string BeltPrefix()
 	{
