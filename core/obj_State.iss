@@ -43,7 +43,6 @@ objectdef obj_State
 		CurState:Set["Idle", 100, ""]
 		IsIdle:Set[TRUE]
 		Event[ISXEVE_onFrame]:AttachAtom[This:Pulse]
-		
 	}
 	
 	method IndependentPulse()

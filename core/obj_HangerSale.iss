@@ -254,7 +254,9 @@ objectdef obj_HangerSale inherits obj_State
 					if ${ItemIterator.Value.IsRepackable}
 					{
 						ItemIterator.Value:Repackage
-						return FALSE
+						This:InsertState["ProcessSells", 10000]
+						This:InsertState["AcceptRepackage", 10000]
+						return TRUE
 					}
 					ItemIterator.Value:PlaceSellOrder[${SellItems.Element[${SellItem}]}, ${ItemIterator.Value.Quantity}, 1]
 					CurrentSellOrders:Inc
@@ -264,6 +266,12 @@ objectdef obj_HangerSale inherits obj_State
 			}
 			while ${ItemIterator:Next(exists)}
 		}
+		return TRUE
+	}
+	
+	member:bool AcceptRepackage()
+	{
+		EVEWindow[ByCaption, "Repackage"]:ClickButtonYes
 		return TRUE
 	}
 	
