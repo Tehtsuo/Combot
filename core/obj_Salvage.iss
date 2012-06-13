@@ -213,6 +213,10 @@ objectdef obj_Salvage inherits obj_State
 			LootCans:Enable
 			do
 			{
+				if ${TargetIterator.Value.IsLockedTarget} || ${TargetIterator.Value.BeingTargeted}
+				{
+					AlreadySalvaged:Set[${TargetIterator.Value.ID}, ${Math.Calc[${LavishScript.RunningTime} + 5000]}]
+				}
 				echo Before Salvage
 				if  !${TargetIterator.Value.BeingTargeted} && \
 					!${TargetIterator.Value.IsLockedTarget} && \
