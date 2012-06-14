@@ -23,6 +23,8 @@ objectdef obj_Drones inherits obj_State
 {
 	variable obj_TargetList DroneTargets
 	variable int64 CurrentTarget = -1
+	variable bool DronesRemainDocked = FALSE
+	variable bool DronesOut = FALSE
 	
 	method Initialize()
 	{
@@ -49,6 +51,16 @@ objectdef obj_Drones inherits obj_State
 		DroneTargets:ClearQueryString
 	}
 
+	method RemainDocked()
+	{
+		DronesRemainDocked:Set[TRUE]
+	}
+
+	method StayDeployed()
+	{
+		DronesRemainDocked:Set[FALSE]
+	}
+
 	method Recall()
 	{
 		variable index:activedrone drones
@@ -66,13 +78,14 @@ objectdef obj_Drones inherits obj_State
 			}
 			while ${droneIterator:Next(exists)}
 		}
-		
 		EVE:DronesReturnToDroneBay[droneIDs]
+		DronesOut:Set[FALSE]
 	}
 
 	method Deploy()
 	{
 		Me:LaunchAllDrones
+		DronesOut:Set[TRUE]
 	}
 	
 	member:bool DroneControl()
@@ -99,6 +112,11 @@ objectdef obj_Drones inherits obj_State
 		
 		if ${TargetIterator:First(exists)}
 		{
+			if ${drones.Used} < ${Me.MaxActiveDrones} && !${DronesOut}
+			{
+				This:Deploy
+				return FALSE
+			}
 			do
 			{
 				if ${TargetIterator.Value.IsLockedTarget} || ${TargetIterator.Value.BeingTargeted}
@@ -146,6 +164,13 @@ objectdef obj_Drones inherits obj_State
 				}
 			}
 			while ${TargetIterator:Next(exists)}
+		}
+		else
+		{
+			if ${DronesOut}
+			{
+				This:Recall
+			}
 		}
 		return FALSE
 	}
