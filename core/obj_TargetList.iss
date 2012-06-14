@@ -22,10 +22,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 objectdef obj_TargetList inherits obj_State
 {
 	variable index:entity TargetList
-	
 	variable index:entity TargetListBuffer
-	
+	variable index:entity TargetListBufferOOR
 	variable index:string QueryStringList
+	variable int MaxRange = 20000
 	
 	method Initialize()
 	{
@@ -49,12 +49,28 @@ objectdef obj_TargetList inherits obj_State
 	{
 		if ${NPC}
 		{
-			QueryStringList:Insert["IsTargetingMe && IsNPC"]
+			This:AddQueryString["IsTargetingMe && IsNPC"]
 		}
 		else
 		{
-			QueryStringList:Insert["IsTargetingMe"]
+			This:AddQueryString["IsTargetingMe"]
 		}
+	}
+	
+	method AddAllNPCs()
+	{
+		variable string QueryString="CategoryID = CATEGORYID_ENTITY && IsNPC && !("
+		
+		;Exclude Groups here
+		QueryString:Concat["GroupID = GROUP_CONCORDDRONE ||"]
+		QueryString:Concat["GroupID = GROUP_CONVOYDRONE ||"]
+		QueryString:Concat["GroupID = GROUP_CONVOY ||"]
+		QueryString:Concat["GroupID = GROUP_LARGECOLLIDABLEOBJECT ||"]
+		QueryString:Concat["GroupID = GROUP_LARGECOLLIDABLESHIP ||"]
+		QueryString:Concat["GroupID = GROUP_SPAWNCONTAINER ||"]
+		QueryString:Concat["GroupID = GROUP_LARGECOLLIDABLESTRUCTURE)"]
+		
+		This:AddQueryString["${QueryString.Escape}"]
 	}
 	
 	member:bool UpdateList()
@@ -89,7 +105,14 @@ objectdef obj_TargetList inherits obj_State
 		{
 			do
 			{
-				This.TargetListBuffer:Insert[${entity_iterator.Value.ID}]
+				if ${entity_iterator.Value.Distance} <= ${MaxRange}
+				{
+					This.TargetListBuffer:Insert[${entity_iterator.Value.ID}]
+				}
+				else
+				{
+					This.TargetListBufferOOR:Insert[${entity_iterator.Value.ID}]
+				}
 			}
 			while ${entity_iterator:Next(exists)}
 		}
@@ -110,7 +133,19 @@ objectdef obj_TargetList inherits obj_State
 			}
 			while ${entity_iterator:Next(exists)}
 		}
+		
+		This.TargetListBufferOOR:GetIterator[entity_iterator]
+
+		if ${entity_iterator:First(exists)}
+		{
+			do
+			{
+				This.TargetList:Insert[${entity_iterator.Value.ID}]
+			}
+			while ${entity_iterator:Next(exists)}
+		}
 		This.TargetListBuffer:Clear
+		This.TargetListBufferOOR:Clear
 		return TRUE
 	}
 }
