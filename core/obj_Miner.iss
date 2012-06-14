@@ -299,6 +299,7 @@ objectdef obj_Miner inherits obj_State
 				if  !${Roid.Value.BeingTargeted} &&\
 					!${Roid.Value.IsLockedTarget}
 				{
+					UI:Update["obj_Miner", "Locking ${Roid.Value.Name} (${ComBot.MetersToKM_Str[${Roid.Value.Distance}]})", "y"]
 					Roid.Value:LockTarget
 					return FALSE
 				}
@@ -331,6 +332,7 @@ objectdef obj_Miner inherits obj_State
 			}
 			if ${Config.Miner.IceMining}
 			{
+				UI:Update["obj_Miner", "Activating ${Ship.ModuleList_MiningLaser.InActiveCount} laser(s) on ${Roid.Value.Name} (${ComBot.MetersToKM_Str[${Roid.Value.Distance}]})", "y"]
 				Ship.ModuleList_MiningLaser:ActivateCount[${Ship.ModuleList_MiningLaser.InActiveCount}, ${Roid.Value.ID}]
 				return FALSE
 			}
@@ -338,6 +340,7 @@ objectdef obj_Miner inherits obj_State
 			{
 				if !${Ship.ModuleList_MiningLaser.IsActiveOn[${Roid.Value.ID}]}
 				{
+					UI:Update["obj_Miner", "Activating 1 laser on ${Roid.Value.Name} (${ComBot.MetersToKM_Str[${Roid.Value.Distance}]})", "y"]
 					Ship.ModuleList_MiningLaser:Activate[${Roid.Value.ID}]
 					return FALSE
 				}
