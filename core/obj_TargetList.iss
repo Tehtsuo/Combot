@@ -61,11 +61,12 @@ objectdef obj_TargetList inherits obj_State
 	{
 		variable iterator QueryStringIterator
 		QueryStringList:GetIterator[QueryStringIterator]
+
 		if ${QueryStringIterator:First(exists)}
 		{
 			do
 			{
-				this:QueueState["GetQueryString", -1, "${QueryStringIterator.Value.Escape}"]
+				This:QueueState["GetQueryString", -1, "${QueryStringIterator.Value.Escape}"]
 			}
 			while ${QueryStringIterator:Next(exists)}
 		}
@@ -80,7 +81,7 @@ objectdef obj_TargetList inherits obj_State
 		variable iterator entity_iterator
 		if !${Client.InSpace}
 		{
-			return
+			return FALSE
 		}
 		EVE:QueryEntities[entity_index, "${QueryString.Escape}"]		
 		entity_index:GetIterator[entity_iterator]
@@ -100,7 +101,7 @@ objectdef obj_TargetList inherits obj_State
 		variable iterator entity_iterator
 		This.TargetList:Clear
 		This.TargetListBuffer:GetIterator[entity_iterator]
-		
+
 		if ${entity_iterator:First(exists)}
 		{
 			do

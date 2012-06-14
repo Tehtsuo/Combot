@@ -35,10 +35,13 @@ objectdef obj_Combat inherits obj_State
 		if ${This.IsIdle}
 		{
 			UI:Update["obj_Combat", "Started", "g"]
-			This:QueueState["WaitForAgro"]
-			This:QueueState["KillAgro"]
-			This:QueueState["ClearPocket"]
-			This:QueueState["ClearTargetAddedList"]
+;			This:QueueState["WaitForAgro"]
+;			This:QueueState["KillAgro"]
+;			This:QueueState["ClearPocket"]
+;			This:QueueState["ClearTargetAddedList"]
+			Drones:RemainDocked
+			Drones:Defensive
+;			Drones:Deploy
 		}
 	}
 	
