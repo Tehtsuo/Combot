@@ -76,10 +76,6 @@ objectdef obj_Targets inherits obj_State
 	}
 	
 
-	member:int LockedAndLockingCount()
-	{
-		return ${LockedAndLocking.Used}
-	}
 	
 	member:bool Update()
 	{

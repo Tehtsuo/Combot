@@ -220,7 +220,7 @@ objectdef obj_Salvage inherits obj_State
 				echo Before Salvage
 				if  !${TargetIterator.Value.BeingTargeted} && \
 					!${TargetIterator.Value.IsLockedTarget} && \
-					${Targets.LockedAndLockingTargets} == ${MaxTarget}
+					${Targets.Locked} == ${MaxTarget}
 				{
 					if ${TargetIterator.Value.Distance} > ${Ship.Module_TractorBeams_Range}
 					{
@@ -236,7 +236,7 @@ objectdef obj_Salvage inherits obj_State
 				echo After Salvage
 				if  !${TargetIterator.Value.BeingTargeted} && \
 					!${TargetIterator.Value.IsLockedTarget} && \
-					${Targets.LockedAndLockingTargets} < ${MaxTarget} && \
+					${Targets.Locked} < ${MaxTarget} && \
 					${TargetIterator.Value.Distance} < ${MyShip.MaxTargetRange} && \
 					!${AlreadySalvaged.Element[${TargetIterator.Value.ID}] >= ${LavishScript.RunningTime}} && \
 					!${Target.Value.Name.Equal["Cargo Container"]}
