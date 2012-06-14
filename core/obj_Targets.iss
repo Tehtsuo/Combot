@@ -94,4 +94,9 @@ objectdef obj_Targets
 	{
 		return ${This.TargetsByQuery[CategoryID != CATEGORYID_ORE]}
 	}
+	
+	member:int TargetingMe()
+	{
+		return ${This.TargetsByQuery[IsTargetingMe]}
+	}
 }
