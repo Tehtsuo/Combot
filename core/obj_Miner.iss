@@ -70,7 +70,7 @@ objectdef obj_Miner inherits obj_State
 					This:QueueState["Traveling", 1000]
 				}
 				break
-			case Do Nothing
+			case No Dropoff
 				break
 			default
 				if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) > 0.95
