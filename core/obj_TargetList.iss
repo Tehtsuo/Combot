@@ -27,12 +27,14 @@ objectdef obj_TargetList inherits obj_State
 	variable index:entity TargetListBufferOOR
 	variable index:entity LockedTargetListBuffer
 	variable index:entity LockedTargetListBufferOOR
+	variable index:entity MyTargets
 	variable collection:int DeadDelay
 	variable index:string QueryStringList
 	variable int64 DistanceTarget
 	variable int MaxRange = 20000
 	variable bool AutoLock = FALSE
 	variable bool AutoRelock = FALSE
+	variable int MaxLockCount = 2
 	
 	method Initialize()
 	{
@@ -117,6 +119,10 @@ objectdef obj_TargetList inherits obj_State
 		{
 			do
 			{
+				if ${entity_iterator.Value.IsLockedTarget} || ${entity_iterator.Value.BeingTargeted}
+				{
+					DeadDelay:Set[${entity_iterator.Value.ID}, ${Math.Calc[${LavishScript.RunningTime} + 5000]}]
+				}
 				if ${entity_iterator.Value.DistanceTo[${DistanceTarget}]} <= ${MaxRange}
 				{
 					This.TargetListBuffer:Insert[${entity_iterator.Value.ID}]
@@ -156,7 +162,47 @@ objectdef obj_TargetList inherits obj_State
 	
 	member:bool ManageLocks()
 	{
+		variable iterator EntityIterator
+		variable int MaxTarget = ${MyShip.MaxLockedTargets}
+		if ${Me.MaxLockedTargets} < ${MyShip.MaxLockedTargets}
+		{
+			MaxTarget:Set[${Me.MaxLockedTargets}]
+		}
 		
+		This.MyTargets:GetIterator[EntityIterator]
+		if ${EntityIterator:First(exists)}
+		{
+			do
+			{
+				if !${EntityIterator.Value(exists)}
+				{
+					This.MyTargets:Remove[${EntityIterator.Key}]
+				}
+			}
+			while ${EntityIterator:Next(exists)}
+		}
+		
+		This.MyTargets:Collapse
+		
+		if ${This.MyTargets.Used} < ${MaxLockCount} && ${Targets.Locked.Used} < ${MaxTarget} && ${EntityIterator.Distance} < ${Entity[${Target}].Distance} < ${MyShip.MaxTargetRange}
+		{
+			This.TargetList:GetIterator[EntityIterator]
+			if ${EntityIterator:First(exists)}
+			{
+				do
+				{
+					if !${EntityIterator.Value.IsLockedTarget} && !${EntityIterator.Value.BeingTargeted} && ${DeadDelay.Element[${EntityIterator.Value.ID}]} < ${LavishScript.RunningTime}
+					{
+						This.MyTargets:Insert[${EntityIterator.Value.ID}]
+						EntityIterator.Value:LockTarget
+						This:QueueState["Idle", ${Math.Rand[500]}]
+						DeadDelay:Set[${EntityIterator.Value.ID}, ${Math.Calc[${LavishScript.RunningTime} + 5000]}]
+						return TRUE
+					}
+				}
+				while ${EntityIterator:Next(exists)}
+			}
+		}
 		return TRUE
 	}
 	
