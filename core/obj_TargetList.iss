@@ -34,6 +34,7 @@ objectdef obj_TargetList inherits obj_State
 	variable int MaxRange = 20000
 	variable bool AutoLock = FALSE
 	variable bool AutoRelock = FALSE
+	variable bool AutoRelockPriority = FALSE
 	variable int MaxLockCount = 2
 	
 	method Initialize()
@@ -163,6 +164,8 @@ objectdef obj_TargetList inherits obj_State
 	member:bool ManageLocks()
 	{
 		variable iterator EntityIterator
+		variable bool NeedLock = FALSE
+		variable int64 LowestLock = -1
 		variable int MaxTarget = ${MyShip.MaxLockedTargets}
 		if ${Me.MaxLockedTargets} < ${MyShip.MaxLockedTargets}
 		{
@@ -184,14 +187,14 @@ objectdef obj_TargetList inherits obj_State
 		
 		This.MyTargets:Collapse
 		
-		if ${This.MyTargets.Used} < ${MaxLockCount} && ${Targets.Locked.Used} < ${MaxTarget} && ${EntityIterator.Distance} < ${Entity[${Target}].Distance} < ${MyShip.MaxTargetRange}
+		if ${This.MyTargets.Used} < ${MaxLockCount} && ${Targets.Locked.Used} < ${MaxTarget}
 		{
 			This.TargetList:GetIterator[EntityIterator]
 			if ${EntityIterator:First(exists)}
 			{
 				do
 				{
-					if !${EntityIterator.Value.IsLockedTarget} && !${EntityIterator.Value.BeingTargeted} && ${DeadDelay.Element[${EntityIterator.Value.ID}]} < ${LavishScript.RunningTime}
+					if !${EntityIterator.Value.IsLockedTarget} && !${EntityIterator.Value.BeingTargeted} && ${DeadDelay.Element[${EntityIterator.Value.ID}]} < ${LavishScript.RunningTime}  && ${EntityIterator.Distance} < ${Entity[${Target}].Distance} < ${MyShip.MaxTargetRange}
 					{
 						This.MyTargets:Insert[${EntityIterator.Value.ID}]
 						EntityIterator.Value:LockTarget
@@ -199,9 +202,18 @@ objectdef obj_TargetList inherits obj_State
 						DeadDelay:Set[${EntityIterator.Value.ID}, ${Math.Calc[${LavishScript.RunningTime} + 5000]}]
 						return TRUE
 					}
+					if ${EntityIterator.Value.IsLockedTarget} && ${AutoRelockPriority} || (${AutoRelock}  && ${EntityIterator.Distance} < ${Entity[${Target}].Distance} < ${MyShip.MaxTargetRange})
+					{
+						LowestLock:Set[TRUE]
+					}
 				}
 				while ${EntityIterator:Next(exists)}
 			}
+		}
+		if {$AutoRelock || $AutoRelockPriority} && !${LowestLock.Equal[-1]}
+		{
+			Entity[${LowestLock}]:UnlockTarget
+			This:QueueState["Idle", ${Math.Rand[500]}]
 		}
 		return TRUE
 	}
