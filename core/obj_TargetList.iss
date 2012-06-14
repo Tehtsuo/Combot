@@ -25,6 +25,7 @@ objectdef obj_TargetList inherits obj_State
 	variable index:entity TargetListBuffer
 	variable index:entity TargetListBufferOOR
 	variable index:string QueryStringList
+	variable int64 DistanceTarget
 	variable int MaxRange = 20000
 	
 	method Initialize()
@@ -33,6 +34,7 @@ objectdef obj_TargetList inherits obj_State
 		PulseFrequency:Set[50]
 		RandomDelta:Set[0]
 		This:QueueState["UpdateList"]
+		DistanceTarget:Set[${MyShip.ID}]
 	}
 
 	method ClearQueryString()
@@ -105,7 +107,7 @@ objectdef obj_TargetList inherits obj_State
 		{
 			do
 			{
-				if ${entity_iterator.Value.Distance} <= ${MaxRange}
+				if ${entity_iterator.Value.DistanceTo[${DistanceTarget}]} <= ${MaxRange}
 				{
 					This.TargetListBuffer:Insert[${entity_iterator.Value.ID}]
 				}
