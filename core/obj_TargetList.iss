@@ -163,6 +163,10 @@ objectdef obj_TargetList inherits obj_State
 	
 	member:bool ManageLocks()
 	{
+		if !${Client.InSpace} || ${Me.ToEntity.Mode} == 3
+		{
+			return TRUE
+		}
 		variable iterator EntityIterator
 		variable bool NeedLock = FALSE
 		variable int64 LowestLock = -1

@@ -33,6 +33,7 @@ objectdef obj_Drones inherits obj_State
 		UI:Update["obj_Drones", "Initialized", "g"]
 		This:QueueState["DroneControl"]
 		DroneTargets.MaxRange:Set[${Me.DroneControlDistance}]
+		DroneTargets.AutoRelock:Set[TRUE]
 	}
 	
 	method Defensive()
@@ -83,8 +84,6 @@ objectdef obj_Drones inherits obj_State
 		variable iterator droneIterator
 		variable index:int64 droneIDs
 		variable iterator TargetIterator
-		variable int MaxTarget = ${MyShip.MaxLockedTargets}
-		variable bool NeedLock = FALSE
 		
 		if !${Client.InSpace}
 		{
@@ -99,16 +98,10 @@ objectdef obj_Drones inherits obj_State
 			return FALSE
 		}
 		
-		if ${Me.MaxLockedTargets} < ${MyShip.MaxLockedTargets}
-		{
-			MaxTarget:Set[${Me.MaxLockedTargets}]
-		}
 		
 		Me:GetActiveDrones[drones]
 		
-		DroneTargets.TargetList:GetIterator[TargetIterator]
-		
-		echo ${DroneTargets.TargetList.Used}
+		DroneTargets.LockedTargetList:GetIterator[TargetIterator]
 		
 		if !${Entity[${CurrentTarget}](exists)} || ${Entity[${CurrentTarget}].Distance} > ${Me.DroneControlDistance}
 		{
@@ -124,55 +117,33 @@ objectdef obj_Drones inherits obj_State
 			}
 			do
 			{
-				if ${TargetIterator.Value.IsLockedTarget} || ${TargetIterator.Value.BeingTargeted}
+				if ${CurrentTarget.Equal[-1]}
 				{
-					if ${TargetIterator.Value.IsLockedTarget}
+					CurrentTarget:Set[${TargetIterator.Value.ID}]
+					return FALSE
+				}
+				if ${CurrentTarget.Equal[${TargetIterator.Value.ID}]}
+				{
+					drones:GetIterator[droneIterator]
+					if ${droneIterator:First(exists)}
 					{
-						if (${TargetIterator.Value.Distance} > ${Me.DroneControlDistance}) && ${NeedLock}
+						do
 						{
-							TargetIterator.Value:UnlockTarget
-							if ${CurrentTarget.Equal[${TargetIterator.Value.ID}]}
+							if !${droneIterator.Value.Target.ID.Equal[${CurrentTarget}]}
 							{
-								CurrentTarget:Set[-1]
+								droneIDs:Insert[${droneIterator.Value.ID}]
 							}
-							return FALSE
 						}
-						if ${CurrentTarget.Equal[-1]}
-						{
-							CurrentTarget:Set[${TargetIterator.Value.ID}]
-							return FALSE
-						}
-						if ${CurrentTarget.Equal[${TargetIterator.Value.ID}]} && !${TargetIterator.Value.IsActiveTarget}
+						while ${droneIterator:Next(exists)}
+					}
+					if ${droneIDs.Used}>0
+					{
+						if !${TargetIterator.Value.IsActiveTarget}
 						{
 							TargetIterator.Value:MakeActiveTarget
+							return FALSE
 						}
-						if ${CurrentTarget.Equal[${TargetIterator.Value.ID}]} && ${TargetIterator.Value.IsActiveTarget}
-						{
-							drones:GetIterator[droneIterator]
-							if ${droneIterator:First(exists)}
-							{
-								do
-								{
-									if !${droneIterator.Value.Target.ID.Equal[${CurrentTarget}]}
-									{
-										droneIDs:Insert[${droneIterator.Value.ID}]
-									}
-								}
-								while ${droneIterator:Next(exists)}
-							}
-							if ${droneIDs.Used}>0
-							{
-								EVE:DronesEngageMyTarget[droneIDs]
-								return FALSE
-							}
-						}
-					}
-				}
-				else
-				{
-					if ${Targets.NotAsteroids} < 2 && ${Targets.LockedAndLockingTargets} <= ${MaxTarget}
-					{
-						TargetIterator.Value:LockTarget
+						EVE:DronesEngageMyTarget[droneIDs]
 						return FALSE
 					}
 				}
