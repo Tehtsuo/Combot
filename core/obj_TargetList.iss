@@ -22,10 +22,19 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 objectdef obj_TargetList inherits obj_State
 {
 	variable index:entity TargetList
-	
+	variable index:entity LockedTargetList
 	variable index:entity TargetListBuffer
-	
+	variable index:entity TargetListBufferOOR
+	variable index:entity LockedTargetListBuffer
+	variable index:entity LockedTargetListBufferOOR
+	variable index:entity MyTargets
+	variable collection:int DeadDelay
 	variable index:string QueryStringList
+	variable int64 DistanceTarget
+	variable int MaxRange = 20000
+	variable bool AutoLock = FALSE
+	variable bool AutoRelock = FALSE
+	variable int MaxLockCount = 2
 	
 	method Initialize()
 	{
@@ -33,6 +42,7 @@ objectdef obj_TargetList inherits obj_State
 		PulseFrequency:Set[50]
 		RandomDelta:Set[0]
 		This:QueueState["UpdateList"]
+		DistanceTarget:Set[${MyShip.ID}]
 	}
 
 	method ClearQueryString()
@@ -49,12 +59,28 @@ objectdef obj_TargetList inherits obj_State
 	{
 		if ${NPC}
 		{
-			QueryStringList:Insert["IsTargetingMe && IsNPC"]
+			This:AddQueryString["IsTargetingMe && IsNPC"]
 		}
 		else
 		{
-			QueryStringList:Insert["IsTargetingMe"]
+			This:AddQueryString["IsTargetingMe"]
 		}
+	}
+	
+	method AddAllNPCs()
+	{
+		variable string QueryString="CategoryID = CATEGORYID_ENTITY && IsNPC && !("
+		
+		;Exclude Groups here
+		QueryString:Concat["GroupID = GROUP_CONCORDDRONE ||"]
+		QueryString:Concat["GroupID = GROUP_CONVOYDRONE ||"]
+		QueryString:Concat["GroupID = GROUP_CONVOY ||"]
+		QueryString:Concat["GroupID = GROUP_LARGECOLLIDABLEOBJECT ||"]
+		QueryString:Concat["GroupID = GROUP_LARGECOLLIDABLESHIP ||"]
+		QueryString:Concat["GroupID = GROUP_SPAWNCONTAINER ||"]
+		QueryString:Concat["GroupID = GROUP_LARGECOLLIDABLESTRUCTURE)"]
+		
+		This:AddQueryString["${QueryString.Escape}"]
 	}
 	
 	member:bool UpdateList()
@@ -71,6 +97,10 @@ objectdef obj_TargetList inherits obj_State
 			while ${QueryStringIterator:Next(exists)}
 		}
 		This:QueueState["PopulateList"]
+		if ${AutoLock}
+		{
+			This:QueueState["ManageLocks"]
+		}
 		This:QueueState["UpdateList"]
 		return TRUE
 	}
@@ -89,7 +119,26 @@ objectdef obj_TargetList inherits obj_State
 		{
 			do
 			{
-				This.TargetListBuffer:Insert[${entity_iterator.Value.ID}]
+				if ${entity_iterator.Value.IsLockedTarget} || ${entity_iterator.Value.BeingTargeted}
+				{
+					DeadDelay:Set[${entity_iterator.Value.ID}, ${Math.Calc[${LavishScript.RunningTime} + 5000]}]
+				}
+				if ${entity_iterator.Value.DistanceTo[${DistanceTarget}]} <= ${MaxRange}
+				{
+					This.TargetListBuffer:Insert[${entity_iterator.Value.ID}]
+					if ${entity_iterator.Value.IsLockedTarget}
+					{
+						This.LockedTargetListBuffer:Insert[${entity_iterator.Value.ID}]
+					}
+				}
+				else
+				{
+					This.TargetListBufferOOR:Insert[${entity_iterator.Value.ID}]
+					if ${entity_iterator.Value.IsLockedTarget}
+					{
+						This.LockedTargetListBufferOOR:Insert[${entity_iterator.Value.ID}]
+					}
+				}
 			}
 			while ${entity_iterator:Next(exists)}
 		}
@@ -98,19 +147,76 @@ objectdef obj_TargetList inherits obj_State
 	
 	member:bool PopulateList()
 	{
-		variable iterator entity_iterator
 		This.TargetList:Clear
-		This.TargetListBuffer:GetIterator[entity_iterator]
-
-		if ${entity_iterator:First(exists)}
+		This.LockedTargetList:Clear
+		
+		This:DeepCopyEntityIndex["This.TargetListBuffer", "This.TargetList"]
+		This:DeepCopyEntityIndex["This.TargetListBufferOOR", "This.TargetList"]
+		This:DeepCopyEntityIndex["This.LockedTargetListBuffer", "This.LockedTargetList"]
+		This:DeepCopyEntityIndex["This.LockedTargetListBufferOOR", "This.LockedTargetList"]
+		
+		This.TargetListBuffer:Clear
+		This.TargetListBufferOOR:Clear
+		return TRUE
+	}
+	
+	member:bool ManageLocks()
+	{
+		variable iterator EntityIterator
+		variable int MaxTarget = ${MyShip.MaxLockedTargets}
+		if ${Me.MaxLockedTargets} < ${MyShip.MaxLockedTargets}
+		{
+			MaxTarget:Set[${Me.MaxLockedTargets}]
+		}
+		
+		This.MyTargets:GetIterator[EntityIterator]
+		if ${EntityIterator:First(exists)}
 		{
 			do
 			{
-				This.TargetList:Insert[${entity_iterator.Value.ID}]
+				if !${EntityIterator.Value(exists)}
+				{
+					This.MyTargets:Remove[${EntityIterator.Key}]
+				}
 			}
-			while ${entity_iterator:Next(exists)}
+			while ${EntityIterator:Next(exists)}
 		}
-		This.TargetListBuffer:Clear
+		
+		This.MyTargets:Collapse
+		
+		if ${This.MyTargets.Used} < ${MaxLockCount} && ${Targets.Locked.Used} < ${MaxTarget} && ${EntityIterator.Distance} < ${Entity[${Target}].Distance} < ${MyShip.MaxTargetRange}
+		{
+			This.TargetList:GetIterator[EntityIterator]
+			if ${EntityIterator:First(exists)}
+			{
+				do
+				{
+					if !${EntityIterator.Value.IsLockedTarget} && !${EntityIterator.Value.BeingTargeted} && ${DeadDelay.Element[${EntityIterator.Value.ID}]} < ${LavishScript.RunningTime}
+					{
+						This.MyTargets:Insert[${EntityIterator.Value.ID}]
+						EntityIterator.Value:LockTarget
+						This:QueueState["Idle", ${Math.Rand[500]}]
+						DeadDelay:Set[${EntityIterator.Value.ID}, ${Math.Calc[${LavishScript.RunningTime} + 5000]}]
+						return TRUE
+					}
+				}
+				while ${EntityIterator:Next(exists)}
+			}
+		}
 		return TRUE
+	}
+	
+	method DeepCopyEntityIndex(string From, string To)
+	{
+		variable iterator EntityIterator
+		${From}:GetIterator[EntityIterator]
+		if ${EntityIterator:First(exists)}
+		{
+			do
+			{
+				${To}:Insert[${EntityIterator.Value.ID}]
+			}
+			while ${EntityIterator:Next(exists)}
+		}
 	}
 }

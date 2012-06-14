@@ -32,6 +32,7 @@ objectdef obj_Drones inherits obj_State
 		PulseFrequency:Set[1000]
 		UI:Update["obj_Drones", "Initialized", "g"]
 		This:QueueState["DroneControl"]
+		DroneTargets.MaxRange:Set[${Me.DroneControlDistance}]
 	}
 	
 	method Defensive()
@@ -44,6 +45,7 @@ objectdef obj_Drones inherits obj_State
 	{
 		DroneTargets:ClearQueryString
 		DroneTargets:AddTargetingMe
+		DroneTargets:AddAllNPCs
 	}
 
 	method Passive()

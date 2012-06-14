@@ -40,7 +40,7 @@ objectdef obj_Combat inherits obj_State
 ;			This:QueueState["ClearPocket"]
 ;			This:QueueState["ClearTargetAddedList"]
 			Drones:RemainDocked
-			Drones:Defensive
+			Drones:Aggressive
 ;			Drones:Deploy
 		}
 	}
