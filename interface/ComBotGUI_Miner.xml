@@ -84,7 +84,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					<Text name='obj_Miner_MiningSystemTitle'> 
 						<X>1%</X> 
 						<Y>60%</Y> 
-						<Width>30%</Width> 
+						<Width>36%</Width> 
 						<Height>2%</Height> 
 						<Alignment>Center</Alignment>
 						<Text>Mining System Bookmark</Text>
@@ -95,7 +95,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<BorderColor>FFFFFFFF</BorderColor>
 						<X>1%</X>
 						<Y>62%</Y>
-						<Width>30%</Width>
+						<Width>36%</Width>
 						<Height>20%</Height>
 						<OnLoad>
 							variable index:bookmark Bookmarks
@@ -118,7 +118,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					</listbox>
 					<Checkbox name='obj_MinerUseBookmarks'>
 						<X>1%</X>
-						<Y>85%</Y>
+						<Y>84%</Y>
 						<Width>20%</Width> 
 						<Height>20</Height> 
 						<Text>Use belt bookmarks</Text>
@@ -134,7 +134,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					</Checkbox>
 					<Checkbox name='obj_MinerAlwaysShieldBoost'>
 						<X>1%</X>
-						<Y>97%</Y>
+						<Y>96%</Y>
 						<Width>20%</Width> 
 						<Height>20</Height> 
 						<Text>Always Shield Boost</Text>
@@ -158,7 +158,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					<Textentry name='obj_MinerOrePrefix'>
 						<X>17%</X>
 						<Y>88%</Y>
-						<Width>14%</Width> 
+						<Width>20%</Width> 
 						<Height>3%</Height> 
 						<OnLoad>
 							This:SetText[${Script[ComBot].VariableScope.Config.Miner.BeltPrefix}]
@@ -180,7 +180,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					<Textentry name='obj_MinerIcePrefix'>
 						<X>17%</X>
 						<Y>92%</Y>
-						<Width>14%</Width> 
+						<Width>20%</Width> 
 						<Height>3%</Height> 
 						<OnLoad>
 							This:SetText[${Script[ComBot].VariableScope.Config.Miner.IceBeltPrefix}]
@@ -196,7 +196,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					<Text name='obj_MinerDropoffBookmarkTitle'> 
 						<X>1%</X> 
 						<Y>28%</Y> 
-						<Width>30%</Width> 
+						<Width>36%</Width> 
 						<Height>2%</Height> 
 						<Alignment>Center</Alignment>
 						<Text>Dropoff Bookmark</Text>
@@ -207,7 +207,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<BorderColor>FFFFFFFF</BorderColor>
 						<X>1%</X>
 						<Y>30%</Y>
-						<Width>30%</Width>
+						<Width>36%</Width>
 						<Height>20%</Height>
 						<OnLoad>
 							variable index:bookmark Bookmarks
@@ -230,17 +230,17 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					</listbox>
 					<Text name='obj_MinerOrcaNameTitle'> 
 						<X>1%</X> 
-						<Y>52%</Y> 
-						<Width>30%</Width> 
+						<Y>51%</Y> 
+						<Width>36%</Width> 
 						<Height>2%</Height> 
 						<Alignment>Center</Alignment>
 						<Text>Orca Name</Text>
 					</Text>
 					<TextEntry name='obj_MinerOrcaName'> 
 						<X>1%</X> 
-						<Y>55%</Y> 
-						<Width>30%</Width> 
-						<Height>2%</Height> 
+						<Y>53%</Y> 
+						<Width>36%</Width> 
+						<Height>3%</Height> 
 						<OnLoad>
 							This:SetText[${Script[ComBot].VariableScope.Config.Miner.Miner_OrcaName}]
 						</OnLoad>
@@ -253,7 +253,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					</TextEntry>
 
 					<Text name='obj_MinerDropoffBookmarkTypeTitle'> 
-						<X>32%</X> 
+						<X>38%</X> 
 						<Y>28%</Y> 
 						<Width>20%</Width> 
 						<Height>2%</Height> 
@@ -264,10 +264,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<BackgroundColor>FF000000</BackgroundColor>
 						<Border>1</Border>
 						<BorderColor>FFFFFFFF</BorderColor>
-						<X>32%</X>
+						<X>38%</X>
 						<Y>30%</Y>
-						<Width>20%</Width>
-						<Height>20%</Height>
+						<Width>30%</Width>
+						<Height>26%</Height>
 						<Items>
 							<Item>Personal Hangar</Item>
 							<Item>Orca</Item>
@@ -287,9 +287,9 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						</OnSelect>
 					</listbox>
 					<Text name='obj_MinerOrePriorityTitle'> 
-						<X>79%</X> 
+						<X>69%</X> 
 						<Y>28%</Y> 
-						<Width>20%</Width> 
+						<Width>30%</Width> 
 						<Height>2%</Height> 
 						<Alignment>Center</Alignment>
 						<Text>Ore/Ice Priority</Text>
