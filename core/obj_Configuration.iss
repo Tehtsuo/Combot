@@ -351,6 +351,16 @@ objectdef obj_Configuration_Miner
 		This.CommonRef:AddSetting[Miner_Dropoff_Type,${value}]
 	}
 	
+	member:string Miner_OrcaName()
+	{
+		return ${This.CommonRef.FindSetting[Miner_OrcaName]}
+	}
+
+	method SetMiner_OrcaName(string value)
+	{
+		This.CommonRef:AddSetting[Miner_OrcaName,${value}]
+	}
+	
 	member:bool IceMining()
 	{
 		return ${This.CommonRef.FindSetting[IceMining]}
