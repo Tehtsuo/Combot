@@ -21,7 +21,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 objectdef obj_Targets inherits obj_State
 {
-	variable index:entity LockedAndLocking
+	variable index:entity Locked
+	variable index:entity Asteroids
 
 	method Initialize()
 	{
@@ -30,7 +31,7 @@ objectdef obj_Targets inherits obj_State
 		This[parent]:Initialize
 		RandomDelta:Set[0]
 
-		This:QueueState["UpdateLockedAndLocking", 100]
+		This:QueueState["Update", 20]
 	}
 
 
@@ -80,37 +81,44 @@ objectdef obj_Targets inherits obj_State
 		return ${LockedAndLocking.Used}
 	}
 	
-	member:bool UpdateLockedAndLocking()
+	member:bool Update()
 	{
 		if !${Client.InSpace}
 		{
 			return FALSE
 		}
-		EVE:QueryEntities[LockedAndLocking, "IsLockedTarget || BeingTargeted"]
-		echo ${LockedAndLocking.Used}
+		EVE:QueryEntities[Locked, "IsLockedTarget || BeingTargeted"]
+		EVE:QueryEntities[Asteroids, "IsLockedTarget || BeingTargeted && CategoryID == CATEGORYID_ORE"]
 		return FALSE
 	}
 
-	member:int TargetsByQuery(string Query)
+	member:int TargetsByQuery(string QueryString)
 	{
 		variable index:entity Targets
-		EVE:QueryEntities[Targets, "(IsLockedTarget || BeingTargeted) && (${Query})"]
+		EVE:QueryEntities[Targets, "(IsLockedTarget || BeingTargeted) && (${QueryString})"]
 		
 		return ${Targets.Used}
 	}
-	
-	member:int Asteroids()
-	{
-		return ${This.TargetsByQuery[CategoryID == CATEGORYID_ORE]}
-	}
 
-	member:int NotAsteroids()
-	{
-		return ${This.TargetsByQuery[CategoryID != CATEGORYID_ORE]}
-	}
-	
 	member:int TargetingMe()
 	{
 		return ${This.TargetsByQuery[IsTargetingMe]}
+	}
+	
+	member:bool AsteroidIsInRangeOfOthers(int64 id)
+	{
+		variable iterator Target
+		Asteroids:GetIterator[Target]
+		
+		if ${Target:First(exists)}
+		do
+		{
+			if ${Entity[${Target.Value}].DistanceTo[${id}]} > ${Math.Calc[${Ship.Module_MiningLaser_Range} * 2]}
+			{
+				return FALSE
+			}
+		}
+		while ${Target:Next(exists)}
+		return TRUE		
 	}
 }
