@@ -163,6 +163,10 @@ objectdef obj_TargetList inherits obj_State
 	
 	member:bool ManageLocks()
 	{
+		if !${Client.InSpace} || ${Me.ToEntity.Mode} == 3
+		{
+			return TRUE
+		}
 		variable iterator EntityIterator
 		variable bool NeedLock = FALSE
 		variable int64 LowestLock = -1
@@ -194,7 +198,7 @@ objectdef obj_TargetList inherits obj_State
 			{
 				do
 				{
-					if !${EntityIterator.Value.IsLockedTarget} && !${EntityIterator.Value.BeingTargeted} && ${DeadDelay.Element[${EntityIterator.Value.ID}]} < ${LavishScript.RunningTime}  && ${EntityIterator.Distance} < ${Entity[${Target}].Distance} < ${MyShip.MaxTargetRange}
+					if !${EntityIterator.Value.IsLockedTarget} && !${EntityIterator.Value.BeingTargeted} && ${DeadDelay.Element[${EntityIterator.Value.ID}]} < ${LavishScript.RunningTime}  && ${EntityIterator.Value.Distance} < ${MyShip.MaxTargetRange}
 					{
 						This.MyTargets:Insert[${EntityIterator.Value.ID}]
 						EntityIterator.Value:LockTarget
@@ -202,7 +206,7 @@ objectdef obj_TargetList inherits obj_State
 						DeadDelay:Set[${EntityIterator.Value.ID}, ${Math.Calc[${LavishScript.RunningTime} + 5000]}]
 						return TRUE
 					}
-					if ${EntityIterator.Value.IsLockedTarget} && ${AutoRelockPriority} || (${AutoRelock}  && ${EntityIterator.Distance} < ${Entity[${Target}].Distance} < ${MyShip.MaxTargetRange})
+					if ${EntityIterator.Value.IsLockedTarget} && (${AutoRelockPriority} || (${AutoRelock}  && ${EntityIterator.Distance} < ${Entity[${Target}].Distance} < ${MyShip.MaxTargetRange}))
 					{
 						LowestLock:Set[TRUE]
 					}
