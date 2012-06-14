@@ -792,6 +792,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 										}
 									}
 								}
+							Script[ComBot].VariableScope.Miner:PopulateTargetList
 							</OnLeftClick>
 					</Checkbox>
 					

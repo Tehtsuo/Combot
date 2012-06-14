@@ -21,12 +21,17 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 objectdef obj_Miner inherits obj_State
 {
+	variable obj_TargetList Asteroids
 
 	method Initialize()
 	{
 		This[parent]:Initialize
 		This:AssignStateQueueDisplay[obj_MinerStateList@Miner@ComBotTab@ComBot]
 		PulseFrequency:Set[20]
+		This:PopulateTargetList
+		Asteroids.AutoLock:Set[TRUE]
+		Asteroids.AutoRelock:Set[TRUE]
+		Asteroids.AutoRelockPriority:Set[TRUE]
 		UI:Update["obj_Miner", "Initialized", "g"]
 	}
 
@@ -38,6 +43,34 @@ objectdef obj_Miner inherits obj_State
 			Asteroids:QueueState["UpdateList"]
 			This:QueueState["Idle", 2000]
 			This:QueueState["Mine"]
+		}
+	}
+	
+	method PopulateTargetList()
+	{
+		Asteroids:ClearQueryString
+		
+		variable iterator OreTypeIterator
+		if ${Config.Miner.IceMining}
+		{
+			Config.Miner.IceTypesRef:GetSettingIterator[OreTypeIterator]
+		}
+		else
+		{
+			Config.Miner.OreTypesRef:GetSettingIterator[OreTypeIterator]
+		}
+
+		if ${OreTypeIterator:First(exists)}
+		{		
+			do
+			{
+				Asteroids:AddQueryString[CategoryID==CATEGORYID_ORE && Name =- "${OreTypeIterator.Key}"]
+			}
+			while ${OreTypeIterator:Next(exists)}			
+		}
+		else
+		{
+			echo "WARNING: obj_Miner: Ore Type list is empty, please check config"
 		}
 	}
 	
@@ -248,17 +281,17 @@ objectdef obj_Miner inherits obj_State
 			return TRUE
 		}
 		
+		Asteroids.MaxLockCount:Set[${Ship.ModuleList_MiningLaser.Count}]
 		
-		if ${Asteroids.AsteroidList.Used} == 0
+		if !${Entity[CategoryID==CATEGORYID_ORE]}
 		{
 			Drones:Recall
-			UI:Update["obj_Miner", "${Asteroids.AsteroidList.Used} asteroids found, moving to another belt", "g"]
+			UI:Update["obj_Miner", "No asteroids found, moving to a new belt", "g"]
 			This:QueueState["CheckCargoHold", 1000]
 			This:QueueState["GoToMiningSystem", 1000]
 			return TRUE
 		}
 
-		echo Setting Aggresive
 		Drones:RemainDocked
 		Drones:Aggressive
 		
@@ -268,6 +301,7 @@ objectdef obj_Miner inherits obj_State
 			if ${Entity[${Config.Miner.Miner_OrcaName}](exists)}
 			{
 				Orca:Set[${Entity[${Config.Miner.Miner_OrcaName}].ID}]
+				Asteroids.DistanceTarget:Set[${Orca}]
 				if ${Entity[${Orca}].Distance} > LOOT_RANGE
 				{
 					Move:Approach[${Orca}, LOOT_RANGE]
@@ -291,27 +325,31 @@ objectdef obj_Miner inherits obj_State
 					}
 				}
 			}
+			else
+			{
+				Asteroids.DistanceTarget:Set[${MyShip.ID}]
+			}
 		}
 		
-		if ${Config.Miner.IceMining}
-		{
-			if  ${Targets.Asteroids.Used} < 1
-			{
-				This:QueueState["TargetAsteroids", 50, 1]
-				This:QueueState["Mine"]
-				return TRUE
+		; if ${Config.Miner.IceMining}
+		; {
+			; if  ${Targets.Asteroids.Used} < 1
+			; {
+				; This:QueueState["TargetAsteroids", 50, 1]
+				; This:QueueState["Mine"]
+				; return TRUE
 				
-			}
-		}
-		else
-		{
-			if  ${Targets.Asteroids.Used} < ${Ship.ModuleList_MiningLaser.Count}
-			{
-				This:QueueState["TargetAsteroids"]
-				This:QueueState["Mine"]
-				return TRUE
-			}
-		}
+			; }
+		; }
+		; else
+		; {
+			; if  ${Targets.Asteroids.Used} < ${Ship.ModuleList_MiningLaser.Count}
+			; {
+				; This:QueueState["TargetAsteroids"]
+				; This:QueueState["Mine"]
+				; return TRUE
+			; }
+		; }
 
 		if ${Ship.ModuleList_MiningLaser.ActiveCount} < ${Ship.ModuleList_MiningLaser.Count}
 		{
@@ -323,60 +361,56 @@ objectdef obj_Miner inherits obj_State
 		if !${Config.Miner.Miner_Dropoff_Type.Equal[No Dropoff]}
 		{
 			This:QueueState["CheckCargoHold"]
-		}
-		return TRUE
-	}
-	
-	member:bool TargetAsteroids()
-	{
-		if ${Targets.Asteroids.Used} == ${Ship.ModuleList_MiningLaser.Count}
-		{
 			return TRUE
 		}
-		variable iterator Roid
-		Asteroids.AsteroidList:GetIterator[Roid]
-		if ${Roid:First(exists)}
-		do
-		{
-			if ${Targets.AsteroidIsInRangeOfOthers[${Roid.Value.ID}]}
-			{
-				if  !${Roid.Value.BeingTargeted} &&\
-					!${Roid.Value.IsLockedTarget} &&\
-					${Roid.Value.Distance} >= ${MyShip.MaxTargetRange}
-				{
-					Move:Approach[${Roid.Value.ID}, ${MyShip.MaxTargetRange}]
-					return FALSE
-				}
-
-				if  !${Roid.Value.BeingTargeted} &&\
-					!${Roid.Value.IsLockedTarget}
-				{
-					UI:Update["obj_Miner", "Locking ${Roid.Value.Name} (${ComBot.MetersToKM_Str[${Roid.Value.Distance}]})", "y"]
-					Roid.Value:LockTarget
-					return FALSE
-				}
-			}
-		}
-		while ${Roid:Next(exists)}
 		return FALSE
 	}
+	
+	; member:bool TargetAsteroids()
+	; {
+		; if ${Targets.Asteroids.Used} == ${Ship.ModuleList_MiningLaser.Count}
+		; {
+			; return TRUE
+		; }
+		; variable iterator Roid
+		; Asteroids.AsteroidList:GetIterator[Roid]
+		; if ${Roid:First(exists)}
+		; do
+		; {
+			; if ${Targets.AsteroidIsInRangeOfOthers[${Roid.Value.ID}]}
+			; {
+				; if  !${Roid.Value.BeingTargeted} &&\
+					; !${Roid.Value.IsLockedTarget} &&\
+					; ${Roid.Value.Distance} >= ${MyShip.MaxTargetRange}
+				; {
+					; Move:Approach[${Roid.Value.ID}, ${MyShip.MaxTargetRange}]
+					; return FALSE
+				; }
+
+				; if  !${Roid.Value.BeingTargeted} &&\
+					; !${Roid.Value.IsLockedTarget}
+				; {
+					; UI:Update["obj_Miner", "Locking ${Roid.Value.Name} (${ComBot.MetersToKM_Str[${Roid.Value.Distance}]})", "y"]
+					; Roid.Value:LockTarget
+					; return FALSE
+				; }
+			; }
+		; }
+		; while ${Roid:Next(exists)}
+		; return FALSE
+	; }
 
 	member:bool ActivateLasers()
 	{
-		if  ${Ship.ModuleList_MiningLaser.ActiveCount} == ${Ship.ModuleList_MiningLaser.Count} ||\
-			${Targets.Asteroids.Used} < ${Ship.ModuleList_MiningLaser.Count}
+		if  ${Ship.ModuleList_MiningLaser.ActiveCount} == ${Ship.ModuleList_MiningLaser.Count}
 		{
 			return TRUE
 		}
 		variable iterator Roid
-		Targets.Asteroids:GetIterator[Roid]
+		Asteroids.LockedTargetList:GetIterator[Roid]
 		if ${Roid:First(exists)}
 		do
 		{
-			if  ${Roid.Value.BeingTargeted}
-			{
-				continue
-			}
 			if	${Roid.Value.Distance} > ${Ship.Module_MiningLaser_Range}
 			{
 				Move:Approach[${Roid.Value.ID}, ${Ship.Module_MiningLaser_Range}]
@@ -386,7 +420,7 @@ objectdef obj_Miner inherits obj_State
 			{
 				UI:Update["obj_Miner", "Activating ${Ship.ModuleList_MiningLaser.InActiveCount} laser(s) on ${Roid.Value.Name} (${ComBot.MetersToKM_Str[${Roid.Value.Distance}]})", "y"]
 				Ship.ModuleList_MiningLaser:ActivateCount[${Ship.ModuleList_MiningLaser.InActiveCount}, ${Roid.Value.ID}]
-				return FALSE
+				return TRUE
 			}
 			else
 			{

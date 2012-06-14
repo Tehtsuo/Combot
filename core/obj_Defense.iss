@@ -29,6 +29,7 @@ objectdef obj_Defense inherits obj_State
 		UI:Update["obj_Defense", "Initialized", "g"]
 		
 		This[parent]:Initialize
+		This.NonGameTiedPulse:Set[TRUE]
 
 		This:QueueState["Defend", 100]
 	}
@@ -46,6 +47,11 @@ objectdef obj_Defense inherits obj_State
 		if ${Ship.ModuleList_Regen_Shield.ActiveCount} && ${MyShip.ShieldPct} > 95
 		{
 			Ship.ModuleList_Regen_Shield:DeactivateCount[${Ship.ModuleList_Regen_Shield.ActiveCount}]
+		}
+		
+		if ${Ship.ModuleList_ActiveResists.Count}
+		{
+			Ship.ModuleList_ActiveResists:ActivateCount[${Ship.ModuleList_ActiveResists.Count}]
 		}
 		return FALSE	
 	}

@@ -210,7 +210,7 @@ objectdef obj_TargetList inherits obj_State
 				while ${EntityIterator:Next(exists)}
 			}
 		}
-		if {$AutoRelock || $AutoRelockPriority} && !${LowestLock.Equal[-1]}
+		if (${AutoRelock} || ${AutoRelockPriority}) && !${LowestLock.Equal[-1]}
 		{
 			Entity[${LowestLock}]:UnlockTarget
 			This:QueueState["Idle", ${Math.Rand[500]}]

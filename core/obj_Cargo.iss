@@ -68,7 +68,7 @@ objectdef obj_Cargo inherits obj_State
 				EVE:MoveItemsTo[This.CargoList, MyShip, CargoHold]
 				break
 			case SHIPCORPORATEHANGAR
-				if ${ID} = -1
+				if ${ID} == -1
 				{
 					EVE:MoveItemsTo[This.CargoList, MyShip, CorpHangars, ${folder.Escape}]
 				}
