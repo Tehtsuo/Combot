@@ -1,6 +1,6 @@
 /*
 
-ComBot  Copyright © 2012  Tehtsuo and Vendan
+ComBot  Copyright ï¿½ 2012  Tehtsuo and Vendan
 
 This file is part of ComBot.
 
@@ -142,6 +142,11 @@ objectdef obj_ModuleList
 			while ${ModuleIterator:Next(exists)}
 		}
 		return ${countActive}
+	}
+	
+	member:int Count()
+	{
+		return ${Modules.Used}
 	}
 	
 	member:int GetActiveOn(int64 target)
