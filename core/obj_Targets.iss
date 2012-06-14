@@ -77,10 +77,10 @@ objectdef obj_Targets
 		return ${Targets.Used}
 	}
 
-	member:int TargetsByQuery(string Query)
+	member:int TargetsByQuery(string QueryString)
 	{
 		variable index:entity Targets
-		EVE:QueryEntities[Targets, "(IsLockedTarget || BeingTargeted) && (${Query})"]
+		EVE:QueryEntities[Targets, "(IsLockedTarget || BeingTargeted) && (${QueryString})"]
 		
 		return ${Targets.Used}
 	}

@@ -62,29 +62,16 @@ objectdef obj_Drones inherits obj_State
 	}
 
 	method Recall()
-	{
-		variable index:activedrone drones
-		variable iterator droneIterator
-		variable index:int64 droneIDs
-
-		MyShip.ToEntity:GetActiveDrones[drones]
-		drones:GetIterator[droneIterator]
-		
-		if ${droneIterator:First(exists)}
-		{
-			do
-			{
-				droneIDs:Insert[${droneIterator.Value.ID}]
-			}
-			while ${droneIterator:Next(exists)}
-		}
-		EVE:DronesReturnToDroneBay[droneIDs]
+	{		
+		UI:Update["obj_Drone", "Recalling Drones", "g"]
+		EVE:Execute[CmdDronesReturnToBay]
 		DronesOut:Set[FALSE]
 	}
 
 	method Deploy()
 	{
-		Me:LaunchAllDrones
+		UI:Update["obj_Drone", "Deploying Drones", "g"]
+		MyShip:LaunchAllDrones
 		DronesOut:Set[TRUE]
 	}
 	
@@ -95,15 +82,31 @@ objectdef obj_Drones inherits obj_State
 		variable index:int64 droneIDs
 		variable iterator TargetIterator
 		variable int MaxTarget = ${MyShip.MaxLockedTargets}
+		variable bool NeedLock = FALSE
+		
+		if !${Client.InSpace}
+		{
+			return FALSE
+		}
+		if ${Me.ToEntity.Mode} == 3
+		{
+			if ${DronesOut}
+			{
+				This:Recall
+			}
+			return FALSE
+		}
 		
 		if ${Me.MaxLockedTargets} < ${MyShip.MaxLockedTargets}
 		{
 			MaxTarget:Set[${Me.MaxLockedTargets}]
 		}
 		
-		MyShip.ToEntity:GetActiveDrones[drones]
+		Me:GetActiveDrones[drones]
 		
 		DroneTargets.TargetList:GetIterator[TargetIterator]
+		
+		echo ${DroneTargets.TargetList.Used}
 		
 		if !${Entity[${CurrentTarget}](exists)} || ${Entity[${CurrentTarget}].Distance} > ${Me.DroneControlDistance}
 		{
@@ -112,7 +115,7 @@ objectdef obj_Drones inherits obj_State
 		
 		if ${TargetIterator:First(exists)}
 		{
-			if ${drones.Used} < ${Me.MaxActiveDrones} && !${DronesOut}
+			if !${DronesOut}
 			{
 				This:Deploy
 				return FALSE
@@ -121,42 +124,51 @@ objectdef obj_Drones inherits obj_State
 			{
 				if ${TargetIterator.Value.IsLockedTarget} || ${TargetIterator.Value.BeingTargeted}
 				{
-					if ${TargetIterator.Value.Distance} > ${Me.DroneControlDistance}
+					if ${TargetIterator.Value.IsLockedTarget}
 					{
-						TargetIterator.Value:UnlockTarget
-						if ${CurrentTarget.Equal[${TargetIterator.Value.ID}]}
+						if (${TargetIterator.Value.Distance} > ${Me.DroneControlDistance}) && ${NeedLock}
 						{
-							CurrentTarget:Set[-1]
-						}
-						return FALSE
-					}
-					if ${TargetIterator.Value.IsLockedTarget} && ${CurrentTarget.Equal[-1]}
-					{
-						CurrentTarget:Set[${TargetIterator.Value.ID}]
-						TargetIterator.Value:MakeActiveTarget
-						return FALSE
-					}
-					if ${CurrentTarget.Equal[${TargetIterator.Value.ID}]} && ${TargetIterator.Value.IsActiveTarget}
-					{
-						drones:GetIterator[droneIterator]
-						if ${droneIterator:First(exists)}
-						{
-							do
+							TargetIterator.Value:UnlockTarget
+							if ${CurrentTarget.Equal[${TargetIterator.Value.ID}]}
 							{
-								if !${droneIterator.Target.ID:Equal[${CurrentTarget}]}
-								{
-									droneIDs:Insert[${droneIterator.Value.ID}]
-								}
+								CurrentTarget:Set[-1]
 							}
-							while ${droneIterator:Next(exists)}
+							return FALSE
 						}
-						EVE:DronesEngageMyTarget[droneIDs]
-						return FALSE
+						if ${CurrentTarget.Equal[-1]}
+						{
+							CurrentTarget:Set[${TargetIterator.Value.ID}]
+							return FALSE
+						}
+						if ${CurrentTarget.Equal[${TargetIterator.Value.ID}]} && !${TargetIterator.Value.IsActiveTarget}
+						{
+							TargetIterator.Value:MakeActiveTarget
+						}
+						if ${CurrentTarget.Equal[${TargetIterator.Value.ID}]} && ${TargetIterator.Value.IsActiveTarget}
+						{
+							drones:GetIterator[droneIterator]
+							if ${droneIterator:First(exists)}
+							{
+								do
+								{
+									if !${droneIterator.Value.Target.ID.Equal[${CurrentTarget}]}
+									{
+										droneIDs:Insert[${droneIterator.Value.ID}]
+									}
+								}
+								while ${droneIterator:Next(exists)}
+							}
+							if ${droneIDs.Used}>0
+							{
+								EVE:DronesEngageMyTarget[droneIDs]
+								return FALSE
+							}
+						}
 					}
 				}
 				else
-				{	
-					if ${Targets.NotAsteroids} > 2 || ${Targets.LockedAndLockingTargets} >= ${MaxTarget} && ${TargetIterator.Value.Distance} < ${Me.DroneControlDistance}
+				{
+					if ${Targets.NotAsteroids} < 2 && ${Targets.LockedAndLockingTargets} <= ${MaxTarget}
 					{
 						TargetIterator.Value:LockTarget
 						return FALSE
