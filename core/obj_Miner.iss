@@ -58,15 +58,32 @@ objectdef obj_Miner inherits obj_State
 	
 	member:bool CheckCargoHold()
 	{
-		if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) > 0.95
+		switch ${Config.Miner.Miner_Dropoff_Type}
 		{
-			UI:Update["obj_Miner", "Unload trip required", "g"]
-			This:Clear
-			Move:Bookmark[${Config.Miner.Miner_Dropoff}]
-			This:QueueState["Traveling", 1000]
-			This:QueueState["Offload", 1000]
-			This:QueueState["StackItemHangar", 1000]
-			This:QueueState["GoToMiningSystem", 1000]
+			case Orca
+				variable int64 Orca
+				if !${Entity[${Config.Miner.Miner_OrcaName}](exists)} && ${Local[${Config.Miner.Miner_OrcaName}].ToFleetMember(exists)}
+				{
+					Orca:Set[${Local[${Config.Miner.Miner_OrcaName}].ToFleetMember.ID}]
+					Me.Fleet.FleetMember[${Orca}]:WarpTo
+					Client:Wait[5000]
+					This:QueueState["Traveling", 1000]
+				}
+				break
+			case Do Nothing
+				break
+			default
+				if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) > 0.95
+				{
+					UI:Update["obj_Miner", "Unload trip required", "g"]
+					This:Clear
+					Move:Bookmark[${Config.Miner.Miner_Dropoff}]
+					This:QueueState["Traveling", 1000]
+					This:QueueState["Offload", 1000]
+					This:QueueState["StackItemHangar", 1000]
+					This:QueueState["GoToMiningSystem", 1000]
+				}
+				break
 		}
 		This:QueueState["Mine"]
 		return TRUE;
@@ -222,19 +239,20 @@ objectdef obj_Miner inherits obj_State
 	
 	member:bool Mine()
 	{
+		This:QueueState["OpenCargoHold", 10]
+
 		if !${Client.InSpace}
 		{
-			This:QueueState["OpenCargoHold", 1000]
 			This:QueueState["CheckCargoHold", 1000]
 			This:QueueState["GoToMiningSystem", 1000]
 			return TRUE
 		}
 		
+		
 		if ${Asteroids.AsteroidList.Used} == 0
 		{
 			Drones:Recall
 			UI:Update["obj_Miner", "${Asteroids.AsteroidList.Used} asteroids found, moving to another belt", "g"]
-			This:QueueState["OpenCargoHold", 1000]
 			This:QueueState["CheckCargoHold", 1000]
 			This:QueueState["GoToMiningSystem", 1000]
 			return TRUE
@@ -243,6 +261,37 @@ objectdef obj_Miner inherits obj_State
 		echo Setting Aggresive
 		Drones:RemainDocked
 		Drones:Aggressive
+		
+		if ${Config.Miner.Miner_Dropoff_Type.Equal[Orca]}
+		{
+			variable int64 Orca
+			if ${Entity[${Config.Miner.Miner_OrcaName}](exists)}
+			{
+				Orca:Set[${Entity[${Config.Miner.Miner_OrcaName}].ID}]
+				if ${Entity[${Orca}].Distance} > LOOT_RANGE
+				{
+					Move:Approach[${Orca}, LOOT_RANGE]
+					return FALSE
+				}
+				else
+				{
+					if !${EVEWindow[ByItemID, ${Orca}](exists)}
+					{
+						UI:Update["obj_Miner", "Opening ${Config.Miner.Miner_OrcaName}'s Corporate Hangar", "g"]
+						Entity[${Orca}]:Open
+						return FALSE
+					}
+					if  ${EVEWindow[ByItemID, ${Orca}](exists)} &&\
+						(${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) > 0.10
+					{
+						UI:Update["obj_Miner", "Unloading to ${Config.Miner.Miner_OrcaName}'s Corporate Hangar", "g"]
+						Cargo:PopulateCargoList[SHIP]
+						Cargo:MoveCargoList[SHIPCORPORATEHANGAR, "Corporation Folder 1", ${Orca}]
+						return FALSE
+					}
+				}
+			}
+		}
 		
 		if ${Config.Miner.IceMining}
 		{
@@ -271,7 +320,10 @@ objectdef obj_Miner inherits obj_State
 			return TRUE
 		}
 		
-		This:QueueState["CheckCargoHold"]
+		if !${Config.Miner.Miner_Dropoff_Type.Equal[No Dropoff]}
+		{
+			This:QueueState["CheckCargoHold"]
+		}
 		return TRUE
 	}
 	
