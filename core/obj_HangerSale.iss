@@ -249,12 +249,29 @@ objectdef obj_HangerSale inherits obj_State
 		variable index:item ItemList
 		variable iterator ItemIterator
 		variable int SellItem
+		variable int TimeToNextRun
 		echo ${CurrentSellOrders} >= ${This.MaxOrders}
 		
 		if ${CurrentSellOrders} >= ${This.MaxOrders}
 		{
-			UI:Update["obj_HangerSale", "Operations complete", "o"]
-			ComBot:Pause
+			TimeToNextRun:Set[${Math.Calc[60000 * ${Math.Rand[11]} + 1800000]}]
+			UI:Update["obj_HangerSale", "Operations complete - Beginning again in ${TimeToNextRun} minutes", "o"]
+			MineralNames:Clear
+			MineralNames:Set[34, "Tritanium"]
+			MineralNames:Set[35, "Pyerite"]
+			MineralNames:Set[36, "Mexallon"]
+			MineralNames:Set[37, "Isogen"]
+			MineralNames:Set[38, "Nocxium"]
+			MineralNames:Set[39, "Zydrine"]
+			MineralNames:Set[40, "Megacyte"]
+			This:QueueState["Idle", ${TimeToNextRun}]
+			This:QueueState["OpenHanger"]
+			This:QueueState["FetchPrice", 100, "34, 35"]
+			This:QueueState["FetchPrice", 100, "36, 37"]
+			This:QueueState["FetchPrice", 100, "38, 39"]
+			This:QueueState["FetchPrice", 100, "40"]
+			This:QueueState["CheckHanger"]			
+		
 			return TRUE
 		}
 		
@@ -262,8 +279,24 @@ objectdef obj_HangerSale inherits obj_State
 		
 		if ${SellItem} == -1
 		{
-			UI:Update["obj_HangerSale", "Operations complete", "o"]
-			ComBot:Pause
+			TimeToNextRun:Set[${Math.Calc[60000 * ${Math.Rand[11]} + 1800000]}]
+			UI:Update["obj_HangerSale", "Operations complete - Beginning again in ${TimeToNextRun} minutes", "o"]
+			MineralNames:Clear
+			MineralNames:Set[34, "Tritanium"]
+			MineralNames:Set[35, "Pyerite"]
+			MineralNames:Set[36, "Mexallon"]
+			MineralNames:Set[37, "Isogen"]
+			MineralNames:Set[38, "Nocxium"]
+			MineralNames:Set[39, "Zydrine"]
+			MineralNames:Set[40, "Megacyte"]
+			This:QueueState["Idle", ${TimeToNextRun}]
+			This:QueueState["OpenHanger"]
+			This:QueueState["FetchPrice", 100, "34, 35"]
+			This:QueueState["FetchPrice", 100, "36, 37"]
+			This:QueueState["FetchPrice", 100, "38, 39"]
+			This:QueueState["FetchPrice", 100, "40"]
+			This:QueueState["CheckHanger"]			
+
 			return TRUE
 		}
 		
@@ -291,8 +324,24 @@ objectdef obj_HangerSale inherits obj_State
 			}
 			while ${ItemIterator:Next(exists)}
 		}
-		UI:Update["obj_HangerSale", "Operations complete", "o"]
-		ComBot:Pause
+			TimeToNextRun:Set[${Math.Calc[60000 * ${Math.Rand[11]} + 1800000]}]
+			UI:Update["obj_HangerSale", "Operations complete - Beginning again in ${TimeToNextRun} minutes", "o"]
+			MineralNames:Clear
+			MineralNames:Set[34, "Tritanium"]
+			MineralNames:Set[35, "Pyerite"]
+			MineralNames:Set[36, "Mexallon"]
+			MineralNames:Set[37, "Isogen"]
+			MineralNames:Set[38, "Nocxium"]
+			MineralNames:Set[39, "Zydrine"]
+			MineralNames:Set[40, "Megacyte"]
+			This:QueueState["Idle", ${TimeToNextRun}]
+			This:QueueState["OpenHanger"]
+			This:QueueState["FetchPrice", 100, "34, 35"]
+			This:QueueState["FetchPrice", 100, "36, 37"]
+			This:QueueState["FetchPrice", 100, "38, 39"]
+			This:QueueState["FetchPrice", 100, "40"]
+			This:QueueState["CheckHanger"]			
+
 		return TRUE
 	}
 	
