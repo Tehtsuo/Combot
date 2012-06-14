@@ -47,6 +47,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 #include core/obj_AgentDialog.iss
 #include core/obj_TargetList.iss
 #include core/obj_Drones.iss
+#include core/obj_Defense.iss
 
 
 function atexit()
@@ -80,6 +81,7 @@ function main()
 	declarevariable Combat obj_Combat script
 	declarevariable AgentDialog obj_AgentDialog script
 	declarevariable Drones obj_Drones script
+	declarevariable Defense obj_Defense script
 
 	UI:Update["ComBot", "Module initialization complete", "y"]
 	
