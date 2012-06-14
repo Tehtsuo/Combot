@@ -182,7 +182,6 @@ objectdef obj_Move inherits obj_State
 
 	member:bool GateMove(int64 ID)
 	{
-		echo GATEMOVE
 		if !${This.CheckApproach}
 		{
 			return FALSE
@@ -537,17 +536,14 @@ objectdef obj_InstaWarp inherits obj_State
 			return FALSE
 		}
 		
-		echo ${Ship.ModuleList_AB_MWD.ActiveCount}
 		if ${Me.ToEntity.Mode} == 3 && ${InstaWarp_Cooldown} && ${Ship.ModuleList_AB_MWD.ActiveCount}
 		{
-			echo DEACTIVATING AB/MWD
 			Ship.ModuleList_AB_MWD:Deactivate
 			return FALSE
 		}
 		
 		if ${Me.ToEntity.Mode} == 3 && !${InstaWarp_Cooldown}
 		{
-			echo ACTIVATING AB/MWD
 			Ship.ModuleList_AB_MWD:Activate
 			InstaWarp_Cooldown:Set[TRUE]
 			return FALSE

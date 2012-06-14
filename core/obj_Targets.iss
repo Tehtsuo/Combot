@@ -109,7 +109,7 @@ objectdef obj_Targets inherits obj_State
 		if ${Target:First(exists)}
 		do
 		{
-			if ${Entity[${Target.Value}].DistanceTo[${id}]} > ${Math.Calc[${Ship.Module_MiningLaser_Range} * 2]}
+			if ${Entity[${Target.Value}].DistanceTo[${id}]} > ${Math.Calc[${Ship.Module_MiningLaser_Range} * 1.9]}
 			{
 				return FALSE
 			}

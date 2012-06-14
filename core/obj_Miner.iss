@@ -230,28 +230,43 @@ objectdef obj_Miner inherits obj_State
 			return TRUE
 		}
 		
-		if ${Ship.ModuleList_Regen_Shield.InactiveCount} && ${MyShip.ShieldPct} < 95
-		{
-			Ship.ModuleList_Regen_Shield:ActivateCount[${Ship.ModuleList_Regen_Shield.InactiveCount}]
-			return FALSE
-		}
-		if ${Ship.ModuleList_Regen_Shield.ActiveCount} && ${MyShip.ShieldPct} > 95
-		{
-			Ship.ModuleList_Regen_Shield:DeactivateCount[${Ship.ModuleList_Regen_Shield.ActiveCount}]
-			return FALSE
-		}
-		
 		if ${Asteroids.AsteroidList.Used} == 0
 		{
+			Drones:Recall
 			UI:Update["obj_Miner", "${Asteroids.AsteroidList.Used} asteroids found, moving to another belt", "g"]
 			This:QueueState["OpenCargoHold", 1000]
 			This:QueueState["CheckCargoHold", 1000]
 			This:QueueState["GoToMiningSystem", 1000]
 			return TRUE
 		}
+
+		echo Setting Aggresive
+		Drones:RemainDocked
+		Drones:Aggressive
 		
-		if ${Ship.ModuleList_MiningLaser.InactiveCount} > 0
+		if ${Config.Miner.IceMining}
 		{
+			if  ${Targets.Asteroids.Used} < 1
+			{
+				This:QueueState["TargetAsteroids", 50, 1]
+				This:QueueState["Mine"]
+				return TRUE
+				
+			}
+		}
+		else
+		{
+			if  ${Targets.Asteroids.Used} < ${Ship.ModuleList_MiningLaser.Count}
+			{
+				This:QueueState["TargetAsteroids"]
+				This:QueueState["Mine"]
+				return TRUE
+			}
+		}
+
+		if ${Ship.ModuleList_MiningLaser.ActiveCount} < ${Ship.ModuleList_MiningLaser.Count}
+		{
+			This:QueueState["ActivateLasers"]
 			This:QueueState["Mine"]
 			return TRUE
 		}
@@ -260,5 +275,76 @@ objectdef obj_Miner inherits obj_State
 		return TRUE
 	}
 	
+	member:bool TargetAsteroids()
+	{
+		if ${Targets.Asteroids.Used} == ${Ship.ModuleList_MiningLaser.Count}
+		{
+			return TRUE
+		}
+		variable iterator Roid
+		Asteroids.AsteroidList:GetIterator[Roid]
+		if ${Roid:First(exists)}
+		do
+		{
+			if ${Targets.AsteroidIsInRangeOfOthers[${Roid.Value.ID}]}
+			{
+				if  !${Roid.Value.BeingTargeted} &&\
+					!${Roid.Value.IsLockedTarget} &&\
+					${Roid.Value.Distance} >= ${MyShip.MaxTargetRange}
+				{
+					Move:Approach[${Roid.Value.ID}, ${MyShip.MaxTargetRange}]
+					return FALSE
+				}
+
+				if  !${Roid.Value.BeingTargeted} &&\
+					!${Roid.Value.IsLockedTarget}
+				{
+					Roid.Value:LockTarget
+					return FALSE
+				}
+			}
+		}
+		while ${Roid:Next(exists)}
+		return FALSE
+	}
+
+	member:bool ActivateLasers()
+	{
+		if  ${Ship.ModuleList_MiningLaser.ActiveCount} == ${Ship.ModuleList_MiningLaser.Count} ||\
+			${Targets.Asteroids.Used} < ${Ship.ModuleList_MiningLaser.Count}
+		{
+			return TRUE
+		}
+		variable iterator Roid
+		Targets.Asteroids:GetIterator[Roid]
+		if ${Roid:First(exists)}
+		do
+		{
+			if  ${Roid.Value.BeingTargeted}
+			{
+				continue
+			}
+			if	${Roid.Value.Distance} > ${Ship.Module_MiningLaser_Range}
+			{
+				Move:Approach[${Roid.Value.ID}, ${Ship.Module_MiningLaser_Range}]
+				return FALSE
+			}
+			if ${Config.Miner.IceMining}
+			{
+				Ship.ModuleList_MiningLaser:ActivateCount[${Ship.ModuleList_MiningLaser.InActiveCount}, ${Roid.Value.ID}]
+				return FALSE
+			}
+			else
+			{
+				if !${Ship.ModuleList_MiningLaser.IsActiveOn[${Roid.Value.ID}]}
+				{
+					Ship.ModuleList_MiningLaser:Activate[${Roid.Value.ID}]
+					return FALSE
+				}
+			}
+		}
+		while ${Roid:Next(exists)}
+		return FALSE
+	}
 	
 }	
