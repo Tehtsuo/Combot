@@ -22,11 +22,17 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 objectdef obj_TargetList inherits obj_State
 {
 	variable index:entity TargetList
+	variable index:entity LockedTargetList
 	variable index:entity TargetListBuffer
 	variable index:entity TargetListBufferOOR
+	variable index:entity LockedTargetListBuffer
+	variable index:entity LockedTargetListBufferOOR
+	variable collection:int DeadDelay
 	variable index:string QueryStringList
 	variable int64 DistanceTarget
 	variable int MaxRange = 20000
+	variable bool AutoLock = FALSE
+	variable bool AutoRelock = FALSE
 	
 	method Initialize()
 	{
@@ -89,6 +95,10 @@ objectdef obj_TargetList inherits obj_State
 			while ${QueryStringIterator:Next(exists)}
 		}
 		This:QueueState["PopulateList"]
+		if ${AutoLock}
+		{
+			This:QueueState["ManageLocks"]
+		}
 		This:QueueState["UpdateList"]
 		return TRUE
 	}
@@ -110,10 +120,18 @@ objectdef obj_TargetList inherits obj_State
 				if ${entity_iterator.Value.DistanceTo[${DistanceTarget}]} <= ${MaxRange}
 				{
 					This.TargetListBuffer:Insert[${entity_iterator.Value.ID}]
+					if ${entity_iterator.Value.IsLockedTarget}
+					{
+						This.LockedTargetListBuffer:Insert[${entity_iterator.Value.ID}]
+					}
 				}
 				else
 				{
 					This.TargetListBufferOOR:Insert[${entity_iterator.Value.ID}]
+					if ${entity_iterator.Value.IsLockedTarget}
+					{
+						This.LockedTargetListBufferOOR:Insert[${entity_iterator.Value.ID}]
+					}
 				}
 			}
 			while ${entity_iterator:Next(exists)}
@@ -123,31 +141,36 @@ objectdef obj_TargetList inherits obj_State
 	
 	member:bool PopulateList()
 	{
-		variable iterator entity_iterator
 		This.TargetList:Clear
-		This.TargetListBuffer:GetIterator[entity_iterator]
-
-		if ${entity_iterator:First(exists)}
-		{
-			do
-			{
-				This.TargetList:Insert[${entity_iterator.Value.ID}]
-			}
-			while ${entity_iterator:Next(exists)}
-		}
+		This.LockedTargetList:Clear
 		
-		This.TargetListBufferOOR:GetIterator[entity_iterator]
-
-		if ${entity_iterator:First(exists)}
-		{
-			do
-			{
-				This.TargetList:Insert[${entity_iterator.Value.ID}]
-			}
-			while ${entity_iterator:Next(exists)}
-		}
+		This:DeepCopyEntityIndex["This.TargetListBuffer", "This.TargetList"]
+		This:DeepCopyEntityIndex["This.TargetListBufferOOR", "This.TargetList"]
+		This:DeepCopyEntityIndex["This.LockedTargetListBuffer", "This.LockedTargetList"]
+		This:DeepCopyEntityIndex["This.LockedTargetListBufferOOR", "This.LockedTargetList"]
+		
 		This.TargetListBuffer:Clear
 		This.TargetListBufferOOR:Clear
 		return TRUE
+	}
+	
+	member:bool ManageLocks()
+	{
+		
+		return TRUE
+	}
+	
+	method DeepCopyEntityIndex(string From, string To)
+	{
+		variable iterator EntityIterator
+		${From}:GetIterator[EntityIterator]
+		if ${EntityIterator:First(exists)}
+		{
+			do
+			{
+				${To}:Insert[${EntityIterator.Value.ID}]
+			}
+			while ${EntityIterator:Next(exists)}
+		}
 	}
 }
