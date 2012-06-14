@@ -1,6 +1,6 @@
 /*
 
-ComBot  Copyright © 2012  Tehtsuo and Vendan
+ComBot  Copyright ï¿½ 2012  Tehtsuo and Vendan
 
 This file is part of ComBot.
 
@@ -91,4 +91,26 @@ objectdef obj_Targets inherits obj_State
 		return FALSE
 	}
 
+	member:int TargetsByQuery(string Query)
+	{
+		variable index:entity Targets
+		EVE:QueryEntities[Targets, "(IsLockedTarget || BeingTargeted) && (${Query})"]
+		
+		return ${Targets.Used}
+	}
+	
+	member:int Asteroids()
+	{
+		return ${This.TargetsByQuery[CategoryID == CATEGORYID_ORE]}
+	}
+
+	member:int NotAsteroids()
+	{
+		return ${This.TargetsByQuery[CategoryID != CATEGORYID_ORE]}
+	}
+	
+	member:int TargetingMe()
+	{
+		return ${This.TargetsByQuery[IsTargetingMe]}
+	}
 }
