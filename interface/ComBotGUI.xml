@@ -155,7 +155,13 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								This.ItemByValue[${Script[ComBot].VariableScope.Config.Common.ComBot_Mode}]:Select
 							</OnLoad>
 							<OnSelect>
+								variable int counter
 								Script[ComBot].VariableScope.Config.Common:SetComBot_Mode[${This.SelectedItem.Value}]
+								for ( counter:Set[1] ; ${counter} &lt;= ${This.Items} ; counter:Inc )
+								{
+									Script[ComBot].VariableScope.${This.OrderedItem[${Counter}]}:Clear
+								}
+								Script[ComBot].VariableScope.ComBot:Pause
 							</OnSelect>
 						</combobox>
 						<Checkbox name='AutoStart'>
