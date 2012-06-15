@@ -520,6 +520,9 @@ objectdef obj_HangerSale inherits obj_State
 				percentile:Set[${XMLString.Left[${Math.Calc[${XMLString.Find[<]}-1]}]}]
 
 				SellPrices:Set[${typeID}, ${avg}, ${max}, ${min}, ${stddev}, ${median}, ${percentile}]
+
+				RemainingToProcess:Dec
+				UIElement[obj_HangerSaleProcessingText@Hangar_Sale@ComBotTab@ComBot]:SetText[Processing ${RemainingToProcess} items from EVE-Central]
 			}
 			while ${XMLString.Find[<type id=](exists)}	
 		}
@@ -527,7 +530,5 @@ objectdef obj_HangerSale inherits obj_State
 		{
 			echo Nothing in XMLString for GetPrices
 		}
-		RemainingToProcess:Dec
-		UIElement[obj_HangerSaleProcessingText@Hangar_Sale@ComBotTab@ComBot]:SetText[Processing ${RemainingToProcess} items from EVE-Central]
 	}
 }
