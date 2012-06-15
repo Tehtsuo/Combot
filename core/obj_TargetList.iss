@@ -40,7 +40,7 @@ objectdef obj_TargetList inherits obj_State
 	method Initialize()
 	{
 		This[parent]:Initialize
-		PulseFrequency:Set[50]
+		PulseFrequency:Set[10]
 		RandomDelta:Set[0]
 		This:QueueState["UpdateList"]
 		DistanceTarget:Set[${MyShip.ID}]
@@ -218,7 +218,7 @@ objectdef obj_TargetList inherits obj_State
 		if (${AutoRelock} || ${AutoRelockPriority}) && !${LowestLock.Equal[-1]}
 		{
 			Entity[${LowestLock}]:UnlockTarget
-			This:QueueState["Idle", ${Math.Rand[500]}]
+			This:QueueState["Idle", ${Math.Rand[200]}]
 		}
 		return TRUE
 	}
