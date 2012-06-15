@@ -35,6 +35,13 @@ objectdef obj_Drones inherits obj_State
 		DroneTargets.MaxRange:Set[${Me.DroneControlDistance}]
 		DroneTargets.AutoLock:Set[TRUE]
 		DroneTargets.AutoRelock:Set[TRUE]
+		
+		variable index:activedrone ActiveDrones
+		Me:GetActiveDrones[ActiveDrones]
+		if ${ActiveDrones.Used}
+		{
+			DronesOut:Set[TRUE]
+		}
 	}
 	
 	method Defensive()
