@@ -277,6 +277,16 @@ objectdef obj_Configuration_Hauler
 		This.CommonRef:AddSetting[MiningSystem,${value}]
 	}
 
+	member:string JetCanMode()
+	{
+		return ${This.CommonRef.FindSetting[JetCanMode]}
+	}
+
+	method SetJetCanMode(string value)
+	{
+		This.CommonRef:AddSetting[JetCanMode,${value}]
+	}
+
 	member:string Dropoff_Bookmark()
 	{
 		return ${This.CommonRef.FindSetting[Dropoff_Bookmark]}

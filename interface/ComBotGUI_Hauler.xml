@@ -96,7 +96,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<X>69%</X>
 						<Y>30%</Y>
 						<Width>30%</Width>
-						<Height>30%</Height>
+						<Height>20%</Height>
 						<OnLoad>
 							variable index:bookmark Bookmarks
 							variable iterator BookmarkIterator
@@ -116,6 +116,31 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							Script[ComBot].VariableScope.Config.Hauler:SetMiningSystem[${This.SelectedItem.Text}]
 						</OnSelect>
 					</listbox>
+					<Text name='obj_Hauler_JetcanModeTitle'> 
+						<X>69%</X> 
+						<Y>52%</Y> 
+						<Width>30%</Width> 
+						<Height>2%</Height> 
+						<Alignment>Center</Alignment>
+						<Text>Jetcan Pickup Mode</Text>
+					</Text>						 
+					<ComboBox name='obj_Hauler_JetcanMode'> 
+						<X>69%</X> 
+						<Y>52%</Y> 
+						<Width>30%</Width> 
+						<Height>2%</Height> 
+						<Alignment>Center</Alignment>
+						<Items>
+							<Item>Service Fleet</Item>
+							<Item>On-Demand</Item>
+						</Items>
+						<OnLoad>
+							This.ItemByText[${Script[ComBot].VariableScope.Config.Hauler.JetCanMode}]:Select
+						</OnLoad>
+						<OnSelect>
+							Script[ComBot].VariableScope.Config.Hauler:SetJetCanMode[${This.SelectedItem.Text}]
+						</OnSelect>
+					</ComboBox>						 
 					
 					<Text name='obj_HaulerDropoffBookmarkTitle'> 
 						<X>1%</X> 
@@ -158,7 +183,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Width>36%</Width> 
 						<Height>2%</Height> 
 						<Alignment>Center</Alignment>
-						<Text>Orca/Container Name</Text>
+						<Text>Container Name</Text>
 					</Text>
 					<TextEntry name='obj_Hauler_Dropoff_ContainerName'> 
 						<X>1%</X> 
@@ -191,9 +216,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Height>26%</Height>
 						<Items>
 							<Item>Personal Hangar</Item>
-							<Item>Orca</Item>
 							<Item>Container</Item>
-							<Item>No Dropoff</Item>
 							<Item>Corporation Folder 1</Item>
 							<Item>Corporation Folder 2</Item>
 							<Item>Corporation Folder 3</Item>
