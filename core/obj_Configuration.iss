@@ -120,6 +120,27 @@ objectdef obj_Configuration_Common
 	{
 		This.CommonRef:AddSetting[AutoStart,${value}]
 	}
+
+	member:bool WarpPulse()
+	{
+		return ${This.CommonRef.FindSetting[WarpPulse]}
+	}
+
+	method SetWarpPulse(bool value)
+	{
+		This.CommonRef:AddSetting[WarpPulse,${value}]
+	}
+	
+	member:bool Propulsion()
+	{
+		return ${This.CommonRef.FindSetting[Propulsion]}
+	}
+
+	method SetPropulsion(bool value)
+	{
+		This.CommonRef:AddSetting[Propulsion,${value}]
+	}
+	
 }
 
 objectdef obj_Configuration_Salvager
@@ -370,6 +391,16 @@ objectdef obj_Configuration_Miner
 	method SetIceMining(bool value)
 	{
 		This.CommonRef:AddSetting[IceMining,${value}]
+	}
+	
+	member:bool OrcaMode()
+	{
+		return ${This.CommonRef.FindSetting[OrcaMode]}
+	}
+
+	method SetOrcaMode(bool value)
+	{
+		This.CommonRef:AddSetting[OrcaMode,${value}]
 	}
 	
 	member:bool UseBookmarks()

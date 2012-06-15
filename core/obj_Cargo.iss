@@ -74,7 +74,15 @@ objectdef obj_Cargo inherits obj_State
 				}
 				else
 				{
-					EVE:MoveItemsTo[This.CargoList, ${ID}, CorpHangars, ${folder.Escape}]
+					if ${folder.Length}
+					{
+						EVE:MoveItemsTo[This.CargoList, ${ID}, CorpHangars, ${folder.Escape}]
+					}
+					else
+					{
+						echo EVE:MoveItemsTo[This.CargoList, ${ID}, CorpHangars]
+						EVE:MoveItemsTo[This.CargoList, ${ID}, CorpHangars]
+					}
 				}
 				break
 			case SHIPOREHOLD
