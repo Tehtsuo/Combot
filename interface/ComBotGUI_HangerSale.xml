@@ -79,7 +79,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Width>98%</Width> 
 						<Height>18%</Height> 
 						<Wrap />
-						<Text>HangarSale is a full-functioned item sales system.  It uses API calls from EVE-Central to determine if the sale of an item would be more profitable than refining the item based on your refinery skill and station standing.  It also is a full-function freighting system which will pick up items for movement to a sale system.  Items which are not determined to be profitable in the sale system based on refinery efficiency in the source system will be refined to reduce capacity requirements.  Upon arrival at the sale system, items which have been determined to be profitable will be sold to the highest available buy order.</Text>
+						<Text>HangarSale is a full-functioned item sales system.  It uses API calls from EVE-Central to determine if the sale of an item would be more profitable than refining the item based on your refinery skill and station standing.  It will then check your current sell orders to ensure they have not been undercut and update orders if necessary.  Finally, any remaining order slots will be filled with the highest sellable items which are more profitable than refining.</Text>
 					</Text>						 
 					<Text name='obj_HangarSale_SaleSystemTitle'> 
 						<X>1%</X> 

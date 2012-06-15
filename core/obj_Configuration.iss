@@ -227,14 +227,24 @@ objectdef obj_Configuration_HangarSale
 
 	}
 
-	member:string SaleSystem()
+	member:bool UpdateOrders()
 	{
-		return ${This.CommonRef.FindSetting[SaleSystem]}
+		return ${This.CommonRef.FindSetting[UpdateOrders]}
 	}
 
-	method SetSaleSystem(string value)
+	method SetUpdateOrders(bool value)
 	{
-		This.CommonRef:AddSetting[SaleSystem,${value}]
+		This.CommonRef:AddSetting[UpdateOrders,${value}]
+	}
+	
+	member:bool PlaceOrders()
+	{
+		return ${This.CommonRef.FindSetting[PlaceOrders]}
+	}
+
+	method SetPlaceOrders(bool value)
+	{
+		This.CommonRef:AddSetting[PlaceOrders,${value}]
 	}
 }
 	
