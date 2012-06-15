@@ -243,13 +243,13 @@ objectdef obj_HangerSale inherits obj_State
 		{
 			SellItems:Set[${TypeID}, ${sellPrice}]
 			ToSellTotal:Inc[${sellPrice}]
-			UIElement[obj_HangerSaleToSellText@Hangar_Sale@ComBotTab@ComBot]:SetText[Estimated Sell Total: ${ToSellTotal}]
+			UIElement[obj_HangerSaleToSellText@Hangar_Sale@ComBotTab@ComBot]:SetText[Estimated Sell Total: ${ComBot.ISK_To_Str[${ToSellTotal}]}]
 			UI:Update["obj_HangerSale", "Selling ${Name} for ${ComBot.ISK_To_Str[${sellPrice}]}", "g"]
 		}
 		else
 		{
 			ToRefineTotal:Inc[${Math.Calc[${This.GetItemValue[${TypeID}, ${PortionSize}]} * ${PortionSize}]}]
-			UIElement[obj_HangerSaleToRefineText@Hangar_Sale@ComBotTab@ComBot]:SetText[Estimated Refine Total: ${ToRefineTotal}]
+			UIElement[obj_HangerSaleToRefineText@Hangar_Sale@ComBotTab@ComBot]:SetText[Estimated Refine Total: ${ComBot.ISK_To_Str[${ToRefineTotal}]}]
 			UI:Update["obj_HangerSale", "Not Selling ${Name}", "g"]
 		}
 		return TRUE
