@@ -499,15 +499,18 @@ objectdef obj_Move inherits obj_State
 			return TRUE
 		}
 		
-		if !${Ship.ModuleList_AB_MWD.ActiveCount} && ${MyShip.CapacitorPct} > 30
+		if ${Config.Common.Propulsion}
 		{
-			Ship.ModuleList_AB_MWD:Activate
-			return FALSE
-		}
-		if ${Ship.ModuleList_AB_MWD.ActiveCount} && ${MyShip.CapacitorPct} <= 30
-		{
-			Ship.ModuleList_AB_MWD:Activate
-			return FALSE
+			if !${Ship.ModuleList_AB_MWD.ActiveCount} && ${MyShip.CapacitorPct} > 30
+			{
+				Ship.ModuleList_AB_MWD:Activate
+				return FALSE
+			}
+			if ${Ship.ModuleList_AB_MWD.ActiveCount} && ${MyShip.CapacitorPct} <= 30
+			{
+				Ship.ModuleList_AB_MWD:Activate
+				return FALSE
+			}
 		}
 		
 		return FALSE
@@ -526,7 +529,10 @@ objectdef obj_InstaWarp inherits obj_State
 		This[parent]:Initialize
 		This.NonGameTiedPulse:Set[TRUE]
 		UI:Update["obj_InstaWarp", "Initialized", "g"]
-		This:QueueState["InstaWarp_Check", 2000]
+		if ${Config.Common.WarpPulse} 
+		{
+			This:QueueState["InstaWarp_Check", 2000]
+		}
 	}
 	
 	member:bool InstaWarp_Check()

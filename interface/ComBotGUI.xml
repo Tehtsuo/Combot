@@ -176,7 +176,61 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						</Checkbox>
 					</Tab>
 
-
+					<Tab Name='Settings'>
+						<frame name='SettingsFillerFrame'>
+							<BackgroundColor>FF000000</BackgroundColor>
+							<Border>1</Border>
+							<BorderColor>FFFFFFFF</BorderColor>
+							<X>0</X>
+							<Y>0</Y>
+							<Height>100%</Height>
+							<Width>100%</Width>
+							<OnLoad>
+								This:SetLeftClickThru[TRUE]
+							</OnLoad>
+						</frame>					
+						<Checkbox name='WarpPulse'>
+							<X>1%</X>
+							<Y>5%</Y>
+							<Width>48%</Width> 
+							<Height>6%</Height> 
+							<Text>Use AB/MWD pulses to insta-warp</Text>
+							<OnLoad>
+								if ${Script[ComBot].VariableScope.Config.Common.WarpPulse}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[ComBot].VariableScope.Config.Common:SetWarpPulse[${This.Checked}]
+								if ${This.Checked}
+								{
+									InstaWarp:QueueState["InstaWarp_Check", 2000]
+								}
+								else
+								{
+									InstaWarp:Clear
+								}
+							</OnLeftClick>
+						</Checkbox>
+						<Checkbox name='Propulsion'>
+							<X>1%</X>
+							<Y>12%</Y>
+							<Width>48%</Width> 
+							<Height>6%</Height> 
+							<Text>Use AB/MWD for approaching objects</Text>
+							<OnLoad>
+								if ${Script[ComBot].VariableScope.Config.Common.Propulsion}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[ComBot].VariableScope.Config.Common:SetPropulsion[${This.Checked}]
+							</OnLeftClick>
+						</Checkbox>
+						
+					</Tab>
 					<Tab Name='Salvager'>
 						<frame name='obj_SalvageFillerFrame'>
 							<BackgroundColor>FF000000</BackgroundColor>
