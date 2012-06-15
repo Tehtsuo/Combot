@@ -64,6 +64,7 @@ objectdef obj_Configuration
 	variable obj_Configuration_Miner Miner
 	variable obj_Configuration_Security Security
 	variable obj_Configuration_HangarSale HangarSale
+	variable obj_Configuration_Hauler Hauler
 	method Save()
 	{
 		BaseConfig:Save[]
@@ -237,7 +238,7 @@ objectdef obj_Configuration_HangarSale
 	}
 }
 	
-objectdef obj_Configuration_Miner
+objectdef obj_Configuration_Hauler
 {
 	variable string SetName = "Hauler"
 
@@ -256,6 +257,16 @@ objectdef obj_Configuration_Miner
 		return ${BaseConfig.BaseRef.FindSet[${This.SetName}]}
 	}
 
+	method Set_Default_Values()
+	{
+		BaseConfig.BaseRef:AddSet[${This.SetName}]
+
+		This.CommonRef:AddSetting[Dropoff_ContainerName,""]
+		This.CommonRef:AddSetting[Pickup_ContainerName,""]
+		
+	}
+	
+	
 	member:string MiningSystem()
 	{
 		return ${This.CommonRef.FindSetting[MiningSystem]}
@@ -276,6 +287,16 @@ objectdef obj_Configuration_Miner
 		This.CommonRef:AddSetting[Dropoff_Bookmark,${value}]
 	}
 
+	member:string Pickup_Bookmark()
+	{
+		return ${This.CommonRef.FindSetting[Pickup_Bookmark]}
+	}
+
+	method SetPickup_Bookmark(string value)
+	{
+		This.CommonRef:AddSetting[Pickup_Bookmark,${value}]
+	}
+
 	member:string Dropoff_Type()
 	{
 		return ${This.CommonRef.FindSetting[Dropoff_Type]}
@@ -284,6 +305,16 @@ objectdef obj_Configuration_Miner
 	method SetDropoff_Type(string value)
 	{
 		This.CommonRef:AddSetting[Dropoff_Type,${value}]
+	}
+	
+	member:string Pickup_Type()
+	{
+		return ${This.CommonRef.FindSetting[Pickup_Type]}
+	}
+
+	method SetPickup_Type(string value)
+	{
+		This.CommonRef:AddSetting[Pickup_Type,${value}]
 	}
 	
 	member:string Dropoff_ContainerName()
