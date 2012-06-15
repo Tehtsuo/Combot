@@ -207,7 +207,7 @@ objectdef obj_TargetList inherits obj_State
 						DeadDelay:Set[${EntityIterator.Value.ID}, ${Math.Calc[${LavishScript.RunningTime} + 5000]}]
 						return TRUE
 					}
-					if ${EntityIterator.Value.IsLockedTarget} && (${AutoRelockPriority} || (${AutoRelock}  && ${EntityIterator.Distance} < ${Entity[${Target}].Distance} < ${MyShip.MaxTargetRange}))
+					if ${EntityIterator.Value.IsLockedTarget} && (${AutoRelockPriority} || (${AutoRelock}  && ${EntityIterator.Value.Distance} < ${Entity[${Target}].Distance} < ${MyShip.MaxTargetRange}))
 					{
 						LowestLock:Set[TRUE]
 					}
