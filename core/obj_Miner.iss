@@ -96,7 +96,7 @@ objectdef obj_Miner inherits obj_State
 		switch ${Config.Miner.Miner_Dropoff_Type}
 		{
 			case Orca
-				if !${Entity[Name = "${Config.Miner.Miner_OrcaName}"](exists)} && ${Local[${Config.Miner.Miner_OrcaName}].ToFleetMember(exists)} && ${WarpToOrca}
+				if !${Entity[Name = "${Config.Miner.Miner_OrcaName}"](exists)} && ${Local[${Config.Miner.Miner_OrcaName}].ToFleetMember(exists)} && ${This.WarpToOrca}
 				{
 					UI:Update["obj_Miner", "Warping to ${Local[${Config.Miner.Miner_OrcaName}].ToFleetMember.ToPilot.Name}", "g"]
 					Local[${Config.Miner.Miner_OrcaName}].ToFleetMember:WarpTo
@@ -104,7 +104,7 @@ objectdef obj_Miner inherits obj_State
 					This:Clear
 					This:QueueState["Traveling", 1000]
 				}
-				if !${WarpToOrca}
+				if !${This.WarpToOrca}
 				{
 					This:Clear
 				}
@@ -115,7 +115,7 @@ objectdef obj_Miner inherits obj_State
 					UI:Update["obj_Miner", "Unload trip required", "g"]
 					if ${Config.Miner.OrcaMode}
 					{
-						relay all -event EVEBot_Orca_InBelt FALSE
+						relay all -event ComBot_Orca_InBelt FALSE
 					}
 					This:Clear
 					Move:Bookmark[${Config.Miner.Miner_Dropoff}]
@@ -356,7 +356,7 @@ objectdef obj_Miner inherits obj_State
 		{
 			if ${Config.Miner.OrcaMode}
 			{
-				relay all -event EVEBot_Orca_InBelt FALSE
+				relay all -event ComBot_Orca_InBelt FALSE
 			}
 			Drones:Recall
 			UI:Update["obj_Miner", "No asteroids found, moving to a new belt", "g"]
@@ -368,7 +368,7 @@ objectdef obj_Miner inherits obj_State
 
 		if ${Config.Miner.OrcaMode}
 		{
-			relay all -event EVEBot_Orca_InBelt TRUE
+			relay all -event ComBot_Orca_InBelt TRUE
 			if ${Config.Miner.IceMining}
 			{
 				Move:Approach[${Entity[CategoryID==CATEGORYID_ORE]}, 10000]
@@ -506,9 +506,9 @@ objectdef obj_Miner inherits obj_State
 		return TRUE
 	}
 	
-	method OrcaInBelt(bool State)
+	method OrcaInBelt(bool value)
 	{
-		WarpToOrca:Set[${State}]
+		WarpToOrca:Set[${value}]
 	}
 	
 }	
