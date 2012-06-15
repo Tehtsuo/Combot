@@ -63,6 +63,10 @@ objectdef obj_HangerSale inherits obj_State
 	variable string XMLString = ""
 	variable index:myorder MyOrderIndex
 	variable iterator MyOrderIterator
+	variable int RemainingToProcess
+	variable float ToSellTotal
+	variable float ToRefineTotal
+	
 	
 	variable collection:obj_ItemInformation BuyPrices
 	variable collection:obj_ItemInformation SellPrices
@@ -177,7 +181,10 @@ objectdef obj_HangerSale inherits obj_State
 		HangerItems:Clear
 		Me:GetHangarItems[HangerItems]
 		
-		UIElement[obj_HangerSaleProcessingText@Hangar_Sale@ComBotTab@ComBot]:SetText[Processing ${HangerItems.Used} items from EVE-Central]
+		RemainingToProcess:Set[${HangerItems.Used}]
+		UIElement[obj_HangerSaleProcessingText@Hangar_Sale@ComBotTab@ComBot]:SetText[Processing ${RemainingToProcess} items from EVE-Central]
+		ToSellTotal:Set[0]
+		ToRefineTotal:Set[0]
 		
 		HangerItems:GetIterator[HangerIterator]
 		if ${HangerIterator:First(exists)}
@@ -235,10 +242,14 @@ objectdef obj_HangerSale inherits obj_State
 		if ${This.GetItemValue[${TypeID}, ${PortionSize}]} < ${sellPrice}
 		{
 			SellItems:Set[${TypeID}, ${sellPrice}]
+			ToSellTotal:Inc[${sellPrice}]
+			UIElement[obj_HangerSaleToSellText@Hangar_Sale@ComBotTab@ComBot]:SetText[Estimated Sell Total: ${ToSellTotal}]
 			UI:Update["obj_HangerSale", "Selling ${Name} for ${ComBot.ISK_To_Str[${sellPrice}]}", "g"]
 		}
 		else
 		{
+			ToRefineTotal:Inc[${Math.Calc[${This.GetItemValue[${TypeID}, ${PortionSize}]} * ${PortionSize}]}]
+			UIElement[obj_HangerSaleToRefineText@Hangar_Sale@ComBotTab@ComBot]:SetText[Estimated Refine Total: ${ToRefineTotal}]
 			UI:Update["obj_HangerSale", "Not Selling ${Name}", "g"]
 		}
 		return TRUE
@@ -512,5 +523,7 @@ objectdef obj_HangerSale inherits obj_State
 		{
 			echo Nothing in XMLString for GetPrices
 		}
+		RemainingToProcess:Dec
+		UIElement[obj_HangerSaleProcessingText@Hangar_Sale@ComBotTab@ComBot]:SetText[Processing ${RemainingToProcess} items from EVE-Central]
 	}
 }

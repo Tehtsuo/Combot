@@ -425,16 +425,42 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					</Tab>
 					
 					<Tab Name='Hangar_Sale'>
+						<frame name='obj_Hangar_SaleFillerFrame'>
+							<BackgroundColor>FF000000</BackgroundColor>
+							<Border>1</Border>
+							<BorderColor>FFFFFFFF</BorderColor>
+							<X>0</X>
+							<Y>0</Y>
+							<Height>100%</Height>
+							<Width>100%</Width>
+							<OnLoad>
+								This:SetLeftClickThru[TRUE]
+							</OnLoad>
+						</frame>					
 						<Text name='obj_HangerSaleProcessingText'> 
-									<X>0%</X> 
+									<X>41%</X> 
 									<Y>5%</Y> 
-									<Width>40%</Width> 
+									<Width>60%</Width> 
 									<Height>5%</Height> 
 									<Text>Processing XXX items from EVE-Central</Text>
 						</Text>						 
+						<Text name='obj_HangerSaleToSellText'> 
+									<X>41%</X> 
+									<Y>10%</Y> 
+									<Width>60%</Width> 
+									<Height>5%</Height> 
+									<Text>Estimated Sell Total: </Text>
+						</Text>						 
+						<Text name='obj_HangerSaleToRefineText'> 
+									<X>41%</X> 
+									<Y>15%</Y> 
+									<Width>60%</Width> 
+									<Height>5%</Height> 
+									<Text>Estimated Refine Total: </Text>
+						</Text>						 
 						
 						<Text name='obj_HangerSaleStateListTitle'> 
-									<X>40%</X> 
+									<X>0%</X> 
 									<Y>5%</Y> 
 									<Width>40%</Width> 
 									<Height>5%</Height> 
@@ -446,7 +472,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							<BackgroundColor>FF000000</BackgroundColor>
 							<Border>1</Border>
 							<BorderColor>FFFFFFFF</BorderColor>
-							<X>40%</X>
+							<X>0%</X>
 							<Y>10%</Y>
 							<Width>40%</Width>
 							<Height>80%</Height>
