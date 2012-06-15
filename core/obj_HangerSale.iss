@@ -243,7 +243,7 @@ objectdef obj_HangerSale inherits obj_State
 		if ${This.GetItemValue[${TypeID}, ${PortionSize}]} < ${sellPrice}
 		{
 			SellItems:Set[${TypeID}, ${sellPrice}]
-			ToSellTotal:Inc[${sellPrice}]
+			ToSellTotal:Inc[${Math.Calc[${sellPrice} * ${PortionSize}]}]
 			UIElement[obj_HangerSaleToSellText@Hangar_Sale@ComBotTab@ComBot]:SetText[Estimated Sell Total: ${ComBot.ISK_To_Str[${ToSellTotal}]}]
 			UI:Update["obj_HangerSale", "Selling ${Name} for ${ComBot.ISK_To_Str[${sellPrice}]}", "g"]
 		}
