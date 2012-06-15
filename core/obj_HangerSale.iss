@@ -92,6 +92,7 @@ objectdef obj_HangerSale inherits obj_State
 		UI:Update["obj_HangerSale", "Started", "g"]
 		if ${This.IsIdle}
 		{
+			RemainingToProcess:Set[7]
 			MineralNames:Clear
 			MineralNames:Set[34, "Tritanium"]
 			MineralNames:Set[35, "Pyerite"]
@@ -268,6 +269,7 @@ objectdef obj_HangerSale inherits obj_State
 			TimeToNextRun:Set[${Math.Calc[60000 * ${Math.Rand[11]} + 1800000]}]
 			UI:Update["obj_HangerSale", "Operations complete - Beginning again in ${TimeToNextRun} minutes", "o"]
 			MineralNames:Clear
+			RemainingToProcess:Set[7]
 			MineralNames:Set[34, "Tritanium"]
 			MineralNames:Set[35, "Pyerite"]
 			MineralNames:Set[36, "Mexallon"]
@@ -293,6 +295,7 @@ objectdef obj_HangerSale inherits obj_State
 			TimeToNextRun:Set[${Math.Calc[60000 * ${Math.Rand[11]} + 1800000]}]
 			UI:Update["obj_HangerSale", "Operations complete - Beginning again in ${TimeToNextRun} minutes", "o"]
 			MineralNames:Clear
+			RemainingToProcess:Set[7]
 			MineralNames:Set[34, "Tritanium"]
 			MineralNames:Set[35, "Pyerite"]
 			MineralNames:Set[36, "Mexallon"]
@@ -338,6 +341,7 @@ objectdef obj_HangerSale inherits obj_State
 			TimeToNextRun:Set[${Math.Calc[60000 * ${Math.Rand[11]} + 1800000]}]
 			UI:Update["obj_HangerSale", "Operations complete - Beginning again in ${TimeToNextRun} minutes", "o"]
 			MineralNames:Clear
+			RemainingToProcess:Set[7]
 			MineralNames:Set[34, "Tritanium"]
 			MineralNames:Set[35, "Pyerite"]
 			MineralNames:Set[36, "Mexallon"]

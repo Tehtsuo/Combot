@@ -439,21 +439,21 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						</frame>					
 						<Text name='obj_HangerSaleProcessingText'> 
 									<X>41%</X> 
-									<Y>5%</Y> 
+									<Y>10%</Y> 
 									<Width>60%</Width> 
 									<Height>5%</Height> 
 									<Text>Processing XXX items from EVE-Central</Text>
 						</Text>						 
 						<Text name='obj_HangerSaleToSellText'> 
 									<X>41%</X> 
-									<Y>10%</Y> 
+									<Y>20%</Y> 
 									<Width>60%</Width> 
 									<Height>5%</Height> 
 									<Text>Estimated Sell Total: </Text>
 						</Text>						 
 						<Text name='obj_HangerSaleToRefineText'> 
 									<X>41%</X> 
-									<Y>15%</Y> 
+									<Y>25%</Y> 
 									<Width>60%</Width> 
 									<Height>5%</Height> 
 									<Text>Estimated Refine Total: </Text>
