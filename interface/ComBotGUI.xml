@@ -362,6 +362,68 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						</button>						
 					</Tab>
 					
+					<Tab Name='Hauler'>
+						<frame name='obj_HaulerFillerFrame'>
+							<BackgroundColor>FF000000</BackgroundColor>
+							<Border>1</Border>
+							<BorderColor>FFFFFFFF</BorderColor>
+							<X>0</X>
+							<Y>0</Y>
+							<Height>100%</Height>
+							<Width>100%</Width>
+							<OnLoad>
+								This:SetLeftClickThru[TRUE]
+							</OnLoad>
+						</frame>					
+						<Text name='obj_HaulerBookmarkListTitle'> 
+									<X>0</X> 
+									<Y>5%</Y> 
+									<Width>40%</Width> 
+									<Height>5%</Height> 
+									<Alignment>Center</Alignment>
+									<Text>Hauler Bookmarks</Text>
+						</Text>						 
+						<listbox Name="obj_HaulerBookmarkList">
+							<BackgroundColor>FF000000</BackgroundColor>
+							<Border>1</Border>
+							<BorderColor>FFFFFFFF</BorderColor>
+							<X>0</X>
+							<Y>10%</Y>
+							<Width>40%</Width>
+							<Height>80%</Height>
+						</listbox>
+						<Text name='obj_HaulerStateListTitle'> 
+									<X>40%</X> 
+									<Y>5%</Y> 
+									<Width>40%</Width> 
+									<Height>5%</Height> 
+									<Alignment>Center</Alignment>
+									<Text>Pending States</Text>
+						</Text>						 
+						<listbox Name="obj_HaulerStateList">
+							<Font template='Listbox.Font' />
+							<BackgroundColor>FF000000</BackgroundColor>
+							<Border>1</Border>
+							<BorderColor>FFFFFFFF</BorderColor>
+							<X>40%</X>
+							<Y>10%</Y>
+							<Width>40%</Width>
+							<Height>80%</Height>
+						</listbox>
+						<button	Name='Config'>
+							<Font template='Button.Font' />
+							<BackgroundColor>FF000000</BackgroundColor>
+							<X>0%</X>
+							<Y>90%</Y>
+							<Width>100%</Width>
+							<Height>10%</Height>
+							<Text>Settings</Text>
+							<OnLeftClick>
+								timedcommand 0 "ui -load \"&filepath;/ComBotGUI_Hauler.xml\""
+							</OnLeftClick>
+						</button>						
+					</Tab>
+					
 					<Tab Name='Hangar_Sale'>
 						<Text name='obj_HangerSaleProcessingText'> 
 									<X>0%</X> 

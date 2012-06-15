@@ -237,6 +237,75 @@ objectdef obj_Configuration_HangarSale
 	}
 }
 	
+objectdef obj_Configuration_Miner
+{
+	variable string SetName = "Hauler"
+
+	method Initialize()
+	{
+		if !${BaseConfig.BaseRef.FindSet[${This.SetName}](exists)}
+		{
+			UI:Update["obj_Configuration", " ${This.SetName} settings missing - initializing", "o"]
+			This:Set_Default_Values[]
+		}
+		UI:Update["obj_Configuration", " ${This.SetName}: Initialized", "-g"]
+	}
+
+	member:settingsetref CommonRef()
+	{
+		return ${BaseConfig.BaseRef.FindSet[${This.SetName}]}
+	}
+
+	member:string MiningSystem()
+	{
+		return ${This.CommonRef.FindSetting[MiningSystem]}
+	}
+
+	method SetMiningSystem(string value)
+	{
+		This.CommonRef:AddSetting[MiningSystem,${value}]
+	}
+
+	member:string Dropoff_Bookmark()
+	{
+		return ${This.CommonRef.FindSetting[Dropoff_Bookmark]}
+	}
+
+	method SetDropoff_Bookmark(string value)
+	{
+		This.CommonRef:AddSetting[Dropoff_Bookmark,${value}]
+	}
+
+	member:string Dropoff_Type()
+	{
+		return ${This.CommonRef.FindSetting[Dropoff_Type]}
+	}
+
+	method SetDropoff_Type(string value)
+	{
+		This.CommonRef:AddSetting[Dropoff_Type,${value}]
+	}
+	
+	member:string Dropoff_ContainerName()
+	{
+		return ${This.CommonRef.FindSetting[Dropoff_ContainerName]}
+	}
+
+	method SetDropoff_ContainerName(string value)
+	{
+		This.CommonRef:AddSetting[Dropoff_ContainerName,${value}]
+	}
+	
+	member:string Pickup_ContainerName()
+	{
+		return ${This.CommonRef.FindSetting[Pickup_ContainerName]}
+	}
+
+	method SetPickup_ContainerName(string value)
+	{
+		This.CommonRef:AddSetting[Pickup_ContainerName,${value}]
+	}
+}
 
 objectdef obj_Configuration_Miner
 {
