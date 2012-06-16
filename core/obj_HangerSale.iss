@@ -417,7 +417,7 @@ objectdef obj_HangerSale inherits obj_State
 			CurrentSellOrders:Set[${MyOrderIndex.Used}]
 			UI:Update["obj_HangerSale", "${CurrentSellOrders} current sell orders out of ${This.MaxOrders}", "g"]
 			MyOrderIndex:GetIterator[MyOrderIterator]
-			if ${MyOrderIterator:First(exists)} && ${Config.HangarSale.Reprice}
+			if ${MyOrderIterator:First(exists)} && ${Config.HangarSale.RePrice}
 			{
 				This:InsertState["UpdateOrders", 100]
 				This:InsertState["FetchPrice", 100, "${MyOrderIterator.Value.TypeID}"]
