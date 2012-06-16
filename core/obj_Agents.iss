@@ -47,7 +47,6 @@ objectdef obj_Agents inherits obj_State
 	method Initialize()
 	{
 		This[parent]:Initialize
-		UI:Update["obj_Agents", "Initialized", "g"]
 		;This.NonGameTiedPulse:Set[TRUE]
 		
 		;This:QueueState["CheckJournal"]

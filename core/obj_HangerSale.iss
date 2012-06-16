@@ -83,7 +83,6 @@ objectdef obj_HangerSale inherits obj_State
 		This[parent]:Initialize
 		This:AssignStateQueueDisplay[obj_HangerSaleStateList@Hangar_Sale@ComBotTab@ComBot]
 		PulseFrequency:Set[1000]
-		UI:Update["obj_HangerSale", "Initialized", "g"]
 		Event[isxGames_onHTTPResponse]:AttachAtom[This:ParsePrice]
 	}
 	
@@ -102,6 +101,7 @@ objectdef obj_HangerSale inherits obj_State
 			MineralNames:Set[39, "Zydrine"]
 			MineralNames:Set[40, "Megacyte"]
 			RefineData:Load
+			UI:Update["obj_HangerSale", "Retrieving Mineral prices from EVE-Central API", "g"]
 			This:QueueState["OpenHanger"]
 			This:QueueState["FetchPrice", 100, "34, 35"]
 			This:QueueState["FetchPrice", 100, "36, 37"]
@@ -190,9 +190,10 @@ objectdef obj_HangerSale inherits obj_State
 		HangerItems:GetIterator[HangerIterator]
 		if ${HangerIterator:First(exists)}
 		{
+			UI:Update["obj_HangerSale", "Retrieving Item prices for \ar${HangerItems.Used}\ao items from EVE-Central API", "o"]
 			RandomDelta:Set[0]
 			This:QueueState["FetchPrice", 10, ${HangerIterator.Value.TypeID}]
-			This:QueueState["AddToSellIfAboveValue", 10, "${HangerIterator.Value.TypeID}, ${HangerIterator.Value.PortionSize}, \"${HangerIterator.Value.Name.Escape}\""]
+			This:QueueState["AddToSellIfAboveValue", 10, "${HangerIterator.Value.TypeID}, ${HangerIterator.Value.PortionSize}, \"${HangerIterator.Value.Name.Escape}\", ${HangerIterator.Value.Quantity}"]
 			This:QueueState["CheckItem", 10]
 		}
 		return TRUE
@@ -207,7 +208,7 @@ objectdef obj_HangerSale inherits obj_State
 		{
 			do
 			{
-				This:QueueState["AddToSellIfAboveValue", 10, "${HangerIterator.Value.TypeID}, ${HangerIterator.Value.PortionSize}, \"${HangerIterator.Value.Name.Escape}\""]
+				This:QueueState["AddToSellIfAboveValue", 10, "${HangerIterator.Value.TypeID}, ${HangerIterator.Value.PortionSize}, \"${HangerIterator.Value.Name.Escape}\", ${HangerIterator.Value.Quantity}"]
 				ItemCount:Inc
 				TypeIDs:Concat["${Seperator}${HangerIterator.Value.TypeID}"]
 				Seperator:Set[", "]
@@ -229,7 +230,7 @@ objectdef obj_HangerSale inherits obj_State
 		return TRUE
 	}
 	
-	member:bool AddToSellIfAboveValue(int TypeID, int PortionSize, string Name)
+	member:bool AddToSellIfAboveValue(int TypeID, int PortionSize, string Name, int Quantity)
 	{
 		variable index:marketorder orders
 		variable iterator orderIterator
@@ -246,15 +247,15 @@ objectdef obj_HangerSale inherits obj_State
 		if ${This.GetItemValue[${TypeID}, ${PortionSize}]} < ${sellPrice}
 		{
 			SellItems:Set[${TypeID}, ${sellPrice}]
-			ToSellTotal:Inc[${Math.Calc[${sellPrice} * ${PortionSize}]}]
+			ToSellTotal:Inc[${Math.Calc[${sellPrice} * ${Quantity}]}]
 			UIElement[obj_HangerSaleToSellText@Hangar_Sale@ComBotTab@ComBot]:SetText[Estimated Sell Total: ${ComBot.ISK_To_Str[${ToSellTotal}]}]
-			UI:Update["obj_HangerSale", "Selling ${Name} for ${ComBot.ISK_To_Str[${sellPrice}]}", "g"]
+			;UI:Update["obj_HangerSale", "Selling ${Name} for ${ComBot.ISK_To_Str[${sellPrice}]}", "g"]
 		}
 		else
 		{
-			ToRefineTotal:Inc[${Math.Calc[${This.GetItemValue[${TypeID}, ${PortionSize}]} * ${PortionSize}]}]
+			ToRefineTotal:Inc[${Math.Calc[${This.GetItemValue[${TypeID}, ${PortionSize}]} * ${Quantity}]}]
 			UIElement[obj_HangerSaleToRefineText@Hangar_Sale@ComBotTab@ComBot]:SetText[Estimated Refine Total: ${ComBot.ISK_To_Str[${ToRefineTotal}]}]
-			UI:Update["obj_HangerSale", "Not Selling ${Name}", "g"]
+			;UI:Update["obj_HangerSale", "Not Selling ${Name}", "g"]
 		}
 		return TRUE
 	}
@@ -317,7 +318,6 @@ objectdef obj_HangerSale inherits obj_State
 			return TRUE
 		}
 		
-		UI:Update["obj_HangerSale", "Trying to sell ${SellItem} for ${ComBot.ISK_To_Str[${SellItems.Element[${SellItem}]}]}", "g"]
 		Me:GetHangarItems[ItemList]
 		ItemList:GetIterator[ItemIterator]
 		if ${ItemIterator:First(exists)}
@@ -333,6 +333,8 @@ objectdef obj_HangerSale inherits obj_State
 						This:InsertState["AcceptRepackage", 10000]
 						return TRUE
 					}
+					UI:Update["obj_HangerSale", "${ItemIterator.Value.Name}", "y"]
+					UI:Update["obj_HangerSale", "Selling \ar${ItemIterator.Value.Quantity}\ag at \ao${ComBot.ISK_To_Str[${SellItems.Element[${SellItem}]}]}", "g"]
 					ItemIterator.Value:PlaceSellOrder[${SellItems.Element[${SellItem}]}, ${ItemIterator.Value.Quantity}, 1]
 					CurrentSellOrders:Inc
 					SellItems:Erase[${SellItem}]

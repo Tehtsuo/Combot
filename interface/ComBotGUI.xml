@@ -162,7 +162,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								{
 									Script[ComBot].VariableScope.${This.OrderedItem[${Counter}]}:Clear
 								}
-								Script[ComBot].VariableScope.ComBot:Pause
+								if ${Script[ComBot].VariableScope.UI.Reloaded}
+								{
+									Script[ComBot].VariableScope.ComBot:Pause
+								}
 							</OnSelect>
 						</combobox>
 						<Checkbox name='AutoStart'>

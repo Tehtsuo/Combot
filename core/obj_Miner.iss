@@ -31,7 +31,6 @@ objectdef obj_Miner inherits obj_State
 		Event[ComBot_Orca_InBelt]:AttachAtom[This:OrcaInBelt]
 		This:AssignStateQueueDisplay[obj_MinerStateList@Miner@ComBotTab@ComBot]
 		PulseFrequency:Set[20]
-		UI:Update["obj_Miner", "Initialized", "g"]
 	}
 
 	method Shutdown()

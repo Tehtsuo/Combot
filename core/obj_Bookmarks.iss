@@ -26,7 +26,6 @@ objectdef obj_Bookmarks
 		
 	method Initialize()
 	{
-		UI:Update["obj_Bookmarks", "Initialized", "g"]
 	}
 
 	method Shutdown()

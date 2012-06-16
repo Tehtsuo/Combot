@@ -30,7 +30,6 @@ objectdef obj_Drones inherits obj_State
 	{
 		This[parent]:Initialize
 		PulseFrequency:Set[1000]
-		UI:Update["obj_Drones", "Initialized", "g"]
 		This:QueueState["DroneControl"]
 		DroneTargets.MaxRange:Set[${Me.DroneControlDistance}]
 		DroneTargets.AutoLock:Set[TRUE]

@@ -30,7 +30,6 @@ objectdef obj_Hauler inherits obj_State
 		Event[ComBot_Orca_Cargo]:AttachAtom[This:OrcaCargoUpdate]
 		This:AssignStateQueueDisplay[obj_HaulerStateList@Hauler@ComBotTab@ComBot]
 		PulseFrequency:Set[20]
-		UI:Update["obj_Hauler", "Initialized", "g"]
 	}
 
 	method Shutdown()

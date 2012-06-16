@@ -28,7 +28,6 @@ objectdef obj_Cargo inherits obj_State
 	method Initialize()
 	{
 		This[parent]:Initialize
-		UI:Update["obj_Cargo", "Initialized", "g"]
 	}
 
 	

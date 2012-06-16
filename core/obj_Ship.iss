@@ -57,7 +57,6 @@ objectdef obj_Ship
 	method Initialize()
 	{
 		Event[ISXEVE_onFrame]:AttachAtom[This:Pulse]
-		UI:Update["obj_Ship", "Initialized", "g"]
 	}
 
 	method Shutdown()

@@ -42,7 +42,6 @@ objectdef obj_ComBotUI
 		This:Update["ComBot", "Initializing modules", "y"]
 
 		Event[ISXEVE_onFrame]:AttachAtom[This:Pulse]
-		This:Update["obj_ComBotUI", "Initialized", "g"]
 	}
 
 	method Reload()

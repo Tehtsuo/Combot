@@ -26,7 +26,6 @@ objectdef obj_Targets inherits obj_State
 
 	method Initialize()
 	{
-		UI:Update["obj_Targets", "Initialized", "g"]
 		
 		This[parent]:Initialize
 		RandomDelta:Set[0]

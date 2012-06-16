@@ -26,7 +26,6 @@ objectdef obj_Combat inherits obj_State
 	method Initialize()
 	{
 		This[parent]:Initialize
-		UI:Update["obj_Combat", "Initialized", "g"]
 		PulseFrequency:Set[500]
 	}
 	

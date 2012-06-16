@@ -31,7 +31,6 @@ objectdef obj_Salvage inherits obj_State
 	{
 		This[parent]:Initialize
 		This:AssignStateQueueDisplay[obj_SalvageStateList@Salvager@ComBotTab@ComBot]
-		UI:Update["obj_Salvage", "Initialized", "g"]
 	}
 
 	method Start()
@@ -524,7 +523,6 @@ objectdef obj_LootCans inherits obj_State
 	{
 		This[parent]:Initialize
 		This.NonGameTiedPulse:Set[TRUE]
-		UI:Update["obj_LootCans", "Initialized", "g"]
 	}
 	
 	method Enable()

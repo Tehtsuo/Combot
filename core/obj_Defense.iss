@@ -26,7 +26,6 @@ objectdef obj_Defense inherits obj_State
 
 	method Initialize()
 	{
-		UI:Update["obj_Defense", "Initialized", "g"]
 		
 		This[parent]:Initialize
 		This.NonGameTiedPulse:Set[TRUE]

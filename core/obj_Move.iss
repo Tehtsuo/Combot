@@ -36,7 +36,6 @@ objectdef obj_Move inherits obj_State
 	method Initialize()
 	{
 		This[parent]:Initialize
-		UI:Update["obj_Move", "Initialized", "g"]
 	}
 
 
@@ -528,7 +527,6 @@ objectdef obj_InstaWarp inherits obj_State
 	{
 		This[parent]:Initialize
 		This.NonGameTiedPulse:Set[TRUE]
-		UI:Update["obj_InstaWarp", "Initialized", "g"]
 		if ${Config.Common.WarpPulse} 
 		{
 			This:QueueState["InstaWarp_Check", 2000]

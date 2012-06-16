@@ -39,7 +39,6 @@ objectdef obj_Configuration_BaseConfig
 		}
 
 		BaseRef:Set[${LavishSettings[ComBotSettings].FindSet[${Me.Name}]}]
-		UI:Update["obj_Configuration", "Initialized - beginning settings Initialization", "g"]
 	}
 
 	method Shutdown()
