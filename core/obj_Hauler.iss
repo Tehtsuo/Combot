@@ -170,7 +170,6 @@ objectdef obj_Hauler inherits obj_State
 		}
 		if ${EVE.Bookmark[${Config.Hauler.MiningSystem}].SolarSystemID} != ${Me.SolarSystemID}
 		{
-			This:Clear
 			Move:System[${EVE.Bookmark[${Config.Hauler.MiningSystem}].SolarSystemID}]
 		}
 		return TRUE

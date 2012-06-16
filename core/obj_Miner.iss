@@ -135,6 +135,7 @@ objectdef obj_Miner inherits obj_State
 					This:QueueState["Offload", 1000]
 					This:QueueState["StackItemHangar", 1000]
 					This:QueueState["GoToMiningSystem", 1000]
+					This:QueueState["Traveling", 1000]
 				}
 				break
 		}
@@ -203,13 +204,8 @@ objectdef obj_Miner inherits obj_State
 		}
 		if ${EVE.Bookmark[${Config.Miner.MiningSystem}].SolarSystemID} != ${Me.SolarSystemID}
 		{
-			This:Clear
 			Move:System[${EVE.Bookmark[${Config.Miner.MiningSystem}].SolarSystemID}]
-			This:QueueState["Traveling", 1000]
 		}
-		This:QueueState["MoveToBelt", 1000]
-		This:QueueState["Traveling", 1000]
-		This:QueueState["Mine"]
 		return TRUE
 	}
 
@@ -369,6 +365,8 @@ objectdef obj_Miner inherits obj_State
 			Drones:Recall
 			UI:Update["obj_Miner", "No asteroids found, moving to a new belt", "g"]
 			This:QueueState["CheckCargoHold", 1000]
+			This:QueueState["GoToMiningSystem", 1000]
+			This:QueueState["Traveling", 1000]
 			This:QueueState["MoveToBelt", 1000]
 			This:QueueState["Traveling", 1000]
 			return TRUE

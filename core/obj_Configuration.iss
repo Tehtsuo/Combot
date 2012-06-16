@@ -225,26 +225,60 @@ objectdef obj_Configuration_HangarSale
 	{
 		BaseConfig.BaseRef:AddSet[${This.SetName}]
 
-	}
-
-	member:bool UpdateOrders()
-	{
-		return ${This.CommonRef.FindSetting[UpdateOrders]}
-	}
-
-	method SetUpdateOrders(bool value)
-	{
-		This.CommonRef:AddSetting[UpdateOrders,${value}]
+		This.CommonRef:AddSetting[PriceMode,Undercut Lowest]
+		This.CommonRef:AddSetting[UndercutPercent,1]
+		This.CommonRef:AddSetting[UndercutValue,1000]
 	}
 	
-	member:bool PlaceOrders()
+	
+	member:string PriceMode()
 	{
-		return ${This.CommonRef.FindSetting[PlaceOrders]}
+		return ${This.CommonRef.FindSetting[PriceMode]}
 	}
 
-	method SetPlaceOrders(bool value)
+	method SetPriceMode(string value)
 	{
-		This.CommonRef:AddSetting[PlaceOrders,${value}]
+		This.CommonRef:AddSetting[PriceMode,${value}]
+	}
+
+	member:int UndercutPercent()
+	{
+		return ${This.CommonRef.FindSetting[UndercutPercent]}
+	}
+
+	method SetUndercutPercent(int value)
+	{
+		This.CommonRef:AddSetting[UndercutPercent,${value}]
+	}
+
+	member:int UndercutValue()
+	{
+		return ${This.CommonRef.FindSetting[UndercutValue]}
+	}
+
+	method SetUndercutValue(int value)
+	{
+		This.CommonRef:AddSetting[UndercutValue,${value}]
+	}
+
+	member:bool RePrice()
+	{
+		return ${This.CommonRef.FindSetting[RePrice]}
+	}
+
+	method SetRePrice(bool value)
+	{
+		This.CommonRef:AddSetting[RePrice,${value}]
+	}
+	
+	member:bool Sell()
+	{
+		return ${This.CommonRef.FindSetting[Sell]}
+	}
+
+	method SetSell(bool value)
+	{
+		This.CommonRef:AddSetting[Sell,${value}]
 	}
 }
 	

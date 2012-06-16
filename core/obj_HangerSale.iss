@@ -220,7 +220,10 @@ objectdef obj_HangerSale inherits obj_State
 		{
 			RandomDelta:Set[1000]
 			This:QueueState["UpdateCurrentOrderCount"]
-			This:QueueState["ProcessSells", 10000]
+			if ${Config.HangarSale.Sell}
+			{
+				This:QueueState["ProcessSells", 10000]
+			}
 			UI:Update["obj_HangerSale", "Ready to sell ${SellItems.Used} item(s)", "g"]
 		}
 		return TRUE
@@ -234,10 +237,10 @@ objectdef obj_HangerSale inherits obj_State
 		variable float sellPrice
 		variable float discount
 		
-		discount:Set[${Math.Calc[${SellPrices[${TypeID}].Min}*0.01]}]
-		if ${discount} > 1000
+		discount:Set[${Math.Calc[${SellPrices[${TypeID}].Min}*(${Config.HangarSale.UndercutPercent} * .01)]}]
+		if ${discount} > ${Config.HangarSale.UndercutValue}
 		{
-			discount:Set[1000]
+			discount:Set[${Config.HangarSale.UndercutValue}]
 		}
 		sellPrice:Set[${Math.Calc[${SellPrices[${TypeID}].Min} - ${discount}]}]
 		if ${This.GetItemValue[${TypeID}, ${PortionSize}]} < ${sellPrice}
@@ -414,7 +417,7 @@ objectdef obj_HangerSale inherits obj_State
 			CurrentSellOrders:Set[${MyOrderIndex.Used}]
 			UI:Update["obj_HangerSale", "${CurrentSellOrders} current sell orders out of ${This.MaxOrders}", "g"]
 			MyOrderIndex:GetIterator[MyOrderIterator]
-			if ${MyOrderIterator:First(exists)}
+			if ${MyOrderIterator:First(exists)} && ${Config.HangarSale.Reprice}
 			{
 				This:InsertState["UpdateOrders", 100]
 				This:InsertState["FetchPrice", 100, "${MyOrderIterator.Value.TypeID}"]
@@ -429,10 +432,10 @@ objectdef obj_HangerSale inherits obj_State
 		variable int delay = 100
 		variable float discount
 		variable float sellPrice
-		discount:Set[${Math.Calc[${SellPrices[${MyOrderIterator.Value.TypeID}].Min}*0.01]}]
-		if ${discount} > 1000
+		discount:Set[${Math.Calc[${SellPrices[${MyOrderIterator.Value.TypeID}].Min}*(${Config.HangarSale.UndercutPercent} * .01)]}]
+		if ${discount} > ${Config.HangarSale.UndercutValue}
 		{
-			discount:Set[1000]
+			discount:Set[${Config.HangarSale.UndercutValue}]
 		}
 		sellPrice:Set[${Math.Calc[${SellPrices[${MyOrderIterator.Value.TypeID}].Min} - ${discount}]}]
 		UI:Update["obj_HangerSale", "${MyOrderIterator.Value.Name}", "y"]

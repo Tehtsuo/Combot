@@ -162,8 +162,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							This:SetValue[${Script[ComBot].VariableScope.Config.Hauler.Threshold}]
 						</OnLoad>
 						<OnChange>
-							UIElement[obj_Hauler_ThresholdTitle@ComBot_Hauler_Frame@ComBot_Hauler]:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Config.Hauler.Threshold}]
 							Script[ComBot].VariableScope.Config.Hauler:SetThreshold[${This.Value}]
+							UIElement[obj_Hauler_ThresholdTitle@ComBot_Hauler_Frame@ComBot_Hauler]:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Config.Hauler.Threshold}]
 						</OnChange>
 					</Slider>						 
 					
