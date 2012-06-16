@@ -146,8 +146,9 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							<Width>48%</Width>
 							<Height>6%</Height>
 							<Items>
-								<Item Value='Salvager'>Dedicated Salvager</Item>
 								<Item Value='Miner'>Miner</Item>
+								<Item Value='Hauler'>Hauler</Item>
+								<Item Value='Salvager'>Dedicated Salvager</Item>
 								<Item Value='HangerSale'>Hanger Sale</Item>
 								<Item Value='Combat'>Simple Clear Agro and Pocket</Item>
 							</Items>
@@ -375,25 +376,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								This:SetLeftClickThru[TRUE]
 							</OnLoad>
 						</frame>					
-						<Text name='obj_HaulerBookmarkListTitle'> 
-									<X>0</X> 
-									<Y>5%</Y> 
-									<Width>40%</Width> 
-									<Height>5%</Height> 
-									<Alignment>Center</Alignment>
-									<Text>Hauler Bookmarks</Text>
-						</Text>						 
-						<listbox Name="obj_HaulerBookmarkList">
-							<BackgroundColor>FF000000</BackgroundColor>
-							<Border>1</Border>
-							<BorderColor>FFFFFFFF</BorderColor>
-							<X>0</X>
-							<Y>10%</Y>
-							<Width>40%</Width>
-							<Height>80%</Height>
-						</listbox>
 						<Text name='obj_HaulerStateListTitle'> 
-									<X>40%</X> 
+									<X>0%</X> 
 									<Y>5%</Y> 
 									<Width>40%</Width> 
 									<Height>5%</Height> 
@@ -405,11 +389,18 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							<BackgroundColor>FF000000</BackgroundColor>
 							<Border>1</Border>
 							<BorderColor>FFFFFFFF</BorderColor>
-							<X>40%</X>
+							<X>0%</X>
 							<Y>10%</Y>
 							<Width>40%</Width>
 							<Height>80%</Height>
 						</listbox>
+						<Text name='obj_HaulerOrcaCargo'> 
+									<X>41%</X> 
+									<Y>10%</Y> 
+									<Width>60%</Width> 
+									<Height>5%</Height> 
+									<Text>Orca Cargo Hold: XXX</Text>
+						</Text>						 
 						<button	Name='Config'>
 							<Font template='Button.Font' />
 							<BackgroundColor>FF000000</BackgroundColor>

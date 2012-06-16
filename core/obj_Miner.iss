@@ -31,10 +31,6 @@ objectdef obj_Miner inherits obj_State
 		Event[ComBot_Orca_InBelt]:AttachAtom[This:OrcaInBelt]
 		This:AssignStateQueueDisplay[obj_MinerStateList@Miner@ComBotTab@ComBot]
 		PulseFrequency:Set[20]
-		This:PopulateTargetList
-		Asteroids.AutoLock:Set[TRUE]
-		Asteroids.AutoRelock:Set[TRUE]
-		Asteroids.AutoRelockPriority:Set[TRUE]
 		UI:Update["obj_Miner", "Initialized", "g"]
 	}
 
@@ -45,6 +41,11 @@ objectdef obj_Miner inherits obj_State
 	
 	method Start()
 	{
+		This:PopulateTargetList
+		Asteroids.AutoLock:Set[TRUE]
+		Asteroids.AutoRelock:Set[TRUE]
+		Asteroids.AutoRelockPriority:Set[TRUE]
+
 		UI:Update["obj_Miner", "Started", "g"]
 		if ${This.IsIdle}
 		{
@@ -168,6 +169,7 @@ objectdef obj_Miner inherits obj_State
 	
 	member:bool StackItemHangar()
 	{
+		variable int64 Orca
 		if !${EVEWindow[ByName, "Inventory"](exists)}
 		{
 			UI:Update["obj_Miner", "Making sure inventory is open", "g"]
@@ -181,6 +183,11 @@ objectdef obj_Miner inherits obj_State
 			case Personal Hangar
 				EVE:StackItems[MyStationHangar, Hangar]
 				break
+			case Orca
+				if ${Entity[Name = "${Config.Miner.Miner_OrcaName}"](exists)}
+				{
+					EVE:StackItems[${Entity[Name = "${Config.Miner.Miner_OrcaName}"].ID}, CorpHangars]
+				}
 			default
 				EVE:StackItems[MyStationCorporateHangar, StationCorporateHangar, "${Config.Miner.Miner_Dropoff_Type.Escape}"]
 				break
@@ -341,6 +348,7 @@ objectdef obj_Miner inherits obj_State
 						Cargo:PopulateCargoList[SHIP]
 						Cargo:MoveCargoList[SHIPCORPORATEHANGAR, "", ${Orca}]
 						This:QueueState["Idle", 1000]
+						This:QueueState["StackItemHangar"]
 						This:QueueState["Mine"]
 						return TRUE
 					}
@@ -369,6 +377,7 @@ objectdef obj_Miner inherits obj_State
 		if ${Config.Miner.OrcaMode}
 		{
 			relay all -event ComBot_Orca_InBelt TRUE
+			relay all -event ComBot_Orca_Cargo ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipCorpHangar]}
 			if ${Config.Miner.IceMining}
 			{
 				Move:Approach[${Entity[CategoryID==CATEGORYID_ORE]}, 10000]
@@ -387,26 +396,6 @@ objectdef obj_Miner inherits obj_State
 			Ship.ModuleList_GangLinks:ActivateCount[${Math.Calc[${Ship.ModuleList_GangLinks.Count} - ${Ship.ModuleList_GangLinks.ActiveCount}]}]
 		}
 		
-		; if ${Config.Miner.IceMining}
-		; {
-			; if  ${Targets.Asteroids.Used} < 1
-			; {
-				; This:QueueState["TargetAsteroids", 50, 1]
-				; This:QueueState["Mine"]
-				; return TRUE
-				
-			; }
-		; }
-		; else
-		; {
-			; if  ${Targets.Asteroids.Used} < ${Ship.ModuleList_MiningLaser.Count}
-			; {
-				; This:QueueState["TargetAsteroids"]
-				; This:QueueState["Mine"]
-				; return TRUE
-			; }
-		; }
-
 		if ${Ship.ModuleList_MiningLaser.ActiveCount} < ${Ship.ModuleList_MiningLaser.Count}
 		{
 			This:QueueState["ActivateLasers"]
@@ -421,40 +410,7 @@ objectdef obj_Miner inherits obj_State
 		}
 		return FALSE
 	}
-	
-	; member:bool TargetAsteroids()
-	; {
-		; if ${Targets.Asteroids.Used} == ${Ship.ModuleList_MiningLaser.Count}
-		; {
-			; return TRUE
-		; }
-		; variable iterator Roid
-		; Asteroids.AsteroidList:GetIterator[Roid]
-		; if ${Roid:First(exists)}
-		; do
-		; {
-			; if ${Targets.AsteroidIsInRangeOfOthers[${Roid.Value.ID}]}
-			; {
-				; if  !${Roid.Value.BeingTargeted} &&\
-					; !${Roid.Value.IsLockedTarget} &&\
-					; ${Roid.Value.Distance} >= ${MyShip.MaxTargetRange}
-				; {
-					; Move:Approach[${Roid.Value.ID}, ${MyShip.MaxTargetRange}]
-					; return FALSE
-				; }
 
-				; if  !${Roid.Value.BeingTargeted} &&\
-					; !${Roid.Value.IsLockedTarget}
-				; {
-					; UI:Update["obj_Miner", "Locking ${Roid.Value.Name} (${ComBot.MetersToKM_Str[${Roid.Value.Distance}]})", "y"]
-					; Roid.Value:LockTarget
-					; return FALSE
-				; }
-			; }
-		; }
-		; while ${Roid:Next(exists)}
-		; return FALSE
-	; }
 
 	member:bool ActivateLasers()
 	{

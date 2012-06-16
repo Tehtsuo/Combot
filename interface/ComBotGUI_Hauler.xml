@@ -126,10 +126,9 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					</Text>						 
 					<ComboBox name='obj_Hauler_JetcanMode'> 
 						<X>69%</X> 
-						<Y>52%</Y> 
+						<Y>54%</Y> 
 						<Width>30%</Width> 
-						<Height>2%</Height> 
-						<Alignment>Center</Alignment>
+						<Height>3%</Height> 
 						<Items>
 							<Item>Service Fleet</Item>
 							<Item>On-Demand</Item>
@@ -141,6 +140,32 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							Script[ComBot].VariableScope.Config.Hauler:SetJetCanMode[${This.SelectedItem.Text}]
 						</OnSelect>
 					</ComboBox>						 
+
+					<Text name='obj_Hauler_ThresholdTitle'> 
+						<X>69%</X> 
+						<Y>60%</Y> 
+						<Width>30%</Width> 
+						<Height>2%</Height> 
+						<Alignment>Center</Alignment>
+						<OnLoad>
+							This:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Config.Hauler.Threshold}]
+						</OnLoad>
+					</Text>						 
+					<Slider name='obj_Hauler_Threshold'> 
+						<X>69%</X> 
+						<Y>63%</Y> 
+						<Width>30%</Width> 
+						<Height>5%</Height> 
+						<Border>1</Border>
+						<OnLoad>
+							This:SetRange[${MyShip.CargoCapacity}]
+							This:SetValue[${Script[ComBot].VariableScope.Config.Hauler.Threshold}]
+						</OnLoad>
+						<OnChange>
+							UIElement[obj_Hauler_ThresholdTitle@ComBot_Hauler_Frame@ComBot_Hauler]:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Config.Hauler.Threshold}]
+							Script[ComBot].VariableScope.Config.Hauler:SetThreshold[${This.Value}]
+						</OnChange>
+					</Slider>						 
 					
 					<Text name='obj_HaulerDropoffBookmarkTitle'> 
 						<X>1%</X> 

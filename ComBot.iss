@@ -39,6 +39,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 #include core/obj_Salvage.iss
 #include core/obj_Targets.iss
 #include core/obj_Miner.iss
+#include core/obj_Hauler.iss
 #include core/obj_Agents.iss
 #include core/obj_HangerSale.iss
 #include core/obj_Combat.iss
@@ -72,6 +73,7 @@ function main()
 	declarevariable Salvager obj_Salvage script
 	declarevariable Targets obj_Targets script
 	declarevariable Miner obj_Miner script
+	declarevariable Hauler obj_Hauler script
 	declarevariable Bookmarks obj_Bookmarks script
 	declarevariable Agents obj_Agents script
 	declarevariable HangerSale obj_HangerSale script

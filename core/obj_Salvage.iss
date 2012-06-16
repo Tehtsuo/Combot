@@ -147,6 +147,7 @@ objectdef obj_Salvage inherits obj_State
 		UI:Update["obj_Salvage", "No salvage bookmark found - returning to station", "g"]
 		Move:Bookmark[${Config.Salvager.Salvager_Dropoff}]
 		This:QueueState["Traveling"]
+		This:QueueState["PrepOffload"]
 		This:QueueState["Offload"]
 		return TRUE
 	}
@@ -194,6 +195,7 @@ objectdef obj_Salvage inherits obj_State
 			UI:Update["obj_Salvage", "Unload trip required", "g"]
 			Move:Bookmark[${Config.Salvager.Salvager_Dropoff}]
 			This:QueueState["Traveling"]
+			This:QueueState["PrepOffload"]
 			This:QueueState["Offload"]
 			This:QueueState["RefreshBookmarks", 3000]
 			This:QueueState["CheckBookmarks"]
@@ -430,6 +432,7 @@ objectdef obj_Salvage inherits obj_State
 			UI:Update["obj_Salvage", "Unload trip required", "g"]
 			Move:Bookmark[${Config.Salvager.Salvager_Dropoff}]
 			This:QueueState["Traveling"]
+			This:QueueState["PrepOffload"]
 			This:QueueState["Offload"]
 		}
 		else
@@ -441,6 +444,18 @@ objectdef obj_Salvage inherits obj_State
 		return TRUE;
 	}
 
+	member:bool PrepOffload()
+	{
+		switch ${Config.Salvager.Salvager_Dropoff_Type}
+		{
+			case Personal Hangar
+				break
+			default
+				EVEWindow[ByName, Inventory]:MakeChildActive[Corporation Hangars]
+				break
+		}
+		return TRUE
+	}
 	
 	member:bool Offload()
 	{

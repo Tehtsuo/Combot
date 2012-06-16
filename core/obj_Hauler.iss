@@ -35,7 +35,7 @@ objectdef obj_Hauler inherits obj_State
 
 	method Shutdown()
 	{
-		Event[ComBot_Orca_Cargo]:DetachAtom[This:OrcaInBelt]
+		Event[ComBot_Orca_Cargo]:DetachAtom[This:OrcaCargoUpdate]
 	}	
 	
 	method Start()
@@ -43,6 +43,8 @@ objectdef obj_Hauler inherits obj_State
 		UI:Update["obj_Hauler", "Started", "g"]
 		if ${This.IsIdle}
 		{
+			This:QueueState["OpenCargoHold"]
+			This:QueueState["CheckCargoHold"]
 			This:QueueState["Haul"]
 		}
 	}
@@ -60,25 +62,46 @@ objectdef obj_Hauler inherits obj_State
 	
 	member:bool CheckCargoHold()
 	{
-		switch ${Config.Hauler.Hauler_Dropoff_Type}
+		
+	
+		switch ${Config.Hauler.Dropoff_Type}
 		{
 			default
-				if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) > 0.95
+				if ${MyShip.UsedCargoCapacity} > ${Config.Hauler.Threshold}
 				{
 					UI:Update["obj_Hauler", "Unload trip required", "g"]
 					This:Clear
-					Move:Bookmark[${Config.Hauler.Hauler_Dropoff}]
+					Move:Bookmark[${Config.Hauler.Dropoff_Bookmark}]
 					This:QueueState["Traveling", 1000]
+					This:QueueState["PrepOffload", 1000]
 					This:QueueState["Offload", 1000]
 					This:QueueState["StackItemHangar", 1000]
+					This:QueueState["OrcaWait"]
 					This:QueueState["GoToMiningSystem", 1000]
+					This:QueueState["Traveling", 1000]
+					This:QueueState["Haul"]
 				}
 				break
 		}
-		This:QueueState["Haul"]
 		return TRUE;
 	}
 
+	member:bool OrcaWait()
+	{
+		if ${Config.Hauler.Pickup_Type.Equal[Orca]}
+		{
+			if ${OrcaCargo} > ${Config.Hauler.Threshold}
+			{
+				return TRUE
+			}
+			else
+			{
+				return FALSE
+			}
+		}
+		return TRUE
+	}
+	
 	member:bool Traveling()
 	{
 		if ${Move.Traveling} || ${Me.ToEntity.Mode} == 3
@@ -88,17 +111,30 @@ objectdef obj_Hauler inherits obj_State
 		return TRUE
 	}
 
+	member:bool PrepOffload()
+	{
+		switch ${Config.Hauler.Dropoff_Type}
+		{
+			case Personal Hangar
+				break
+			default
+				EVEWindow[ByName, Inventory]:MakeChildActive[Corporation Hangars]
+				break
+		}
+		return TRUE
+	}
+	
 	member:bool Offload()
 	{
 		UI:Update["obj_Hauler", "Unloading cargo", "g"]
 		Cargo:PopulateCargoList[SHIP]
-		switch ${Config.Hauler.Hauler_Dropoff_Type}
+		switch ${Config.Hauler.Dropoff_Type}
 		{
 			case Personal Hangar
 				Cargo:MoveCargoList[HANGAR]
 				break
 			default
-				Cargo:MoveCargoList[CORPORATEHANGAR, ${Config.Hauler.Hauler_Dropoff_Type}]
+				Cargo:MoveCargoList[CORPORATEHANGAR, ${Config.Hauler.Dropoff_Type}]
 				break
 		}
 		return TRUE
@@ -114,13 +150,13 @@ objectdef obj_Hauler inherits obj_State
 		}
 
 		UI:Update["obj_Hauler", "Stacking dropoff container", "g"]
-		switch ${Config.Hauler.Hauler_Dropoff_Type}
+		switch ${Config.Hauler.Dropoff_Type}
 		{
 			case Personal Hangar
 				EVE:StackItems[MyStationHangar, Hangar]
 				break
 			default
-				EVE:StackItems[MyStationCorporateHangar, StationCorporateHangar, "${Config.Hauler.Hauler_Dropoff_Type.Escape}"]
+				EVE:StackItems[MyStationCorporateHangar, StationCorporateHangar, "${Config.Hauler.Dropoff_Type}"]
 				break
 		}
 		return TRUE
@@ -136,23 +172,30 @@ objectdef obj_Hauler inherits obj_State
 		{
 			This:Clear
 			Move:System[${EVE.Bookmark[${Config.Hauler.MiningSystem}].SolarSystemID}]
-			This:QueueState["Traveling", 1000]
 		}
-		This:QueueState["Haul"]
 		return TRUE
 	}
 
-	
+	member:bool Undock()
+	{
+		Move:Undock
+		return TRUE
+	}
 	
 	
 	member:bool Haul()
 	{
+		variable int64 Container
+
 		This:Clear
 		This:QueueState["OpenCargoHold", 10]
 
 		if !${Client.InSpace}
 		{
 			This:QueueState["CheckCargoHold", 1000]
+			This:QueueState["OrcaWait"]
+			This:QueueState["Undock"]
+			This:QueueState["Haul"]
 			return TRUE
 		}
 		
@@ -162,12 +205,47 @@ objectdef obj_Hauler inherits obj_State
 		}
 		
 		
-		if ${Config.Hauler.Hauler_Dropoff_Type.Equal[Container]}
+		; if ${Config.Hauler.Dropoff_Type.Equal[Container]}
+		; {
+			; if ${Entity[Name = "${Config.Hauler.Hauler_ContainerName}"](exists)}
+			; {
+				; Container:Set[${Entity[Name = "${Config.Hauler.Hauler_ContainerName}"].ID}]
+				; if ${Entity[${Container}].Distance} > LOOT_RANGE
+				; {
+					; Move:Approach[${Container}, LOOT_RANGE]
+					; return FALSE
+				; }
+				; else
+				; {
+					; if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) > 0.10
+					; {
+						; if !${EVEWindow[ByName, Inventory].ChildWindowExists[${Container}]}
+						; {
+							; UI:Update["obj_Hauler", "Opening ${Config.Hauler.Hauler_ContainerName}", "g"]
+							; Entity[${Container}]:Open
+							; return FALSE
+						; }
+						; if !${EVEWindow[ByItemID, ${Container}](exists)}
+						; {
+							; EVEWindow[ByName, Inventory]:MakeChildActive[${Container}]
+							; return FALSE
+						; }
+						; UI:Update["obj_Hauler", "Unloading to ${Config.Hauler.Hauler_ContainerName}", "g"]
+						; Cargo:PopulateCargoList[SHIP]
+						; Cargo:MoveCargoList[SHIPCORPORATEHANGAR, "", ${Container}]
+						; This:QueueState["Idle", 1000]
+						; This:QueueState["Haul"]
+						; return TRUE
+					; }
+				; }
+			; }
+		; }
+
+		if ${Config.Hauler.Pickup_Type.Equal[Orca]}
 		{
-			variable int64 Container
-			if ${Entity[Name = "${Config.Hauler.Hauler_ContainerName}"](exists)}
+			if ${Entity[Name = "${Config.Hauler.Pickup_ContainerName}"](exists)}
 			{
-				Container:Set[${Entity[Name = "${Config.Hauler.Hauler_ContainerName}"].ID}]
+				Container:Set[${Entity[Name = "${Config.Hauler.Pickup_ContainerName}"].ID}]
 				if ${Entity[${Container}].Distance} > LOOT_RANGE
 				{
 					Move:Approach[${Container}, LOOT_RANGE]
@@ -175,30 +253,42 @@ objectdef obj_Hauler inherits obj_State
 				}
 				else
 				{
-					if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) > 0.10
+					if ${OrcaCargo}
 					{
 						if !${EVEWindow[ByName, Inventory].ChildWindowExists[${Container}]}
 						{
-							UI:Update["obj_Hauler", "Opening ${Config.Hauler.Hauler_ContainerName}", "g"]
+							UI:Update["obj_Hauler", "Opening ${Config.Hauler.Pickup_ContainerName}", "g"]
 							Entity[${Container}]:Open
 							return FALSE
 						}
-						if !${EVEWindow[ByItemID, ${Container}](exists)}
+						if !${EVEWindow[ByItemID, ${Container}](exists)} 
 						{
 							EVEWindow[ByName, Inventory]:MakeChildActive[${Container}]
 							return FALSE
 						}
-						UI:Update["obj_Hauler", "Unloading to ${Config.Hauler.Hauler_ContainerName}", "g"]
-						Cargo:PopulateCargoList[SHIP]
-						Cargo:MoveCargoList[SHIPCORPORATEHANGAR, "", ${Container}]
+						Cargo:PopulateCargoList[CONTAINERCORPORATEHANGAR, ${Container}]
+						Cargo:MoveCargoList[SHIP]
 						This:QueueState["Idle", 1000]
+						This:QueueState["CheckCargoHold"]
 						This:QueueState["Haul"]
 						return TRUE
 					}
 				}
 			}
+			else
+			{
+				if ${Local[${Config.Hauler.Pickup_ContainerName}].ToFleetMember(exists)}
+					{
+						UI:Update["obj_Miner", "Warping to ${Local[${Config.Hauler.Pickup_ContainerName}].ToFleetMember.ToPilot.Name}", "g"]
+						Local[${Config.Hauler.Pickup_ContainerName}].ToFleetMember:WarpTo
+						Client:Wait[5000]
+						This:Clear
+						This:QueueState["Traveling", 1000]
+						This:QueueState["Haul"]
+						return TRUE
+					}
+			}
 		}
-
 
 
 
@@ -208,15 +298,19 @@ objectdef obj_Hauler inherits obj_State
 			Ship.ModuleList_GangLinks:ActivateCount[${Math.Calc[${Ship.ModuleList_GangLinks.Count} - ${Ship.ModuleList_GangLinks.ActiveCount}]}]
 		}
 		
-
+	
 		This:QueueState["CheckCargoHold"]
+		This:QueueState["GoToMiningSystem"]
+		This:QueueState["Traveling", 1000]
+		This:QueueState["Haul"]
 		return TRUE
 	}
 	
 
-	method OrcaInBelt(bool value)
+	method OrcaCargoUpdate(float value)
 	{
-		WarpToOrca:Set[${value}]
+		OrcaCargo:Set[${value}]
+		UIElement[obj_HaulerOrcaCargo@Hauler@ComBotTab@ComBot]:SetText[Orca Cargo Hold: ${OrcaCargo.Round} m3]
 	}
 	
 }	

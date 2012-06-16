@@ -356,6 +356,17 @@ objectdef obj_Configuration_Hauler
 	{
 		This.CommonRef:AddSetting[Pickup_ContainerName,${value}]
 	}
+
+	member:int Threshold()
+	{
+		return ${This.CommonRef.FindSetting[Threshold]}
+	}
+
+	method SetThreshold(int value)
+	{
+		This.CommonRef:AddSetting[Threshold,${value}]
+	}
+	
 }
 
 objectdef obj_Configuration_Miner
