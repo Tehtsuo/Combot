@@ -883,6 +883,17 @@ objectdef obj_Configuration_Security
 	{
 		This.CommonRef:AddSetting[OverrideFleeBookmark,${value}]
 	}
+
+	member:bool TargetFlee()
+	{
+		return ${This.CommonRef.FindSetting[TargetFlee]}
+	}
+
+	method SetTargetFlee(bool value)
+	{
+		This.CommonRef:AddSetting[TargetFlee,${value}]
+	}
+
 	
 }	
 	

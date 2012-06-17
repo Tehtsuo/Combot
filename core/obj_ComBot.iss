@@ -61,7 +61,6 @@ objectdef obj_ComBot
 	method Resume()
 	{
 		UIElement[Run@TitleBar@ComBot]:SetText[Stop]
-		UI:Update["obj_ComBot", "Combot Resumed", "g"]
 		This.Paused:Set[FALSE]
 		${Config.Common.ComBot_Mode}:Start
 	}
