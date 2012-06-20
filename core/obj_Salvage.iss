@@ -554,12 +554,18 @@ objectdef obj_LootCans inherits obj_State
 		
 		EVE:QueryEntities[Targets, "(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && HaveLootRights && !IsWreckEmpty && Distance<LOOT_RANGE && !IsAbandoned"]
 		Targets:GetIterator[TargetIterator]
-		if ${TargetIterator:First(exists)}
+		if ${TargetIterator:First(exists)} && ${EVEWindow[ByName, Inventory](exists)}
 		{
 			do
 			{
-				if ${EVEWindow[ByItemID, ${TargetIterator.Value}](exists)}
+				if ${EVEWindow[ByName, Inventory].ChildWindowExists[${TargetIterator.Value}]}
 				{
+					if !${EVEWindow[ByItemID, ${TargetIterator.Value}](exists)}
+					{
+						EVEWindow[ByName, Inventory]:MakeChildActive[${TargetIterator.Value}]
+						return FALSE
+					}
+					
 					Entity[${TargetIterator.Value}]:GetCargo[TargetCargo]
 					TargetCargo:GetIterator[CargoIterator]
 					if ${CargoIterator:First(exists)}
@@ -578,7 +584,7 @@ objectdef obj_LootCans inherits obj_State
 					EVEWindow[ByItemID, ${TargetIterator.Value}]:LootAll
 					return FALSE
 				}
-				if !${EVEWindow[ByItemID, ${TargetIterator.Value}](exists)}
+				if !${EVEWindow[ByName, Inventory].ChildWindowExists[${TargetIterator.Value}]}
 				{
 					UI:Update["obj_Salvage", "Opening - ${TargetIterator.Value.Name}", "g"]
 					TargetIterator.Value:OpenCargo
