@@ -547,7 +547,7 @@ objectdef obj_LootCans inherits obj_State
 			return FALSE
 		}
 
-		if ${Entity[(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && IsAbandoned](exists)}
+		if ${Entity[(GroupID==GROUP_CARGOCONTAINER) && IsAbandoned](exists)}
 		{
 			Entity[(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && IsAbandoned]:UnlockTarget
 		}
