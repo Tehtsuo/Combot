@@ -1,25 +1,23 @@
-objectdef obj_WarpDestination
-{
-	variable int Distance
-	variable string Bookmark
-	variable int AgentID
+/*
 
-	method Initialize(int arg_Distance, string arg_Bookmark, int arg_Agent=0)
-	{
-		Distance:Set[${arg_Distance}]	
-		Bookmark:Set[${arg_Bookmark}]	
-		AgentID:Set[${arg_Agent}]	
-	}
-	
-	method Set(int arg_Distance, string arg_Bookmark, int arg_Agent=0)
-	{
-		Distance:Set[${arg_Distance}]	
-		Bookmark:Set[${arg_Bookmark}]	
-		AgentID:Set[${arg_Agent}]
-		
-	}
-}
+ComBot  Copyright © 2012  Tehtsuo and Vendan
 
+This file is part of ComBot.
+
+ComBot is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ComBot is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
+
+*/
 
 objectdef obj_Move inherits obj_State
 {
@@ -32,23 +30,21 @@ objectdef obj_Move inherits obj_State
 
 	variable bool Traveling=FALSE
 	
-	variable obj_WarpDestination WarpDestination
-	variable int64 TargetGate = -1
+	variable int Distance
 
 
 	method Initialize()
 	{
 		This[parent]:Initialize
-		UI:Update["obj_Move", "Initialized", "g"]
 	}
 
 
 
 	
 	
-	method Warp(int64 ID, int Distance=0)
+	method Warp(int64 ID, int Dist=0)
 	{
-		Entity[${ID}]:WarpTo[${Distance}]
+		Entity[${ID}]:WarpTo[${Dist}]
 		Client:Wait[5000]
 	}
 	
@@ -106,7 +102,7 @@ objectdef obj_Move inherits obj_State
 	
 	
 	
-	method Bookmark(string DestinationBookmarkLabel, int Distance=0)
+	method Bookmark(string DestinationBookmarkLabel, int Dist=0)
 	{
 		if ${This.Traveling}
 		{
@@ -121,12 +117,43 @@ objectdef obj_Move inherits obj_State
 		}
 
 		UI:Update["obj_Move", "Movement queued.  Destination: ${DestinationBookmarkLabel}", "g"]
-		This.WarpDestination:Set[${Distance}, ${DestinationBookmarkLabel}]
 		This.Traveling:Set[TRUE]
-		This:QueueState["BookmarkMove"]
+		This.Distance:Set[${Dist}]
+		This:QueueState["BookmarkMove", 2000, ${DestinationBookmarkLabel}]
 	}
 
-	method AgentName(string AgentName)
+	method System(string SystemID)
+	{
+		if ${This.Traveling}
+		{
+			return
+		}
+		
+		if !${Universe[${SystemID}](exists)}
+		{
+			UI:Update["obj_Move", "Attempted to travel to a system which does not exist", "r"]
+			UI:Update["obj_Move", "System ID: ${SystemID}", "r"]
+			return
+		}
+
+		UI:Update["obj_Move", "Movement queued.  Destination: ${Universe[${SystemID]}}.Name", "g"]
+		This.Traveling:Set[TRUE]
+		This:QueueState["SystemMove", 2000, ${SystemID}]
+	}
+
+	method Object(int64 ID)
+	{
+		if ${This.Traveling}
+		{
+			return
+		}
+		
+		UI:Update["obj_Move", "Movement to object queued.  Destination: ${ID}", "g"]
+		This.Traveling:Set[TRUE]
+		This:QueueState["ObjectMove", 2000, ${ID}]
+	}	
+	
+	method Agent(string AgentName)
 	{
 		if ${This.Traveling}
 		{
@@ -141,60 +168,57 @@ objectdef obj_Move inherits obj_State
 		}
 
 		UI:Update["obj_Move", "Movement queued.  Destination: ${AgentName}", "g"]
-		This.WarpDestination:Set[0, "", ${Agent[AgentName].Index}]
 		This.Traveling:Set[TRUE]
-		This:QueueState["AgentMove"]
+		This:QueueState["AgentMove", 2000, ${Agent[AgentName].Index}]
 	}	
 
 	method Gate(int64 ID)
 	{
 		UI:Update["obj_Move", "Movement queued.  Destination: ${Entity[${ID}].Name}", "g"]
-		TargetGate:Set[${ID}]
 		This.Traveling:Set[TRUE]
-		This:QueueState["GateMove"]
+		This:QueueState["GateMove", 2000, ${ID}]
 	}
 
-	member:bool GateMove()
+	member:bool GateMove(int64 ID)
 	{
-		echo GATEMOVE
 		if !${This.CheckApproach}
 		{
 			return FALSE
 		}
 
-		if ${Entity[${TargetGate}].Distance} == 0
+		if ${Entity[${ID}].Distance} == 0
 		{
-			UI:Update["obj_Move", "Too close!  Orbiting ${Entity[${TargetGate}].Name}", "g"]
+			UI:Update["obj_Move", "Too close!  Orbiting ${Entity[${ID}].Name}", "g"]
 			This:Clear
-			This:QueueState["Orbit", 10000, ${Entity[${TargetGate}].ID}]
+			This:QueueState["Orbit", 10000, ${Entity[${ID}].ID}]
 			This:QueueState["GateMove"]
 			return TRUE
 		}
-		if ${Entity[${TargetGate}].Distance} > 3000
+		if ${Entity[${ID}].Distance} > 3000
 		{
-			This:Approach[${TargetGate}, 3000]
+			This:Approach[${ID}, 3000]
 			return FALSE
 		}
-		UI:Update["obj_Move", "Activating ${Entity[${TargetGate}].Name}", "g"]
-		Entity[${TargetGate}]:Activate
+		UI:Update["obj_Move", "Activating ${Entity[${ID}].Name}", "g"]
+		Entity[${ID}]:Activate
 		Client:Wait[5000]
-		This.Traveling:Set[FALSE]
 		return TRUE
 	}
+	
 	member:bool Orbit(int64 ID)
 	{
 		Entity[${ID}]:Orbit
 		return TRUE
 	}
 	
-	member:bool BookmarkMove()
+	member:bool BookmarkMove(string Bookmark)
 	{
 
 		if ${Me.InStation}
 		{
-			if ${Me.StationID} == ${EVE.Bookmark[${This.WarpDestination.Bookmark}].ItemID}
+			if ${Me.StationID} == ${EVE.Bookmark[${Bookmark}].ItemID}
 			{
-				UI:Update["obj_Move", "Docked at ${This.WarpDestination.Bookmark}", "g"]
+				UI:Update["obj_Move", "Docked at ${Bookmark}", "g"]
 				This.Traveling:Set[FALSE]
 				return TRUE
 			}
@@ -216,64 +240,65 @@ objectdef obj_Move inherits obj_State
 			return FALSE
 		}
 		
-		if  ${EVE.Bookmark[${This.WarpDestination.Bookmark}].SolarSystemID} != ${Me.SolarSystemID}
+		if  ${EVE.Bookmark[${Bookmark}].SolarSystemID} != ${Me.SolarSystemID}
 		{
-			This:TravelToSystem[${EVE.Bookmark[${This.WarpDestination.Bookmark}].SolarSystemID}]
+			This:TravelToSystem[${EVE.Bookmark[${Bookmark}].SolarSystemID}]
 			return FALSE
 		}
 		
-		if ${EVE.Bookmark[${This.WarpDestination.Bookmark}].ItemID} == -1
+		if ${EVE.Bookmark[${Bookmark}].ItemID} == -1
 		{
-			if ${EVE.Bookmark[${This.WarpDestination.Bookmark}].Distance} > WARP_RANGE
+			if ${EVE.Bookmark[${Bookmark}].Distance} > WARP_RANGE
 			{
 				if ${Entity[GroupID == GROUP_WARPGATE](exists)}
 				{
 					UI:Update["obj_Move", "Gate found, activating", "g"]
 					This:Gate[${Entity[GroupID == GROUP_WARPGATE].ID}]
+					This:QueueState["BookmarkMove", 2000, ${Bookmark}]
 					return TRUE
 				}			
 				
-				UI:Update["obj_Move", "Warping to ${This.WarpDestination.Bookmark}", "g"]
-				EVE.Bookmark[${This.WarpDestination.Bookmark}]:WarpTo[${This.WarpDestination.Distance}]
+				UI:Update["obj_Move", "Warping to ${Bookmark}", "g"]
+				EVE.Bookmark[${Bookmark}]:WarpTo[${This.Distance}]
 				Client:Wait[5000]
 				return FALSE
 			}
 			else
 			{
-				UI:Update["obj_Move", "Reached ${This.WarpDestination.Bookmark}", "g"]
+				UI:Update["obj_Move", "Reached ${Bookmark}", "g"]
 				This.Traveling:Set[FALSE]
 				return TRUE
 			}
 		}
 		else
 		{
-			if ${EVE.Bookmark[${This.WarpDestination.Bookmark}].ToEntity(exists)}
+			if ${EVE.Bookmark[${Bookmark}].ToEntity(exists)}
 			{
-				if ${EVE.Bookmark[${This.WarpDestination.Bookmark}].ToEntity.Distance} > WARP_RANGE
+				if ${EVE.Bookmark[${Bookmark}].ToEntity.Distance} > WARP_RANGE
 				{
-					UI:Update["obj_Move", "Warping to ${This.WarpDestination.Bookmark}", "g"]
-					This:Warp[${EVE.Bookmark[${This.WarpDestination.Bookmark}].ToEntity}, ${This.WarpDestination.Distance}]
+					UI:Update["obj_Move", "Warping to ${Bookmark}", "g"]
+					This:Warp[${EVE.Bookmark[${Bookmark}].ToEntity}, ${This.Distance}]
 					return FALSE
 				}
 				else
 				{
-					UI:Update["obj_Move", "Reached ${This.WarpDestination.Bookmark}, docking", "g"]
-					This:DockAtStation[${EVE.Bookmark[${This.WarpDestination.Bookmark}].ItemID}]
+					UI:Update["obj_Move", "Reached ${Bookmark}, docking", "g"]
+					This:DockAtStation[${EVE.Bookmark[${Bookmark}].ItemID}]
 					return FALSE
 				}
 			}
 			else
 			{
-				if ${EVE.Bookmark[${This.WarpDestination.Bookmark}].Distance} > WARP_RANGE
+				if ${EVE.Bookmark[${Bookmark}].Distance} > WARP_RANGE
 				{
-					UI:Update["obj_Move", "Warping to ${This.WarpDestination.Bookmark}", "g"]
-					EVE.Bookmark[${This.WarpDestination.Bookmark}]:WarpTo[${This.WarpDestination.Distance}]
+					UI:Update["obj_Move", "Warping to ${Bookmark}", "g"]
+					EVE.Bookmark[${Bookmark}]:WarpTo[${This.Distance}]
 					Client:Wait[5000]
 					return FALSE
 				}
 				else
 				{
-					UI:Update["obj_Move", "Reached ${This.WarpDestination.Bookmark}", "g"]
+					UI:Update["obj_Move", "Reached ${Bookmark}", "g"]
 					This.Traveling:Set[FALSE]
 					return TRUE
 				}
@@ -282,14 +307,14 @@ objectdef obj_Move inherits obj_State
 	}
 	
 
-	member:bool AgentMove()
+	member:bool AgentMove(int ID)
 	{
 
 		if ${Me.InStation}
 		{
-			if ${Me.StationID} == ${Agent[${This.WarpDestination.AgentID}].StationID}
+			if ${Me.StationID} == ${Agent[${ID}].StationID}
 			{
-				UI:Update["obj_Move", "Docked at ${Agent[${This.WarpDestination.AgentID}].Station}", "g"]
+				UI:Update["obj_Move", "Docked at ${Agent[${ID}].Station}", "g"]
 				This.Traveling:Set[FALSE]
 				return TRUE
 			}
@@ -306,48 +331,118 @@ objectdef obj_Move inherits obj_State
 			return FALSE
 		}
 			
-		if  ${Agent[${This.WarpDestination.AgentID}].SolarSystem.ID} != ${Me.SolarSystemID}
+		if  ${Agent[${ID}].SolarSystem.ID} != ${Me.SolarSystemID}
 		{
-			This:TravelToSystem[${Agent[${This.WarpDestination.AgentID}].SolarSystem.ID}]
+			This:TravelToSystem[${Agent[${ID}].SolarSystem.ID}]
 			return FALSE
 		}
 		
-		if ${Entity[${Agent[${This.WarpDestination.AgentID}].StationID}](exists)}
+		if ${Entity[${Agent[${ID}].StationID}](exists)}
 		{
-			if ${Entity[${Agent[${This.WarpDestination.AgentID}].StationID}].Distance} > WARP_RANGE
+			if ${Entity[${Agent[${ID}].StationID}].Distance} > WARP_RANGE
 			{
-				UI:Update["obj_Move", "Warping to ${Agent[${This.WarpDestination.AgentID}].Station}", "g"]
-				This:Warp[${Agent[${This.WarpDestination.AgentID}].StationID}]
+				UI:Update["obj_Move", "Warping to ${Agent[${ID}].Station}", "g"]
+				This:Warp[${Agent[${ID}].StationID}]
 				return FALSE
 			}
 			else
 			{
-				UI:Update["obj_Move", "Reached ${Agent[${This.WarpDestination.AgentID}].Station}, docking", "g"]
-				This:DockAtStation[${Agent[${This.WarpDestination.AgentID}].StationID}]
+				UI:Update["obj_Move", "Reached ${Agent[${ID}].Station}, docking", "g"]
+				This:DockAtStation[${Agent[${ID}].StationID}]
 				This.Traveling:Set[FALSE]
 				return TRUE
 			}
 		}
 	}
 
+	member:bool SystemMove(int64 ID)
+	{
+
+		if ${Me.InStation}
+		{
+			if ${Me.SolarSystemID} == ${ID}
+			{
+				UI:Update["obj_Move", "Reached ${Universe[${ID}].Name", "g"]
+				This.Traveling:Set[FALSE]
+				return TRUE
+			}
+			else
+			{
+				UI:Update["obj_Move", "Undocking from ${Me.Station.Name}", "g"]
+				This:Undock
+				return FALSE
+			}
+		}
+
+		if !${Client.InSpace}
+		{
+			return FALSE
+		}
+
+		if ${Me.ToEntity.Mode} == 3
+		{
+			return FALSE
+		}
+		
+		if  ${ID} != ${Me.SolarSystemID}
+		{
+			This:TravelToSystem[${ID}]
+			return FALSE
+		}
+		This.Traveling:Set[FALSE]
+		return TRUE
+	}
+
+	member:bool ObjectMove(int64 ID)
+	{
+
+		if ${Me.InStation}
+		{
+			UI:Update["obj_Move", "Undocking from ${Me.Station.Name}", "g"]
+			This:Undock
+			return FALSE
+		}
+
+		if !${Client.InSpace}
+		{
+			return FALSE
+		}
+
+		if ${Me.ToEntity.Mode} == 3
+		{
+			return FALSE
+		}
+		
+		if !${Entity[${ID}](exists)}
+		{
+			UI:Update["obj_Move", "Attempted to warp to object ${ID} which does not exist", "r"]
+		}
+		
+		if  ${Entity[${ID}].Distance} > WARP_RANGE
+		{
+			This:Warp[${ID}]
+			return FALSE
+		}
+		
+		This.Traveling:Set[FALSE]
+		return TRUE
+	}
+
 	
 	
 	method Approach(int64 target, int distance=0)
 	{
-		echo APPROACH - ${target} == ${This.ApproachingID} && ${This.Approaching}
 		;	If we're already approaching the target, ignore the request
 		if ${target} == ${This.ApproachingID} && ${This.Approaching}
 		{
 			return
 		}
-		echo AFTER
 		if !${Entity[${target}](exists)}
 		{
 			UI:Update["obj_Move", "Attempted to approach a target that does not exist", "r"]
 			UI:Update["obj_Move", "Target ID: ${target}", "r"]
 			return
 		}
-		echo EVEN AFTER
 		if ${Entity[${target}].Distance} <= ${distance}
 		{
 			return
@@ -402,6 +497,21 @@ objectdef obj_Move inherits obj_State
 			This.Approaching:Set[FALSE]
 			return TRUE
 		}
+		
+		if ${Config.Common.Propulsion}
+		{
+			if !${Ship.ModuleList_AB_MWD.ActiveCount} && ${MyShip.CapacitorPct} > 30
+			{
+				Ship.ModuleList_AB_MWD:Activate
+				return FALSE
+			}
+			if ${Ship.ModuleList_AB_MWD.ActiveCount} && ${MyShip.CapacitorPct} <= 30
+			{
+				Ship.ModuleList_AB_MWD:Activate
+				return FALSE
+			}
+		}
+		
 		return FALSE
 	}
 
@@ -411,39 +521,46 @@ objectdef obj_Move inherits obj_State
 	
 objectdef obj_InstaWarp inherits obj_State
 {
-	; variable bool InstaWarp_Cooldown=FALSE
+	variable bool InstaWarp_Cooldown=FALSE
 
-	; method Initialize()
-	; {
-		; This[parent]:Initialize
-		; This.NonGameTiedPulse:Set[TRUE]
-		; UI:Update["obj_InstaWarp", "Initialized", "g"]
-		; This:QueueState["InstaWarp_Check", 2000]
-	; }
+	method Initialize()
+	{
+		This[parent]:Initialize
+		This.NonGameTiedPulse:Set[TRUE]
+		if ${Config.Common.WarpPulse} 
+		{
+			This:QueueState["InstaWarp_Check", 2000]
+		}
+	}
 	
-	; member:bool InstaWarp_Check()
-	; {
-		; if !${Client.InSpace}
-		; {
-			; return FALSE
-		; }
-		; echo ${Ship.ModuleList_AB_MWD.ActiveCount}
-		; if ${Me.ToEntity.Mode} == 3 && ${InstaWarp_Cooldown} && ${Ship.ModuleList_AB_MWD.ActiveCount}
-		; {
-			; echo Deactivating
-			; Ship.ModuleList_AB_MWD:DeactivateAll
-			; return FALSE
-		; }
-		; if ${Me.ToEntity.Mode} == 3 && !${InstaWarp_Cooldown}
-		; {
-			; Ship.ModuleList_AB_MWD:Activate
-			; This:InstaWarp_Cooldown:Set[TRUE]
-			; return FALSE
-		; }
-		; if ${Me.ToEntity.Mode} != 3
-		; {
-			; This:InstaWarp_Cooldown:Set[FALSE]
-			; return FALSE
-		; }
-	; }
+	member:bool InstaWarp_Check()
+	{
+		if !${Client.InSpace}
+		{
+			return FALSE
+		}
+		
+		if ${Me.ToEntity.Mode} == 3 && ${InstaWarp_Cooldown} && ${Ship.ModuleList_AB_MWD.ActiveCount}
+		{
+			Ship.ModuleList_AB_MWD:Deactivate
+			return FALSE
+		}
+		
+		if ${Me.ToEntity.Mode} == 3 && !${InstaWarp_Cooldown}
+		{
+			Ship.ModuleList_AB_MWD:Activate
+			InstaWarp_Cooldown:Set[TRUE]
+			return FALSE
+		}
+		if ${Me.ToEntity.Mode} != 3
+		{
+			InstaWarp_Cooldown:Set[FALSE]
+			return FALSE
+		}
+	}
+	
+
+	method Flee()
+	{
+	}
 }

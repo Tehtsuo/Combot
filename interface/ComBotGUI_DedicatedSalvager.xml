@@ -1,5 +1,27 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <ISUI>
+
+<!--
+
+ComBot  Copyright © 2012  Tehtsuo and Vendan
+
+This file is part of ComBot.
+
+ComBot is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ComBot is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+
 	<template name='Information.Font'>	
 		<Name>Terminal</Name>
 		<Size>8</Size>
@@ -57,7 +79,7 @@
 						<Width>98%</Width> 
 						<Height>18%</Height> 
 						<Wrap />
-						<Text>The dedicated salvager mode will automatically salvage from bookmarks found in your address book with a prefix matching what you set below.  It will follow gates only when there are newer bookmarks available from the creator of the bookmark to the gate.  This means it will not gate to a room which has not been cleared, with the exception of non-linear missions like Worlds Collide.</Text>
+						<Text>The dedicated salvager mode will automatically salvage from bookmarks found in your address book with a prefix matching what you set below.  It will follow gates only when there are newer bookmarks available from the creator of the bookmark to the gate.  This means it will not gate to a room which has not been cleared, with the exception of non-linear missions like Worlds Collide.  Note - if NPCs are present when the Salvager warps in, it will immediately panic warp to a star and block the bookmark creator's bookmarks for an interval of time.</Text>
 					</Text>						 
 					<Text name='obj_SalvagePrefixTitle'> 
 						<X>1%</X> 
@@ -131,13 +153,13 @@
 						<Height>40%</Height>
 						<Items>
 							<Item>Personal Hangar</Item>
-							<Item>Corporate Hangar Folder 1</Item>
-							<Item>Corporate Hangar Folder 2</Item>
-							<Item>Corporate Hangar Folder 3</Item>
-							<Item>Corporate Hangar Folder 4</Item>
-							<Item>Corporate Hangar Folder 5</Item>
-							<Item>Corporate Hangar Folder 6</Item>
-							<Item>Corporate Hangar Folder 7</Item>
+							<Item>Corporation Folder 1</Item>
+							<Item>Corporation Folder 2</Item>
+							<Item>Corporation Folder 3</Item>
+							<Item>Corporation Folder 4</Item>
+							<Item>Corporation Folder 5</Item>
+							<Item>Corporation Folder 6</Item>
+							<Item>Corporation Folder 7</Item>
 						</Items>
 						<OnLoad>
 							This.ItemByText[${Script[ComBot].VariableScope.Config.Salvager.Salvager_Dropoff_Type}]:Select

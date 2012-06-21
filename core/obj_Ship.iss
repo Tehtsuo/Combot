@@ -1,3 +1,23 @@
+/*
+
+ComBot  Copyright © 2012  Tehtsuo and Vendan
+
+This file is part of ComBot.
+
+ComBot is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ComBot is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
+
+*/
 
 objectdef obj_Ship
 {
@@ -29,6 +49,7 @@ objectdef obj_Ship
 
 	variable float Module_Salvagers_Range
 	variable float Module_TractorBeams_Range
+	variable float Module_MiningLaser_Range
 
 
 	
@@ -36,7 +57,6 @@ objectdef obj_Ship
 	method Initialize()
 	{
 		Event[ISXEVE_onFrame]:AttachAtom[This:Pulse]
-		UI:Update["obj_Ship", "Initialized", "g"]
 	}
 
 	method Shutdown()
@@ -137,9 +157,11 @@ objectdef obj_Ship
 			
 			if ${ModuleIter.Value.MiningAmount(exists)}
 			{
+				This.Module_MiningLaser_Range:Set[${ModuleIter.Value.OptimalRange}]
 				This.ModuleList_MiningLaser:Insert[${ModuleIter.Value.ID}]
 				continue
 			}
+			
 			
 			switch ${GroupID}
 			{
@@ -241,6 +263,17 @@ objectdef obj_Ship
 		if ${ModuleIter:First(exists)}
 		{
 			UI:Update["obj_Ship", "ECCM Modules:", "g"]
+			do
+			{
+				UI:Update["obj_Ship", " Slot: ${ModuleIter.Value.ToItem.Slot} ${ModuleIter.Value.ToItem.Name}", "-g"]
+			}
+			while ${ModuleIter:Next(exists)}
+		}
+
+		This.ModuleList_GangLinks:GetIterator[ModuleIter]
+		if ${ModuleIter:First(exists)}
+		{
+			UI:Update["obj_Ship", "Gang Link Modules:", "g"]
 			do
 			{
 				UI:Update["obj_Ship", " Slot: ${ModuleIter.Value.ToItem.Slot} ${ModuleIter.Value.ToItem.Name}", "-g"]
@@ -408,149 +441,5 @@ objectdef obj_Ship
 		}
 	}
 
-	member:int FindUnactiveModule(string arg_ModuleList)
-	{
-		variable iterator ModuleIterator
-		${arg_ModuleList}:GetIterator[ModuleIterator]
-		if ${ModuleIterator:First(exists)}
-		{
-			do
-			{
-				if 	!${ModuleIterator.Value.IsActive} && \
-					!${ModuleIterator.Value.IsDeactivating}
-				{
-					return ${ModuleIterator.Key}
-				}
-			}
-			while ${ModuleIterator:Next(exists)}
-		}
-		return -1
-	}
-	member:int ModuleActiveOn(string arg_ModuleList, int64 ID)
-	{
-		variable iterator ModuleIterator
-		${arg_ModuleList}:GetIterator[ModuleIterator]
-		if ${ModuleIterator:First(exists)}
-		{
-			do
-			{
-				if  ${ModuleIterator.Value.TargetID} == ${ID} && \
-					${ModuleIterator.Value.IsActive} && \
-					!${ModuleIterator.Value.IsDeactivating}
-				{
-					return ${ModuleIterator.Key}
-				}
-			}
-			while ${ModuleIterator:Next(exists)}
-		}
-		return 0
-	}
-	member:int ActiveModuleCount(string arg_ModuleList)
-	{
-		variable int count=0
-		variable iterator ModuleIterator
-
-		${arg_ModuleList}:GetIterator[ModuleIter]
-		if ${ModuleIterator:First(exists)}
-		do
-		{
-			if 	${ModuleIterator.Value.IsActive} || \
-				${ModuleIterator.Value.IsDeactivating}
-			{
-				count:Inc
-			}
-		}
-		while ${ModuleIterator:Next(exists)}
-
-		return ${count}
-	}	
-	
-	
-	
-	
-	;	Module methods/members for ease of use
-	
-	method Activate_AfterBurner()
-	{
-		if ${This.FindUnactiveModule[ModuleList_AB_MWD]} != -1
-		{
-			This.ModuleList_AB_MWD.Get[${This.FindUnactiveModule[ModuleList_AB_MWD]}]:Activate
-		}
-	}
-
-	member:bool AfterBurner_Active()
-	{
-		if ${This.ActiveModuleCount[ModuleList_AB_MWD]} > 0
-		{
-			return TRUE
-		}
-		return FALSE
-	}
-	
-	method Deactivate_AfterBurner()
-	{
-		variable iterator ModuleIter
-
-		This.ModuleList_AB_MWD:GetIterator[ModuleIter]
-		if ${ModuleIter:First(exists)}
-		{
-			if ${ModuleIter.Value.IsActive} && ${ModuleIter.Value.IsOnline} && !${ModuleIter.Value.IsDeactivating}
-			{
-				ModuleIter.Value:Deactivate
-			}
-		}
-	}
-	
-
-	
-	member:bool IsTractoringID(int64 ID)
-	{
-		return ${This.ModuleActiveOn[ModuleList_TractorBeams, ${ID}]}
-	}
-	
-	method ActivateFreeTractorBeam(int64 ID)
-	{
-		if ${This.FindUnactiveModule[ModuleList_TractorBeams]} != -1
-		{
-			This.ModuleList_TractorBeams.Get[${This.FindUnactiveModule[ModuleList_TractorBeams]}]:Activate[${ID}]
-		}
-	}
-	method DeactivateTractorBeam(int64 ID)
-	{
-		This.ModuleList_TractorBeams.Get[${This.ModuleActiveOn[ModuleList_TractorBeams, ${ID}]}]:Deactivate
-	}
-	member:int TotalTractorBeams()
-	{
-		return ${This.ModuleList_TractorBeams.Used}
-	}
-	member:int TotalActivatedTractorBeams()
-	{
-		return ${This.ActiveModuleCount[ModuleList_TractorBeams]}
-	}
-	
-	member:bool IsSalvagingID(int64 ID)
-	{
-		return ${This.ModuleActiveOn[ModuleList_Salvagers, ${ID}]}
-	}	
-	method ActivateFreeSalvager(int64 ID)
-	{
-		if ${This.FindUnactiveModule[ModuleList_Salvagers]} != -1
-		{
-			This.ModuleList_Salvagers.Get[${This.FindUnactiveModule[ModuleList_Salvagers]}]:Activate[${ID}]
-		}
-	}		
-	method DeactivateSalvager(int64 ID)
-	{
-		This.ModuleList_Salvagers.Get[${This.ModuleActiveOn[ModuleList_Salvagers, ${ID}]}]:Deactivate
-	}
-	
-	member:int TotalSalvagers()
-	{
-		return ${This.ModuleList_Salvagers.Used}
-	}
-	member:int TotalActivatedSalvagers()
-	{
-		return ${This.ActiveModuleCount[ModuleList_Salvagers]}
-	}	
 
 }

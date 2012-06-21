@@ -1,13 +1,37 @@
+/*
+
+ComBot  Copyright © 2012  Tehtsuo and Vendan
+
+This file is part of ComBot.
+
+ComBot is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ComBot is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
+
+*/
+
 objectdef obj_Module inherits obj_State
 {
 	variable bool Activated = FALSE
+	variable bool Deactivated = FALSE
 	variable int64 CurrentTarget = -1
 	variable int64 ModuleID
 	
 	method Initialize(int64 ID)
 	{
 		This[parent]:Initialize
+		This.NonGameTiedPulse:Set[TRUE]
 		ModuleID:Set[${ID}]
+		NonGameTiedPulse:Set[TRUE]
 		PulseFrequency:Set[50]
 	}
 	
@@ -16,38 +40,40 @@ objectdef obj_Module inherits obj_State
 		return ${Activated}
 	}
 	
+	member:bool IsDeactivating()
+	{
+		return ${Deactivated}
+	}
+	
 	member:bool IsActiveOn(int64 checkTarget)
 	{
-		echo IsActiveOn ${This.CurrentTarget} == ${checkTarget}
 		if (${This.CurrentTarget.Equal[${checkTarget}]})
 		{
 			if ${This.IsActive}
 			{
-				echo TRUE
 				return TRUE
 			}
 		}
-		echo FALSE
 		return FALSE
 	}
 	
 	method Deactivate()
 	{
-		MyShip.Module[${ModuleID}]:Deactivate
-		This:Clear
-		This:QueueState["WaitTillInactive"]
+		if !${Deactivated}
+		{
+			MyShip.Module[${ModuleID}]:Deactivate
+			Deactivated:Set[TRUE]
+			This:Clear
+			This:QueueState["WaitTillInactive"]
+		}
 	}
 	
 	method Activate(int64 newTarget=-1, bool DoDeactivate=TRUE)
 	{
 		if ${DoDeactivate} && ${This.IsActive}
 		{
-			echo "Deactivating"
-			MyShip.Module[${ModuleID}]:Deactivate
-			This:Clear
-			This:QueueState["WaitTillInactive"]
+			This:Deactivate
 		}
-		echo "QueueActivate on ${newTarget}"
 		This:QueueState["ActivateOn", 50, "${newTarget}"]
 		This:QueueState["WaitTillActive", 50, 20]
 		This:QueueState["WaitTillInactive"]
@@ -60,7 +86,6 @@ objectdef obj_Module inherits obj_State
 	
 	member:bool ActivateOn(int64 newTarget)
 	{
-		echo "Activating on ${newTarget}"
 		if ${newTarget} == -1
 		{
 			MyShip.Module[${ModuleID}]:Activate
@@ -91,6 +116,7 @@ objectdef obj_Module inherits obj_State
 			return FALSE
 		}
 		Activated:Set[FALSE]
+		Deactivated:Set[FALSE]
 		CurrentTarget:Set[-1]
 		return TRUE
 	}

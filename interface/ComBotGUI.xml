@@ -1,5 +1,27 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <ISUI>
+
+<!--
+
+ComBot  Copyright © 2012  Tehtsuo and Vendan
+
+This file is part of ComBot.
+
+ComBot is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ComBot is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+
 	<template name='Console.Font'>	
 		<Name>Terminal</Name>
 		<Size>8</Size>
@@ -47,6 +69,27 @@
 						endscript ComBot
 					</OnLeftClick>
 				</button>
+				<button	Name='Hide'>
+					<Font template='Button.Font' />
+					<BackgroundColor>FF000000</BackgroundColor>
+					<X>r80</X>
+					<Y>0</Y>
+					<Width>40</Width>
+					<Height>20</Height>
+					<Text>Hide</Text>
+					<OnLeftClick>
+						if ${UIElement[ComBotTab@ComBot].Visible}
+						{
+							UIElement[ComBotTab@ComBot]:Hide
+							This:SetText[Show]
+						}
+						else
+						{
+							UIElement[ComBotTab@ComBot]:Show
+							This:SetText[Hide]
+						}
+					</OnLeftClick>
+				</button>
 				<button	Name='Run'>
 					<Font template='Button.Font' />
 					<BackgroundColor>FF000000</BackgroundColor>
@@ -58,12 +101,10 @@
 					<OnLeftClick>
 						if ${Script[ComBot].VariableScope.ComBot.Paused}
 						{
-							This:SetText[Stop]
 							Script[ComBot].VariableScope.ComBot:Resume
 						}
 						else
 						{
-							This:SetText[Run]
 							Script[ComBot].VariableScope.ComBot:Pause
 						}
 					</OnLeftClick>
@@ -86,6 +127,9 @@
 							<Y>0</Y>
 							<Height>100%</Height>
 							<Width>100%</Width>
+							<OnLoad>
+								This:SetLeftClickThru[TRUE]
+							</OnLoad>
 						 </frame>					
 						<console Name="StatusConsole">
 							<Font template='Console.Font' />
@@ -102,14 +146,100 @@
 							<Width>48%</Width>
 							<Height>6%</Height>
 							<Items>
+								<Item Value='Miner'>Miner</Item>
+								<Item Value='Hauler'>Hauler</Item>
 								<Item Value='Salvager'>Dedicated Salvager</Item>
+								<Item Value='HangerSale'>Hanger Sale</Item>
+								<Item Value='Combat'>Simple Clear Agro and Pocket</Item>
 							</Items>
 							<OnLoad>
 								This.ItemByValue[${Script[ComBot].VariableScope.Config.Common.ComBot_Mode}]:Select
 							</OnLoad>
 							<OnSelect>
+								variable int counter
+								Script[ComBot].VariableScope.Config.Common:SetComBot_Mode[${This.SelectedItem.Value}]
+								for ( counter:Set[1] ; ${counter} &lt;= ${This.Items} ; counter:Inc )
+								{
+									Script[ComBot].VariableScope.${This.OrderedItem[${Counter}]}:Clear
+								}
+								if ${Script[ComBot].VariableScope.UI.Reloaded}
+								{
+									Script[ComBot].VariableScope.ComBot:Pause
+								}
 							</OnSelect>
 						</combobox>
+						<Checkbox name='AutoStart'>
+							<X>51%</X>
+							<Y>92%</Y>
+							<Width>48%</Width> 
+							<Height>6%</Height> 
+							<Text>Start automatically</Text>
+							<OnLoad>
+								if ${Script[ComBot].VariableScope.Config.Common.AutoStart}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[ComBot].VariableScope.Config.Common:SetAutoStart[${This.Checked}]
+							</OnLeftClick>
+						</Checkbox>
+					</Tab>
+
+					<Tab Name='Settings'>
+						<frame name='SettingsFillerFrame'>
+							<BackgroundColor>FF000000</BackgroundColor>
+							<Border>1</Border>
+							<BorderColor>FFFFFFFF</BorderColor>
+							<X>0</X>
+							<Y>0</Y>
+							<Height>100%</Height>
+							<Width>100%</Width>
+							<OnLoad>
+								This:SetLeftClickThru[TRUE]
+							</OnLoad>
+						</frame>					
+						<Checkbox name='WarpPulse'>
+							<X>1%</X>
+							<Y>5%</Y>
+							<Width>48%</Width> 
+							<Height>6%</Height> 
+							<Text>Use AB/MWD pulses to insta-warp</Text>
+							<OnLoad>
+								if ${Script[ComBot].VariableScope.Config.Common.WarpPulse}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[ComBot].VariableScope.Config.Common:SetWarpPulse[${This.Checked}]
+								if ${This.Checked}
+								{
+									InstaWarp:QueueState["InstaWarp_Check", 2000]
+								}
+								else
+								{
+									InstaWarp:Clear
+								}
+							</OnLeftClick>
+						</Checkbox>
+						<Checkbox name='Propulsion'>
+							<X>1%</X>
+							<Y>12%</Y>
+							<Width>48%</Width> 
+							<Height>6%</Height> 
+							<Text>Use AB/MWD for approaching objects</Text>
+							<OnLoad>
+								if ${Script[ComBot].VariableScope.Config.Common.Propulsion}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[ComBot].VariableScope.Config.Common:SetPropulsion[${This.Checked}]
+							</OnLeftClick>
+						</Checkbox>
+						
 					</Tab>
 					<Tab Name='Salvager'>
 						<frame name='obj_SalvageFillerFrame'>
@@ -120,6 +250,9 @@
 							<Y>0</Y>
 							<Height>100%</Height>
 							<Width>100%</Width>
+							<OnLoad>
+								This:SetLeftClickThru[TRUE]
+							</OnLoad>
 						</frame>					
 						<Text name='obj_SalvageBookmarkListTitle'> 
 									<X>0</X> 
@@ -169,9 +302,338 @@
 							</OnLeftClick>
 						</button>						
 					</Tab>
+
+
+					<Tab Name='Miner'>
+						<frame name='obj_MinerFillerFrame'>
+							<BackgroundColor>FF000000</BackgroundColor>
+							<Border>1</Border>
+							<BorderColor>FFFFFFFF</BorderColor>
+							<X>0</X>
+							<Y>0</Y>
+							<Height>100%</Height>
+							<Width>100%</Width>
+							<OnLoad>
+								This:SetLeftClickThru[TRUE]
+							</OnLoad>
+						</frame>					
+						<Text name='obj_MinerBookmarkListTitle'> 
+									<X>0</X> 
+									<Y>5%</Y> 
+									<Width>40%</Width> 
+									<Height>5%</Height> 
+									<Alignment>Center</Alignment>
+									<Text>Miner Bookmarks</Text>
+						</Text>						 
+						<listbox Name="obj_MinerBookmarkList">
+							<BackgroundColor>FF000000</BackgroundColor>
+							<Border>1</Border>
+							<BorderColor>FFFFFFFF</BorderColor>
+							<X>0</X>
+							<Y>10%</Y>
+							<Width>40%</Width>
+							<Height>80%</Height>
+						</listbox>
+						<Text name='obj_MinerStateListTitle'> 
+									<X>40%</X> 
+									<Y>5%</Y> 
+									<Width>40%</Width> 
+									<Height>5%</Height> 
+									<Alignment>Center</Alignment>
+									<Text>Pending States</Text>
+						</Text>						 
+						<listbox Name="obj_MinerStateList">
+							<Font template='Listbox.Font' />
+							<BackgroundColor>FF000000</BackgroundColor>
+							<Border>1</Border>
+							<BorderColor>FFFFFFFF</BorderColor>
+							<X>40%</X>
+							<Y>10%</Y>
+							<Width>40%</Width>
+							<Height>80%</Height>
+						</listbox>
+						<button	Name='Config'>
+							<Font template='Button.Font' />
+							<BackgroundColor>FF000000</BackgroundColor>
+							<X>0%</X>
+							<Y>90%</Y>
+							<Width>100%</Width>
+							<Height>10%</Height>
+							<Text>Settings</Text>
+							<OnLeftClick>
+								timedcommand 0 "ui -load \"&filepath;/ComBotGUI_Miner.xml\""
+							</OnLeftClick>
+						</button>						
+					</Tab>
+					
+					<Tab Name='Hauler'>
+						<frame name='obj_HaulerFillerFrame'>
+							<BackgroundColor>FF000000</BackgroundColor>
+							<Border>1</Border>
+							<BorderColor>FFFFFFFF</BorderColor>
+							<X>0</X>
+							<Y>0</Y>
+							<Height>100%</Height>
+							<Width>100%</Width>
+							<OnLoad>
+								This:SetLeftClickThru[TRUE]
+							</OnLoad>
+						</frame>					
+						<Text name='obj_HaulerStateListTitle'> 
+									<X>0%</X> 
+									<Y>5%</Y> 
+									<Width>40%</Width> 
+									<Height>5%</Height> 
+									<Alignment>Center</Alignment>
+									<Text>Pending States</Text>
+						</Text>						 
+						<listbox Name="obj_HaulerStateList">
+							<Font template='Listbox.Font' />
+							<BackgroundColor>FF000000</BackgroundColor>
+							<Border>1</Border>
+							<BorderColor>FFFFFFFF</BorderColor>
+							<X>0%</X>
+							<Y>10%</Y>
+							<Width>40%</Width>
+							<Height>80%</Height>
+						</listbox>
+						<Text name='obj_HaulerOrcaCargo'> 
+									<X>41%</X> 
+									<Y>10%</Y> 
+									<Width>60%</Width> 
+									<Height>5%</Height> 
+									<Text>Orca Cargo Hold: XXX</Text>
+						</Text>						 
+						<button	Name='Config'>
+							<Font template='Button.Font' />
+							<BackgroundColor>FF000000</BackgroundColor>
+							<X>0%</X>
+							<Y>90%</Y>
+							<Width>100%</Width>
+							<Height>10%</Height>
+							<Text>Settings</Text>
+							<OnLeftClick>
+								timedcommand 0 "ui -load \"&filepath;/ComBotGUI_Hauler.xml\""
+							</OnLeftClick>
+						</button>						
+					</Tab>
+					
+					<Tab Name='Hangar_Sale'>
+						<frame name='obj_Hangar_SaleFillerFrame'>
+							<BackgroundColor>FF000000</BackgroundColor>
+							<Border>1</Border>
+							<BorderColor>FFFFFFFF</BorderColor>
+							<X>0</X>
+							<Y>0</Y>
+							<Height>100%</Height>
+							<Width>100%</Width>
+							<OnLoad>
+								This:SetLeftClickThru[TRUE]
+							</OnLoad>
+						</frame>					
+						<Text name='obj_HangerSaleProcessingText'> 
+									<X>31%</X> 
+									<Y>10%</Y> 
+									<Width>60%</Width> 
+									<Height>5%</Height> 
+									<Text>Processing XXX items from EVE-Central</Text>
+						</Text>						 
+						<Text name='obj_HangerSaleTotalsText'> 
+									<X>31%</X> 
+									<Y>20%</Y> 
+									<Width>60%</Width> 
+									<Height>5%</Height> 
+									<Text>Estimated Totals</Text>
+						</Text>						 
+						<Text name='obj_HangerSaleToSellLowestText'> 
+									<X>31%</X> 
+									<Y>35%</Y> 
+									<Width>60%</Width> 
+									<Height>5%</Height> 
+									<Text>[Match Lowest]:    </Text>
+						</Text>						 
+						<Text name='obj_HangerSaleToSellAverageText'> 
+									<X>31%</X> 
+									<Y>40%</Y> 
+									<Width>60%</Width> 
+									<Height>5%</Height> 
+									<Text>[Match Average]:   </Text>
+						</Text>						 
+						<Text name='obj_HangerSaleToSellBuyoutText'> 
+									<X>31%</X> 
+									<Y>30%</Y> 
+									<Width>60%</Width> 
+									<Height>5%</Height> 
+									<Text>[Match Buyouts]:   </Text>
+						</Text>						 
+						<Text name='obj_HangerSaleToRefineText'> 
+									<X>31%</X> 
+									<Y>55%</Y> 
+									<Width>60%</Width> 
+									<Height>5%</Height> 
+									<Text>[Refine]:          </Text>
+						</Text>						 
+						
+						<Text name='obj_HangerSaleStateListTitle'> 
+									<X>0%</X> 
+									<Y>5%</Y> 
+									<Width>30%</Width> 
+									<Height>5%</Height> 
+									<Alignment>Center</Alignment>
+									<Text>Pending States</Text>
+						</Text>						 
+						<listbox Name="obj_HangerSaleStateList">
+							<Font template='Listbox.Font' />
+							<BackgroundColor>FF000000</BackgroundColor>
+							<Border>1</Border>
+							<BorderColor>FFFFFFFF</BorderColor>
+							<X>0%</X>
+							<Y>10%</Y>
+							<Width>30%</Width>
+							<Height>80%</Height>
+						</listbox>
+						<button	Name='Config'>
+							<Font template='Button.Font' />
+							<BackgroundColor>FF000000</BackgroundColor>
+							<X>0%</X>
+							<Y>90%</Y>
+							<Width>100%</Width>
+							<Height>10%</Height>
+							<Text>Settings</Text>
+							<OnLeftClick>
+								timedcommand 0 "ui -load \"&filepath;/ComBotGUI_HangerSale.xml\""
+							</OnLeftClick>
+						</button>						
+					</Tab>
+
+					<Tab Name='Combat'>
+						<frame name='obj_CombatFillerFrame'>
+							<BackgroundColor>FF000000</BackgroundColor>
+							<Border>1</Border>
+							<BorderColor>FFFFFFFF</BorderColor>
+							<X>0</X>
+							<Y>0</Y>
+							<Height>100%</Height>
+							<Width>100%</Width>
+							<OnLoad>
+								This:SetLeftClickThru[TRUE]
+							</OnLoad>
+						</frame>					
+						<Text name='obj_CombatListTitle'> 
+									<X>0</X> 
+									<Y>5%</Y> 
+									<Width>40%</Width> 
+									<Height>5%</Height> 
+									<Alignment>Center</Alignment>
+									<Text>Target List</Text>
+						</Text>						 
+						<listbox Name="obj_CombatList">
+							<Font template='Console.Font' />
+							<BackgroundColor>FF000000</BackgroundColor>
+							<Border>1</Border>
+							<BorderColor>FFFFFFFF</BorderColor>
+							<X>0</X>
+							<Y>10%</Y>
+							<Width>40%</Width>
+							<Height>80%</Height>
+						</listbox>
+						<Text name='obj_CombatStateListTitle'> 
+									<X>40%</X> 
+									<Y>5%</Y> 
+									<Width>40%</Width> 
+									<Height>5%</Height> 
+									<Alignment>Center</Alignment>
+									<Text>Pending States</Text>
+						</Text>						 
+						<listbox Name="obj_CombatStateList">
+							<Font template='Listbox.Font' />
+							<BackgroundColor>FF000000</BackgroundColor>
+							<Border>1</Border>
+							<BorderColor>FFFFFFFF</BorderColor>
+							<X>40%</X>
+							<Y>10%</Y>
+							<Width>40%</Width>
+							<Height>80%</Height>
+						</listbox>
+						<button	Name='Config'>
+							<Font template='Button.Font' />
+							<BackgroundColor>FF000000</BackgroundColor>
+							<X>0%</X>
+							<Y>90%</Y>
+							<Width>100%</Width>
+							<Height>10%</Height>
+							<Text>Settings</Text>
+							<OnLeftClick>
+								timedcommand 0 "ui -load \"&filepath;/ComBotGUI_Combat.xml\""
+							</OnLeftClick>
+						</button>						
+					</Tab>
+					
+					
+					<Tab Name='Security'>
+						<frame name='obj_SecurityFillerFrame'>
+							<BackgroundColor>FF000000</BackgroundColor>
+							<Border>1</Border>
+							<BorderColor>FFFFFFFF</BorderColor>
+							<X>0</X>
+							<Y>0</Y>
+							<Height>100%</Height>
+							<Width>100%</Width>
+							<OnLoad>
+								This:SetLeftClickThru[TRUE]
+							</OnLoad>
+						</frame>					
+						<Text name='obj_SecurityListTitle'> 
+									<X>0</X> 
+									<Y>5%</Y> 
+									<Width>40%</Width> 
+									<Height>5%</Height> 
+									<Alignment>Center</Alignment>
+									<Text>Security Risks</Text>
+						</Text>						 
+						<listbox Name="obj_SecurityList">
+							<Font template='Console.Font' />
+							<BackgroundColor>FF000000</BackgroundColor>
+							<Border>1</Border>
+							<BorderColor>FFFFFFFF</BorderColor>
+							<X>0</X>
+							<Y>10%</Y>
+							<Width>40%</Width>
+							<Height>80%</Height>
+						</listbox>
+						<Text name='obj_SecurityStateListTitle'> 
+									<X>40%</X> 
+									<Y>5%</Y> 
+									<Width>40%</Width> 
+									<Height>5%</Height> 
+									<Alignment>Center</Alignment>
+									<Text>Pending States</Text>
+						</Text>						 
+						<listbox Name="obj_SecurityStateList">
+							<Font template='Listbox.Font' />
+							<BackgroundColor>FF000000</BackgroundColor>
+							<Border>1</Border>
+							<BorderColor>FFFFFFFF</BorderColor>
+							<X>40%</X>
+							<Y>10%</Y>
+							<Width>40%</Width>
+							<Height>80%</Height>
+						</listbox>
+						<button	Name='Config'>
+							<Font template='Button.Font' />
+							<BackgroundColor>FF000000</BackgroundColor>
+							<X>0%</X>
+							<Y>90%</Y>
+							<Width>100%</Width>
+							<Height>10%</Height>
+							<Text>Settings</Text>
+							<OnLeftClick>
+								timedcommand 0 "ui -load \"&filepath;/ComBotGUI_Security.xml\""
+							</OnLeftClick>
+						</button>						
+					</Tab>
 				</Tabs>
 			</TabControl>
 		</Children>
 	</window>
-	
-</ISUI>
+[</ISUI>

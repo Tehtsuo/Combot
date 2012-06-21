@@ -1,3 +1,23 @@
+/*
+
+ComBot  Copyright © 2012  Tehtsuo and Vendan
+
+This file is part of ComBot.
+
+ComBot is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ComBot is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
+
+*/
 
 objectdef obj_ComBot
 {
@@ -9,7 +29,6 @@ objectdef obj_ComBot
 	method Initialize()
 	{
 		Event[ISXEVE_onFrame]:AttachAtom[This:Pulse]
-		UI:Update["obj_ComBot", "Initialized", "g"]
 	}
 
 	method Shutdown()
@@ -34,13 +53,14 @@ objectdef obj_ComBot
 
 	method Pause()
 	{
+		UIElement[Run@TitleBar@ComBot]:SetText[Run]
 		UI:Update["obj_ComBot", "Combot Paused", "r"]
 		This.Paused:Set[TRUE]
 	}
 
 	method Resume()
 	{
-		UI:Update["obj_ComBot", "Combot Resumed", "g"]
+		UIElement[Run@TitleBar@ComBot]:SetText[Stop]
 		This.Paused:Set[FALSE]
 		${Config.Common.ComBot_Mode}:Start
 	}
@@ -65,7 +85,7 @@ objectdef obj_ComBot
 		{
 			if ${Total} > 1000000000
 			{
-				return "${Math.Calc[${Total}/100000000].Precision[3]}b isk"
+				return "${Math.Calc[${Total}/1000000000].Precision[3]}b isk"
 			}
 			elseif ${Total} > 1000000
 			{

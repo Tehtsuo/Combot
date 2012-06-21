@@ -1,3 +1,24 @@
+/*
+
+ComBot  Copyright � 2012  Tehtsuo and Vendan
+
+This file is part of ComBot.
+
+ComBot is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ComBot is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
+
+*/
+
 #if ${ISXEVE(exists)}
 #else
 	#error ComBot requires ISXEVE to be loaded before running
@@ -16,7 +37,18 @@
 #include core/obj_Ship.iss
 #include core/obj_Cargo.iss
 #include core/obj_Salvage.iss
+#include core/obj_Security.iss
 #include core/obj_Targets.iss
+#include core/obj_Miner.iss
+#include core/obj_Hauler.iss
+#include core/obj_Agents.iss
+#include core/obj_HangerSale.iss
+#include core/obj_Combat.iss
+#include core/obj_Bookmarks.iss
+#include core/obj_AgentDialog.iss
+#include core/obj_TargetList.iss
+#include core/obj_Drones.iss
+#include core/obj_Defense.iss
 
 
 function atexit()
@@ -40,10 +72,34 @@ function main()
 	declarevariable Ship obj_Ship script
 	declarevariable Cargo obj_Cargo script
 	declarevariable Salvager obj_Salvage script
+	declarevariable Security obj_Security script
 	declarevariable Targets obj_Targets script
+	declarevariable Miner obj_Miner script
+	declarevariable Hauler obj_Hauler script
+	declarevariable Bookmarks obj_Bookmarks script
+	declarevariable Agents obj_Agents script
+	declarevariable HangerSale obj_HangerSale script
+	declarevariable RefineData obj_Configuration_RefineData script
+	declarevariable Combat obj_Combat script
+	declarevariable AgentDialog obj_AgentDialog script
+	declarevariable Drones obj_Drones script
+	declarevariable Defense obj_Defense script
 
 	UI:Update["ComBot", "Module initialization complete", "y"]
 	
+	
+	
+	if ${Config.Common.AutoStart}
+	{
+		ComBot.Paused:Set[FALSE]
+		${Config.Common.ComBot_Mode}:Start
+	}
+	else
+	{
+		UI:Update["ComBot", "Paused", "r"]
+	}
+	
+
 	while TRUE
 	{
 		wait 10
