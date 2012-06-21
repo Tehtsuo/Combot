@@ -146,11 +146,11 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							<Width>48%</Width>
 							<Height>6%</Height>
 							<Items>
-								<Item Value='Miner'>Miner</Item>
+<!--								<Item Value='Miner'>Miner</Item>
 								<Item Value='Hauler'>Hauler</Item>
+								<Item Value='Combat'>Simple Clear Agro and Pocket</Item>-->
 								<Item Value='Salvager'>Dedicated Salvager</Item>
 								<Item Value='HangerSale'>Hanger Sale</Item>
-								<Item Value='Combat'>Simple Clear Agro and Pocket</Item>
 							</Items>
 							<OnLoad>
 								This.ItemByValue[${Script[ComBot].VariableScope.Config.Common.ComBot_Mode}]:Select
@@ -304,7 +304,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					</Tab>
 
 
-					<Tab Name='Miner'>
+<!--					<Tab Name='Miner'>
 						<frame name='obj_MinerFillerFrame'>
 							<BackgroundColor>FF000000</BackgroundColor>
 							<Border>1</Border>
@@ -416,7 +416,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								timedcommand 0 "ui -load \"&filepath;/ComBotGUI_Hauler.xml\""
 							</OnLeftClick>
 						</button>						
-					</Tab>
+					</Tab>-->
 					
 					<Tab Name='Hangar_Sale'>
 						<frame name='obj_Hangar_SaleFillerFrame'>
@@ -506,7 +506,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						</button>						
 					</Tab>
 
-					<Tab Name='Combat'>
+<!--					<Tab Name='Combat'>
 						<frame name='obj_CombatFillerFrame'>
 							<BackgroundColor>FF000000</BackgroundColor>
 							<Border>1</Border>
@@ -567,7 +567,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								timedcommand 0 "ui -load \"&filepath;/ComBotGUI_Combat.xml\""
 							</OnLeftClick>
 						</button>						
-					</Tab>
+					</Tab>-->
 					
 					
 					<Tab Name='Security'>
