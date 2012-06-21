@@ -432,31 +432,52 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							</OnLoad>
 						</frame>					
 						<Text name='obj_HangerSaleProcessingText'> 
-									<X>41%</X> 
+									<X>31%</X> 
 									<Y>10%</Y> 
 									<Width>60%</Width> 
 									<Height>5%</Height> 
 									<Text>Processing XXX items from EVE-Central</Text>
 						</Text>						 
-						<Text name='obj_HangerSaleToSellText'> 
-									<X>41%</X> 
+						<Text name='obj_HangerSaleTotalsText'> 
+									<X>31%</X> 
 									<Y>20%</Y> 
 									<Width>60%</Width> 
 									<Height>5%</Height> 
-									<Text>Estimated Sell Total: </Text>
+									<Text>Estimated Totals</Text>
 						</Text>						 
-						<Text name='obj_HangerSaleToRefineText'> 
-									<X>41%</X> 
-									<Y>25%</Y> 
+						<Text name='obj_HangerSaleToSellLowestText'> 
+									<X>31%</X> 
+									<Y>35%</Y> 
 									<Width>60%</Width> 
 									<Height>5%</Height> 
-									<Text>Estimated Refine Total: </Text>
+									<Text>[Match Lowest]:    </Text>
+						</Text>						 
+						<Text name='obj_HangerSaleToSellAverageText'> 
+									<X>31%</X> 
+									<Y>40%</Y> 
+									<Width>60%</Width> 
+									<Height>5%</Height> 
+									<Text>[Match Average]:   </Text>
+						</Text>						 
+						<Text name='obj_HangerSaleToSellBuyoutText'> 
+									<X>31%</X> 
+									<Y>30%</Y> 
+									<Width>60%</Width> 
+									<Height>5%</Height> 
+									<Text>[Match Buyouts]:   </Text>
+						</Text>						 
+						<Text name='obj_HangerSaleToRefineText'> 
+									<X>31%</X> 
+									<Y>55%</Y> 
+									<Width>60%</Width> 
+									<Height>5%</Height> 
+									<Text>[Refine]:          </Text>
 						</Text>						 
 						
 						<Text name='obj_HangerSaleStateListTitle'> 
 									<X>0%</X> 
 									<Y>5%</Y> 
-									<Width>40%</Width> 
+									<Width>30%</Width> 
 									<Height>5%</Height> 
 									<Alignment>Center</Alignment>
 									<Text>Pending States</Text>
@@ -468,7 +489,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							<BorderColor>FFFFFFFF</BorderColor>
 							<X>0%</X>
 							<Y>10%</Y>
-							<Width>40%</Width>
+							<Width>30%</Width>
 							<Height>80%</Height>
 						</listbox>
 						<button	Name='Config'>

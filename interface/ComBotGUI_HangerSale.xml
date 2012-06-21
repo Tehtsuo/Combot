@@ -96,9 +96,9 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Width>30%</Width> 
 						<Height>3%</Height> 
 						<Items>
-							<Item>Match Average</Item>
+							<Item>Undercut Average</Item>
 							<Item>Undercut Lowest</Item>
-							<Item>Match highest Buyout</Item>
+							<Item>Match Highest Buyout</Item>
 						</Items>
 						<OnLoad>
 							This.ItemByText[${Script[ComBot].VariableScope.Config.HangarSale.PriceMode}]:Select

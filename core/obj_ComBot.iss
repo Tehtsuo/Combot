@@ -85,7 +85,7 @@ objectdef obj_ComBot
 		{
 			if ${Total} > 1000000000
 			{
-				return "${Math.Calc[${Total}/100000000].Precision[3]}b isk"
+				return "${Math.Calc[${Total}/1000000000].Precision[3]}b isk"
 			}
 			elseif ${Total} > 1000000
 			{
