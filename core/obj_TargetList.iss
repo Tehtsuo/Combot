@@ -75,6 +75,7 @@ objectdef obj_TargetList inherits obj_State
 		QueryString:Concat["GroupID = GROUP_LARGECOLLIDABLEOBJECT ||"]
 		QueryString:Concat["GroupID = GROUP_LARGECOLLIDABLESHIP ||"]
 		QueryString:Concat["GroupID = GROUP_SPAWNCONTAINER ||"]
+		QueryString:Concat["GroupID = CATEGORYID_ORE ||"]
 		QueryString:Concat["GroupID = GROUP_LARGECOLLIDABLESTRUCTURE)"]
 		
 		This:AddQueryString["${QueryString.Escape}"]
@@ -203,7 +204,7 @@ objectdef obj_TargetList inherits obj_State
 			}
 			while ${EntityIterator:Next(exists)}
 		}
-		
+
 		This.TargetList:GetIterator[EntityIterator]
 		if ${EntityIterator:First(exists)}
 		{

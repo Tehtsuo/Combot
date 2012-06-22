@@ -21,23 +21,62 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 objectdef obj_Miner inherits obj_State
 {
+	variable obj_TargetList Asteroids
+	variable bool WarpToOrca=FALSE
 
 	method Initialize()
 	{
 		This[parent]:Initialize
+		LavishScript:RegisterEvent[ComBot_Orca_InBelt]
+		Event[ComBot_Orca_InBelt]:AttachAtom[This:OrcaInBelt]
 		This:AssignStateQueueDisplay[obj_MinerStateList@Miner@ComBotTab@ComBot]
 		PulseFrequency:Set[20]
-		UI:Update["obj_Miner", "Initialized", "g"]
 	}
 
+	method Shutdown()
+	{
+		Event[ComBot_Orca_InBelt]:DetachAtom[This:OrcaInBelt]
+	}	
+	
 	method Start()
 	{
+		This:PopulateTargetList
+		Asteroids.AutoLock:Set[TRUE]
+		Asteroids.AutoRelock:Set[TRUE]
+		Asteroids.AutoRelockPriority:Set[TRUE]
+
 		UI:Update["obj_Miner", "Started", "g"]
 		if ${This.IsIdle}
 		{
-			Asteroids:QueueState["UpdateList"]
-			This:QueueState["Idle", 2000]
 			This:QueueState["Mine"]
+		}
+	}
+	
+	method PopulateTargetList()
+	{
+		Asteroids:ClearQueryString
+		
+		variable iterator OreTypeIterator
+		if ${Config.Miner.IceMining}
+		{
+			Config.Miner.IceTypesRef:GetSettingIterator[OreTypeIterator]
+		}
+		else
+		{
+			Config.Miner.OreTypesRef:GetSettingIterator[OreTypeIterator]
+		}
+
+		if ${OreTypeIterator:First(exists)}
+		{		
+			do
+			{
+				Asteroids:AddQueryString[CategoryID==CATEGORYID_ORE && Name =- "${OreTypeIterator.Key}"]
+			}
+			while ${OreTypeIterator:Next(exists)}			
+		}
+		else
+		{
+			echo "WARNING: obj_Miner: Ore Type list is empty, please check config"
 		}
 	}
 	
@@ -49,24 +88,55 @@ objectdef obj_Miner inherits obj_State
 			MyShip:OpenCargo[]
 			return FALSE
 		}
-		if !${EVEWindow[byCaption, "active ship"](exists)}
-		{
-			EVEWindow[byName,"Inventory"]:MakeChildActive[ShipCargo]
-		}
 		return TRUE
 	}
 	
 	member:bool CheckCargoHold()
 	{
-		if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) > 0.95
+		switch ${Config.Miner.Miner_Dropoff_Type}
 		{
-			UI:Update["obj_Miner", "Unload trip required", "g"]
-			This:Clear
-			Move:Bookmark[${Config.Miner.Miner_Dropoff}]
-			This:QueueState["Traveling", 1000]
-			This:QueueState["Offload", 1000]
-			This:QueueState["StackItemHangar", 1000]
-			This:QueueState["GoToMiningSystem", 1000]
+			case Orca
+				if !${Entity[Name = "${Config.Miner.Miner_OrcaName}"](exists)} && ${Local[${Config.Miner.Miner_OrcaName}].ToFleetMember(exists)} && ${This.WarpToOrca}
+				{
+					UI:Update["obj_Miner", "Warping to ${Local[${Config.Miner.Miner_OrcaName}].ToFleetMember.ToPilot.Name}", "g"]
+					Local[${Config.Miner.Miner_OrcaName}].ToFleetMember:WarpTo
+					Client:Wait[5000]
+					This:Clear
+					This:QueueState["Traveling", 1000]
+				}
+				if !${This.WarpToOrca}
+				{
+					This:Clear
+				}
+				break
+			case Container
+				if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) > 0.95
+				{
+					UI:Update["obj_Miner", "Unload trip required", "g"]
+					if ${Config.Miner.OrcaMode}
+					{
+						relay all -event ComBot_Orca_InBelt FALSE
+					}
+					This:Clear
+					Move:Bookmark[${Config.Miner.Miner_Dropoff}]
+					This:QueueState["Traveling", 1000]
+				}
+				break
+			case No Dropoff
+				break
+			default
+				if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) > 0.95
+				{
+					UI:Update["obj_Miner", "Unload trip required", "g"]
+					This:Clear
+					Move:Bookmark[${Config.Miner.Miner_Dropoff}]
+					This:QueueState["Traveling", 1000]
+					This:QueueState["Offload", 1000]
+					This:QueueState["StackItemHangar", 1000]
+					This:QueueState["GoToMiningSystem", 1000]
+					This:QueueState["Traveling", 1000]
+				}
+				break
 		}
 		This:QueueState["Mine"]
 		return TRUE;
@@ -99,6 +169,7 @@ objectdef obj_Miner inherits obj_State
 	
 	member:bool StackItemHangar()
 	{
+		variable int64 Orca
 		if !${EVEWindow[ByName, "Inventory"](exists)}
 		{
 			UI:Update["obj_Miner", "Making sure inventory is open", "g"]
@@ -112,6 +183,11 @@ objectdef obj_Miner inherits obj_State
 			case Personal Hangar
 				EVE:StackItems[MyStationHangar, Hangar]
 				break
+			case Orca
+				if ${Entity[Name = "${Config.Miner.Miner_OrcaName}"](exists)}
+				{
+					EVE:StackItems[${Entity[Name = "${Config.Miner.Miner_OrcaName}"].ID}, CorpHangars]
+				}
 			default
 				EVE:StackItems[MyStationCorporateHangar, StationCorporateHangar, "${Config.Miner.Miner_Dropoff_Type.Escape}"]
 				break
@@ -125,12 +201,10 @@ objectdef obj_Miner inherits obj_State
 		{
 			UI:Update["obj_Miner", "No mining system defined!  Check your settings", "r"]
 		}
-		This:Clear
-		Move:System[${EVE.Bookmark[${Config.Miner.MiningSystem}].SolarSystemID}]
-		This:QueueState["Traveling", 1000]
-		This:QueueState["MoveToBelt", 1000]
-		This:QueueState["Traveling", 1000]
-		This:QueueState["Mine"]
+		if ${EVE.Bookmark[${Config.Miner.MiningSystem}].SolarSystemID} != ${Me.SolarSystemID}
+		{
+			Move:System[${EVE.Bookmark[${Config.Miner.MiningSystem}].SolarSystemID}]
+		}
 		return TRUE
 	}
 
@@ -222,80 +296,172 @@ objectdef obj_Miner inherits obj_State
 	
 	member:bool Mine()
 	{
+		This:Clear
+		This:QueueState["OpenCargoHold", 10]
+
 		if !${Client.InSpace}
 		{
-			This:QueueState["OpenCargoHold", 1000]
 			This:QueueState["CheckCargoHold", 1000]
-			This:QueueState["GoToMiningSystem", 1000]
 			return TRUE
 		}
-		if ${Asteroids.AsteroidList.Used} == 0
+		
+		if ${Me.ToEntity.Mode} == 3
 		{
-			UI:Update["obj_Miner", "${Asteroids.AsteroidList.Used} asteroids found, moving to another belt", "g"]
-			This:QueueState["OpenCargoHold", 1000]
+			return FALSE
+		}
+		
+		Asteroids.MaxLockCount:Set[${Ship.ModuleList_MiningLaser.Count}]
+		
+		if ${Config.Miner.Miner_Dropoff_Type.Equal[Orca]} || ${Config.Miner.Miner_Dropoff_Type.Equal[Container]}
+		{
+			variable int64 Orca
+			if ${Entity[Name = "${Config.Miner.Miner_OrcaName}"](exists)}
+			{
+				Orca:Set[${Entity[Name = "${Config.Miner.Miner_OrcaName}"].ID}]
+				Asteroids.DistanceTarget:Set[${Orca}]
+				if ${Entity[${Orca}].Distance} > LOOT_RANGE
+				{
+					Move:Approach[${Orca}, LOOT_RANGE]
+					return FALSE
+				}
+				else
+				{
+					if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) > 0.10
+					{
+						if !${EVEWindow[ByName, Inventory].ChildWindowExists[${Orca}]}
+						{
+							UI:Update["obj_Miner", "Opening ${Config.Miner.Miner_OrcaName}", "g"]
+							Entity[${Orca}]:Open
+							return FALSE
+						}
+						if !${EVEWindow[ByItemID, ${Orca}](exists)}
+						{
+							EVEWindow[ByName, Inventory]:MakeChildActive[${Orca}]
+							return FALSE
+						}
+						UI:Update["obj_Miner", "Unloading to ${Config.Miner.Miner_OrcaName}", "g"]
+						Cargo:PopulateCargoList[SHIP]
+						Cargo:MoveCargoList[SHIPCORPORATEHANGAR, "", ${Orca}]
+						This:QueueState["Idle", 1000]
+						This:QueueState["StackItemHangar"]
+						This:QueueState["Mine"]
+						return TRUE
+					}
+				}
+			}
+			else
+			{
+				Asteroids.DistanceTarget:Set[${MyShip.ID}]
+			}
+		}
+
+		if !${Entity[CategoryID==CATEGORYID_ORE]}
+		{
+			if ${Config.Miner.OrcaMode}
+			{
+				relay all -event ComBot_Orca_InBelt FALSE
+			}
+			Drones:Recall
+			UI:Update["obj_Miner", "No asteroids found, moving to a new belt", "g"]
 			This:QueueState["CheckCargoHold", 1000]
 			This:QueueState["GoToMiningSystem", 1000]
+			This:QueueState["Traveling", 1000]
+			This:QueueState["MoveToBelt", 1000]
+			This:QueueState["Traveling", 1000]
 			return TRUE
 		}
-		if ${Ship.ModuleList_MiningLaser.InactiveCount} > 0
+
+		if ${Config.Miner.OrcaMode}
 		{
-			This:QueueState["ActivateLaser"]
+			relay all -event ComBot_Orca_InBelt TRUE
+			relay all -event ComBot_Orca_Cargo ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipCorpHangar]}
+			if ${Config.Miner.IceMining}
+			{
+				Move:Approach[${Entity[CategoryID==CATEGORYID_ORE]}, 10000]
+			}
+			else
+			{
+				Move:Approach[${Entity[CategoryID==CATEGORYID_ORE]}, 8000]
+			}
+		}
+		
+		Drones:RemainDocked
+		Drones:Aggressive
+		
+		if ${Ship.ModuleList_GangLinks.ActiveCount} < ${Ship.ModuleList_GangLinks.Count}
+		{
+			Ship.ModuleList_GangLinks:ActivateCount[${Math.Calc[${Ship.ModuleList_GangLinks.Count} - ${Ship.ModuleList_GangLinks.ActiveCount}]}]
+		}
+		
+		if ${Ship.ModuleList_MiningLaser.ActiveCount} < ${Ship.ModuleList_MiningLaser.Count}
+		{
+			This:QueueState["ActivateLasers"]
 			This:QueueState["Mine"]
 			return TRUE
 		}
 		
-		This:QueueState["CheckCargoHold"]
-		return TRUE
-	}
-	
-	member:bool ActivateLaser()
-	{
-		variable int MaxTarget = ${MyShip.MaxLockedTargets}
-		variable iterator Roid
-
-		if ${Me.MaxLockedTargets} < ${MyShip.MaxLockedTargets}
+		if !${Config.Miner.Miner_Dropoff_Type.Equal[No Dropoff]}
 		{
-			MaxTarget:Set[${Me.MaxLockedTargets}]
+			This:QueueState["CheckCargoHold"]
+			return TRUE
 		}
+		return FALSE
+	}
 
-		Asteroids.AsteroidList:GetIterator[Roid]
+
+	member:bool ActivateLasers()
+	{
+		if  ${Ship.ModuleList_MiningLaser.ActiveCount} == ${Ship.ModuleList_MiningLaser.Count}
+		{
+			return TRUE
+		}
+		variable iterator Roid
+		Asteroids.LockedTargetList:GetIterator[Roid]
 		if ${Roid:First(exists)}
 		do
 		{
-			if  !${Roid.Value.BeingTargeted} && \
-				!${Roid.Value.IsLockedTarget} && \
-				${Targets.LockedAndLockingTargets} < ${MaxTarget} && \
-				${Roid.Value.Distance} < ${MyShip.MaxTargetRange} && \
-				${Targets.LockedAndLockingTargets} < ${Ship.ModuleList_MiningLaser.Used}
+			if	${Roid.Value.Distance} > ${Ship.Module_MiningLaser_Range}
 			{
-				UI:Update["obj_Miner", "Locking - ${Roid.Value.Name}", "g"]
-				Roid.Value:LockTarget
+				Move:Approach[${Roid.Value.ID}, ${Ship.Module_MiningLaser_Range}]
 				return FALSE
 			}
-			
-			if  ${Roid.Value.Distance} > ${Ship.Module_MiningLaser_Range} &&\
-				(${Roid.Value.IsLockedTarget} || ${Roid.Value.BeingTargeted})
-			
+			if ${Config.Miner.IceMining}
 			{
-				Move:Approach[${Roid.Value}, ${Ship.Module_MiningLaser_Range}]
-				return FALSE
-			}
-
-			if  !${Ship.ModuleList_MiningLaser.IsActiveOn[${Roid.Value.ID}]} &&\
-				${Roid.Value.Distance} < ${Ship.Module_MiningLaser_Range} &&\
-				${Ship.ModuleList_MiningLaser.InactiveCount} > 0 &&\
-				${Roid.Value.IsLockedTarget}
-			{
-				UI:Update["obj_Miner", "Activating mining laser - ${Roid.Value.Name}", "g"]
-				Ship.ModuleList_MiningLaser:Activate[${Roid.Value.ID}]
+				UI:Update["obj_Miner", "Activating ${Ship.ModuleList_MiningLaser.InActiveCount} laser(s) on ${Roid.Value.Name} (${ComBot.MetersToKM_Str[${Roid.Value.Distance}]})", "y"]
+				Ship.ModuleList_MiningLaser:ActivateCount[${Ship.ModuleList_MiningLaser.InActiveCount}, ${Roid.Value.ID}]
 				return TRUE
 			}
-			
-
-			
-			
+			else
+			{
+				if !${Ship.ModuleList_MiningLaser.IsActiveOn[${Roid.Value.ID}]}
+				{
+					UI:Update["obj_Miner", "Activating 1 laser on ${Roid.Value.Name} (${ComBot.MetersToKM_Str[${Roid.Value.Distance}]})", "y"]
+					Ship.ModuleList_MiningLaser:Activate[${Roid.Value.ID}]
+					return FALSE
+				}
+			}
 		}
 		while ${Roid:Next(exists)}
+		return FALSE
+	}
+	
+	member:bool ExpandContainer()
+	{
+		variable int64 Orca
+		if ${Entity[Name = "${Config.Miner.Miner_OrcaName}"](exists)}
+		{
+			Orca:Set[${Entity[Name = "${Config.Miner.Miner_OrcaName}"].ID}]
+			if ${EVEWindow[ByName, Inventory].ChildWindowExists[${Orca}]}
+			{
+				${EVEWindow[ByName, Inventory]:OpenChildAsNewWindow[${Orca}]
+			}
+		}
+		return TRUE
+	}
+	
+	method OrcaInBelt(bool value)
+	{
+		WarpToOrca:Set[${value}]
 	}
 	
 }	

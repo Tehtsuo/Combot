@@ -57,7 +57,6 @@ objectdef obj_Ship
 	method Initialize()
 	{
 		Event[ISXEVE_onFrame]:AttachAtom[This:Pulse]
-		UI:Update["obj_Ship", "Initialized", "g"]
 	}
 
 	method Shutdown()
@@ -163,6 +162,7 @@ objectdef obj_Ship
 				continue
 			}
 			
+			
 			switch ${GroupID}
 			{
 				case GROUP_SHIELD_TRANSPORTER
@@ -263,6 +263,17 @@ objectdef obj_Ship
 		if ${ModuleIter:First(exists)}
 		{
 			UI:Update["obj_Ship", "ECCM Modules:", "g"]
+			do
+			{
+				UI:Update["obj_Ship", " Slot: ${ModuleIter.Value.ToItem.Slot} ${ModuleIter.Value.ToItem.Name}", "-g"]
+			}
+			while ${ModuleIter:Next(exists)}
+		}
+
+		This.ModuleList_GangLinks:GetIterator[ModuleIter]
+		if ${ModuleIter:First(exists)}
+		{
+			UI:Update["obj_Ship", "Gang Link Modules:", "g"]
 			do
 			{
 				UI:Update["obj_Ship", " Slot: ${ModuleIter.Value.ToItem.Slot} ${ModuleIter.Value.ToItem.Name}", "-g"]

@@ -37,7 +37,6 @@ objectdef obj_Asteroids inherits obj_State
 		PulseFrequency:Set[10]
 		RandomDelta:Set[0]
 
-		UI:Update["obj_Asteroids", "Initialized", "g"]
 	}
 
 

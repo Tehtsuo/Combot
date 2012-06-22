@@ -31,7 +31,6 @@ objectdef obj_Salvage inherits obj_State
 	{
 		This[parent]:Initialize
 		This:AssignStateQueueDisplay[obj_SalvageStateList@Salvager@ComBotTab@ComBot]
-		UI:Update["obj_Salvage", "Initialized", "g"]
 	}
 
 	method Start()
@@ -147,6 +146,7 @@ objectdef obj_Salvage inherits obj_State
 		UI:Update["obj_Salvage", "No salvage bookmark found - returning to station", "g"]
 		Move:Bookmark[${Config.Salvager.Salvager_Dropoff}]
 		This:QueueState["Traveling"]
+		This:QueueState["PrepOffload"]
 		This:QueueState["Offload"]
 		return TRUE
 	}
@@ -194,6 +194,7 @@ objectdef obj_Salvage inherits obj_State
 			UI:Update["obj_Salvage", "Unload trip required", "g"]
 			Move:Bookmark[${Config.Salvager.Salvager_Dropoff}]
 			This:QueueState["Traveling"]
+			This:QueueState["PrepOffload"]
 			This:QueueState["Offload"]
 			This:QueueState["RefreshBookmarks", 3000]
 			This:QueueState["CheckBookmarks"]
@@ -220,7 +221,7 @@ objectdef obj_Salvage inherits obj_State
 				echo Before Salvage
 				if  !${TargetIterator.Value.BeingTargeted} && \
 					!${TargetIterator.Value.IsLockedTarget} && \
-					${Targets.LockedAndLockingTargets} == ${MaxTarget}
+					${Targets.Locked} == ${MaxTarget}
 				{
 					if ${TargetIterator.Value.Distance} > ${Ship.Module_TractorBeams_Range}
 					{
@@ -236,7 +237,7 @@ objectdef obj_Salvage inherits obj_State
 				echo After Salvage
 				if  !${TargetIterator.Value.BeingTargeted} && \
 					!${TargetIterator.Value.IsLockedTarget} && \
-					${Targets.LockedAndLockingTargets} < ${MaxTarget} && \
+					${Targets.Locked} < ${MaxTarget} && \
 					${TargetIterator.Value.Distance} < ${MyShip.MaxTargetRange} && \
 					!${AlreadySalvaged.Element[${TargetIterator.Value.ID}] >= ${LavishScript.RunningTime}} && \
 					!${Target.Value.Name.Equal["Cargo Container"]}
@@ -430,6 +431,7 @@ objectdef obj_Salvage inherits obj_State
 			UI:Update["obj_Salvage", "Unload trip required", "g"]
 			Move:Bookmark[${Config.Salvager.Salvager_Dropoff}]
 			This:QueueState["Traveling"]
+			This:QueueState["PrepOffload"]
 			This:QueueState["Offload"]
 		}
 		else
@@ -441,6 +443,18 @@ objectdef obj_Salvage inherits obj_State
 		return TRUE;
 	}
 
+	member:bool PrepOffload()
+	{
+		switch ${Config.Salvager.Salvager_Dropoff_Type}
+		{
+			case Personal Hangar
+				break
+			default
+				EVEWindow[ByName, Inventory]:MakeChildActive[Corporation Hangars]
+				break
+		}
+		return TRUE
+	}
 	
 	member:bool Offload()
 	{
@@ -509,7 +523,6 @@ objectdef obj_LootCans inherits obj_State
 	{
 		This[parent]:Initialize
 		This.NonGameTiedPulse:Set[TRUE]
-		UI:Update["obj_LootCans", "Initialized", "g"]
 	}
 	
 	method Enable()
@@ -534,19 +547,25 @@ objectdef obj_LootCans inherits obj_State
 			return FALSE
 		}
 
-		if ${Entity[(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && IsAbandoned](exists)}
+		if ${Entity[(GroupID==GROUP_CARGOCONTAINER) && IsAbandoned](exists)}
 		{
 			Entity[(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && IsAbandoned]:UnlockTarget
 		}
 		
 		EVE:QueryEntities[Targets, "(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && HaveLootRights && !IsWreckEmpty && Distance<LOOT_RANGE && !IsAbandoned"]
 		Targets:GetIterator[TargetIterator]
-		if ${TargetIterator:First(exists)}
+		if ${TargetIterator:First(exists)} && ${EVEWindow[ByName, Inventory](exists)}
 		{
 			do
 			{
-				if ${EVEWindow[ByItemID, ${TargetIterator.Value}](exists)}
+				if ${EVEWindow[ByName, Inventory].ChildWindowExists[${TargetIterator.Value}]}
 				{
+					if !${EVEWindow[ByItemID, ${TargetIterator.Value}](exists)}
+					{
+						EVEWindow[ByName, Inventory]:MakeChildActive[${TargetIterator.Value}]
+						return FALSE
+					}
+					
 					Entity[${TargetIterator.Value}]:GetCargo[TargetCargo]
 					TargetCargo:GetIterator[CargoIterator]
 					if ${CargoIterator:First(exists)}
@@ -565,7 +584,7 @@ objectdef obj_LootCans inherits obj_State
 					EVEWindow[ByItemID, ${TargetIterator.Value}]:LootAll
 					return FALSE
 				}
-				if !${EVEWindow[ByItemID, ${TargetIterator.Value}](exists)}
+				if !${EVEWindow[ByName, Inventory].ChildWindowExists[${TargetIterator.Value}]}
 				{
 					UI:Update["obj_Salvage", "Opening - ${TargetIterator.Value.Name}", "g"]
 					TargetIterator.Value:OpenCargo

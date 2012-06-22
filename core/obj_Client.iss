@@ -29,7 +29,6 @@ objectdef obj_Client
 	method Initialize()
 	{
 		Event[ISXEVE_onFrame]:AttachAtom[This:Pulse]
-		UI:Update["obj_Client", "Initialized", "g"]
 	}
 
 	method Shutdown()

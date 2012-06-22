@@ -29,7 +29,6 @@ objectdef obj_ComBot
 	method Initialize()
 	{
 		Event[ISXEVE_onFrame]:AttachAtom[This:Pulse]
-		UI:Update["obj_ComBot", "Initialized", "g"]
 	}
 
 	method Shutdown()
@@ -62,7 +61,6 @@ objectdef obj_ComBot
 	method Resume()
 	{
 		UIElement[Run@TitleBar@ComBot]:SetText[Stop]
-		UI:Update["obj_ComBot", "Combot Resumed", "g"]
 		This.Paused:Set[FALSE]
 		${Config.Common.ComBot_Mode}:Start
 	}
@@ -87,7 +85,7 @@ objectdef obj_ComBot
 		{
 			if ${Total} > 1000000000
 			{
-				return "${Math.Calc[${Total}/100000000].Precision[3]}b isk"
+				return "${Math.Calc[${Total}/1000000000].Precision[3]}b isk"
 			}
 			elseif ${Total} > 1000000
 			{

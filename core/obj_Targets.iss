@@ -19,12 +19,18 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-objectdef obj_Targets
+objectdef obj_Targets inherits obj_State
 {
+	variable index:entity Locked
+	variable index:entity Asteroids
 
 	method Initialize()
 	{
-		UI:Update["obj_Targets", "Initialized", "g"]
+		
+		This[parent]:Initialize
+		RandomDelta:Set[0]
+
+		;This:QueueState["Update", 20]
 	}
 
 
@@ -69,12 +75,16 @@ objectdef obj_Targets
 	}
 	
 
-	member:int LockedAndLockingTargets()
+	
+	member:bool Update()
 	{
-		variable index:entity Targets
-		EVE:QueryEntities[Targets, "IsLockedTarget || BeingTargeted"]
-		
-		return ${Targets.Used}
+		if !${Client.InSpace}
+		{
+			return FALSE
+		}
+		EVE:QueryEntities[Locked, "IsLockedTarget || BeingTargeted"]
+		EVE:QueryEntities[Asteroids, "IsLockedTarget || BeingTargeted && CategoryID == CATEGORYID_ORE"]
+		return FALSE
 	}
 
 	member:int TargetsByQuery(string QueryString)
@@ -84,19 +94,26 @@ objectdef obj_Targets
 		
 		return ${Targets.Used}
 	}
-	
-	member:int Asteroids()
-	{
-		return ${This.TargetsByQuery[CategoryID == CATEGORYID_ORE]}
-	}
 
-	member:int NotAsteroids()
-	{
-		return ${This.TargetsByQuery[CategoryID != CATEGORYID_ORE]}
-	}
-	
 	member:int TargetingMe()
 	{
 		return ${This.TargetsByQuery[IsTargetingMe]}
+	}
+	
+	member:bool AsteroidIsInRangeOfOthers(int64 id)
+	{
+		variable iterator Target
+		Asteroids:GetIterator[Target]
+		
+		if ${Target:First(exists)}
+		do
+		{
+			if ${Entity[${Target.Value}].DistanceTo[${id}]} > ${Math.Calc[${Ship.Module_MiningLaser_Range} * 1.9]}
+			{
+				return FALSE
+			}
+		}
+		while ${Target:Next(exists)}
+		return TRUE		
 	}
 }
