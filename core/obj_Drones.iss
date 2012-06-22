@@ -104,6 +104,8 @@ objectdef obj_Drones inherits obj_State
 		
 		DroneTargets.LockedTargetList:GetIterator[TargetIterator]
 		
+		echo Locked Targets = ${DroneTargets.LockedTargetList.Used}
+		
 		if !${Entity[${CurrentTarget}](exists)} || !${Entity[${CurrentTarget}].IsLockedTarget}
 		{
 			CurrentTarget:Set[-1]
@@ -118,7 +120,7 @@ objectdef obj_Drones inherits obj_State
 			}
 			do
 			{
-				if ${CurrentTarget.Equal[-1]}
+				if ${CurrentTarget.Equal[-1]} && ${TargetIterator.Value.Distance} < ${Me.DroneControlDistance}
 				{
 					CurrentTarget:Set[${TargetIterator.Value.ID}]
 					return FALSE
