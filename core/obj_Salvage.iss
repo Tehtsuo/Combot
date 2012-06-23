@@ -26,6 +26,10 @@ objectdef obj_Salvage inherits obj_State
 	variable index:int64 HoldOffPlayer
 	variable index:int HoldOffTimer
 	variable collection:int64 AlreadySalvaged
+	variable float NonDedicatedFullPercent = 0.95
+	variable bool NonDedicatedNPCRun = FALSE
+	variable bool Dedicated = TRUE
+	variable bool Salvaging = FALSE
 
 	method Initialize()
 	{
@@ -165,6 +169,22 @@ objectdef obj_Salvage inherits obj_State
 		UI:Update["obj_Salvage", "${text}", "g"]
 		return TRUE
 	}
+	
+	method NonDedicatedSalvage(float FullThreshold = 0.95, bool NPCRun = FALSE)
+	{
+		Dedicated:Set[FALSE]
+		NonDedicatedFullPercent:Set[${FullThreshold}]
+		NonDedicatedNPCRun:Set[${NPCRun}]
+		This:QueueState["SalvageWrecks", 500, "0"]
+		This:QueueState["DoneSalvaging"]
+		Salvaging:Set[TRUE]
+	}
+	
+	member:bool DoneSalvaging()
+	{
+		Salvaging:Set[FALSE]
+		Dedicated:Set[TRUE]
+	}
 
 	member:bool SalvageWrecks(int64 BookmarkCreator)
 	{
@@ -175,31 +195,46 @@ objectdef obj_Salvage inherits obj_State
 		variable int ClosestTractorKey
 		variable bool ReactivateTractor = FALSE
 		variable int64 SalvageMultiTarget = -1
+		variable float FullHold = 0.95
+		variable bool NPCRun = TRUE
+		if !${Dedicated}
+		{
+			FullHold:Set[${NonDedicatedFullPercent}]
+			NPCRun:Set[${NonDedicatedNPCRun}]
+		}
 		
-		if ${Targets.NPC}
+		if ${Targets.NPC} && ${NPCRun}
 		{
 			UI:Update["obj_Salvage", "Pocket has NPCs - Jumping Clear", "g"]
-			HoldOffPlayer:Insert[${BookmarkCreator}]
-			HoldOffTimer:Insert[${Math.Calc[${LavishScript.RunningTime} + 600000]}]
-			This:Clear
-			This:QueueState["JumpToCelestial"]
-			This:QueueState["Traveling"]
-			This:QueueState["RefreshBookmarks", 3000]
-			This:QueueState["CheckBookmarks"]
+			LootCans:Disable
+			if ${Dedicated}
+			{
+				HoldOffPlayer:Insert[${BookmarkCreator}]
+				HoldOffTimer:Insert[${Math.Calc[${LavishScript.RunningTime} + 600000]}]
+				This:Clear
+				This:QueueState["JumpToCelestial"]
+				This:QueueState["Traveling"]
+				This:QueueState["RefreshBookmarks", 3000]
+				This:QueueState["CheckBookmarks"]
+			}
 			return TRUE
 		}
 
-		if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) > 0.95
+		if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) > ${FullHold}
 		{
 			UI:Update["obj_Salvage", "Unload trip required", "g"]
-			Move:Bookmark[${Config.Salvager.Salvager_Dropoff}]
-			This:QueueState["Traveling"]
-			This:QueueState["PrepOffload"]
-			This:QueueState["Offload"]
-			This:QueueState["RefreshBookmarks", 3000]
-			This:QueueState["CheckBookmarks"]
+			LootCans:Disable
+			if ${Dedicated}
+			{
+				Move:Bookmark[${Config.Salvager.Salvager_Dropoff}]
+				This:Clear
+				This:QueueState["Traveling"]
+				This:QueueState["Offload"]
+				This:QueueState["RefreshBookmarks", 3000]
+				This:QueueState["CheckBookmarks"]
+			}
 			return TRUE
-		}		
+		}
 		
 		if ${Me.MaxLockedTargets} < ${MyShip.MaxLockedTargets}
 		{
