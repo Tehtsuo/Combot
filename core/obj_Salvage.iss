@@ -274,7 +274,7 @@ objectdef obj_Salvage inherits obj_State
 					!${TargetIterator.Value.IsLockedTarget} && \
 					${Targets.Locked.Used} < ${MaxTarget} && \
 					${TargetIterator.Value.Distance} < ${MyShip.MaxTargetRange} && \
-					!${AlreadySalvaged.Element[${TargetIterator.Value.ID}] >= ${LavishScript.RunningTime}} && \
+					!(${AlreadySalvaged.Element[${TargetIterator.Value.ID}]} >= ${LavishScript.RunningTime}}) && \
 					!${Target.Value.Name.Equal["Cargo Container"]}
 				{
 					UI:Update["obj_Salvage", "Locking - ${TargetIterator.Value.Name}", "g"]
