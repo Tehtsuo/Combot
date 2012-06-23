@@ -79,43 +79,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Width>98%</Width> 
 						<Height>18%</Height> 
 						<Wrap />
-						<Text></Text>
+						<Text>ComBot's Hauler mode offers both simplicity and versatility.  It provides dropoff service to Station Hangar, Station Corporation Hangar, and even Player Owned Station structures.  It can pick up cargo from an Orca, a Jetcan, or a Player Owned Station structure, Personal Hangar, or Corporation Hangar.  Keep in mind, to move cargo from one Player Owned Station structure to another, they must have unique names.  If your source and destination containers are the same name, it will simply pick up cargo and immediately drop it back off!  Unfortunately, folder selection for picking up Corporation Hangar cargo is not available at this time.</Text>
 					</Text>						 
-					<Text name='obj_Hauler_MiningSystemTitle'> 
-						<X>69%</X> 
-						<Y>28%</Y> 
-						<Width>30%</Width> 
-						<Height>2%</Height> 
-						<Alignment>Center</Alignment>
-						<Text>Mining System Bookmark</Text>
-					</Text>						 
-					<listbox Name="obj_Hauler_MiningSystem">
-						<BackgroundColor>FF000000</BackgroundColor>
-						<Border>1</Border>
-						<BorderColor>FFFFFFFF</BorderColor>
-						<X>69%</X>
-						<Y>30%</Y>
-						<Width>30%</Width>
-						<Height>20%</Height>
-						<OnLoad>
-							variable index:bookmark Bookmarks
-							variable iterator BookmarkIterator
-
-							EVE:GetBookmarks[Bookmarks]
-							Bookmarks:GetIterator[BookmarkIterator]
-
-							if ${BookmarkIterator:First(exists)}
-								do
-								{	
-									This:AddItem[${BookmarkIterator.Value.Label}]
-								}
-								while ${BookmarkIterator:Next(exists)}
-							This.ItemByText[${Script[ComBot].VariableScope.Config.Hauler.MiningSystem}]:Select
-						</OnLoad>
-						<OnSelect>
-							Script[ComBot].VariableScope.Config.Hauler:SetMiningSystem[${This.SelectedItem.Text}]
-						</OnSelect>
-					</listbox>
 					<Text name='obj_Hauler_JetcanModeTitle'> 
 						<X>69%</X> 
 						<Y>52%</Y> 
@@ -334,6 +299,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							<Item>Orca</Item>
 							<Item>Jetcan</Item>
 							<Item>Container</Item>
+							<Item>Personal Hangar</Item>
+							<Item>Corporation Hangar</Item>
 						</Items>
 						<OnLoad>
 							This.ItemByText[${Script[ComBot].VariableScope.Config.Hauler.Pickup_Type}]:Select

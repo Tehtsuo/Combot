@@ -47,6 +47,12 @@ objectdef obj_Cargo inherits obj_State
 			case CONTAINERCORPORATEHANGAR
 				Entity[${ID}]:GetCorpHangarsCargo[CargoList]
 				break
+			case STATIONCORPORATEHANGAR
+				Me.Station:GetCorpHangarItems[CargoList]
+				break
+			case STATIONHANGAR
+				Me.Station:GetHangarItems[CargoList]
+				break
 		}
 	}
 
