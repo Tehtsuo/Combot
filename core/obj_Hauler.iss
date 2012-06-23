@@ -120,7 +120,6 @@ objectdef obj_Hauler inherits obj_State
 
 	member:bool PrepOffload()
 	{
-		echo PREPPING
 		switch ${Config.Hauler.Dropoff_Type}
 		{
 			case Personal Hangar

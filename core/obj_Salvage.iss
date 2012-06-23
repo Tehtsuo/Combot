@@ -321,7 +321,7 @@ objectdef obj_Salvage inherits obj_State
 				if  !${Ship.ModuleList_Salvagers.IsActiveOn[${TargetIterator.Value.ID}]} &&\
 					${TargetIterator.Value.Distance} < ${Ship.Module_Salvagers_Range} &&\
 					${Ship.ModuleList_Salvagers.InactiveCount} > 0 &&\
-					${TargetIterator.Value.IsLockedTarget} && ${Ship.ModuleList_Salvagers} > 0
+					${TargetIterator.Value.IsLockedTarget} && ${Ship.ModuleList_Salvagers.Count} > 0
 				{
 					UI:Update["obj_Salvage", "Activating salvager - ${TargetIterator.Value.Name}", "g"]
 					Ship.ModuleList_Salvagers:Activate[${TargetIterator.Value.ID}]
@@ -329,7 +329,7 @@ objectdef obj_Salvage inherits obj_State
 				}
 				if  !${Ship.ModuleList_Salvagers.IsActiveOn[${TargetIterator.Value.ID}]} &&\
 					${TargetIterator.Value.IsWreckEmpty} &&\
-					${TargetIterator.Value.IsLockedTarget} && ${Ship.ModuleList_Salvagers} == 0
+					${TargetIterator.Value.IsLockedTarget} && ${Ship.ModuleList_Salvagers.Count} == 0
 				{
 					TargetIterator.Value:Abandon
 					TargetIterator.Value:UnlockTarget
@@ -487,11 +487,24 @@ objectdef obj_Salvage inherits obj_State
 
 	member:bool PrepOffload()
 	{
+		if !${EVEWindow[ByName, "Inventory"](exists)}
+		{
+			UI:Update["obj_Salvage", "Opening inventory", "g"]
+			MyShip:OpenCargo[]
+			return FALSE
+		}
 		switch ${Config.Salvager.Salvager_Dropoff_Type}
 		{
 			case Personal Hangar
 				break
 			default
+				if !${EVEWindow[ByName, Inventory]:ChildWindowExists[Corporation Hangars]}
+				{
+					UI:Update["obj_Salvage", "Delivery destination is Corporation Hangars, but child not found", "r"]
+					UI:Update["obj_Salvage", "Closing inventory to fix possible EVE bug", "y"]
+					EVEWindow[ByName, Inventory]:Close
+					return FALSE
+				}
 				EVEWindow[ByName, Inventory]:MakeChildActive[Corporation Hangars]
 				break
 		}
