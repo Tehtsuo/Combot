@@ -606,6 +606,17 @@ objectdef obj_Configuration_Miner
 	{
 		This.CommonRef:AddSetting[IceBeltPrefix,${value}]
 	}
+	
+	member:int Threshold()
+	{
+		return ${This.CommonRef.FindSetting[Threshold]}
+	}
+
+	method SetThreshold(int value)
+	{
+		This.CommonRef:AddSetting[Threshold,${value}]
+	}
+	
 }
 	
 objectdef obj_Configuration_Security

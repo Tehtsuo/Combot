@@ -47,6 +47,12 @@ objectdef obj_Cargo inherits obj_State
 			case CONTAINERCORPORATEHANGAR
 				Entity[${ID}]:GetCorpHangarsCargo[CargoList]
 				break
+			case STATIONCORPORATEHANGAR
+				Me.Station:GetCorpHangarItems[CargoList]
+				break
+			case STATIONHANGAR
+				Me.Station:GetHangarItems[CargoList]
+				break
 		}
 	}
 
@@ -100,7 +106,7 @@ objectdef obj_Cargo inherits obj_State
 						{
 							if ${Math.Calc[${Volume} + ${Cargo.Value.Volume} * ${Cargo.Value.Quantity}]} > ${Math.Calc[${EVEWindow[ByName, Inventory].ChildCapacity[ShipCorpHangar]} - ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipCorpHangar]}]}
 							{
-								Cargo.Value:MoveTo[MyShip, CorpHangars, ${Math.Calc[(${EVEWindow[ByName, Inventory].ChildCapacity[ShipCorpHangar]} - ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipCorpHangar]} - ${Volume}) / ${CargoIterator.Value.Volume}]}${TransferFolder}]
+								Cargo.Value:MoveTo[MyShip, CorpHangars, ${Math.Calc[(${EVEWindow[ByName, Inventory].ChildCapacity[ShipCorpHangar]} - ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipCorpHangar]} - ${Volume}) / ${Cargo.Value.Volume}]}${TransferFolder}]
 								break
 							}
 							else
@@ -119,7 +125,7 @@ objectdef obj_Cargo inherits obj_State
 						{
 							if ${Math.Calc[${Volume} + ${Cargo.Value.Volume} * ${Cargo.Value.Quantity}]} > ${Math.Calc[${EVEWindow[ByName, Inventory].ChildCapacity[ShipCorpHangar]} - ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipCorpHangar]}]}
 							{
-								Cargo.Value:MoveTo[${ID}, CorpHangars, ${Math.Calc[(${EVEWindow[ByName, Inventory].ChildCapacity[ShipCorpHangar]} - ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipCorpHangar]} - ${Volume}) / ${CargoIterator.Value.Volume}]}${TransferFolder}]
+								Cargo.Value:MoveTo[${ID}, CorpHangars, ${Math.Calc[(${EVEWindow[ByName, Inventory].ChildCapacity[ShipCorpHangar]} - ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipCorpHangar]} - ${Volume}) / ${Cargo.Value.Volume}]}${TransferFolder}]
 								break
 							}
 							else
@@ -131,6 +137,25 @@ objectdef obj_Cargo inherits obj_State
 						while ${Cargo:Next(exists)}
 					EVE:MoveItemsTo[TransferIndex, ${ID}, CorpHangars${TransferFolder}]
 				}
+				break
+			case CONTAINER
+				TransferIndex:Clear
+				if ${Cargo:First(exists)}
+					do
+					{
+						if ${Math.Calc[${Volume} + (${Cargo.Value.Volume} * ${Cargo.Value.Quantity})]} > ${Math.Calc[${EVEWindow[ByName, Inventory].ChildCapacity[${ID}]} - ${EVEWindow[ByName, Inventory].ChildUsedCapacity[${ID}]}]}
+						{
+							Cargo.Value:MoveTo[${ID}, CargoHold, ${Math.Calc[(${EVEWindow[ByName, Inventory].ChildCapacity[${ID}]} - ${EVEWindow[ByName, Inventory].ChildUsedCapacity[${ID}]} - ${Volume}) / ${Cargo.Value.Volume}]}]
+							break
+						}
+						else
+						{
+							Volume:Inc[${Cargo.Value.Quantity} * ${Cargo.Value.Volume}]
+							TransferIndex:Insert[${Cargo.Value.ID}]
+						}
+					}
+					while ${Cargo:Next(exists)}
+				EVE:MoveItemsTo[TransferIndex, ${ID}, CargoHold]
 				break
 			case SHIPOREHOLD
 				EVE:MoveItemsTo[TransferIndex, MyShip, OreHold]
