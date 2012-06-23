@@ -43,7 +43,7 @@ objectdef obj_TargetList inherits obj_State
 	method Initialize()
 	{
 		This[parent]:Initialize
-		PulseFrequency:Set[10]
+		PulseFrequency:Set[100]
 		RandomDelta:Set[0]
 		This:QueueState["UpdateList"]
 		DistanceTarget:Set[${MyShip.ID}]
@@ -90,7 +90,7 @@ objectdef obj_TargetList inherits obj_State
 		{
 			do
 			{
-				This:QueueState["GetQueryString", 20, "${QueryStringIterator.Value.Escape}"]
+				This:QueueState["GetQueryString", 250, "${QueryStringIterator.Value.Escape}"]
 			}
 			while ${QueryStringIterator:Next(exists)}
 		}
@@ -111,7 +111,7 @@ objectdef obj_TargetList inherits obj_State
 		{
 			return FALSE
 		}
-		EVE:QueryEntities[entity_index, "${QueryString.Escape}"]		
+		EVE:QueryEntities[entity_index, "${QueryString.Escape}"]	
 		entity_index:GetIterator[entity_iterator]
 		if ${entity_iterator:First(exists)}
 		{
@@ -204,13 +204,13 @@ objectdef obj_TargetList inherits obj_State
 			}
 			while ${EntityIterator:Next(exists)}
 		}
-
+		echo Target Count - ${This.TargetList.Used}
 		This.TargetList:GetIterator[EntityIterator]
 		if ${EntityIterator:First(exists)}
 		{
 			do
 			{
-				if !${EntityIterator.Value.IsLockedTarget} && !${EntityIterator.Value.BeingTargeted} && ${LockedAndLockingTargets.Used} < ${MinLockCount} && ${MaxTarget} > ${Targets.LockedAndLockingTargets} && ${EntityIterator.Value.Distance} < ${MyShip.MaxTargetRange}
+				if !${EntityIterator.Value.IsLockedTarget} && !${EntityIterator.Value.BeingTargeted} && ${LockedAndLockingTargets.Used} < ${MinLockCount} && ${MaxTarget} > ${Targets.Locked.Used} && ${EntityIterator.Value.Distance} < ${MyShip.MaxTargetRange}
 				{
 					EntityIterator.Value:LockTarget
 					LockedAndLockingTargets:Add[${EntityIterator.Value.ID}]
