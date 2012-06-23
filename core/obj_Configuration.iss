@@ -39,7 +39,6 @@ objectdef obj_Configuration_BaseConfig
 		}
 
 		BaseRef:Set[${LavishSettings[ComBotSettings].FindSet[${Me.Name}]}]
-		UI:Update["obj_Configuration", "Initialized - beginning settings Initialization", "g"]
 	}
 
 	method Shutdown()
@@ -64,6 +63,7 @@ objectdef obj_Configuration
 	variable obj_Configuration_Miner Miner
 	variable obj_Configuration_Security Security
 	variable obj_Configuration_HangarSale HangarSale
+	variable obj_Configuration_Hauler Hauler
 	method Save()
 	{
 		BaseConfig:Save[]
@@ -120,6 +120,27 @@ objectdef obj_Configuration_Common
 	{
 		This.CommonRef:AddSetting[AutoStart,${value}]
 	}
+
+	member:bool WarpPulse()
+	{
+		return ${This.CommonRef.FindSetting[WarpPulse]}
+	}
+
+	method SetWarpPulse(bool value)
+	{
+		This.CommonRef:AddSetting[WarpPulse,${value}]
+	}
+	
+	member:bool Propulsion()
+	{
+		return ${This.CommonRef.FindSetting[Propulsion]}
+	}
+
+	method SetPropulsion(bool value)
+	{
+		This.CommonRef:AddSetting[Propulsion,${value}]
+	}
+	
 }
 
 objectdef obj_Configuration_Salvager
@@ -203,19 +224,183 @@ objectdef obj_Configuration_HangarSale
 	{
 		BaseConfig.BaseRef:AddSet[${This.SetName}]
 
+		This.CommonRef:AddSetting[PriceMode,Undercut Lowest]
+		This.CommonRef:AddSetting[UndercutPercent,1]
+		This.CommonRef:AddSetting[UndercutValue,1000]
+	}
+	
+	
+	member:string PriceMode()
+	{
+		return ${This.CommonRef.FindSetting[PriceMode]}
 	}
 
-	member:string SaleSystem()
+	method SetPriceMode(string value)
 	{
-		return ${This.CommonRef.FindSetting[SaleSystem]}
+		This.CommonRef:AddSetting[PriceMode,${value}]
 	}
 
-	method SetSaleSystem(string value)
+	member:int UndercutPercent()
 	{
-		This.CommonRef:AddSetting[SaleSystem,${value}]
+		return ${This.CommonRef.FindSetting[UndercutPercent]}
+	}
+
+	method SetUndercutPercent(int value)
+	{
+		This.CommonRef:AddSetting[UndercutPercent,${value}]
+	}
+
+	member:int UndercutValue()
+	{
+		return ${This.CommonRef.FindSetting[UndercutValue]}
+	}
+
+	method SetUndercutValue(int value)
+	{
+		This.CommonRef:AddSetting[UndercutValue,${value}]
+	}
+
+	member:bool RePrice()
+	{
+		return ${This.CommonRef.FindSetting[RePrice]}
+	}
+
+	method SetRePrice(bool value)
+	{
+		This.CommonRef:AddSetting[RePrice,${value}]
+	}
+	
+	member:bool Sell()
+	{
+		return ${This.CommonRef.FindSetting[Sell]}
+	}
+
+	method SetSell(bool value)
+	{
+		This.CommonRef:AddSetting[Sell,${value}]
 	}
 }
 	
+objectdef obj_Configuration_Hauler
+{
+	variable string SetName = "Hauler"
+
+	method Initialize()
+	{
+		if !${BaseConfig.BaseRef.FindSet[${This.SetName}](exists)}
+		{
+			UI:Update["obj_Configuration", " ${This.SetName} settings missing - initializing", "o"]
+			This:Set_Default_Values[]
+		}
+		UI:Update["obj_Configuration", " ${This.SetName}: Initialized", "-g"]
+	}
+
+	member:settingsetref CommonRef()
+	{
+		return ${BaseConfig.BaseRef.FindSet[${This.SetName}]}
+	}
+
+	method Set_Default_Values()
+	{
+		BaseConfig.BaseRef:AddSet[${This.SetName}]
+
+		This.CommonRef:AddSetting[Dropoff_ContainerName,""]
+		This.CommonRef:AddSetting[Pickup_ContainerName,""]
+		
+	}
+	
+	
+	member:string MiningSystem()
+	{
+		return ${This.CommonRef.FindSetting[MiningSystem]}
+	}
+
+	method SetMiningSystem(string value)
+	{
+		This.CommonRef:AddSetting[MiningSystem,${value}]
+	}
+
+	member:string JetCanMode()
+	{
+		return ${This.CommonRef.FindSetting[JetCanMode]}
+	}
+
+	method SetJetCanMode(string value)
+	{
+		This.CommonRef:AddSetting[JetCanMode,${value}]
+	}
+
+	member:string Dropoff_Bookmark()
+	{
+		return ${This.CommonRef.FindSetting[Dropoff_Bookmark]}
+	}
+
+	method SetDropoff_Bookmark(string value)
+	{
+		This.CommonRef:AddSetting[Dropoff_Bookmark,${value}]
+	}
+
+	member:string Pickup_Bookmark()
+	{
+		return ${This.CommonRef.FindSetting[Pickup_Bookmark]}
+	}
+
+	method SetPickup_Bookmark(string value)
+	{
+		This.CommonRef:AddSetting[Pickup_Bookmark,${value}]
+	}
+
+	member:string Dropoff_Type()
+	{
+		return ${This.CommonRef.FindSetting[Dropoff_Type]}
+	}
+
+	method SetDropoff_Type(string value)
+	{
+		This.CommonRef:AddSetting[Dropoff_Type,${value}]
+	}
+	
+	member:string Pickup_Type()
+	{
+		return ${This.CommonRef.FindSetting[Pickup_Type]}
+	}
+
+	method SetPickup_Type(string value)
+	{
+		This.CommonRef:AddSetting[Pickup_Type,${value}]
+	}
+	
+	member:string Dropoff_ContainerName()
+	{
+		return ${This.CommonRef.FindSetting[Dropoff_ContainerName]}
+	}
+
+	method SetDropoff_ContainerName(string value)
+	{
+		This.CommonRef:AddSetting[Dropoff_ContainerName,${value}]
+	}
+	
+	member:string Pickup_ContainerName()
+	{
+		return ${This.CommonRef.FindSetting[Pickup_ContainerName]}
+	}
+
+	method SetPickup_ContainerName(string value)
+	{
+		This.CommonRef:AddSetting[Pickup_ContainerName,${value}]
+	}
+
+	member:int Threshold()
+	{
+		return ${This.CommonRef.FindSetting[Threshold]}
+	}
+
+	method SetThreshold(int value)
+	{
+		This.CommonRef:AddSetting[Threshold,${value}]
+	}
+	
+}
 
 objectdef obj_Configuration_Miner
 {
@@ -318,6 +503,7 @@ objectdef obj_Configuration_Miner
 		This.CommonRef:AddSetting[Miner_Dropoff_Type,Personal Hangar]
 		This.CommonRef:AddSetting[BeltPrefix,Belt:]
 		This.CommonRef:AddSetting[IceBeltPrefix,Ice Belt:]
+		This.CommonRef:AddSetting[Miner_OrcaName,""]
 		
 	}
 
@@ -351,6 +537,16 @@ objectdef obj_Configuration_Miner
 		This.CommonRef:AddSetting[Miner_Dropoff_Type,${value}]
 	}
 	
+	member:string Miner_OrcaName()
+	{
+		return ${This.CommonRef.FindSetting[Miner_OrcaName]}
+	}
+
+	method SetMiner_OrcaName(string value)
+	{
+		This.CommonRef:AddSetting[Miner_OrcaName,${value}]
+	}
+	
 	member:bool IceMining()
 	{
 		return ${This.CommonRef.FindSetting[IceMining]}
@@ -361,6 +557,16 @@ objectdef obj_Configuration_Miner
 		This.CommonRef:AddSetting[IceMining,${value}]
 	}
 	
+	member:bool OrcaMode()
+	{
+		return ${This.CommonRef.FindSetting[OrcaMode]}
+	}
+
+	method SetOrcaMode(bool value)
+	{
+		This.CommonRef:AddSetting[OrcaMode,${value}]
+	}
+	
 	member:bool UseBookmarks()
 	{
 		return ${This.CommonRef.FindSetting[UseBookmarks]}
@@ -369,6 +575,16 @@ objectdef obj_Configuration_Miner
 	method SetUseBookmarks(bool value)
 	{
 		This.CommonRef:AddSetting[UseBookmarks,${value}]
+	}
+
+	member:bool AlwaysShieldBoost()
+	{
+		return ${This.CommonRef.FindSetting[AlwaysShieldBoost]}
+	}
+
+	method SetAlwaysShieldBoost(bool value)
+	{
+		This.CommonRef:AddSetting[AlwaysShieldBoost,${value}]
 	}
 	
 	member:string BeltPrefix()
@@ -667,6 +883,17 @@ objectdef obj_Configuration_Security
 	{
 		This.CommonRef:AddSetting[OverrideFleeBookmark,${value}]
 	}
+
+	member:bool TargetFlee()
+	{
+		return ${This.CommonRef.FindSetting[TargetFlee]}
+	}
+
+	method SetTargetFlee(bool value)
+	{
+		This.CommonRef:AddSetting[TargetFlee,${value}]
+	}
+
 	
 }	
 	

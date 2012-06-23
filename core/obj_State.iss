@@ -64,10 +64,13 @@ objectdef obj_State
 		CurState:Set["Idle", 100, ""]
 		IsIdle:Set[TRUE]
 		Event[ISXEVE_onFrame]:AttachAtom[This:Pulse]
+		LavishScript:RegisterEvent[ComBot_Flee]
+		Event[ComBot_Flee]:AttachAtom[This:Flee]
 	}
 	
 	method IndependentPulse()
 	{
+		echo detach
 		IndependentPulse:Set[TRUE]
 		Event[ISXEVE_onFrame]:DetachAtom[This:Pulse]
 	}
@@ -75,6 +78,7 @@ objectdef obj_State
 	method Shutdown()
 	{
 		Event[ISXEVE_onFrame]:DetachAtom[This:Pulse]
+		Event[ComBot_Flee]:DetachAtom[This:Flee]
 	}
 	
 	method AssignStateQueueDisplay(string listbox)
@@ -218,5 +222,14 @@ objectdef obj_State
 	member:bool Idle()
 	{
 		return TRUE
+	}
+	
+	method Flee()
+	{
+		States:Clear
+		CurState:Set["Idle", 100, ""]
+		UIElement[${QueueListbox}]:ClearItems
+		UIElement[${QueueListbox}]:AddItem[${CurState.Name}]
+		echo ${States.Used}
 	}
 }

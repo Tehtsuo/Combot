@@ -36,13 +36,12 @@ objectdef obj_ComBotUI
 		This:Update["ComBot", "ComBot  Copyright © 2012  Tehtsuo and Vendan", "o"]
 		This:Update["ComBot", "This program comes with ABSOLUTELY NO WARRANTY", "o"]
 		This:Update["ComBot", "This is free software and you are welcome to redistribute it", "o"]
-		This:Update["ComBot", "under certain conditions.  See the 'About' tab for details", "o"]
+		This:Update["ComBot", "under certain conditions.  See gpl.txt for details", "o"]
 
 		
 		This:Update["ComBot", "Initializing modules", "y"]
 
 		Event[ISXEVE_onFrame]:AttachAtom[This:Pulse]
-		This:Update["obj_ComBotUI", "Initialized", "g"]
 	}
 
 	method Reload()

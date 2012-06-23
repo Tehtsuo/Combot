@@ -99,7 +99,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					</Checkbox>
 					<Checkbox name='obj_Security_MeToCorp'>
 						<X>1%</X>
-						<Y>23%</Y>
+						<Y>24%</Y>
 						<Width>30%</Width> 
 						<Height>3%</Height> 
 						<Text>Corporation's standing to me</Text>
@@ -115,7 +115,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					</Checkbox>
 					<Checkbox name='obj_Security_MeToAlliance'>
 						<X>1%</X>
-						<Y>26%</Y>
+						<Y>28%</Y>
 						<Width>30%</Width> 
 						<Height>3%</Height> 
 						<Text>Alliance's standing to me</Text>
@@ -131,7 +131,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					</Checkbox>
 					<Checkbox name='obj_Security_CorpToPilot'>
 						<X>1%</X>
-						<Y>30%</Y>
+						<Y>33%</Y>
 						<Width>30%</Width> 
 						<Height>3%</Height> 
 						<Text>Pilot's standing to my corporation</Text>
@@ -147,7 +147,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					</Checkbox>
 					<Checkbox name='obj_Security_CorpToCorp'>
 						<X>1%</X>
-						<Y>33%</Y>
+						<Y>37%</Y>
 						<Width>30%</Width> 
 						<Height>3%</Height> 
 						<Text>Corporation's standing to my corporation</Text>
@@ -163,7 +163,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					</Checkbox>
 					<Checkbox name='obj_Security_CorpToAlliance'>
 						<X>1%</X>
-						<Y>36%</Y>
+						<Y>41%</Y>
 						<Width>30%</Width> 
 						<Height>3%</Height> 
 						<Text>Alliance's standing to my corporation</Text>
@@ -179,7 +179,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					</Checkbox>
 					<Checkbox name='obj_Security_AllianceToPilot'>
 						<X>1%</X>
-						<Y>40%</Y>
+						<Y>46%</Y>
 						<Width>30%</Width> 
 						<Height>3%</Height> 
 						<Text>Pilot's standing to my alliance</Text>
@@ -195,7 +195,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					</Checkbox>
 					<Checkbox name='obj_Security_AllianceToCorp'>
 						<X>1%</X>
-						<Y>43%</Y>
+						<Y>50%</Y>
 						<Width>30%</Width> 
 						<Height>3%</Height> 
 						<Text>Corporation's standing to my alliance</Text>
@@ -211,7 +211,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					</Checkbox>
 					<Checkbox name='obj_Security_AllianceToAlliance'>
 						<X>1%</X>
-						<Y>46%</Y>
+						<Y>54%</Y>
 						<Width>30%</Width> 
 						<Height>3%</Height> 
 						<Text>Alliance's standing to my alliance</Text>
@@ -247,7 +247,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					<Combobox Name="obj_Security_MeToCorp_Value">
 						<BackgroundColor>FF000000</BackgroundColor>
 						<X>32%</X>
-						<Y>23%</Y>
+						<Y>24%</Y>
 						<Width>7%</Width>
 						<Height>3%</Height>
 						<OnLoad>
@@ -266,7 +266,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					<Combobox Name="obj_Security_MeToAlliance_Value">
 						<BackgroundColor>FF000000</BackgroundColor>
 						<X>32%</X>
-						<Y>26%</Y>
+						<Y>28%</Y>
 						<Width>7%</Width>
 						<Height>3%</Height>
 						<OnLoad>
@@ -285,7 +285,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					<Combobox Name="obj_Security_CorpToPilot_Value">
 						<BackgroundColor>FF000000</BackgroundColor>
 						<X>32%</X>
-						<Y>30%</Y>
+						<Y>33%</Y>
 						<Width>7%</Width>
 						<Height>3%</Height>
 						<OnLoad>
@@ -304,7 +304,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					<Combobox Name="obj_Security_CorpToCorp_Value">
 						<BackgroundColor>FF000000</BackgroundColor>
 						<X>32%</X>
-						<Y>33%</Y>
+						<Y>37%</Y>
 						<Width>7%</Width>
 						<Height>3%</Height>
 						<OnLoad>
@@ -323,7 +323,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					<Combobox Name="obj_Security_CorpToAlliance_Value">
 						<BackgroundColor>FF000000</BackgroundColor>
 						<X>32%</X>
-						<Y>36%</Y>
+						<Y>41%</Y>
 						<Width>7%</Width>
 						<Height>3%</Height>
 						<OnLoad>
@@ -342,7 +342,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					<Combobox Name="obj_Security_AllianceToPilot_Value">
 						<BackgroundColor>FF000000</BackgroundColor>
 						<X>32%</X>
-						<Y>40%</Y>
+						<Y>46%</Y>
 						<Width>7%</Width>
 						<Height>3%</Height>
 						<OnLoad>
@@ -361,7 +361,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					<Combobox Name="obj_Security_AllianceToCorp_Value">
 						<BackgroundColor>FF000000</BackgroundColor>
 						<X>32%</X>
-						<Y>43%</Y>
+						<Y>50%</Y>
 						<Width>7%</Width>
 						<Height>3%</Height>
 						<OnLoad>
@@ -380,7 +380,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					<Combobox Name="obj_Security_AllianceToAlliance_Value">
 						<BackgroundColor>FF000000</BackgroundColor>
 						<X>32%</X>
-						<Y>46%</Y>
+						<Y>54%</Y>
 						<Width>7%</Width>
 						<Height>3%</Height>
 						<OnLoad>
@@ -398,8 +398,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					</Combobox>	
 
 					<Checkbox name='obj_Security_FleeWaitTime_Enabled'>
-						<X>1%</X>
-						<Y>50%</Y>
+						<X>45%</X>
+						<Y>25%</Y>
 						<Width>30%</Width> 
 						<Height>3%</Height> 
 						<Text>Wait at safe place after fleeing for</Text>
@@ -414,8 +414,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						</OnLeftClick>
 					</Checkbox>		
 					<Combobox name='obj_Security_FleeWaitTime'>
-						<X>30%</X>
-						<Y>50%</Y>
+						<X>73%</X>
+						<Y>25%</Y>
 						<Width>15%</Width> 
 						<Height>3%</Height> 
 						<Items>
@@ -434,8 +434,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					</Combobox>		
 					
 					<Checkbox name='obj_Security_Break_Enabled'>
-						<X>1%</X>
-						<Y>55%</Y>
+						<X>45%</X>
+						<Y>30%</Y>
 						<Width>30%</Width> 
 						<Height>3%</Height> 
 						<Text>Take a break for</Text>
@@ -450,8 +450,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						</OnLeftClick>
 					</Checkbox>		
 					<Combobox name='obj_Security_Break_Duration'>
-						<X>15%</X>
-						<Y>55%</Y>
+						<X>60%</X>
+						<Y>30%</Y>
 						<Width>15%</Width> 
 						<Height>3%</Height> 
 						<Items>
@@ -467,15 +467,15 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						</OnSelect>
 					</Combobox>		
 					<Text name='obj_Security_Break_Text'>
-						<X>31%</X>
-						<Y>55%</Y>
+						<X>76%</X>
+						<Y>30%</Y>
 						<Width>6%</Width> 
 						<Height>3%</Height>
 						<Text>every</Text>
 					</Text>
 					<Combobox name='obj_Security_Break_Interval'>
-						<X>37%</X>
-						<Y>55%</Y>
+						<X>82%</X>
+						<Y>30%</Y>
 						<Width>15%</Width> 
 						<Height>3%</Height> 
 						<Items>
@@ -536,6 +536,70 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							Script[ComBot].VariableScope.Config.Security:SetOverrideFleeBookmark[${This.SelectedItem.Text}]
 						</OnSelect>
 					</Listbox>
+					<Checkbox name='obj_Security_TargetFlee'>
+						<X>45%</X>
+						<Y>20%</Y>
+						<Width>30%</Width> 
+						<Height>3%</Height> 
+						<Text>Flee if targeted by another player</Text>
+						<OnLoad>
+							if ${Script[ComBot].VariableScope.Config.Security.TargetFlee}
+							{
+								This:SetChecked
+							}
+						</OnLoad>
+						<OnLeftClick>
+							Script[ComBot].VariableScope.Config.Security:SetTargetFlee[${This.Checked}]
+						</OnLeftClick>
+					</Checkbox>		
+					<Checkbox name='obj_Security_CorpFlee'>
+						<X>45%</X>
+						<Y>40%</Y>
+						<Width>30%</Width> 
+						<Height>3%</Height> 
+						<Text>Include corporation members in flee check</Text>
+						<OnLoad>
+							if ${Script[ComBot].VariableScope.Config.Security.CorpFlee}
+							{
+								This:SetChecked
+							}
+						</OnLoad>
+						<OnLeftClick>
+							Script[ComBot].VariableScope.Config.Security:SetCorpFlee[${This.Checked}]
+						</OnLeftClick>
+					</Checkbox>		
+					<Checkbox name='obj_Security_AllianceFlee'>
+						<X>45%</X>
+						<Y>45%</Y>
+						<Width>30%</Width> 
+						<Height>3%</Height> 
+						<Text>Include alliance members in flee check</Text>
+						<OnLoad>
+							if ${Script[ComBot].VariableScope.Config.Security.AllianceFlee}
+							{
+								This:SetChecked
+							}
+						</OnLoad>
+						<OnLeftClick>
+							Script[ComBot].VariableScope.Config.Security:SetAllianceFlee[${This.Checked}]
+						</OnLeftClick>
+					</Checkbox>		
+					<Checkbox name='obj_Security_FleetFlee'>
+						<X>45%</X>
+						<Y>50%</Y>
+						<Width>30%</Width> 
+						<Height>3%</Height> 
+						<Text>Include fleet members in flee check</Text>
+						<OnLoad>
+							if ${Script[ComBot].VariableScope.Config.Security.FleetFlee}
+							{
+								This:SetChecked
+							}
+						</OnLoad>
+						<OnLeftClick>
+							Script[ComBot].VariableScope.Config.Security:SetFleetFlee[${This.Checked}]
+						</OnLeftClick>
+					</Checkbox>		
 					
 				</Children>
 			</Frame>

@@ -79,12 +79,12 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Width>98%</Width> 
 						<Height>18%</Height> 
 						<Wrap />
-						<Text></Text>
+						<Text>ComBot's mining mode is designed to provide all of your mining needs, from single-ship mining to organized fleet operations.  Remember, dropoff types will dictate what additional information is needed.  For Personal Hangar or Corporate Folders, only a bookmark is required.  However, for Orca delivery, you must specify the name of your Orca pilot.  Similarly, if you wish to deliver to a station structure, be sure to include BOTH the bookmark for the structure and its name!  The mining system bookmark can be for a belt or object in your desired mining system, you do not need to make a separate bookmark for the Solar System itself.</Text>
 					</Text>						 
 					<Text name='obj_Miner_MiningSystemTitle'> 
 						<X>1%</X> 
-						<Y>53%</Y> 
-						<Width>30%</Width> 
+						<Y>60%</Y> 
+						<Width>36%</Width> 
 						<Height>2%</Height> 
 						<Alignment>Center</Alignment>
 						<Text>Mining System Bookmark</Text>
@@ -94,8 +94,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Border>1</Border>
 						<BorderColor>FFFFFFFF</BorderColor>
 						<X>1%</X>
-						<Y>55%</Y>
-						<Width>30%</Width>
+						<Y>62%</Y>
+						<Width>36%</Width>
 						<Height>20%</Height>
 						<OnLoad>
 							variable index:bookmark Bookmarks
@@ -118,7 +118,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					</listbox>
 					<Checkbox name='obj_MinerUseBookmarks'>
 						<X>1%</X>
-						<Y>75%</Y>
+						<Y>84%</Y>
 						<Width>20%</Width> 
 						<Height>20</Height> 
 						<Text>Use belt bookmarks</Text>
@@ -132,17 +132,49 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							Script[ComBot].VariableScope.Config.Miner:SetUseBookmarks[${This.Checked}]
 						</OnLeftClick>
 					</Checkbox>
+					<Checkbox name='obj_MinerAlwaysShieldBoost'>
+						<X>1%</X>
+						<Y>96%</Y>
+						<Width>20%</Width> 
+						<Height>20</Height> 
+						<Text>Always Shield Boost</Text>
+						<OnLoad>
+							if ${Script[ComBot].VariableScope.Config.Miner.AlwaysShieldBoost}
+							{
+								This:SetChecked
+							}
+						</OnLoad>
+						<OnLeftClick>
+							Script[ComBot].VariableScope.Config.Miner:SetAlwaysShieldBoost[${This.Checked}]
+						</OnLeftClick>
+					</Checkbox>
+					<Checkbox name='obj_MinerOrcaMode'>
+						<X>69%</X>
+						<Y>75%</Y>
+						<Width>30%</Width> 
+						<Height>20</Height> 
+						<Text>Orca Mode</Text>
+							<OnLoad>
+							if ${Script[ComBot].VariableScope.Config.Miner.OrcaMode}
+							{
+								This:SetChecked
+							}
+						</OnLoad>
+						<OnLeftClick>
+							Script[ComBot].VariableScope.Config.Miner:SetOrcaMode[${This.Checked}]
+						</OnLeftClick>
+					</Checkbox>
 					<Text name='obj_MinerOrePrefixTitle'>
 						<X>1%</X>
-						<Y>79%</Y>
+						<Y>88%</Y>
 						<Width>20%</Width> 
 						<Height>2%</Height> 
 						<Text>Belt Prefix:</Text>
 					</Text>
 					<Textentry name='obj_MinerOrePrefix'>
 						<X>17%</X>
-						<Y>79%</Y>
-						<Width>14%</Width> 
+						<Y>88%</Y>
+						<Width>20%</Width> 
 						<Height>3%</Height> 
 						<OnLoad>
 							This:SetText[${Script[ComBot].VariableScope.Config.Miner.BeltPrefix}]
@@ -156,15 +188,15 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					</Textentry>
 					<Text name='obj_MinerIcePrefixTitle'>
 						<X>1%</X>
-						<Y>83%</Y>
+						<Y>92%</Y>
 						<Width>20%</Width> 
 						<Height>2%</Height> 
 						<Text>Ice Belt Prefix:</Text>
 					</Text>
 					<Textentry name='obj_MinerIcePrefix'>
 						<X>17%</X>
-						<Y>83%</Y>
-						<Width>14%</Width> 
+						<Y>92%</Y>
+						<Width>20%</Width> 
 						<Height>3%</Height> 
 						<OnLoad>
 							This:SetText[${Script[ComBot].VariableScope.Config.Miner.IceBeltPrefix}]
@@ -180,7 +212,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					<Text name='obj_MinerDropoffBookmarkTitle'> 
 						<X>1%</X> 
 						<Y>28%</Y> 
-						<Width>30%</Width> 
+						<Width>36%</Width> 
 						<Height>2%</Height> 
 						<Alignment>Center</Alignment>
 						<Text>Dropoff Bookmark</Text>
@@ -191,7 +223,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<BorderColor>FFFFFFFF</BorderColor>
 						<X>1%</X>
 						<Y>30%</Y>
-						<Width>30%</Width>
+						<Width>36%</Width>
 						<Height>20%</Height>
 						<OnLoad>
 							variable index:bookmark Bookmarks
@@ -212,8 +244,29 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							Script[ComBot].VariableScope.Config.Miner:SetMiner_Dropoff[${This.SelectedItem.Text}]
 						</OnSelect>
 					</listbox>
+					<Text name='obj_MinerOrcaNameTitle'> 
+						<X>1%</X> 
+						<Y>51%</Y> 
+						<Width>36%</Width> 
+						<Height>2%</Height> 
+						<Alignment>Center</Alignment>
+						<Text>Orca/Container Name</Text>
+					</Text>
+					<TextEntry name='obj_MinerOrcaName'> 
+						<X>1%</X> 
+						<Y>53%</Y> 
+						<Width>36%</Width> 
+						<Height>3%</Height> 
+						<OnLoad>
+							This:SetText[${Script[ComBot].VariableScope.Config.Miner.Miner_OrcaName}]
+						</OnLoad>
+						<OnChange>
+							Script[ComBot].VariableScope.Config.Miner:SetMiner_OrcaName[${This.Text}]
+						</OnChange>
+					</TextEntry>
+
 					<Text name='obj_MinerDropoffBookmarkTypeTitle'> 
-						<X>32%</X> 
+						<X>38%</X> 
 						<Y>28%</Y> 
 						<Width>20%</Width> 
 						<Height>2%</Height> 
@@ -224,12 +277,15 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<BackgroundColor>FF000000</BackgroundColor>
 						<Border>1</Border>
 						<BorderColor>FFFFFFFF</BorderColor>
-						<X>32%</X>
+						<X>38%</X>
 						<Y>30%</Y>
-						<Width>20%</Width>
-						<Height>20%</Height>
+						<Width>30%</Width>
+						<Height>26%</Height>
 						<Items>
 							<Item>Personal Hangar</Item>
+							<Item>Orca</Item>
+							<Item>Container</Item>
+							<Item>No Dropoff</Item>
 							<Item>Corporation Folder 1</Item>
 							<Item>Corporation Folder 2</Item>
 							<Item>Corporation Folder 3</Item>
@@ -246,9 +302,9 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						</OnSelect>
 					</listbox>
 					<Text name='obj_MinerOrePriorityTitle'> 
-						<X>79%</X> 
+						<X>69%</X> 
 						<Y>28%</Y> 
-						<Width>20%</Width> 
+						<Width>30%</Width> 
 						<Height>2%</Height> 
 						<Alignment>Center</Alignment>
 						<Text>Ore/Ice Priority</Text>
@@ -750,6 +806,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 										}
 									}
 								}
+							Script[ComBot].VariableScope.Miner:PopulateTargetList
 							</OnLeftClick>
 					</Checkbox>
 					

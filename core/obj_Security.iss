@@ -24,14 +24,15 @@ objectdef obj_Security inherits obj_State
 	method Initialize()
 	{
 		This[parent]:Initialize
-		This.NonGameTiedPulse:Set[TRUE]
+		;This.NonGameTiedPulse:Set[TRUE]
+		This:AssignStateQueueDisplay[obj_SecurityStateList@Security@ComBotTab@ComBot]
 		UI:Update["obj_Security", "Initialized", "g"]
 		
 		This:QueueState["CheckSafe", 500]
 	}
 
 	
-	member:bool CheckSafe()
+	member:bool CheckSafe(bool ClearFlee=FALSE)
 	{
 		variable index:pilot Pilots
 		variable iterator Pilot_Iterator
@@ -45,6 +46,7 @@ objectdef obj_Security inherits obj_State
 		
 			if ${Config.Security.MeToPilot} && ${Pilot_Iterator.Value.Standing.MeToPilot} < ${Config.Security.MeToPilot_Value}
 			{
+				echo Me to ${Pilot_Iterator.Value.Name} - ${Pilot_Iterator.Value.Standing.MeToPilot}
 				This:QueueState["Flee", 500, "${Pilot_Iterator.Value.Name}(pilot) is ${Pilot_Iterator.Value.Standing.MeToPilot} standing to you"]
 				return TRUE
 			}
@@ -92,6 +94,14 @@ objectdef obj_Security inherits obj_State
 		}
 		while ${Pilot_Iterator:Next(exists)}
 		
+		if ${ClearFlee}
+		{
+			echo Resuming!
+			ComBot:Resume
+			This:QueueState["CheckSafe", 500]
+			return TRUE
+		}
+		
 		return FALSE
 	}
 	
@@ -99,6 +109,7 @@ objectdef obj_Security inherits obj_State
 	{
 		UI:Update["obj_Security", "Flee triggered!", "r"]
 		UI:Update["obj_Security", "${Message}", "r"]
+		Event[ComBot_Flee]:Execute[]
 
 		if ${Config.Security.OverrideFleeBookmark_Enabled}
 		{
@@ -117,6 +128,10 @@ objectdef obj_Security inherits obj_State
 					Move:Bookmark[${Config.Miner.Miner_Dropoff}]
 					This:QueueState["Traveling"]
 					break
+				case Hauler
+					Move:Bookmark[${Config.Hauler.Dropoff}]
+					This:QueueState["Traveling"]
+					break
 			}
 		}
 
@@ -126,13 +141,13 @@ objectdef obj_Security inherits obj_State
 			This:QueueState["Idle", ${Math.Calc[${Config.Security.FleeWaitTime} * 60000]}]
 		}
 
-		This:QueueState["CheckSafe", 500]
+		This:QueueState["CheckSafe", 500, TRUE]
 		return TRUE
 	}
 	
 	member:bool Log(string text)
 	{
-		UI:Update["obj_Security", "${text}", "g"]
+		UI:Update["obj_Security", "${text.Escape}", "g"]
 		return TRUE
 	}
 
