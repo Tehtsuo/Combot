@@ -321,11 +321,18 @@ objectdef obj_Salvage inherits obj_State
 				if  !${Ship.ModuleList_Salvagers.IsActiveOn[${TargetIterator.Value.ID}]} &&\
 					${TargetIterator.Value.Distance} < ${Ship.Module_Salvagers_Range} &&\
 					${Ship.ModuleList_Salvagers.InactiveCount} > 0 &&\
-					${TargetIterator.Value.IsLockedTarget}
+					${TargetIterator.Value.IsLockedTarget} && ${Ship.ModuleList_Salvagers} > 0
 				{
 					UI:Update["obj_Salvage", "Activating salvager - ${TargetIterator.Value.Name}", "g"]
 					Ship.ModuleList_Salvagers:Activate[${TargetIterator.Value.ID}]
 					return FALSE
+				}
+				if  !${Ship.ModuleList_Salvagers.IsActiveOn[${TargetIterator.Value.ID}]} &&\
+					${TargetIterator.Value.Distance} < LOOT_RANGE-500 &&\
+					${TargetIterator.Value.IsLockedTarget} && ${Ship.ModuleList_Salvagers} == 0
+				{
+					TargetIterator.Value:Abandon
+					TargetIterator.Value:UnlockTarget
 				}
 				if  ${TargetIterator.Value.Distance} < ${Ship.Module_Salvagers_Range} &&\
 					${Ship.ModuleList_Salvagers.InactiveCount} > 0 &&\
