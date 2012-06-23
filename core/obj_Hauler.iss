@@ -63,7 +63,7 @@ objectdef obj_Hauler inherits obj_State
 		switch ${Config.Hauler.Dropoff_Type}
 		{
 			case Container
-				if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) > ${Config.Hauler.Threshold}
+				if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) >= ${Config.Hauler.Threshold} * .01
 				{
 					UI:Update["obj_Hauler", "Unload trip required", "g"]
 					This:Clear
@@ -73,7 +73,8 @@ objectdef obj_Hauler inherits obj_State
 				}
 				break
 			default
-				if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) > ${Config.Hauler.Threshold}
+				echo (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) >= ${Config.Hauler.Threshold} * .01
+				if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) >= ${Config.Hauler.Threshold} * .01
 				{
 					UI:Update["obj_Hauler", "Unload trip required", "g"]
 					This:Clear
@@ -96,7 +97,7 @@ objectdef obj_Hauler inherits obj_State
 	{
 		if ${Config.Hauler.Pickup_Type.Equal[Orca]}
 		{
-			if ${OrcaCargo} > ${Config.Hauler.Threshold} * ${MyShip.CargoCapacity}
+			if ${OrcaCargo} > ${Config.Hauler.Threshold} * .01 * ${MyShip.CargoCapacity}
 			{
 				return TRUE
 			}
@@ -119,6 +120,7 @@ objectdef obj_Hauler inherits obj_State
 
 	member:bool PrepOffload()
 	{
+		echo PREPPING
 		switch ${Config.Hauler.Dropoff_Type}
 		{
 			case Personal Hangar
@@ -207,7 +209,14 @@ objectdef obj_Hauler inherits obj_State
 	
 	member:bool LootCans()
 	{
-		return !${Salvager.Salvaging}
+		if ${Salvager.Salvaging} 
+		{
+			return FALSE
+		}
+		else
+		{
+			return TRUE
+		}
 	}
 	
 	
@@ -229,11 +238,14 @@ objectdef obj_Hauler inherits obj_State
 		}
 		else
 		{
-			echo Adding queues
 			This:QueueState["CheckCargoHold"]
 			This:QueueState["GoToPickup"]
 			This:QueueState["Traveling", 1000]
 			This:QueueState["Haul"]
+			if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) >= ${Config.Hauler.Threshold} * .01
+			{
+				return TRUE
+			}
 		}
 
 		if ${Me.ToEntity.Mode} == 3
@@ -334,7 +346,7 @@ objectdef obj_Hauler inherits obj_State
 				}
 				break
 			case Jetcan
-				if ${MyShip.UsedCargoCapacity} > ${Config.Hauler.Threshold} * ${MyShip.CargoCapacity} || ${EVE.Bookmark[${Config.Hauler.Pickup_Bookmark}].SolarSystemID} != ${Me.SolarSystemID}
+				if ${MyShip.UsedCargoCapacity} > (${Config.Hauler.Threshold} * .01 * ${MyShip.CargoCapacity}) || ${EVE.Bookmark[${Config.Hauler.Pickup_Bookmark}].SolarSystemID} != ${Me.SolarSystemID}
 				{
 					break
 				}

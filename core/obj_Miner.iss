@@ -308,7 +308,6 @@ objectdef obj_Miner inherits obj_State
 		{
 			return FALSE
 		}
-		echo Before OrcaMode
 		
 		Asteroids.MinLockCount:Set[${Ship.ModuleList_MiningLaser.Count}]
 		if ${Config.Miner.OrcaMode}

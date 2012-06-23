@@ -98,7 +98,7 @@ objectdef obj_Jetcan inherits obj_State
 	{
 		variable index:entity Targets
 		variable iterator TargetIterator
-		EVE:QueryEntities[Targets, "GroupID==GROUP_CARGOCONTAINER && HaveLootRights && Name==\"Cargo Container\""]
+		EVE:QueryEntities[Targets, "GroupID==GROUP_CARGOCONTAINER && HaveLootRights && Name =- \"Cargo Container\""]
 		Targets:GetIterator[TargetIterator]
 		if ${TargetIterator:First(exists)}
 		{

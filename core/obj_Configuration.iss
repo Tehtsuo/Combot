@@ -99,6 +99,7 @@ objectdef obj_Configuration_Common
 		BaseConfig.BaseRef:AddSet[${This.SetName}]
 
 		This.CommonRef:AddSetting[ComBot_Mode,Salvager]
+		This.CommonRef:AddSetting[AlwaysShieldBoost, FALSE]
 	}
 
 	member:string ComBot_Mode()
@@ -141,6 +142,15 @@ objectdef obj_Configuration_Common
 		This.CommonRef:AddSetting[Propulsion,${value}]
 	}
 	
+	member:bool AlwaysShieldBoost()
+	{
+		return ${This.CommonRef.FindSetting[AlwaysShieldBoost]}
+	}
+
+	method SetAlwaysShieldBoost(bool value)
+	{
+		This.CommonRef:AddSetting[AlwaysShieldBoost,${value}]
+	}
 }
 
 objectdef obj_Configuration_Salvager
@@ -577,16 +587,6 @@ objectdef obj_Configuration_Miner
 		This.CommonRef:AddSetting[UseBookmarks,${value}]
 	}
 
-	member:bool AlwaysShieldBoost()
-	{
-		return ${This.CommonRef.FindSetting[AlwaysShieldBoost]}
-	}
-
-	method SetAlwaysShieldBoost(bool value)
-	{
-		This.CommonRef:AddSetting[AlwaysShieldBoost,${value}]
-	}
-	
 	member:string BeltPrefix()
 	{
 		return ${This.CommonRef.FindSetting[BeltPrefix]}
