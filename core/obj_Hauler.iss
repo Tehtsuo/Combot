@@ -288,7 +288,46 @@ objectdef obj_Hauler inherits obj_State
 			}
 		}
 
-
+		if ${Config.Hauler.Pickup_Type.Equal[Container]}
+		{
+			if ${Entity[Name = "${Config.Hauler.Pickup_ContainerName}"](exists)}
+			{
+				Container:Set[${Entity[Name = "${Config.Hauler.Pickup_ContainerName}"].ID}]
+				if ${Entity[${Container}].Distance} > LOOT_RANGE
+				{
+					Move:Approach[${Container}, LOOT_RANGE]
+					return FALSE
+				}
+				else
+				{
+					if !${EVEWindow[ByName, Inventory].ChildWindowExists[${Container}]}
+					{
+						UI:Update["obj_Hauler", "Opening ${Config.Hauler.Pickup_ContainerName}", "g"]
+						Entity[${Container}]:Open
+						return FALSE
+					}
+					if !${EVEWindow[ByItemID, ${Container}](exists)} 
+					{
+						EVEWindow[ByName, Inventory]:MakeChildActive[${Container}]
+						return FALSE
+					}
+					Cargo:PopulateCargoList[CONTAINERCORPORATEHANGAR, ${Container}]
+					Cargo:MoveCargoList[SHIP]
+					This:QueueState["Idle", 1000]
+					This:QueueState["CheckCargoHold"]
+					This:QueueState["Haul"]
+					return TRUE
+				}
+			}
+			else
+			{
+				Move:Bookmark[${Config.Hauler.Pickup_Bookmark}]
+				This:Clear
+				This:QueueState["Traveling", 1000]
+				This:QueueState["Haul"]
+				return TRUE
+			}
+		}
 
 		
 		if ${Ship.ModuleList_GangLinks.ActiveCount} < ${Ship.ModuleList_GangLinks.Count}

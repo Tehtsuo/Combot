@@ -210,7 +210,7 @@ objectdef obj_TargetList inherits obj_State
 		{
 			do
 			{
-				if !${EntityIterator.Value.IsLockedTarget} && !${EntityIterator.Value.BeingTargeted} && ${LockedAndLockingTargets.Used} < ${MinLockCount} && ${MaxTarget} > ${Targets.LockedAndLockingTargets}
+				if !${EntityIterator.Value.IsLockedTarget} && !${EntityIterator.Value.BeingTargeted} && ${LockedAndLockingTargets.Used} < ${MinLockCount} && ${MaxTarget} > ${Targets.LockedAndLockingTargets} && ${EntityIterator.Value.Distance} < ${MyShip.MaxTargetRange}
 				{
 					EntityIterator.Value:LockTarget
 					LockedAndLockingTargets:Add[${EntityIterator.Value.ID}]

@@ -494,6 +494,7 @@ objectdef obj_Move inherits obj_State
 		{
 			UI:Update["obj_Move", "Within ${ComBot.MetersToKM_Str[${This.ApproachingDistance}]} of ${Entity[${This.ApproachingID}].Name}", "g"]
 			EVE:Execute[CmdStopShip]
+			Ship.ModuleList_AB_MWD:Deactivate
 			This.Approaching:Set[FALSE]
 			return TRUE
 		}
@@ -507,7 +508,7 @@ objectdef obj_Move inherits obj_State
 			}
 			if ${Ship.ModuleList_AB_MWD.ActiveCount} && ${MyShip.CapacitorPct} <= 30
 			{
-				Ship.ModuleList_AB_MWD:Activate
+				Ship.ModuleList_AB_MWD:Deactivate
 				return FALSE
 			}
 		}

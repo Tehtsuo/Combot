@@ -299,7 +299,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Width>36%</Width> 
 						<Height>2%</Height> 
 						<Alignment>Center</Alignment>
-						<Text>Orca Name</Text>
+						<Text>Orca/Container Name</Text>
 					</Text>
 					<TextEntry name='obj_Hauler_Pickup_ContainerName'> 
 						<X>1%</X> 
@@ -333,6 +333,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Items>
 							<Item>Orca</Item>
 							<Item>Jetcan</Item>
+							<Item>Container</Item>
 						</Items>
 						<OnLoad>
 							This.ItemByText[${Script[ComBot].VariableScope.Config.Hauler.Pickup_Type}]:Select

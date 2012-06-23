@@ -171,6 +171,31 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Height>2%</Height> 
 						<Text>Belt Prefix:</Text>
 					</Text>
+					<Text name='obj_Miner_ThresholdTitle'> 
+						<X>38%</X> 
+						<Y>60%</Y> 
+						<Width>30%</Width> 
+						<Height>2%</Height> 
+						<Alignment>Center</Alignment>
+						<OnLoad>
+							This:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Config.Miner.Threshold}]
+						</OnLoad>
+					</Text>						 
+					<Slider name='obj_Miner_Threshold'> 
+						<X>38%</X> 
+						<Y>62%</Y> 
+						<Width>30%</Width> 
+						<Height>5%</Height> 
+						<Border>1</Border>
+						<OnLoad>
+							This:SetRange[${MyShip.CargoCapacity}]
+							This:SetValue[${Script[ComBot].VariableScope.Config.Miner.Threshold}]
+						</OnLoad>
+						<OnChange>
+							Script[ComBot].VariableScope.Config.Miner:SetThreshold[${This.Value}]
+							UIElement[obj_Miner_ThresholdTitle@ComBot_Miner_Frame@ComBot_Miner]:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Config.Miner.Threshold}]
+						</OnChange>
+					</Slider>						 
 					<Textentry name='obj_MinerOrePrefix'>
 						<X>17%</X>
 						<Y>88%</Y>
@@ -285,6 +310,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							<Item>Personal Hangar</Item>
 							<Item>Orca</Item>
 							<Item>Container</Item>
+							<Item>Jetcan</Item>
 							<Item>No Dropoff</Item>
 							<Item>Corporation Folder 1</Item>
 							<Item>Corporation Folder 2</Item>

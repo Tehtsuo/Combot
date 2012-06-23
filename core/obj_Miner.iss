@@ -41,9 +41,6 @@ objectdef obj_Miner inherits obj_State
 	method Start()
 	{
 		This:PopulateTargetList
-		Asteroids.AutoLock:Set[TRUE]
-		Asteroids.AutoRelock:Set[TRUE]
-		Asteroids.AutoRelockPriority:Set[TRUE]
 
 		UI:Update["obj_Miner", "Started", "g"]
 		if ${This.IsIdle}
@@ -110,7 +107,7 @@ objectdef obj_Miner inherits obj_State
 				}
 				break
 			case Container
-				if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) > 0.95
+				if ${MyShip.UsedCargoCapacity} > ${Config.Miner.Threshold}
 				{
 					UI:Update["obj_Miner", "Unload trip required", "g"]
 					if ${Config.Miner.OrcaMode}
@@ -124,8 +121,10 @@ objectdef obj_Miner inherits obj_State
 				break
 			case No Dropoff
 				break
+			case Jetcan
+				break
 			default
-				if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) > 0.95
+				if ${MyShip.UsedCargoCapacity} > ${Config.Miner.Threshold}
 				{
 					UI:Update["obj_Miner", "Unload trip required", "g"]
 					This:Clear
@@ -177,7 +176,7 @@ objectdef obj_Miner inherits obj_State
 			return FALSE
 		}
 
-		UI:Update["obj_Miner", "Stacking dropoff container", "g"]
+		;UI:Update["obj_Miner", "Stacking dropoff container", "g"]
 		switch ${Config.Miner.Miner_Dropoff_Type}
 		{
 			case Personal Hangar
@@ -309,8 +308,37 @@ objectdef obj_Miner inherits obj_State
 		{
 			return FALSE
 		}
+		echo Before OrcaMode
 		
-		Asteroids.MaxLockCount:Set[${Ship.ModuleList_MiningLaser.Count}]
+		Asteroids.MinLockCount:Set[${Ship.ModuleList_MiningLaser.Count}]
+		if ${Config.Miner.OrcaMode}
+		{
+			Asteroids.AutoLock:Set[FALSE]
+			Asteroids.AutoRelock:Set[FALSE]
+			Asteroids.AutoRelockPriority:Set[FALSE]
+			if ${Config.Miner.Miner_Dropoff_Type.Equal[Container]} && ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipCorpHangar]} > 0
+			{
+				Cargo:PopulateCargoList[SHIPCORPORATEHANGAR]
+				Cargo:MoveCargoList[SHIP]
+				This:QueueState["Idle", 1000]
+				This:QueueState["Mine"]
+				return TRUE
+			}
+			if ${Config.Miner.Miner_Dropoff_Type.Equal[Jetcan]} && ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipCorpHangar]} > 0
+			{
+				Cargo:PopulateCargoList[SHIPCORPORATEHANGAR]
+				Cargo:MoveCargoList[SHIP]
+				This:QueueState["Idle", 1000]
+				This:QueueState["Mine"]
+				return TRUE
+			}
+		}
+		else
+		{
+			Asteroids.AutoLock:Set[TRUE]
+			Asteroids.AutoRelock:Set[TRUE]
+			Asteroids.AutoRelockPriority:Set[TRUE]
+		}
 		
 		if ${Config.Miner.Miner_Dropoff_Type.Equal[Orca]} || ${Config.Miner.Miner_Dropoff_Type.Equal[Container]}
 		{
@@ -339,7 +367,7 @@ objectdef obj_Miner inherits obj_State
 							EVEWindow[ByName, Inventory]:MakeChildActive[${Orca}]
 							return FALSE
 						}
-						UI:Update["obj_Miner", "Unloading to ${Config.Miner.Miner_OrcaName}", "g"]
+						;UI:Update["obj_Miner", "Unloading to ${Config.Miner.Miner_OrcaName}", "g"]
 						Cargo:PopulateCargoList[SHIP]
 						Cargo:MoveCargoList[SHIPCORPORATEHANGAR, "", ${Orca}]
 						This:QueueState["Idle", 1000]
@@ -353,6 +381,15 @@ objectdef obj_Miner inherits obj_State
 			{
 				Asteroids.DistanceTarget:Set[${MyShip.ID}]
 			}
+		}
+		
+		if ${Config.Miner.Miner_Dropoff_Type.Equal[Jetcan]}
+		{
+			Jetcan:Enable
+		}
+		else
+		{
+			Jetcan:Disable
 		}
 
 		if !${Entity[CategoryID==CATEGORYID_ORE]}

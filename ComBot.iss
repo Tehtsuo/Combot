@@ -42,6 +42,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 #include core/obj_Miner.iss
 #include core/obj_Hauler.iss
 #include core/obj_Agents.iss
+#include core/obj_Jetcan.iss
 #include core/obj_HangerSale.iss
 #include core/obj_Combat.iss
 #include core/obj_Bookmarks.iss
@@ -83,6 +84,7 @@ function main()
 	declarevariable Combat obj_Combat script
 	declarevariable AgentDialog obj_AgentDialog script
 	declarevariable Drones obj_Drones script
+	declarevariable Jetcan obj_Jetcan script
 	declarevariable Defense obj_Defense script
 
 	UI:Update["ComBot", "Module initialization complete", "y"]
