@@ -272,7 +272,7 @@ objectdef obj_Salvage inherits obj_State
 				echo After Salvage
 				if  !${TargetIterator.Value.BeingTargeted} && \
 					!${TargetIterator.Value.IsLockedTarget} && \
-					${Targets.Locked} < ${MaxTarget} && \
+					${Targets.Locked.Used} < ${MaxTarget} && \
 					${TargetIterator.Value.Distance} < ${MyShip.MaxTargetRange} && \
 					!${AlreadySalvaged.Element[${TargetIterator.Value.ID}] >= ${LavishScript.RunningTime}} && \
 					!${Target.Value.Name.Equal["Cargo Container"]}
@@ -328,7 +328,7 @@ objectdef obj_Salvage inherits obj_State
 					return FALSE
 				}
 				if  !${Ship.ModuleList_Salvagers.IsActiveOn[${TargetIterator.Value.ID}]} &&\
-					${TargetIterator.Value.Distance} < LOOT_RANGE-500 &&\
+					${TargetIterator.Value.IsWreckEmpty} &&\
 					${TargetIterator.Value.IsLockedTarget} && ${Ship.ModuleList_Salvagers} == 0
 				{
 					TargetIterator.Value:Abandon
