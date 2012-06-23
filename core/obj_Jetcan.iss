@@ -86,7 +86,8 @@ objectdef obj_Jetcan inherits obj_State
 		{
 			Me.Ship:GetCargo[CargoList]
 			CargoList.Get[1]:Jettison
-			This:QueueState["Rename", 5000]
+			This:QueueState["Idle", 5000]
+			This:QueueState["Rename", 2000]
 			This:QueueState["Fill", 1500]
 			return TRUE
 		}

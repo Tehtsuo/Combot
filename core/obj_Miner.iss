@@ -333,12 +333,6 @@ objectdef obj_Miner inherits obj_State
 				return TRUE
 			}
 		}
-		else
-		{
-			Asteroids.AutoLock:Set[TRUE]
-			Asteroids.AutoRelock:Set[TRUE]
-			Asteroids.AutoRelockPriority:Set[TRUE]
-		}
 		
 		if ${Config.Miner.Miner_Dropoff_Type.Equal[Orca]} || ${Config.Miner.Miner_Dropoff_Type.Equal[Container]}
 		{
@@ -382,6 +376,14 @@ objectdef obj_Miner inherits obj_State
 				Asteroids.DistanceTarget:Set[${MyShip.ID}]
 			}
 		}
+		
+		if !${Config.Miner.OrcaMode}
+		{
+			Asteroids.AutoLock:Set[TRUE]
+			Asteroids.AutoRelock:Set[TRUE]
+			Asteroids.AutoRelockPriority:Set[TRUE]
+		}
+
 		
 		if ${Config.Miner.Miner_Dropoff_Type.Equal[Jetcan]}
 		{
