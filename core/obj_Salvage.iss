@@ -498,9 +498,9 @@ objectdef obj_Salvage inherits obj_State
 			case Personal Hangar
 				break
 			default
-				if !${EVEWindow[ByName, Inventory]:ChildWindowExists[Corporation Hangars]}
+				if !${EVEWindow[ByName, Inventory].ChildWindowExists[Corporation Hangars]}
 				{
-					UI:Update["obj_Salvage", "Delivery destination is Corporation Hangars, but child not found", "r"]
+					UI:Update["obj_Salvage", "Delivery Location: Corporate Hangars child not found", "r"]
 					UI:Update["obj_Salvage", "Closing inventory to fix possible EVE bug", "y"]
 					EVEWindow[ByName, Inventory]:Close
 					return FALSE
