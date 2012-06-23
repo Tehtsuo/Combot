@@ -63,7 +63,7 @@ objectdef obj_Hauler inherits obj_State
 		switch ${Config.Hauler.Dropoff_Type}
 		{
 			case Container
-				if ${MyShip.UsedCargoCapacity} > ${Config.Hauler.Threshold}
+				if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) > ${Config.Hauler.Threshold}
 				{
 					UI:Update["obj_Hauler", "Unload trip required", "g"]
 					This:Clear
@@ -73,7 +73,7 @@ objectdef obj_Hauler inherits obj_State
 				}
 				break
 			default
-				if ${MyShip.UsedCargoCapacity} > ${Config.Hauler.Threshold}
+				if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) > ${Config.Hauler.Threshold}
 				{
 					UI:Update["obj_Hauler", "Unload trip required", "g"]
 					This:Clear
@@ -96,7 +96,7 @@ objectdef obj_Hauler inherits obj_State
 	{
 		if ${Config.Hauler.Pickup_Type.Equal[Orca]}
 		{
-			if ${OrcaCargo} > ${Config.Hauler.Threshold}
+			if ${OrcaCargo} > ${Config.Hauler.Threshold} * ${MyShip.CargoCapacity}
 			{
 				return TRUE
 			}
@@ -334,7 +334,7 @@ objectdef obj_Hauler inherits obj_State
 				}
 				break
 			case Jetcan
-				if ${MyShip.UsedCargoCapacity} > ${Config.Hauler.Threshold} || ${EVE.Bookmark[${Config.Hauler.Pickup_Bookmark}].SolarSystemID} != ${Me.SolarSystemID}
+				if ${MyShip.UsedCargoCapacity} > ${Config.Hauler.Threshold} * ${MyShip.CargoCapacity} || ${EVE.Bookmark[${Config.Hauler.Pickup_Bookmark}].SolarSystemID} != ${Me.SolarSystemID}
 				{
 					break
 				}
