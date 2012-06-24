@@ -26,6 +26,7 @@ objectdef obj_Security inherits obj_State
 		This[parent]:Initialize
 		This.NonGameTiedPulse:Set[TRUE]
 		This:AssignStateQueueDisplay[obj_SecurityStateList@Security@ComBotTab@ComBot]
+		variable uint NonPC = ${LavishScript.CreateQuery[!IsPC]}
 		
 		This:QueueState["CheckSafe", 500]
 	}
@@ -99,7 +100,7 @@ objectdef obj_Security inherits obj_State
 		variable int MyCorpID
 
 		Me:GetTargetedBy[Threats]
-		Threats:RemoveByQuery[${LavishScript.CreateQuery[!IsPC]}]
+		Threats:RemoveByQuery[${NonPC}]
 		Threats:Collapse
 		Threats:GetIterator[Threat]
 		if ${Me.Corp.ID} == -1
