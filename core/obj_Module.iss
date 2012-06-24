@@ -92,7 +92,17 @@ objectdef obj_Module inherits obj_State
 		}
 		else
 		{
-			MyShip.Module[${ModuleID}]:Activate[${newTarget}]
+			if ${Entity[${newTarget}](exists)} && ${Entity[${newTarget}].IsLockedTarget}
+			{
+				MyShip.Module[${ModuleID}]:Activate[${newTarget}]
+			}
+			else
+			{
+				Activated:Set[FALSE]
+				CurrentTarget:Set[-1]
+				This:Clear
+				return TRUE
+			}
 		}
 		Activated:Set[TRUE]
 		CurrentTarget:Set[${newTarget}]
@@ -119,6 +129,18 @@ objectdef obj_Module inherits obj_State
 		Deactivated:Set[FALSE]
 		CurrentTarget:Set[-1]
 		return TRUE
+	}
+	
+	member:float Range()
+	{
+		if ${MyShip.Module[${ModuleID}].OptimalRange} != NULL
+		{
+			return ${MyShip.Module[${ModuleID}].OptimalRange}
+		}
+		else
+		{
+			return ${Math.Calc[${MyShip.Module[${ModuleID}].Charge.MaxFlightTime} * ${MyShip.Module[${ModuleID}].Charge.MaxVelocity}]}
+		}
 	}
 	
 	member:string GetFallthroughObject()
