@@ -99,7 +99,7 @@ objectdef obj_Security inherits obj_State
 		variable int MyCorpID
 
 		Me:GetTargetedBy[Threats]
-		Threats:RemoveByQuery[${LavishScript.CreateQuery[IsPC == FALSE}]}]
+		Threats:RemoveByQuery[${LavishScript.CreateQuery[!IsPC]}]
 		Threats:Collapse
 		Threats:GetIterator[Threat]
 		if ${Me.Corp.ID} == -1
