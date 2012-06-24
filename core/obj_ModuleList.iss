@@ -36,7 +36,7 @@ objectdef obj_ModuleList
 		{
 			do
 			{
-				if !${ModuleIterator.Value.IsActive}
+				if !${ModuleIterator.Value.IsActive} && !${ModuleIterator.Value.IsReloading}
 				{
 					return ${ModuleIterator.Key}
 				}
@@ -176,7 +176,7 @@ objectdef obj_ModuleList
 		{
 			do
 			{
-				if !${ModuleIterator.Value.IsActive}
+				if !${ModuleIterator.Value.IsActive} && !${ModuleIterator.Value.IsReloading}
 				{
 					countInactive:Inc
 				}
@@ -188,8 +188,7 @@ objectdef obj_ModuleList
 	
 	member:float Range()
 	{
-		return ${Math.Calc[${Modules.Get[1].Charge.MaxFlightTime} * ${Modules.Get[1].Charge.MaxVelocity}]}
-		return ${Modules.Get[1].OptimalRange}
+		return ${Modules.Get[1].Range}
 	}
 	
 	member:string GetFallthroughObject()
