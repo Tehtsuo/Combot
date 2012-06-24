@@ -107,7 +107,7 @@ objectdef obj_Miner inherits obj_State
 				}
 				break
 			case Container
-				if ${MyShip.UsedCargoCapacity} > ${Config.Miner.Threshold}
+				if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) >= ${Config.Miner.Threshold} * .01
 				{
 					UI:Update["obj_Miner", "Unload trip required", "g"]
 					if ${Config.Miner.OrcaMode}
@@ -124,7 +124,7 @@ objectdef obj_Miner inherits obj_State
 			case Jetcan
 				break
 			default
-				if ${MyShip.UsedCargoCapacity} > ${Config.Miner.Threshold}
+				if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) >= ${Config.Miner.Threshold} * .01
 				{
 					UI:Update["obj_Miner", "Unload trip required", "g"]
 					This:Clear
