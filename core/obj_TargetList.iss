@@ -83,6 +83,16 @@ objectdef obj_TargetList inherits obj_State
 	
 	member:bool UpdateList()
 	{
+		if !${Client.InSpace}
+		{
+			return FALSE
+		}
+		
+		if ${Me.ToEntity.Mode} == 3
+		{
+			return FALSE
+		}
+		
 		variable iterator QueryStringIterator
 		QueryStringList:GetIterator[QueryStringIterator]
 

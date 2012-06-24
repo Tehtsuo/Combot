@@ -79,7 +79,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Width>98%</Width> 
 						<Height>18%</Height> 
 						<Wrap />
-						<Text>ComBot's Hauler mode offers both simplicity and versatility.  It provides dropoff service to Station Hangar, Station Corporation Hangar, and even Player Owned Station structures.  It can pick up cargo from an Orca, a Jetcan, or a Player Owned Station structure, Personal Hangar, or Corporation Hangar.  Keep in mind, to move cargo from one Player Owned Station structure to another, they must have unique names.  If your source and destination containers are the same name, it will simply pick up cargo and immediately drop it back off!  Unfortunately, folder selection for picking up Corporation Hangar cargo is not available at this time.</Text>
+						<Text>ComBot's Hauler mode offers both simplicity and versatility.  It provides dropoff service to Station Hangar, Station Corporation Hangar, and even Player Owned Station structures.  It can pick up cargo from an Orca, a Jetcan, Player Owned Station structure, Personal Hangar, or Corporation Hangar.  Keep in mind, to move cargo from one Player Owned Station structure to another, they must have unique names.  If your source and destination containers are the same name, it will simply pick up cargo and immediately drop it back off!  Unfortunately, folder selection for picking up Corporation Hangar cargo is not available at this time.  As you can select hangars and containers for both source and destination, the hauler can be used as a simple freight module, however it does not have any utility to determine if a source has cargo to haul, so it will keep traveling between source and destination even after all the cargo is hauled.</Text>
 					</Text>						 
 					<Text name='obj_Hauler_JetcanModeTitle'> 
 						<X>69%</X> 
@@ -95,8 +95,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Width>30%</Width> 
 						<Height>3%</Height> 
 						<Items>
-							<Item>Service Fleet</Item>
-							<Item>On-Demand</Item>
+							<Item Default="1">Service Fleet</Item>
 						</Items>
 						<OnLoad>
 							This.ItemByText[${Script[ComBot].VariableScope.Config.Hauler.JetCanMode}]:Select

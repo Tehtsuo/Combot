@@ -61,7 +61,7 @@ objectdef obj_Jetcan inherits obj_State
 			{
 				if !${EVEWindow[ByName, Inventory].ChildWindowExists[${TargetIterator.Value}]}
 				{
-					UI:Update["obj_Salvage", "Opening - ${TargetIterator.Value.Name}", "g"]
+					UI:Update["obj_Jetcan", "Opening - ${TargetIterator.Value.Name}", "g"]
 					TargetIterator.Value:OpenCargo
 					return FALSE
 				}
@@ -102,7 +102,7 @@ objectdef obj_Jetcan inherits obj_State
 		Targets:GetIterator[TargetIterator]
 		if ${TargetIterator:First(exists)}
 		{
-			echo Renaming ${TargetIterator.Value.Name}
+			UI:Update["obj_Jetcan", "Renaming ${TargetIterator.Value.Name}", "g"]
 			TargetIterator.Value:SetName[${Me.Corp.Ticker} ${EVE.Time[short]}]
 			return TRUE
 		}

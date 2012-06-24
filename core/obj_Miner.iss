@@ -114,6 +114,7 @@ objectdef obj_Miner inherits obj_State
 					{
 						relay all -event ComBot_Orca_InBelt FALSE
 					}
+					Bookmarks:StoreLocation
 					This:Clear
 					Move:Bookmark[${Config.Miner.Miner_Dropoff}]
 					This:QueueState["Traveling", 1000]
@@ -127,9 +128,14 @@ objectdef obj_Miner inherits obj_State
 				if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) >= ${Config.Miner.Threshold} * .01
 				{
 					UI:Update["obj_Miner", "Unload trip required", "g"]
+					if ${Client.InSpace}
+					{
+						Bookmarks:StoreLocation
+					}
 					This:Clear
 					Move:Bookmark[${Config.Miner.Miner_Dropoff}]
 					This:QueueState["Traveling", 1000]
+					This:QueueState["PrepOffload", 1000]
 					This:QueueState["Offload", 1000]
 					This:QueueState["StackItemHangar", 1000]
 					This:QueueState["GoToMiningSystem", 1000]
@@ -149,7 +155,36 @@ objectdef obj_Miner inherits obj_State
 		}
 		return TRUE
 	}
-
+	
+	member:bool PrepOffload()
+	{
+		if ${Client.InSpace}
+		{
+			return TRUE
+		}
+		if !${EVEWindow[ByName, "Inventory"](exists)}
+		{
+			UI:Update["obj_Miner", "Opening inventory", "g"]
+			MyShip:OpenCargo[]
+			return FALSE
+		}
+		switch ${Config.Miner.Miner_Dropoff_Type}
+		{
+			case Personal Hangar
+				break
+			default
+				if !${EVEWindow[ByName, Inventory].ChildWindowExists[Corporation Hangars]}
+				{
+					UI:Update["obj_Miner", "Delivery Location: Corporate Hangars child not found", "r"]
+					UI:Update["obj_Miner", "Closing inventory to fix possible EVE bug", "y"]
+					EVEWindow[ByName, Inventory]:Close
+					return FALSE
+				}
+				EVEWindow[ByName, Inventory]:MakeChildActive[Corporation Hangars]
+				break
+		}
+		return TRUE
+	}
 	member:bool Offload()
 	{
 		UI:Update["obj_Miner", "Unloading cargo", "g"]
@@ -187,6 +222,13 @@ objectdef obj_Miner inherits obj_State
 				{
 					EVE:StackItems[${Entity[Name = "${Config.Miner.Miner_OrcaName}"].ID}, CorpHangars]
 				}
+				break
+			case Container
+				if ${Entity[Name = "${Config.Miner.Miner_OrcaName}"](exists)}
+				{
+					EVE:StackItems[${Entity[Name = "${Config.Miner.Miner_OrcaName}"].ID}, CorpHangars]
+				}
+				break
 			default
 				EVE:StackItems[MyStationCorporateHangar, StationCorporateHangar, "${Config.Miner.Miner_Dropoff_Type.Escape}"]
 				break
@@ -206,6 +248,12 @@ objectdef obj_Miner inherits obj_State
 		}
 		return TRUE
 	}
+	
+	member:bool RemoveStoredBookmark()
+	{
+		Bookmarks:RemoveStoredLocation
+		return TRUE
+	}
 
 	member:bool MoveToBelt()
 	{
@@ -213,11 +261,10 @@ objectdef obj_Miner inherits obj_State
 		{
 			UI:Update["obj_Miner","Returning to last location (${Bookmarks.StoredLocation})", "g"]
 			Move:Bookmark["${Bookmarks.StoredLocation}"]
-			Bookmarks:RemoveStoredLocation
 			return TRUE
 		}
 	
-		if ${Config.Miner.UseFieldBookmarks}
+		if ${Config.Miner.UseBookmarks}
 		{
 			variable index:bookmark BookmarkIndex
 			variable int RandomBelt
@@ -246,7 +293,7 @@ objectdef obj_Miner inherits obj_State
 					continue
 				}
 
-				Move:Bookmark[${BeltBookMarkList[${BookmarkIndex}].Label}]
+				Move:Bookmark[${BookmarkIndex[${RandomBelt}].Label}]
 
 				return TRUE
 			}	
@@ -310,6 +357,8 @@ objectdef obj_Miner inherits obj_State
 		}
 		
 		Asteroids.MinLockCount:Set[${Ship.ModuleList_MiningLaser.Count}]
+		Asteroids.MaxRange:Set[${Ship.Module_MiningLaser_Range}]
+		
 		if ${Config.Miner.OrcaMode}
 		{
 			Asteroids.AutoLock:Set[FALSE]
@@ -376,6 +425,11 @@ objectdef obj_Miner inherits obj_State
 			}
 		}
 		
+		if !${Config.Miner.Miner_Dropoff_Type.Equal[Orca]}
+		{
+			Asteroids.DistanceTarget:Set[${MyShip.ID}]
+		}
+		
 		if !${Config.Miner.OrcaMode}
 		{
 			Asteroids.AutoLock:Set[TRUE]
@@ -406,6 +460,7 @@ objectdef obj_Miner inherits obj_State
 			This:QueueState["Traveling", 1000]
 			This:QueueState["MoveToBelt", 1000]
 			This:QueueState["Traveling", 1000]
+			This:QueueState["RemoveStoredBookmark", 1000]
 			return TRUE
 		}
 
@@ -420,6 +475,13 @@ objectdef obj_Miner inherits obj_State
 			else
 			{
 				Move:Approach[${Entity[CategoryID==CATEGORYID_ORE]}, 8000]
+			}
+		}
+		else
+		{
+			if ${Entity[CategoryID==CATEGORYID_ORE].Distance} > ${MyShip.MaxTargetRange}
+			{
+				Move:Approach[${Entity[CategoryID==CATEGORYID_ORE]}, ${Ship.Module_MiningLaser_Range}]
 			}
 		}
 		
@@ -458,9 +520,9 @@ objectdef obj_Miner inherits obj_State
 		if ${Roid:First(exists)}
 		do
 		{
-			if	${Roid.Value.Distance} > ${Ship.Module_MiningLaser.Range}
+			if	${Roid.Value.Distance} > ${Ship.Module_MiningLaser_Range}
 			{
-				Move:Approach[${Roid.Value.ID}, ${Ship.Module_MiningLaser.Range}]
+				Move:Approach[${Roid.Value.ID}, ${Ship.Module_MiningLaser_Range}]
 				return FALSE
 			}
 			if ${Config.Miner.IceMining}
