@@ -50,6 +50,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 #include core/obj_TargetList.iss
 #include core/obj_Drones.iss
 #include core/obj_Defense.iss
+#include core/obj_Profiling.iss
 
 
 function atexit()
@@ -67,6 +68,7 @@ function main()
 	declarevariable Config obj_Configuration script
 	UI:Reload
 	
+	declarevariable Profiling obj_Profiling script
 	declarevariable Client obj_Client script
 	declarevariable Move obj_Move script
 	declarevariable InstaWarp obj_InstaWarp script

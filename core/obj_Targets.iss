@@ -78,12 +78,15 @@ objectdef obj_Targets inherits obj_State
 	
 	member:bool Update()
 	{
+		Profiling:StartTrack["Targets_Update"]
 		if !${Client.InSpace}
 		{
+			Profiling:EndTrack
 			return FALSE
 		}
 		EVE:QueryEntities[Locked, "IsLockedTarget || BeingTargeted"]
 		EVE:QueryEntities[Asteroids, "IsLockedTarget || BeingTargeted && CategoryID == CATEGORYID_ORE"]
+		Profiling:EndTrack
 		return FALSE
 	}
 
