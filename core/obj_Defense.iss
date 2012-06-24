@@ -43,7 +43,7 @@ objectdef obj_Defense inherits obj_State
 		{
 			Ship.ModuleList_Regen_Shield:ActivateCount[${Ship.ModuleList_Regen_Shield.InactiveCount}]
 		}
-		if ${Ship.ModuleList_Regen_Shield.ActiveCount} && ${MyShip.ShieldPct} > 95 && !${Config.Common.AlwaysShieldBoost})
+		if ${Ship.ModuleList_Regen_Shield.ActiveCount} && ${MyShip.ShieldPct} > 95 && !${Config.Common.AlwaysShieldBoost}
 		{
 			Ship.ModuleList_Regen_Shield:DeactivateCount[${Ship.ModuleList_Regen_Shield.ActiveCount}]
 		}

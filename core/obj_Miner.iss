@@ -458,9 +458,9 @@ objectdef obj_Miner inherits obj_State
 		if ${Roid:First(exists)}
 		do
 		{
-			if	${Roid.Value.Distance} > ${Ship.Module_MiningLaser_Range}
+			if	${Roid.Value.Distance} > ${Ship.Module_MiningLaser.Range}
 			{
-				Move:Approach[${Roid.Value.ID}, ${Ship.Module_MiningLaser_Range}]
+				Move:Approach[${Roid.Value.ID}, ${Ship.Module_MiningLaser.Range}]
 				return FALSE
 			}
 			if ${Config.Miner.IceMining}
