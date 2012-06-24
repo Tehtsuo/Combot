@@ -22,6 +22,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 objectdef obj_Hauler inherits obj_State
 {
 	variable float OrcaCargo
+	variable index:fleetmember FleetMembers
 
 	method Initialize()
 	{
@@ -42,8 +43,6 @@ objectdef obj_Hauler inherits obj_State
 		UI:Update["obj_Hauler", "Started", "g"]
 		if ${This.IsIdle}
 		{
-			This:QueueState["OpenCargoHold"]
-			This:QueueState["CheckCargoHold"]
 			This:QueueState["Haul"]
 		}
 	}
@@ -61,21 +60,21 @@ objectdef obj_Hauler inherits obj_State
 	
 	member:bool CheckCargoHold()
 	{
-		
-	
 		switch ${Config.Hauler.Dropoff_Type}
 		{
 			case Container
-				if ${MyShip.UsedCargoCapacity} > ${Config.Hauler.Threshold}
+				if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) >= ${Config.Hauler.Threshold} * .01
 				{
 					UI:Update["obj_Hauler", "Unload trip required", "g"]
 					This:Clear
 					Move:Bookmark[${Config.Hauler.Dropoff_Bookmark}]
 					This:QueueState["Traveling", 1000]
+					This:QueueState["Haul"]
 				}
 				break
 			default
-				if ${MyShip.UsedCargoCapacity} > ${Config.Hauler.Threshold}
+				echo (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) >= ${Config.Hauler.Threshold} * .01
+				if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) >= ${Config.Hauler.Threshold} * .01
 				{
 					UI:Update["obj_Hauler", "Unload trip required", "g"]
 					This:Clear
@@ -87,10 +86,9 @@ objectdef obj_Hauler inherits obj_State
 					This:QueueState["OrcaWait"]
 					This:QueueState["GoToPickup", 1000]
 					This:QueueState["Traveling", 1000]
+					This:QueueState["Haul"]
 				}
 				break
-				
-			This:QueueState["Haul"]
 		}
 		return TRUE;
 	}
@@ -99,7 +97,7 @@ objectdef obj_Hauler inherits obj_State
 	{
 		if ${Config.Hauler.Pickup_Type.Equal[Orca]}
 		{
-			if ${OrcaCargo} > ${Config.Hauler.Threshold}
+			if ${OrcaCargo} > ${Config.Hauler.Threshold} * .01 * ${MyShip.CargoCapacity}
 			{
 				return TRUE
 			}
@@ -208,6 +206,18 @@ objectdef obj_Hauler inherits obj_State
 		return TRUE
 	}
 	
+	member:bool LootCans()
+	{
+		if ${Salvager.Salvaging} 
+		{
+			return FALSE
+		}
+		else
+		{
+			return TRUE
+		}
+	}
+	
 	
 	member:bool Haul()
 	{
@@ -225,11 +235,23 @@ objectdef obj_Hauler inherits obj_State
 			This:QueueState["Haul"]
 			return TRUE
 		}
-		
+		else
+		{
+			This:QueueState["CheckCargoHold"]
+			This:QueueState["GoToPickup"]
+			This:QueueState["Traveling", 1000]
+			This:QueueState["Haul"]
+			if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) >= ${Config.Hauler.Threshold} * .01
+			{
+				return TRUE
+			}
+		}
+
 		if ${Me.ToEntity.Mode} == 3
 		{
 			return FALSE
 		}
+
 		
 		switch ${Config.Hauler.Pickup_Type}
 		{
@@ -259,6 +281,7 @@ objectdef obj_Hauler inherits obj_State
 							}
 							Cargo:PopulateCargoList[CONTAINERCORPORATEHANGAR, ${Container}]
 							Cargo:MoveCargoList[SHIP]
+							This:Clear
 							This:QueueState["Idle", 1000]
 							This:QueueState["CheckCargoHold"]
 							This:QueueState["Haul"]
@@ -305,6 +328,7 @@ objectdef obj_Hauler inherits obj_State
 						}
 						Cargo:PopulateCargoList[CONTAINERCORPORATEHANGAR, ${Container}]
 						Cargo:MoveCargoList[SHIP]
+						This:Clear
 						This:QueueState["Idle", 1000]
 						This:QueueState["CheckCargoHold"]
 						This:QueueState["Haul"]
@@ -320,13 +344,80 @@ objectdef obj_Hauler inherits obj_State
 					return TRUE
 				}
 				break
+			case Jetcan
+				if ${MyShip.UsedCargoCapacity} > (${Config.Hauler.Threshold} * .01 * ${MyShip.CargoCapacity}) || ${EVE.Bookmark[${Config.Hauler.Pickup_Bookmark}].SolarSystemID} != ${Me.SolarSystemID}
+				{
+					break
+				}
+				if !${FleetMembers.Used}
+				{
+					Me.Fleet:GetMembers[FleetMembers]
+					FleetMembers:RemoveByQuery[${LavishScript.CreateQuery[ID == ${Me.CharID}]}]
+					FleetMembers:Collapse
+				}
+				echo ${FleetMembers.Get[1].ID}
+				if ${Entity[Name = "${FleetMembers.Get[1].ToPilot.Name}"](exists)}
+				{
+					FleetMembers:Remove[1]
+					Salvager:NonDedicatedSalvage[0.95, FALSE]
+					This:Clear
+					This:QueueState["LootCans"]
+					This:QueueState["Haul"]
+					return TRUE
+				}
+				else
+				{
+					echo Warping to ${FleetMembers.Get[1].ToPilot.Name}
+					FleetMembers.Get[1]:WarpTo[]
+					This:Clear
+					This:QueueState["Traveling", 1000]
+					This:QueueState["Haul"]
+					return TRUE
+				}
+			
+				break
+				
 			default
 			
 			Move:Bookmark[${Config.Hauler.Pickup_Bookmark}]
 			
 		}
 		
-
+		if ${Config.Hauler.Dropoff_Type.Equal[Container]}
+		{
+			if ${Entity[Name = "${Config.Hauler.Dropoff_ContainerName}"](exists)}
+			{
+				Container:Set[${Entity[Name = "${Config.Hauler.Dropoff_ContainerName}"].ID}]
+				if ${Entity[${Container}].Distance} > LOOT_RANGE
+				{
+					Move:Approach[${Container}, LOOT_RANGE]
+					return FALSE
+				}
+				else
+				{
+					if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) > 0.10
+					{
+						if !${EVEWindow[ByName, Inventory].ChildWindowExists[${Container}]}
+						{
+							UI:Update["obj_Miner", "Opening ${Config.Hauler.Dropoff_ContainerName}", "g"]
+							Entity[${Container}]:Open
+							return FALSE
+						}
+						if !${EVEWindow[ByItemID, ${Container}](exists)}
+						{
+							EVEWindow[ByName, Inventory]:MakeChildActive[${Container}]
+							return FALSE
+						}
+						;UI:Update["obj_Miner", "Unloading to ${Config.Hauler.Dropoff_ContainerName}", "g"]
+						Cargo:PopulateCargoList[SHIP]
+						Cargo:MoveCargoList[SHIPCORPORATEHANGAR, "", ${Container}]
+						This:QueueState["Idle", 1000]
+						This:QueueState["Haul"]
+						return TRUE
+					}
+				}
+			}
+		}
 		
 		if ${Ship.ModuleList_GangLinks.ActiveCount} < ${Ship.ModuleList_GangLinks.Count}
 		{
@@ -334,10 +425,6 @@ objectdef obj_Hauler inherits obj_State
 		}
 		
 	
-		This:QueueState["CheckCargoHold"]
-		This:QueueState["GoToPickup"]
-		This:QueueState["Traveling", 1000]
-		This:QueueState["Haul"]
 		return TRUE
 	}
 	

@@ -239,7 +239,34 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								Script[ComBot].VariableScope.Config.Common:SetPropulsion[${This.Checked}]
 							</OnLeftClick>
 						</Checkbox>
-						
+						<Checkbox name='AlwaysShieldBoost'>
+							<X>1%</X>
+							<Y>19%</Y>
+							<Width>48%</Width> 
+							<Height>6%</Height> 
+							<Text>Always Shield Boost</Text>
+							<OnLoad>
+								if ${Script[ComBot].VariableScope.Config.Common.AlwaysShieldBoost}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[ComBot].VariableScope.Config.Common:SetAlwaysShieldBoost[${This.Checked}]
+							</OnLeftClick>
+						</Checkbox>
+						<button	Name='FleetConfig'>
+							<Font template='Button.Font' />
+							<BackgroundColor>FF000000</BackgroundColor>
+							<X>0%</X>
+							<Y>90%</Y>
+							<Width>100%</Width>
+							<Height>10%</Height>
+							<Text>Fleet Configuration</Text>
+							<OnLeftClick>
+								timedcommand 0 "ui -load \"&filepath;/ComBotGUI_Fleet.xml\""
+							</OnLeftClick>
+						</button>							
 					</Tab>
 					<Tab Name='Salvager'>
 						<frame name='obj_SalvageFillerFrame'>

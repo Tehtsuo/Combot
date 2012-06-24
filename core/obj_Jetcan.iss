@@ -86,7 +86,8 @@ objectdef obj_Jetcan inherits obj_State
 		{
 			Me.Ship:GetCargo[CargoList]
 			CargoList.Get[1]:Jettison
-			This:QueueState["Rename", 5000]
+			This:QueueState["Idle", 5000]
+			This:QueueState["Rename", 2000]
 			This:QueueState["Fill", 1500]
 			return TRUE
 		}
@@ -97,7 +98,7 @@ objectdef obj_Jetcan inherits obj_State
 	{
 		variable index:entity Targets
 		variable iterator TargetIterator
-		EVE:QueryEntities[Targets, "GroupID==GROUP_CARGOCONTAINER && HaveLootRights && Name==\"Cargo Container\""]
+		EVE:QueryEntities[Targets, "GroupID==GROUP_CARGOCONTAINER && HaveLootRights && Name =- \"Cargo Container\""]
 		Targets:GetIterator[TargetIterator]
 		if ${TargetIterator:First(exists)}
 		{

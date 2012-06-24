@@ -24,9 +24,8 @@ objectdef obj_Security inherits obj_State
 	method Initialize()
 	{
 		This[parent]:Initialize
-		;This.NonGameTiedPulse:Set[TRUE]
+		This.NonGameTiedPulse:Set[TRUE]
 		This:AssignStateQueueDisplay[obj_SecurityStateList@Security@ComBotTab@ComBot]
-		UI:Update["obj_Security", "Initialized", "g"]
 		
 		This:QueueState["CheckSafe", 500]
 	}
@@ -93,10 +92,54 @@ objectdef obj_Security inherits obj_State
 			
 		}
 		while ${Pilot_Iterator:Next(exists)}
+	
+		variable index:entity Threats
+		variable iterator Threat
+		variable int MyAllianceID
+		variable int MyCorpID
+
+		Me:GetTargetedBy[Threats]
+		Threats:RemoveByQuery[${LavishScript.CreateQuery[IsPC == FALSE}]}]
+		Threats:Collapse
+		Threats:GetIterator[Threat]
+		if ${Me.Corp.ID} == -1
+		{
+			MyCorpID:Set[0]
+			MyAllianceID:Set[0]
+		}
+		else
+		{
+			MyCorpID:Set[${Me.Corp.ID}]
+			if  ${Me.AllianceID} == -1
+			{
+				MyAllianceID:Set[0]
+			}
+			else
+			{
+				MyAllianceID:Set[${Me.AllianceID}]
+			}
+		}
+		
+		if ${Threat:First(exists)}
+		do
+		{
+			if  ${MyCorpID} == ${Threat.Value.CorpID} || \
+				${MyAllianceID} == ${Threat.Value.AllianceID} || \
+				${Me.Fleet.IsMember[${Threat.Value.CharID}]}
+			{
+				continue
+			}
+			
+			This:QueueState["Flee", 500, "${Threat.Value.Name} is targeting me!"]
+			return TRUE
+		}
+		while ${Threat:Next(exists)}	
+
+		
+
 		
 		if ${ClearFlee}
 		{
-			echo Resuming!
 			ComBot:Resume
 			This:QueueState["CheckSafe", 500]
 			return TRUE

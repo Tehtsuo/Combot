@@ -204,7 +204,7 @@ objectdef obj_TargetList inherits obj_State
 			}
 			while ${EntityIterator:Next(exists)}
 		}
-		echo Target Count - ${This.TargetList.Used}
+
 		This.TargetList:GetIterator[EntityIterator]
 		if ${EntityIterator:First(exists)}
 		{

@@ -110,7 +110,6 @@ objectdef obj_Drones inherits obj_State
 		
 		DroneTargets.LockedTargetList:GetIterator[TargetIterator]
 		
-		echo Locked Targets = ${DroneTargets.LockedTargetList.Used}
 		
 		if !${Entity[${CurrentTarget}](exists)} || !${Entity[${CurrentTarget}].IsLockedTarget}
 		{

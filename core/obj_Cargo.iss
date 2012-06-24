@@ -164,6 +164,7 @@ objectdef obj_Cargo inherits obj_State
 				EVE:MoveItemsTo[TransferIndex, MyStationHangar, Hangar]
 				break
 			case CORPORATEHANGAR
+				echo EVE:MoveItemsTo[TransferIndex, MyStationCorporateHangar, StationCorporateHangar${TransferFolder}]
 				EVE:MoveItemsTo[TransferIndex, MyStationCorporateHangar, StationCorporateHangar${TransferFolder}]
 				break
 		}

@@ -64,6 +64,7 @@ objectdef obj_Configuration
 	variable obj_Configuration_Security Security
 	variable obj_Configuration_HangarSale HangarSale
 	variable obj_Configuration_Hauler Hauler
+	variable obj_Configuration_Fleet Fleet
 	method Save()
 	{
 		BaseConfig:Save[]
@@ -99,6 +100,7 @@ objectdef obj_Configuration_Common
 		BaseConfig.BaseRef:AddSet[${This.SetName}]
 
 		This.CommonRef:AddSetting[ComBot_Mode,Salvager]
+		This.CommonRef:AddSetting[AlwaysShieldBoost, FALSE]
 	}
 
 	member:string ComBot_Mode()
@@ -141,6 +143,15 @@ objectdef obj_Configuration_Common
 		This.CommonRef:AddSetting[Propulsion,${value}]
 	}
 	
+	member:bool AlwaysShieldBoost()
+	{
+		return ${This.CommonRef.FindSetting[AlwaysShieldBoost]}
+	}
+
+	method SetAlwaysShieldBoost(bool value)
+	{
+		This.CommonRef:AddSetting[AlwaysShieldBoost,${value}]
+	}
 }
 
 objectdef obj_Configuration_Salvager
@@ -577,16 +588,6 @@ objectdef obj_Configuration_Miner
 		This.CommonRef:AddSetting[UseBookmarks,${value}]
 	}
 
-	member:bool AlwaysShieldBoost()
-	{
-		return ${This.CommonRef.FindSetting[AlwaysShieldBoost]}
-	}
-
-	method SetAlwaysShieldBoost(bool value)
-	{
-		This.CommonRef:AddSetting[AlwaysShieldBoost,${value}]
-	}
-	
 	member:string BeltPrefix()
 	{
 		return ${This.CommonRef.FindSetting[BeltPrefix]}
@@ -908,6 +909,86 @@ objectdef obj_Configuration_Security
 	
 }	
 	
+
+
+objectdef obj_FleetMember
+{
+	variable string FleetMemberName
+	variable bool FleetCommander
+	variable int Wing
+	variable bool WingCommander
+	variable int Squad
+	variable bool SquadCommander
+
+	method Initialize(string arg_FleetMemberName, bool arg_FleetCommander, int arg_Wing, bool arg_WingCommander, int arg_Squad, bool arg_SquadCommander)
+	{
+		FleetMemberName:Set[${arg_FleetMemberName}]
+		FleetCommander:Set[${arg_FleetCommander}]
+		Wing:Set[${arg_Wing}]
+		WingCommander:Set[${arg_WingCommander}]
+		Squad:Set[${arg_Squad}]
+		SquadCommander:Set[${arg_SquadCommander}]
+	}
+}
+
+
+objectdef obj_Configuration_Fleet
+{
+	variable string SetName = "Fleet"
+	variable index:obj_FleetMember FleetMembers
+
+	method Initialize()
+	{
+		if !${BaseConfig.BaseRef.FindSet[${This.SetName}](exists)} || !${BaseConfig.BaseRef.FindSet[${This.SetName}].FindSet[FleetMembers](exists)}
+		{
+			UI:Update["obj_Configuration", " ${This.SetName} settings missing - initializing", "o"]
+			This:Set_Default_Values[]
+		}
+		UI:Update["obj_Configuration", " ${This.SetName}: Initialized", "-g"]
+	}
+
+	member:settingsetref FleetRef()
+	{
+		return ${BaseConfig.BaseRef.FindSet[${This.SetName}]}
+	}
+	member:settingsetref FleetMembersRef()
+	{
+		return ${This.FleetRef.FindSet[FleetMembers]}
+	}
+	method Set_Default_Values()
+	{
+		BaseConfig.BaseRef:AddSet[${This.SetName}]
+		This.FleetRef:AddSet[FleetMembers]
+	}
+
+	member:bool ManageFleet()
+	{
+		return ${This.FleetRef.FindSetting[Manage Fleet, FALSE]}
+	}
+
+	method SetManageFleet(bool value)
+	{
+		This.FleetRef:AddSetting[Manage Fleet, ${value}]
+	}
+
+	member:string FleetLeader()
+	{
+		return ${This.FleetRef.FindSetting[Fleet Leader, ""]}
+	}
+
+	method SetFleetLeader(string value)
+	{
+		This.FleetRef:AddSetting[Fleet Leader, ${value}]
+	}
+
+	
+	
+
+}	
+	
+	
+	
+	
 objectdef obj_Configuration_RefineData
 {
 	variable string SetName = "Refine Amounts"
@@ -969,5 +1050,8 @@ objectdef obj_Configuration_RefineData
 	{
 		return ${This.BaseRef.FindSet["${ID}"].FindSetting["40"]}
 	}
-
 }
+
+
+
+
