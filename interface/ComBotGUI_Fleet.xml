@@ -108,7 +108,12 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							{
 								if ${UIElement[Combot_Fleet_Tree@ComBot_Fleet_Frame@ComBot_Fleet].GetNode[Text == "Fleet"].Children(exists)}
 								{
-								
+									if ${UIElement[Combot_Fleet_Tree@ComBot_Fleet_Frame@ComBot_Fleet].GetNode[Text == "Fleet"].Children.Children(exists)}
+									{
+										UIElement[Combot_Fleet_Tree@ComBot_Fleet_Frame@ComBot_Fleet].GetNode[Text == "Fleet"].Children:AddChild[Wing 1]
+										UIElement[Combot_Fleet_Tree@ComBot_Fleet_Frame@ComBot_Fleet].GetNode[Text == "Wing 1"]:AddChild[${UIElement[AddFleetMemberText@ComBot_Fleet_Frame@ComBot_Fleet].Text}, ffffff00]
+										
+									}
 								}
 								else
 								{
