@@ -487,6 +487,10 @@ objectdef obj_Salvage inherits obj_State
 
 	member:bool PrepOffload()
 	{
+		if ${Client.InSpace}
+		{
+			return TRUE
+		}
 		if !${EVEWindow[ByName, "Inventory"](exists)}
 		{
 			UI:Update["obj_Salvage", "Opening inventory", "g"]

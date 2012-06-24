@@ -24,9 +24,8 @@ objectdef obj_Security inherits obj_State
 	method Initialize()
 	{
 		This[parent]:Initialize
-		;This.NonGameTiedPulse:Set[TRUE]
+		This.NonGameTiedPulse:Set[TRUE]
 		This:AssignStateQueueDisplay[obj_SecurityStateList@Security@ComBotTab@ComBot]
-		UI:Update["obj_Security", "Initialized", "g"]
 		
 		This:QueueState["CheckSafe", 500]
 	}
@@ -99,18 +98,18 @@ objectdef obj_Security inherits obj_State
 		variable int MyAllianceID
 		variable int MyCorpID
 
-		EVE:GetLocalPilots[Threats]
+		Me:GetTargetedBy[Threats]
 		Threats:RemoveByQuery[${LavishScript.CreateQuery[IsPC == FALSE}]}]
 		Threats:Collapse
 		Threats:GetIterator[Threat]
-		if ${Me.CorpID} == -1
+		if ${Me.Corp.ID} == -1
 		{
 			MyCorpID:Set[0]
 			MyAllianceID:Set[0]
 		}
 		else
 		{
-			MyCorpID:Set[${Me.CorpID}]
+			MyCorpID:Set[${Me.Corp.ID}]
 			if  ${Me.AllianceID} == -1
 			{
 				MyAllianceID:Set[0]
