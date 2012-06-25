@@ -100,6 +100,18 @@ objectdef obj_TargetList inherits obj_State
 			return FALSE
 		}
 		NeedUpdate:Set[FALSE]
+		if !${Client.InSpace}
+		{
+			Profiling:EndTrack
+			return FALSE
+		}
+		
+		if ${Me.ToEntity.Mode} == 3
+		{
+			Profiling:EndTrack
+			return FALSE
+		}
+		
 		variable iterator QueryStringIterator
 		QueryStringList:GetIterator[QueryStringIterator]
 

@@ -162,7 +162,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Height>2%</Height> 
 						<Alignment>Center</Alignment>
 						<OnLoad>
-							This:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Config.Miner.Threshold}]
+							This:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Config.Miner.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Config.Miner.Threshold} * .01 * ${MyShip.CargoCapacity}].Round} m3]
 						</OnLoad>
 					</Text>						 
 					<Slider name='obj_Miner_Threshold'> 
@@ -172,12 +172,12 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Height>5%</Height> 
 						<Border>1</Border>
 						<OnLoad>
-							This:SetRange[${MyShip.CargoCapacity}]
+							This:SetRange[100]
 							This:SetValue[${Script[ComBot].VariableScope.Config.Miner.Threshold}]
 						</OnLoad>
 						<OnChange>
 							Script[ComBot].VariableScope.Config.Miner:SetThreshold[${This.Value}]
-							UIElement[obj_Miner_ThresholdTitle@ComBot_Miner_Frame@ComBot_Miner]:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Config.Miner.Threshold}]
+							UIElement[obj_Miner_ThresholdTitle@ComBot_Miner_Frame@ComBot_Miner]:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Config.Miner.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Config.Miner.Threshold} * .01 * ${MyShip.CargoCapacity}].Round} m3]
 						</OnChange>
 					</Slider>						 
 					<Textentry name='obj_MinerOrePrefix'>
