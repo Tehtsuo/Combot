@@ -659,6 +659,146 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							</OnLeftClick>
 						</button>						
 					</Tab>
+					<Tab Name='Profiling'>
+						<frame name='obj_ProfilingFillerFrame'>
+							<BackgroundColor>FF000000</BackgroundColor>
+							<Border>1</Border>
+							<BorderColor>FFFFFFFF</BorderColor>
+							<X>0</X>
+							<Y>0</Y>
+							<Height>100%</Height>
+							<Width>100%</Width>
+							<OnLoad>
+								This:SetLeftClickThru[TRUE]
+							</OnLoad>
+						</frame>			
+						<slider name='obj_ProfilingSlider'>
+							<X>98%</X>
+							<Y>0</Y>
+							<Height>100%</Height>
+							<Width>2%</Width>
+						</slider>
+						<gauge name='obj_ProfilingGauge1'>
+							<X>0%</X>
+							<Y>0%</Y>
+							<Height>10%</Height>
+							<Width>98%</Width>
+						</gauge>
+						<gauge name='obj_ProfilingGauge2'>
+							<X>0%</X>
+							<Y>10%</Y>
+							<Height>10%</Height>
+							<Width>98%</Width>
+						</gauge>
+						<gauge name='obj_ProfilingGauge3'>
+							<X>0%</X>
+							<Y>20%</Y>
+							<Height>10%</Height>
+							<Width>98%</Width>
+						</gauge>
+						<gauge name='obj_ProfilingGauge4'>
+							<X>0%</X>
+							<Y>30%</Y>
+							<Height>10%</Height>
+							<Width>98%</Width>
+						</gauge>
+						<gauge name='obj_ProfilingGauge5'>
+							<X>0%</X>
+							<Y>40%</Y>
+							<Height>10%</Height>
+							<Width>98%</Width>
+						</gauge>
+						<gauge name='obj_ProfilingGauge6'>
+							<X>0%</X>
+							<Y>50%</Y>
+							<Height>10%</Height>
+							<Width>98%</Width>
+						</gauge>
+						<gauge name='obj_ProfilingGauge7'>
+							<X>0%</X>
+							<Y>60%</Y>
+							<Height>10%</Height>
+							<Width>98%</Width>
+						</gauge>
+						<gauge name='obj_ProfilingGauge8'>
+							<X>0%</X>
+							<Y>70%</Y>
+							<Height>10%</Height>
+							<Width>98%</Width>
+						</gauge>
+						<gauge name='obj_ProfilingGauge9'>
+							<X>0%</X>
+							<Y>80%</Y>
+							<Height>10%</Height>
+							<Width>98%</Width>
+						</gauge>
+						<gauge name='obj_ProfilingGauge10'>
+							<X>0%</X>
+							<Y>90%</Y>
+							<Height>10%</Height>
+							<Width>98%</Width>
+						</gauge>
+						<Text name='obj_ProfilingGauge1_Text'>
+							<X>0%</X>
+							<Y>0%</Y>
+							<Height>10%</Height>
+							<Width>98%</Width>
+						</Text>
+						<Text name='obj_ProfilingGauge2_Text'>
+							<X>0%</X>
+							<Y>10%</Y>
+							<Height>10%</Height>
+							<Width>98%</Width>
+						</Text>
+						<Text name='obj_ProfilingGauge3_Text'>
+							<X>0%</X>
+							<Y>20%</Y>
+							<Height>10%</Height>
+							<Width>98%</Width>
+						</Text>
+						<Text name='obj_ProfilingGauge4_Text'>
+							<X>0%</X>
+							<Y>30%</Y>
+							<Height>10%</Height>
+							<Width>98%</Width>
+						</Text>
+						<Text name='obj_ProfilingGauge5_Text'>
+							<X>0%</X>
+							<Y>40%</Y>
+							<Height>10%</Height>
+							<Width>98%</Width>
+						</Text>
+						<Text name='obj_ProfilingGauge6_Text'>
+							<X>0%</X>
+							<Y>50%</Y>
+							<Height>10%</Height>
+							<Width>98%</Width>
+						</Text>
+						<Text name='obj_ProfilingGauge7_Text'>
+							<X>0%</X>
+							<Y>60%</Y>
+							<Height>10%</Height>
+							<Width>98%</Width>
+						</Text>
+						<Text name='obj_ProfilingGauge8_Text'>
+							<X>0%</X>
+							<Y>70%</Y>
+							<Height>10%</Height>
+							<Width>98%</Width>
+						</Text>
+						<Text name='obj_ProfilingGauge9_Text'>
+							<X>0%</X>
+							<Y>80%</Y>
+							<Height>10%</Height>
+							<Width>98%</Width>
+						</Text>
+						<Text name='obj_ProfilingGauge10_Text'>
+							<X>0%</X>
+							<Y>90%</Y>
+							<Height>10%</Height>
+							<Width>98%</Width>
+						</Text>
+					</Tab>					
 				</Tabs>
 			</TabControl>
 		</Children>

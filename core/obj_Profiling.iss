@@ -65,11 +65,23 @@ objectdef obj_Profiling inherits obj_State
 	member:bool Update()
 	{
 		variable iterator TimeSpentIterator
+		variable int count=0
+		variable int upperlimit
 		TimeSpent:GetIterator[TimeSpentIterator]
 		if ${TimeSpentIterator:First(exists)}
 		{
+			upperlimit:Set[${TimeSpentIterator.Value}]
 			do
 			{
+				count:Inc
+				if ${count} == 9
+				{
+					break
+				}
+				UIElement[obj_ProfilingGauge${count}@Profiling@ComBotTab@ComBot]:SetRange[${upperlimit}]
+				UIElement[obj_ProfilingGauge${count}@Profiling@ComBotTab@ComBot]:SetValue[${TimeSpentIterator.Value}]
+				UIElement[obj_ProfilingGauge${count}_Text@Profiling@ComBotTab@ComBot]:SetValue[${TimeSpentIterator.Key} - ${TimeSpentIterator.Value}ms in ${TimeCalled.Element[${TimeSpentIterator.Key}]} calls]
+				
 				echo ${TimeSpentIterator.Key} - ${TimeSpentIterator.Value}ms in ${TimeCalled.Element[${TimeSpentIterator.Key}]} calls
 			}
 			while ${TimeSpentIterator:Next(exists)}
