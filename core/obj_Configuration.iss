@@ -19,6 +19,19 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
+#macro Setting(type, name, setname)
+	member:type name()
+	{
+		return ${This.CommonRef.FindSetting[name]}
+	}
+
+	method setname(type value)
+	{
+		This.CommonRef:AddSetting[name,${value}]
+		Config:Save
+	}
+#endmac
+
 objectdef obj_Configuration_BaseConfig
 {
 	variable filepath CONFIG_PATH = "${Script.CurrentDirectory}/config"
@@ -103,56 +116,12 @@ objectdef obj_Configuration_Common
 		This.CommonRef:AddSetting[AlwaysShieldBoost, FALSE]
 	}
 
-	member:string ComBot_Mode()
-	{
-		return ${This.CommonRef.FindSetting[ComBot_Mode]}
+Setting(string, ComBot_Mode, SetComBot_Mode)
+Setting(bool, AutoStart, SetAutoStart)
+Setting(bool, WarpPulse, SetWarpPulse)
+Setting(bool, Propulsion, SetPropulsion)
+Setting(bool, AlwaysShieldBoost, SetAlwaysShieldBoost)
 	}
-
-	method SetComBot_Mode(string value)
-	{
-		This.CommonRef:AddSetting[ComBot_Mode,${value}]
-	}
-
-	member:bool AutoStart()
-	{
-		return ${This.CommonRef.FindSetting[AutoStart]}
-	}
-
-	method SetAutoStart(bool value)
-	{
-		This.CommonRef:AddSetting[AutoStart,${value}]
-	}
-
-	member:bool WarpPulse()
-	{
-		return ${This.CommonRef.FindSetting[WarpPulse]}
-	}
-
-	method SetWarpPulse(bool value)
-	{
-		This.CommonRef:AddSetting[WarpPulse,${value}]
-	}
-	
-	member:bool Propulsion()
-	{
-		return ${This.CommonRef.FindSetting[Propulsion]}
-	}
-
-	method SetPropulsion(bool value)
-	{
-		This.CommonRef:AddSetting[Propulsion,${value}]
-	}
-	
-	member:bool AlwaysShieldBoost()
-	{
-		return ${This.CommonRef.FindSetting[AlwaysShieldBoost]}
-	}
-
-	method SetAlwaysShieldBoost(bool value)
-	{
-		This.CommonRef:AddSetting[AlwaysShieldBoost,${value}]
-	}
-}
 
 objectdef obj_Configuration_Salvager
 {
@@ -181,35 +150,9 @@ objectdef obj_Configuration_Salvager
 		This.CommonRef:AddSetting[Salvager_Prefix,Salvage:]
 	}
 
-	member:string Salvager_Prefix()
-	{
-		return ${This.CommonRef.FindSetting[Salvager_Prefix]}
-	}
-
-	method SetSalvager_Prefix(string value)
-	{
-		This.CommonRef:AddSetting[Salvager_Prefix,${value}]
-	}
-	
-	member:string Salvager_Dropoff()
-	{
-		return ${This.CommonRef.FindSetting[Salvager_Dropoff]}
-	}
-
-	method SetSalvager_Dropoff(string value)
-	{
-		This.CommonRef:AddSetting[Salvager_Dropoff,${value}]
-	}
-
-	member:string Salvager_Dropoff_Type()
-	{
-		return ${This.CommonRef.FindSetting[Salvager_Dropoff_Type]}
-	}
-
-	method SetSalvager_Dropoff_Type(string value)
-	{
-		This.CommonRef:AddSetting[Salvager_Dropoff_Type,${value}]
-	}
+Setting(string, Salvager_Prefix, SetSalvager_Prefix)
+Setting(string, Salvager_Dropoff, SetSalvager_Dropoff)
+Setting(string, Salvager_Dropoff_Type, SetSalvager_DropoffType)
 }
 
 objectdef obj_Configuration_HangarSale
@@ -240,56 +183,11 @@ objectdef obj_Configuration_HangarSale
 		This.CommonRef:AddSetting[UndercutValue,1000]
 	}
 	
-	
-	member:string PriceMode()
-	{
-		return ${This.CommonRef.FindSetting[PriceMode]}
-	}
-
-	method SetPriceMode(string value)
-	{
-		This.CommonRef:AddSetting[PriceMode,${value}]
-	}
-
-	member:int UndercutPercent()
-	{
-		return ${This.CommonRef.FindSetting[UndercutPercent]}
-	}
-
-	method SetUndercutPercent(int value)
-	{
-		This.CommonRef:AddSetting[UndercutPercent,${value}]
-	}
-
-	member:int UndercutValue()
-	{
-		return ${This.CommonRef.FindSetting[UndercutValue]}
-	}
-
-	method SetUndercutValue(int value)
-	{
-		This.CommonRef:AddSetting[UndercutValue,${value}]
-	}
-
-	member:bool RePrice()
-	{
-		return ${This.CommonRef.FindSetting[RePrice]}
-	}
-
-	method SetRePrice(bool value)
-	{
-		This.CommonRef:AddSetting[RePrice,${value}]
-	}
-	
-	member:bool Sell()
-	{
-		return ${This.CommonRef.FindSetting[Sell]}
-	}
-
-	method SetSell(bool value)
-	{
-		This.CommonRef:AddSetting[Sell,${value}]
-	}
+Setting(string, PriceMode, SetPriceMode)
+Setting(int, UndercutPercent, SetUndercutPercent)
+Setting(int, UndercutValue, SetUndercutValue)
+Setting(bool, RePrice, SetRePrice)
+Setting(bool, Sell, SetSell)
 }
 	
 objectdef obj_Configuration_Hauler
@@ -320,96 +218,15 @@ objectdef obj_Configuration_Hauler
 		
 	}
 	
-	
-	member:string MiningSystem()
-	{
-		return ${This.CommonRef.FindSetting[MiningSystem]}
-	}
-
-	method SetMiningSystem(string value)
-	{
-		This.CommonRef:AddSetting[MiningSystem,${value}]
-	}
-
-	member:string JetCanMode()
-	{
-		return ${This.CommonRef.FindSetting[JetCanMode]}
-	}
-
-	method SetJetCanMode(string value)
-	{
-		This.CommonRef:AddSetting[JetCanMode,${value}]
-	}
-
-	member:string Dropoff_Bookmark()
-	{
-		return ${This.CommonRef.FindSetting[Dropoff_Bookmark]}
-	}
-
-	method SetDropoff_Bookmark(string value)
-	{
-		This.CommonRef:AddSetting[Dropoff_Bookmark,${value}]
-	}
-
-	member:string Pickup_Bookmark()
-	{
-		return ${This.CommonRef.FindSetting[Pickup_Bookmark]}
-	}
-
-	method SetPickup_Bookmark(string value)
-	{
-		This.CommonRef:AddSetting[Pickup_Bookmark,${value}]
-	}
-
-	member:string Dropoff_Type()
-	{
-		return ${This.CommonRef.FindSetting[Dropoff_Type]}
-	}
-
-	method SetDropoff_Type(string value)
-	{
-		This.CommonRef:AddSetting[Dropoff_Type,${value}]
-	}
-	
-	member:string Pickup_Type()
-	{
-		return ${This.CommonRef.FindSetting[Pickup_Type]}
-	}
-
-	method SetPickup_Type(string value)
-	{
-		This.CommonRef:AddSetting[Pickup_Type,${value}]
-	}
-	
-	member:string Dropoff_ContainerName()
-	{
-		return ${This.CommonRef.FindSetting[Dropoff_ContainerName]}
-	}
-
-	method SetDropoff_ContainerName(string value)
-	{
-		This.CommonRef:AddSetting[Dropoff_ContainerName,${value}]
-	}
-	
-	member:string Pickup_ContainerName()
-	{
-		return ${This.CommonRef.FindSetting[Pickup_ContainerName]}
-	}
-
-	method SetPickup_ContainerName(string value)
-	{
-		This.CommonRef:AddSetting[Pickup_ContainerName,${value}]
-	}
-
-	member:int Threshold()
-	{
-		return ${This.CommonRef.FindSetting[Threshold]}
-	}
-
-	method SetThreshold(int value)
-	{
-		This.CommonRef:AddSetting[Threshold,${value}]
-	}
+Setting(string, MiningSystem, SetMiningSystem)	
+Setting(string, JetCanMode, SetJetCanMode)
+Setting(string, Dropoff_Bookmark, SetDropoff_Bookmark)
+Setting(string, Pickup_Bookmark, SetPickup_Bookmark)
+Setting(string, Dropoff_Type, SetDropoff_Type)
+Setting(string, Pickup_Type, SetPickup_Type)
+Setting(string, Dropoff_ContainerName, SetDropoff_ContainerName)
+Setting(string, Pickup_ContainerName, SetPickup_ContainerName)
+Setting(int, Threshold, SetThreshold)	
 	
 }
 

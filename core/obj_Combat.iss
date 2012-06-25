@@ -45,9 +45,8 @@ objectdef obj_Combat inherits obj_State
 			This:QueueState["KillCurrentTargets"]
 			KillTargets.AutoLock:Set[TRUE]
 			KillTargets.MinLockCount:Set[5]
-;			Drones:RemainDocked
-;			Drones:Aggressive
-;			Drones:Deploy
+			Drones:RemainDocked
+			Drones:Aggressive
 		}
 	}
 	
@@ -101,6 +100,7 @@ objectdef obj_Combat inherits obj_State
 	
 	member:bool KillCurrentTargets()
 	{
+		DroneTargets:RequestUpdate
 		variable iterator TargetIterator
 		if !${Entity[${CurrentTarget}](exists)}
 		{
