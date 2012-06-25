@@ -334,107 +334,18 @@ objectdef obj_Configuration_Miner
 		This.CommonRef:AddSetting[Miner_OrcaName,""]
 		
 	}
+Setting(string, MiningSystem, SetMiningSystem)	
+Setting(string, Dropoff, SetDropoff)	
+Setting(string, Dropoff_Type, SetDropoff_Type)	
+Setting(string, Dropoff_Type, SetDropoff_Type)	
+Setting(string, Container_Name, SetContainer_Name)	
+Setting(bool, IceMining, SetIceMining)	
+Setting(bool, OrcaMode, SetOrcaMode)	
+Setting(bool, UseBookmarks, SetUseBookmarks)	
+Setting(string, BeltPrefix, SetBeltPrefix)	
+Setting(string, IceBeltPrefix, SetIceBeltPrefix)	
+Setting(bool, Threshold, SetThreshold)	
 
-	member:string MiningSystem()
-	{
-		return ${This.CommonRef.FindSetting[MiningSystem]}
-	}
-
-	method SetMiningSystem(string value)
-	{
-		This.CommonRef:AddSetting[MiningSystem,${value}]
-	}
-
-	member:string Miner_Dropoff()
-	{
-		return ${This.CommonRef.FindSetting[Miner_Dropoff]}
-	}
-
-	method SetMiner_Dropoff(string value)
-	{
-		This.CommonRef:AddSetting[Miner_Dropoff,${value}]
-	}
-
-	member:string Miner_Dropoff_Type()
-	{
-		return ${This.CommonRef.FindSetting[Miner_Dropoff_Type]}
-	}
-
-	method SetMiner_Dropoff_Type(string value)
-	{
-		This.CommonRef:AddSetting[Miner_Dropoff_Type,${value}]
-	}
-	
-	member:string Miner_OrcaName()
-	{
-		return ${This.CommonRef.FindSetting[Miner_OrcaName]}
-	}
-
-	method SetMiner_OrcaName(string value)
-	{
-		This.CommonRef:AddSetting[Miner_OrcaName,${value}]
-	}
-	
-	member:bool IceMining()
-	{
-		return ${This.CommonRef.FindSetting[IceMining]}
-	}
-
-	method SetIceMining(bool value)
-	{
-		This.CommonRef:AddSetting[IceMining,${value}]
-	}
-	
-	member:bool OrcaMode()
-	{
-		return ${This.CommonRef.FindSetting[OrcaMode]}
-	}
-
-	method SetOrcaMode(bool value)
-	{
-		This.CommonRef:AddSetting[OrcaMode,${value}]
-	}
-	
-	member:bool UseBookmarks()
-	{
-		return ${This.CommonRef.FindSetting[UseBookmarks]}
-	}
-
-	method SetUseBookmarks(bool value)
-	{
-		This.CommonRef:AddSetting[UseBookmarks,${value}]
-	}
-
-	member:string BeltPrefix()
-	{
-		return ${This.CommonRef.FindSetting[BeltPrefix]}
-	}
-
-	method SetBeltPrefix(string value)
-	{
-		This.CommonRef:AddSetting[BeltPrefix,${value}]
-	}
-
-	member:string IceBeltPrefix()
-	{
-		return ${This.CommonRef.FindSetting[IceBeltPrefix]}
-	}
-
-	method SetIceBeltPrefix(string value)
-	{
-		This.CommonRef:AddSetting[IceBeltPrefix,${value}]
-	}
-	
-	member:int Threshold()
-	{
-		return ${This.CommonRef.FindSetting[Threshold]}
-	}
-
-	method SetThreshold(int value)
-	{
-		This.CommonRef:AddSetting[Threshold,${value}]
-	}
-	
 }
 	
 objectdef obj_Configuration_Security
@@ -463,265 +374,32 @@ objectdef obj_Configuration_Security
 		
 	}
 
-	member:bool MeToPilot()
-	{
-		return ${This.CommonRef.FindSetting[MeToPilot]}
-	}
-
-	method SetMeToPilot(bool value)
-	{
-		This.CommonRef:AddSetting[MeToPilot,${value}]
-	}
-
-	member:bool MeToCorp()
-	{
-		return ${This.CommonRef.FindSetting[MeToCorp]}
-	}
-
-	method SetMeToCorp(bool value)
-	{
-		This.CommonRef:AddSetting[MeToCorp,${value}]
-	}
-
-	member:bool MeToAlliance()
-	{
-		return ${This.CommonRef.FindSetting[MeToAlliance]}
-	}
-
-	method SetMeToAlliance(bool value)
-	{
-		This.CommonRef:AddSetting[MeToAlliance,${value}]
-	}
-
-	member:bool CorpToPilot()
-	{
-		return ${This.CommonRef.FindSetting[CorpToPilot]}
-	}
-
-	method SetCorpToPilot(bool value)
-	{
-		This.CommonRef:AddSetting[CorpToPilot,${value}]
-	}
-
-	member:bool CorpToCorp()
-	{
-		return ${This.CommonRef.FindSetting[CorpToCorp]}
-	}
-
-	method SetCorpToCorp(bool value)
-	{
-		This.CommonRef:AddSetting[CorpToCorp,${value}]
-	}
-
-	member:bool CorpToAlliance()
-	{
-		return ${This.CommonRef.FindSetting[CorpToAlliance]}
-	}
-
-	method SetCorpToAlliance(bool value)
-	{
-		This.CommonRef:AddSetting[CorpToAlliance,${value}]
-	}
-	
-	member:bool AllianceToPilot()
-	{
-		return ${This.CommonRef.FindSetting[AllianceToPilot]}
-	}
-
-	method SetAllianceToPilot(bool value)
-	{
-		This.CommonRef:AddSetting[AllianceToPilot,${value}]
-	}
-
-	member:bool AllianceToCorp()
-	{
-		return ${This.CommonRef.FindSetting[AllianceToCorp]}
-	}
-
-	method SetAllianceToCorp(bool value)
-	{
-		This.CommonRef:AddSetting[AllianceToCorp,${value}]
-	}
-
-	member:bool AllianceToAlliance()
-	{
-		return ${This.CommonRef.FindSetting[AllianceToAlliance]}
-	}
-
-	method SetAllianceToAlliance(bool value)
-	{
-		This.CommonRef:AddSetting[AllianceToAlliance,${value}]
-	}
-	
-	member:int MeToPilot_Value()
-	{
-		return ${This.CommonRef.FindSetting[MeToPilot_Value]}
-	}
-
-	method SetMeToPilot_Value(int value)
-	{
-		This.CommonRef:AddSetting[MeToPilot_Value,${value}]
-	}
-	
-	member:int MeToCorp_Value()
-	{
-		return ${This.CommonRef.FindSetting[MeToCorp_Value]}
-	}
-
-	method SetMeToCorp_Value(int value)
-	{
-		This.CommonRef:AddSetting[MeToCorp_Value,${value}]
-	}
-	
-	member:int MeToAlliance_Value()
-	{
-		return ${This.CommonRef.FindSetting[MeToAlliance_Value]}
-	}
-
-	method SetMeToAlliance_Value(int value)
-	{
-		This.CommonRef:AddSetting[MeToAlliance_Value,${value}]
-	}
-	
-	member:int CorpToPilot_Value()
-	{
-		return ${This.CommonRef.FindSetting[CorpToPilot_Value]}
-	}
-
-	method SetCorpToPilot_Value(int value)
-	{
-		This.CommonRef:AddSetting[CorpToPilot_Value,${value}]
-	}
-	
-	member:int CorpToCorp_Value()
-	{
-		return ${This.CommonRef.FindSetting[CorpToCorp_Value]}
-	}
-
-	method SetCorpToCorp_Value(int value)
-	{
-		This.CommonRef:AddSetting[CorpToCorp_Value,${value}]
-	}
-	
-	member:int CorpToAlliance_Value()
-	{
-		return ${This.CommonRef.FindSetting[CorpToAlliance_Value]}
-	}
-
-	method SetCorpToAlliance_Value(int value)
-	{
-		This.CommonRef:AddSetting[CorpToAlliance_Value,${value}]
-	}
-	
-	member:int AllianceToPilot_Value()
-	{
-		return ${This.CommonRef.FindSetting[AllianceToPilot_Value]}
-	}
-
-	method SetAllianceToPilot_Value(int value)
-	{
-		This.CommonRef:AddSetting[AllianceToPilot_Value,${value}]
-	}
-	
-	member:int AllianceToCorp_Value()
-	{
-		return ${This.CommonRef.FindSetting[AllianceToCorp_Value]}
-	}
-
-	method SetAllianceToCorp_Value(int value)
-	{
-		This.CommonRef:AddSetting[AllianceToCorp_Value,${value}]
-	}
-	
-	member:int AllianceToAlliance_Value()
-	{
-		return ${This.CommonRef.FindSetting[AllianceToAlliance_Value]}
-	}
-
-	method SetAllianceToAlliance_Value(int value)
-	{
-		This.CommonRef:AddSetting[AllianceToAlliance_Value,${value}]
-	}
-	
-	member:bool FleeWaitTime_Enabled()
-	{
-		return ${This.CommonRef.FindSetting[FleeWaitTime_Enabled]}
-	}
-
-	method SetFleeWaitTime_Enabled(bool value)
-	{
-		This.CommonRef:AddSetting[FleeWaitTime_Enabled,${value}]
-	}
-
-	member:int FleeWaitTime()
-	{
-		return ${This.CommonRef.FindSetting[FleeWaitTime]}
-	}
-
-	method SetFleeWaitTime(int value)
-	{
-		This.CommonRef:AddSetting[FleeWaitTime,${value}]
-	}
-	
-	member:bool Break_Enabled()
-	{
-		return ${This.CommonRef.FindSetting[Break_Enabled]}
-	}
-
-	method SetBreak_Enabled(bool value)
-	{
-		This.CommonRef:AddSetting[Break_Enabled,${value}]
-	}
-
-	member:int Break_Duration()
-	{
-		return ${This.CommonRef.FindSetting[Break_Duration]}
-	}
-
-	method SetBreak_Duration(int value)
-	{
-		This.CommonRef:AddSetting[Break_Duration,${value}]
-	}
-	
-	member:int Break_Interval()
-	{
-		return ${This.CommonRef.FindSetting[Break_Interval]}
-	}
-
-	method SetBreak_Interval(int value)
-	{
-		This.CommonRef:AddSetting[Break_Interval,${value}]
-	}
-	
-	member:bool OverrideFleeBookmark_Enabled()
-	{
-		return ${This.CommonRef.FindSetting[OverrideFleeBookmark_Enabled]}
-	}
-
-	method SetOverrideFleeBookmark_Enabled(bool value)
-	{
-		This.CommonRef:AddSetting[OverrideFleeBookmark_Enabled,${value}]
-	}
-
-	member:string OverrideFleeBookmark()
-	{
-		return ${This.CommonRef.FindSetting[OverrideFleeBookmark]}
-	}
-
-	method SetOverrideFleeBookmark(string value)
-	{
-		This.CommonRef:AddSetting[OverrideFleeBookmark,${value}]
-	}
-
-	member:bool TargetFlee()
-	{
-		return ${This.CommonRef.FindSetting[TargetFlee]}
-	}
-
-	method SetTargetFlee(bool value)
-	{
-		This.CommonRef:AddSetting[TargetFlee,${value}]
-	}
+Setting(bool, MeToPilot, SetMeToPilot)	
+Setting(bool, MeToCorp, SetMeToCorp)	
+Setting(bool, MeToAlliance, SetMeToAlliance)	
+Setting(bool, CorpToPilot, SetCorpToPilot)	
+Setting(bool, CorpToCorp, SetCorpToCorp)	
+Setting(bool, CorpToAlliance, SetCorpToAlliance)	
+Setting(bool, AllianceToPilot, SetAllianceToPilot)	
+Setting(bool, AllianceToCorp, SetAllianceToCorp)	
+Setting(bool, AllianceToAlliance, SetAllianceToAlliance)	
+Setting(int, MeToPilot_Value, SetMeToPilot_Value)	
+Setting(int, MeToCorp_Value, SetMeToCorp_Value)	
+Setting(int, MeToAlliance_Value, SetMeToAlliance_Value)	
+Setting(int, CorpToPilot_Value, SetCorpToPilot_Value)	
+Setting(int, CorpToCorp_Value, SetCorpToCorp_Value)	
+Setting(int, CorpToAlliance_Value, SetCorpToAlliance_Value)	
+Setting(int, AllianceToPilot_Value, SetAllianceToPilot_Value)	
+Setting(int, AllianceToCorp_Value, SetAllianceToCorp_Value)	
+Setting(int, AllianceToAlliance_Value, SetAllianceToAlliance_Value)	
+Setting(bool, FleeWaitTime_Enabled, SetFleeWaitTime_Enabled)	
+Setting(int, FleeWaitTime, SetFleeWaitTime)	
+Setting(bool, Break_Enabled, SetBreak_Enabled)	
+Setting(int, Break_Duration, SetBreak_Duration)	
+Setting(int, Break_Interval, SetBreak_Interval)	
+Setting(bool, OverrideFleeBookmark_Enabled, SetOverrideFleeBookmark_Enabled)	
+Setting(string, OverrideFleeBookmark, SetOverrideFleeBookmark)	
+Setting(bool, TargetFlee, SetTargetFlee)	
 
 	
 }	
