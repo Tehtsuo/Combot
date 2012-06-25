@@ -357,7 +357,7 @@ objectdef obj_Miner inherits obj_State
 		}
 		
 		Asteroids.MinLockCount:Set[${Ship.ModuleList_MiningLaser.Count}]
-		Asteroids.MaxRange:Set[${Ship.Module_MiningLaser_Range}]
+		Asteroids.MaxRange:Set[${Ship.ModuleList_MiningLaser.Range}]
 		
 		if ${Config.Miner.OrcaMode}
 		{
@@ -481,7 +481,7 @@ objectdef obj_Miner inherits obj_State
 		{
 			if ${Entity[CategoryID==CATEGORYID_ORE].Distance} > ${MyShip.MaxTargetRange}
 			{
-				Move:Approach[${Entity[CategoryID==CATEGORYID_ORE]}, ${Ship.Module_MiningLaser_Range}]
+				Move:Approach[${Entity[CategoryID==CATEGORYID_ORE]}, ${Ship.ModuleList_MiningLaser.Range}]
 			}
 		}
 		
@@ -520,12 +520,12 @@ objectdef obj_Miner inherits obj_State
 		if ${Roid:First(exists)}
 		do
 		{
-			if	${Roid.Value.Distance} > ${Ship.Module_MiningLaser_Range}
+			if	${Roid.Value.Distance} > ${Ship.ModuleList_MiningLaser.Range}
 			{
-				Move:Approach[${Roid.Value.ID}, ${Ship.Module_MiningLaser_Range}]
+				Move:Approach[${Roid.Value.ID}, ${Ship.ModuleList_MiningLaser.Range}]
 				return FALSE
 			}
-			if ${Config.Miner.IceMining}
+			if ${Config.Miner.IceMining} && ${Roid.Value(exists)}
 			{
 				UI:Update["obj_Miner", "Activating ${Ship.ModuleList_MiningLaser.InActiveCount} laser(s) on ${Roid.Value.Name} (${ComBot.MetersToKM_Str[${Roid.Value.Distance}]})", "y"]
 				Ship.ModuleList_MiningLaser:ActivateCount[${Ship.ModuleList_MiningLaser.InActiveCount}, ${Roid.Value.ID}]
@@ -533,7 +533,7 @@ objectdef obj_Miner inherits obj_State
 			}
 			else
 			{
-				if !${Ship.ModuleList_MiningLaser.IsActiveOn[${Roid.Value.ID}]}
+				if !${Ship.ModuleList_MiningLaser.IsActiveOn[${Roid.Value.ID}]} && ${Roid.Value.Name(exists)}
 				{
 					UI:Update["obj_Miner", "Activating 1 laser on ${Roid.Value.Name} (${ComBot.MetersToKM_Str[${Roid.Value.Distance}]})", "y"]
 					Ship.ModuleList_MiningLaser:Activate[${Roid.Value.ID}]
