@@ -64,7 +64,7 @@ objectdef obj_TargetList inherits obj_State
 	
 	method AddTargetingMe()
 	{
-		This:AddQueryString["IsTargetingMe && IsNPC"]
+		This:AddQueryString["IsTargetingMe && IsNPC && !IsMoribund"]
 		NeedUpdate:Set[TRUE]
 	}
 	
@@ -76,7 +76,7 @@ objectdef obj_TargetList inherits obj_State
 	
 	method AddAllNPCs()
 	{
-		variable string QueryString="CategoryID = CATEGORYID_ENTITY && IsNPC && !("
+		variable string QueryString="CategoryID = CATEGORYID_ENTITY && IsNPC && !IsMoribund && !("
 		
 		;Exclude Groups here
 		QueryString:Concat["GroupID = GROUP_CONCORDDRONE ||"]
@@ -119,7 +119,7 @@ objectdef obj_TargetList inherits obj_State
 		This:QueueState["SetUpdated"]
 		This:QueueState["UpdateList"]
 		Profiling:EndTrack
-		echo UpdateList ${This.ObjectName}
+;		echo UpdateList ${This.ObjectName}
 		return TRUE
 	}
 	
@@ -245,7 +245,7 @@ objectdef obj_TargetList inherits obj_State
 		{
 			do
 			{
-				if !${EntityIterator.Value.IsLockedTarget} && !${EntityIterator.Value.BeingTargeted} && ${LockedAndLockingTargets.Used} < ${MinLockCount} && ${MaxTarget} > ${Targets.Locked.Used} && ${EntityIterator.Value.Distance} < ${MyShip.MaxTargetRange}
+				if !${EntityIterator.Value.IsLockedTarget} && !${EntityIterator.Value.BeingTargeted} && ${LockedAndLockingTargets.Used} < ${MinLockCount} && ${MaxTarget} > (${Me.TargetCount} + ${Me.TargetingCount}) && ${EntityIterator.Value.Distance} < ${MyShip.MaxTargetRange}
 				{
 					EntityIterator.Value:LockTarget
 					LockedAndLockingTargets:Add[${EntityIterator.Value.ID}]

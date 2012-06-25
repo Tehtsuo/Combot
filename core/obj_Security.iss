@@ -110,7 +110,7 @@ objectdef obj_Security inherits obj_State
 		variable int MyAllianceID
 		variable int MyCorpID
 
-		Me:GetTargetedBy[Threats]
+/*		Me:GetTargetedBy[Threats]
 		Threats:RemoveByQuery[${LavishScript.CreateQuery[IsPC == FALSE}]}]
 		Threats:Collapse
 		Threats:GetIterator[Threat]
@@ -146,7 +146,7 @@ objectdef obj_Security inherits obj_State
 			Profiling:EndTrack
 			return TRUE
 		}
-		while ${Threat:Next(exists)}	
+		while ${Threat:Next(exists)}	*/
 
 		
 
