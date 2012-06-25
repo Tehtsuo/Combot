@@ -133,7 +133,7 @@ objectdef obj_Module inherits obj_State
 	
 	member:float Range()
 	{
-		if ${MyShip.Module[${ModuleID}].OptimalRange} != NULL
+		if ${MyShip.Module[${ModuleID}].OptimalRange(exists)}
 		{
 			return ${MyShip.Module[${ModuleID}].OptimalRange}
 		}
