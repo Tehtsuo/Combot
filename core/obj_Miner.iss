@@ -520,12 +520,16 @@ objectdef obj_Miner inherits obj_State
 		if ${Roid:First(exists)}
 		do
 		{
+			if !${Roid.Value.ID(exists)}
+			{
+				continue
+			}
 			if	${Roid.Value.Distance} > ${Ship.ModuleList_MiningLaser.Range}
 			{
 				Move:Approach[${Roid.Value.ID}, ${Ship.ModuleList_MiningLaser.Range}]
 				return FALSE
 			}
-			if ${Config.Miner.IceMining} && ${Roid.Value(exists)}
+			if ${Config.Miner.IceMining}
 			{
 				UI:Update["obj_Miner", "Activating ${Ship.ModuleList_MiningLaser.InActiveCount} laser(s) on ${Roid.Value.Name} (${ComBot.MetersToKM_Str[${Roid.Value.Distance}]})", "y"]
 				Ship.ModuleList_MiningLaser:ActivateCount[${Ship.ModuleList_MiningLaser.InActiveCount}, ${Roid.Value.ID}]
@@ -533,7 +537,7 @@ objectdef obj_Miner inherits obj_State
 			}
 			else
 			{
-				if !${Ship.ModuleList_MiningLaser.IsActiveOn[${Roid.Value.ID}]} && ${Roid.Value.Name(exists)}
+				if !${Ship.ModuleList_MiningLaser.IsActiveOn[${Roid.Value.ID}]}
 				{
 					UI:Update["obj_Miner", "Activating 1 laser on ${Roid.Value.Name} (${ComBot.MetersToKM_Str[${Roid.Value.Distance}]})", "y"]
 					Ship.ModuleList_MiningLaser:Activate[${Roid.Value.ID}]
