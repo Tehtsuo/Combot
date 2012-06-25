@@ -247,10 +247,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									This:AddItem[${BookmarkIterator.Value.Label}]
 								}
 								while ${BookmarkIterator:Next(exists)}
-							This.ItemByText[${Script[ComBot].VariableScope.Config.Miner.Miner_Dropoff}]:Select
+							This.ItemByText[${Script[ComBot].VariableScope.Config.Miner.Dropoff}]:Select
 						</OnLoad>
 						<OnSelect>
-							Script[ComBot].VariableScope.Config.Miner:SetMiner_Dropoff[${This.SelectedItem.Text}]
+							Script[ComBot].VariableScope.Config.Miner:SetDropoff[${This.SelectedItem.Text}]
 						</OnSelect>
 					</listbox>
 					<Text name='obj_MinerOrcaNameTitle'> 
@@ -267,10 +267,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Width>36%</Width> 
 						<Height>3%</Height> 
 						<OnLoad>
-							This:SetText[${Script[ComBot].VariableScope.Config.Miner.Miner_OrcaName}]
+							This:SetText[${Script[ComBot].VariableScope.Config.Miner.Container_Name}]
 						</OnLoad>
 						<OnChange>
-							Script[ComBot].VariableScope.Config.Miner:SetMiner_OrcaName[${This.Text}]
+							Script[ComBot].VariableScope.Config.Miner:SetContainer_Name[${This.Text}]
 						</OnChange>
 					</TextEntry>
 
@@ -305,10 +305,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							<Item>Corporation Folder 7</Item>
 						</Items>
 						<OnLoad>
-							This.ItemByText[${Script[ComBot].VariableScope.Config.Miner.Miner_Dropoff_Type}]:Select
+							This.ItemByText[${Script[ComBot].VariableScope.Config.Miner.Dropoff_Type}]:Select
 						</OnLoad>
 						<OnSelect>
-							Script[ComBot].VariableScope.Config.Miner:SetMiner_Dropoff_Type[${This.SelectedItem.Text}]
+							Script[ComBot].VariableScope.Config.Miner:SetDropoff_Type[${This.SelectedItem.Text}]
 						</OnSelect>
 					</listbox>
 					<Text name='obj_MinerOrePriorityTitle'> 
