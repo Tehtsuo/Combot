@@ -39,6 +39,8 @@ objectdef obj_TargetList inherits obj_State
 	variable bool AutoLock = FALSE
 	variable int MinLockCount = 2
 	variable int MaxLockCount = 2
+	variable bool NeedUpdate = TRUE
+	variable bool Updated = FALSE
 	
 	method Initialize()
 	{
@@ -57,16 +59,24 @@ objectdef obj_TargetList inherits obj_State
 	method AddQueryString(string QueryString)
 	{
 		QueryStringList:Insert["${QueryString.Escape}"]
+		NeedUpdate:Set[TRUE]
 	}
 	
 	method AddTargetingMe()
 	{
-		This:AddQueryString["IsTargetingMe && IsNPC"]
+		This:AddQueryString["IsTargetingMe && IsNPC && !IsMoribund"]
+		NeedUpdate:Set[TRUE]
+	}
+	
+	method RequestUpdate()
+	{
+		NeedUpdate:Set[TRUE]
+		Updated:Set[FALSE]
 	}
 	
 	method AddAllNPCs()
 	{
-		variable string QueryString="CategoryID = CATEGORYID_ENTITY && IsNPC && !("
+		variable string QueryString="CategoryID = CATEGORYID_ENTITY && IsNPC && !IsMoribund && !("
 		
 		;Exclude Groups here
 		QueryString:Concat["GroupID = GROUP_CONCORDDRONE ||"]
@@ -83,6 +93,13 @@ objectdef obj_TargetList inherits obj_State
 	
 	member:bool UpdateList()
 	{
+		Profiling:StartTrack["TargetList_UpdateList"]
+		if !${NeedUpdate}
+		{
+			Profiling:EndTrack
+			return FALSE
+		}
+		NeedUpdate:Set[FALSE]
 		variable iterator QueryStringIterator
 		QueryStringList:GetIterator[QueryStringIterator]
 
@@ -99,19 +116,32 @@ objectdef obj_TargetList inherits obj_State
 		{
 			This:QueueState["ManageLocks"]
 		}
+		This:QueueState["SetUpdated"]
 		This:QueueState["UpdateList"]
+		Profiling:EndTrack
+;		echo UpdateList ${This.ObjectName}
+		return TRUE
+	}
+	
+	member:bool SetUpdated()
+	{
+		Updated:Set[TRUE]
 		return TRUE
 	}
 	
 	member:bool GetQueryString(string QueryString)
 	{
+		Profiling:StartTrack["TargetList_GetQueryString"]
 		variable index:entity entity_index
 		variable iterator entity_iterator
 		if !${Client.InSpace}
 		{
+			Profiling:EndTrack
 			return FALSE
 		}
-		EVE:QueryEntities[entity_index, "${QueryString.Escape}"]	
+		Profiling:StartTrack["QueryEntities"]
+		EVE:QueryEntities[entity_index, "${QueryString.Escape}"]
+		Profiling:EndTrack
 		entity_index:GetIterator[entity_iterator]
 		if ${entity_iterator:First(exists)}
 		{
@@ -140,11 +170,13 @@ objectdef obj_TargetList inherits obj_State
 			}
 			while ${entity_iterator:Next(exists)}
 		}
+		Profiling:EndTrack
 		return TRUE
 	}
 	
 	member:bool PopulateList()
 	{
+		Profiling:StartTrack["TargetList_PopulateList"]
 		This.TargetList:Clear
 		This.LockedTargetList:Clear
 		
@@ -160,6 +192,7 @@ objectdef obj_TargetList inherits obj_State
 		This.TargetListBufferOOR:Clear
 		This.LockedTargetListBuffer:Clear
 		This.LockedTargetListBufferOOR:Clear
+		Profiling:EndTrack
 		return TRUE
 	}
 	
@@ -167,8 +200,10 @@ objectdef obj_TargetList inherits obj_State
 	{
 		if !${Client.InSpace} || ${Me.ToEntity.Mode} == 3
 		{
+			Profiling:EndTrack
 			return TRUE
 		}
+		Profiling:StartTrack["TargetList_ManageLocks"]
 		variable iterator EntityIterator
 		variable bool NeedLock = FALSE
 		variable int64 LowestLock = -1
@@ -210,19 +245,20 @@ objectdef obj_TargetList inherits obj_State
 		{
 			do
 			{
-				if !${EntityIterator.Value.IsLockedTarget} && !${EntityIterator.Value.BeingTargeted} && ${LockedAndLockingTargets.Used} < ${MinLockCount} && ${MaxTarget} > ${Targets.Locked.Used} && ${EntityIterator.Value.Distance} < ${MyShip.MaxTargetRange}
+				if !${EntityIterator.Value.IsLockedTarget} && !${EntityIterator.Value.BeingTargeted} && ${LockedAndLockingTargets.Used} < ${MinLockCount} && ${MaxTarget} > (${Me.TargetCount} + ${Me.TargetingCount}) && ${EntityIterator.Value.Distance} < ${MyShip.MaxTargetRange}
 				{
 					EntityIterator.Value:LockTarget
 					LockedAndLockingTargets:Add[${EntityIterator.Value.ID}]
 					OwnedTargets:Add[${EntityIterator.Value.ID}]
 					This:QueueState["Idle", ${Math.Rand[200]}]
+					Profiling:EndTrack
 					return TRUE
 				}
 			}
 			while ${EntityIterator:Next(exists)}
 		}
 		
-		
+		Profiling:EndTrack
 		return TRUE
 	}
 	

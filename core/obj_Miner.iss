@@ -90,6 +90,7 @@ objectdef obj_Miner inherits obj_State
 	
 	member:bool CheckCargoHold()
 	{
+		Profiling:StartTrack["Miner_CheckCargohold"]
 		switch ${Config.Miner.Miner_Dropoff_Type}
 		{
 			case Orca
@@ -138,6 +139,7 @@ objectdef obj_Miner inherits obj_State
 				break
 		}
 		This:QueueState["Mine"]
+		Profiling:EndTrack
 		return TRUE;
 	}
 
@@ -152,6 +154,7 @@ objectdef obj_Miner inherits obj_State
 
 	member:bool Offload()
 	{
+		Profiling:StartTrack["Miner_Offload"]
 		UI:Update["obj_Miner", "Unloading cargo", "g"]
 		Cargo:PopulateCargoList[SHIP]
 		switch ${Config.Miner.Miner_Dropoff_Type}
@@ -163,16 +166,19 @@ objectdef obj_Miner inherits obj_State
 				Cargo:MoveCargoList[CORPORATEHANGAR, ${Config.Miner.Miner_Dropoff_Type}]
 				break
 		}
+		Profiling:StartTrack["Drones_DroneControl"]
 		return TRUE
 	}
 	
 	member:bool StackItemHangar()
 	{
+		Profiling:StartTrack["Miner_StackItemHanger"]
 		variable int64 Orca
 		if !${EVEWindow[ByName, "Inventory"](exists)}
 		{
 			UI:Update["obj_Miner", "Making sure inventory is open", "g"]
 			MyShip:Open
+			Profiling:EndTrack
 			return FALSE
 		}
 
@@ -191,6 +197,7 @@ objectdef obj_Miner inherits obj_State
 				EVE:StackItems[MyStationCorporateHangar, StationCorporateHangar, "${Config.Miner.Miner_Dropoff_Type.Escape}"]
 				break
 		}
+		Profiling:EndTrack
 		return TRUE
 	}
 	
@@ -295,17 +302,20 @@ objectdef obj_Miner inherits obj_State
 	
 	member:bool Mine()
 	{
+		Profiling:StartTrack["Miner_Mine"]
 		This:Clear
 		This:QueueState["OpenCargoHold", 10]
 
 		if !${Client.InSpace}
 		{
 			This:QueueState["CheckCargoHold", 1000]
+			Profiling:EndTrack
 			return TRUE
 		}
 		
 		if ${Me.ToEntity.Mode} == 3
 		{
+			Profiling:EndTrack
 			return FALSE
 		}
 		
@@ -321,6 +331,7 @@ objectdef obj_Miner inherits obj_State
 				Cargo:MoveCargoList[SHIP]
 				This:QueueState["Idle", 1000]
 				This:QueueState["Mine"]
+				Profiling:EndTrack
 				return TRUE
 			}
 			if ${Config.Miner.Miner_Dropoff_Type.Equal[Jetcan]} && ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipCorpHangar]} > 0
@@ -329,6 +340,7 @@ objectdef obj_Miner inherits obj_State
 				Cargo:MoveCargoList[SHIP]
 				This:QueueState["Idle", 1000]
 				This:QueueState["Mine"]
+				Profiling:EndTrack
 				return TRUE
 			}
 		}
@@ -343,6 +355,7 @@ objectdef obj_Miner inherits obj_State
 				if ${Entity[${Orca}].Distance} > LOOT_RANGE
 				{
 					Move:Approach[${Orca}, LOOT_RANGE]
+					Profiling:EndTrack
 					return FALSE
 				}
 				else
@@ -353,11 +366,13 @@ objectdef obj_Miner inherits obj_State
 						{
 							UI:Update["obj_Miner", "Opening ${Config.Miner.Miner_OrcaName}", "g"]
 							Entity[${Orca}]:Open
+							Profiling:EndTrack
 							return FALSE
 						}
 						if !${EVEWindow[ByItemID, ${Orca}](exists)}
 						{
 							EVEWindow[ByName, Inventory]:MakeChildActive[${Orca}]
+							Profiling:EndTrack
 							return FALSE
 						}
 						;UI:Update["obj_Miner", "Unloading to ${Config.Miner.Miner_OrcaName}", "g"]
@@ -366,6 +381,7 @@ objectdef obj_Miner inherits obj_State
 						This:QueueState["Idle", 1000]
 						This:QueueState["StackItemHangar"]
 						This:QueueState["Mine"]
+						Profiling:EndTrack
 						return TRUE
 					}
 				}
@@ -406,6 +422,7 @@ objectdef obj_Miner inherits obj_State
 			This:QueueState["Traveling", 1000]
 			This:QueueState["MoveToBelt", 1000]
 			This:QueueState["Traveling", 1000]
+			Profiling:EndTrack
 			return TRUE
 		}
 
@@ -435,24 +452,30 @@ objectdef obj_Miner inherits obj_State
 		{
 			This:QueueState["ActivateLasers"]
 			This:QueueState["Mine"]
+			Profiling:EndTrack
 			return TRUE
 		}
 		
 		if !${Config.Miner.Miner_Dropoff_Type.Equal[No Dropoff]}
 		{
 			This:QueueState["CheckCargoHold"]
+			Profiling:EndTrack
 			return TRUE
 		}
+		Profiling:EndTrack
 		return FALSE
 	}
 
 
 	member:bool ActivateLasers()
 	{
+		Profiling:StartTrack["Miner_ActivateLasers"]
 		if  ${Ship.ModuleList_MiningLaser.ActiveCount} == ${Ship.ModuleList_MiningLaser.Count}
 		{
+			Profiling:EndTrack
 			return TRUE
 		}
+		Asteroids:RequestUpdate
 		variable iterator Roid
 		Asteroids.LockedTargetList:GetIterator[Roid]
 		if ${Roid:First(exists)}
@@ -461,12 +484,14 @@ objectdef obj_Miner inherits obj_State
 			if	${Roid.Value.Distance} > ${Ship.Module_MiningLaser_Range}
 			{
 				Move:Approach[${Roid.Value.ID}, ${Ship.Module_MiningLaser_Range}]
+				Profiling:EndTrack
 				return FALSE
 			}
 			if ${Config.Miner.IceMining}
 			{
 				UI:Update["obj_Miner", "Activating ${Ship.ModuleList_MiningLaser.InActiveCount} laser(s) on ${Roid.Value.Name} (${ComBot.MetersToKM_Str[${Roid.Value.Distance}]})", "y"]
 				Ship.ModuleList_MiningLaser:ActivateCount[${Ship.ModuleList_MiningLaser.InActiveCount}, ${Roid.Value.ID}]
+				Profiling:EndTrack
 				return TRUE
 			}
 			else
@@ -475,11 +500,13 @@ objectdef obj_Miner inherits obj_State
 				{
 					UI:Update["obj_Miner", "Activating 1 laser on ${Roid.Value.Name} (${ComBot.MetersToKM_Str[${Roid.Value.Distance}]})", "y"]
 					Ship.ModuleList_MiningLaser:Activate[${Roid.Value.ID}]
+					Profiling:EndTrack
 					return FALSE
 				}
 			}
 		}
 		while ${Roid:Next(exists)}
+		Profiling:EndTrack
 		return FALSE
 	}
 	
