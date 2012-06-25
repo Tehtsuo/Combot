@@ -119,16 +119,33 @@ objectdef obj_Hauler inherits obj_State
 	}
 
 	member:bool PrepOffload()
-	{
+	{	
+		if ${Client.InSpace}
+		{
+			return TRUE
+		}
+		if !${EVEWindow[ByName, "Inventory"](exists)}
+		{
+			UI:Update["obj_Hauler", "Opening inventory", "g"]
+			MyShip:OpenCargo[]
+			return FALSE
+		}
 		switch ${Config.Hauler.Dropoff_Type}
 		{
 			case Personal Hangar
 				break
 			default
+				if !${EVEWindow[ByName, Inventory].ChildWindowExists[Corporation Hangars]}
+				{
+					UI:Update["obj_Hauler", "Delivery Location: Corporate Hangars child not found", "r"]
+					UI:Update["obj_Hauler", "Closing inventory to fix possible EVE bug", "y"]
+					EVEWindow[ByName, Inventory]:Close
+					return FALSE
+				}
 				EVEWindow[ByName, Inventory]:MakeChildActive[Corporation Hangars]
 				break
 		}
-		return TRUE
+		return TRUE		
 	}
 	
 	member:bool Offload()
@@ -208,14 +225,10 @@ objectdef obj_Hauler inherits obj_State
 	
 	member:bool LootCans()
 	{
-		if ${Salvager.Salvaging} 
-		{
-			return FALSE
-		}
-		else
-		{
-			return TRUE
-		}
+
+		
+		
+		return TRUE
 	}
 	
 	
@@ -243,6 +256,7 @@ objectdef obj_Hauler inherits obj_State
 			This:QueueState["Haul"]
 			if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) >= ${Config.Hauler.Threshold} * .01
 			{
+				echo Exiting before Haul - (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) >= ${Config.Hauler.Threshold} * .01
 				return TRUE
 			}
 		}
@@ -256,6 +270,7 @@ objectdef obj_Hauler inherits obj_State
 		switch ${Config.Hauler.Pickup_Type}
 		{
 			case Orca
+				echo Orca
 				if ${Entity[Name = "${Config.Hauler.Pickup_ContainerName}"](exists)}
 				{
 					Container:Set[${Entity[Name = "${Config.Hauler.Pickup_ContainerName}"].ID}]
@@ -291,9 +306,10 @@ objectdef obj_Hauler inherits obj_State
 				}
 				else
 				{
+					echo Check for orca
 					if ${Local[${Config.Hauler.Pickup_ContainerName}].ToFleetMember(exists)}
 						{
-							UI:Update["obj_Miner", "Warping to ${Local[${Config.Hauler.Pickup_ContainerName}].ToFleetMember.ToPilot.Name}", "g"]
+							UI:Update["obj_Hauler", "Warping to ${Local[${Config.Hauler.Pickup_ContainerName}].ToFleetMember.ToPilot.Name}", "g"]
 							Local[${Config.Hauler.Pickup_ContainerName}].ToFleetMember:WarpTo
 							Client:Wait[5000]
 							This:Clear
@@ -355,13 +371,13 @@ objectdef obj_Hauler inherits obj_State
 					FleetMembers:RemoveByQuery[${LavishScript.CreateQuery[ID == ${Me.CharID}]}]
 					FleetMembers:Collapse
 				}
-				echo ${FleetMembers.Get[1].ID}
+				echo Entity exists - ${Entity[Name = "${FleetMembers.Get[1].ToPilot.Name}"](exists)}
 				if ${Entity[Name = "${FleetMembers.Get[1].ToPilot.Name}"](exists)}
 				{
 					FleetMembers:Remove[1]
-					Salvager:NonDedicatedSalvage[0.95, FALSE]
+					FleetMembers:Collapse
 					This:Clear
-					This:QueueState["LootCans"]
+					This:QueueState["LootCans", 2000]
 					This:QueueState["Haul"]
 					return TRUE
 				}
@@ -369,6 +385,7 @@ objectdef obj_Hauler inherits obj_State
 				{
 					echo Warping to ${FleetMembers.Get[1].ToPilot.Name}
 					FleetMembers.Get[1]:WarpTo[]
+					Client:Wait[5000]
 					This:Clear
 					This:QueueState["Traveling", 1000]
 					This:QueueState["Haul"]
