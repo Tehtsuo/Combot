@@ -67,10 +67,25 @@ objectdef obj_Profiling inherits obj_State
 		variable iterator TimeSpentIterator
 		variable int count=0
 		variable int upperlimit
+		
+		variable collection:string TimeSpentCopy
+		
 		TimeSpent:GetIterator[TimeSpentIterator]
+
 		if ${TimeSpentIterator:First(exists)}
 		{
-			upperlimit:Set[${TimeSpentIterator.Value}]
+			do
+			{
+				TimeSpentCopy:Set[${TimeSpentIterator.Value}, ${TimeSpentIterator.Key}]
+			}
+			while ${TimeSpentIterator:Next(exists)}
+		}
+		
+		
+		TimeSpentCopy:GetIterator[TimeSpentIterator]
+		if ${TimeSpentIterator:Last(exists)}
+		{
+			upperlimit:Set[${TimeSpentIterator.Key}]
 			do
 			{
 				count:Inc
@@ -79,12 +94,18 @@ objectdef obj_Profiling inherits obj_State
 					break
 				}
 				UIElement[obj_ProfilingGauge${count}@Profiling@ComBotTab@ComBot]:SetRange[${upperlimit}]
-				UIElement[obj_ProfilingGauge${count}@Profiling@ComBotTab@ComBot]:SetValue[${TimeSpentIterator.Value}]
-				UIElement[obj_ProfilingGauge${count}_Text@Profiling@ComBotTab@ComBot]:SetValue[${TimeSpentIterator.Key} - ${TimeSpentIterator.Value}ms in ${TimeCalled.Element[${TimeSpentIterator.Key}]} calls]
+				UIElement[obj_ProfilingGauge${count}@Profiling@ComBotTab@ComBot]:SetValue[${TimeSpentIterator.Key}]
+				UIElement[obj_ProfilingGauge${count}_Text@Profiling@ComBotTab@ComBot]:SetText[${TimeSpentIterator.Value} - ${TimeSpentIterator.Key}ms in ${TimeCalled.Element[${TimeSpentIterator.Value}]} calls]
 				
-				echo ${TimeSpentIterator.Key} - ${TimeSpentIterator.Value}ms in ${TimeCalled.Element[${TimeSpentIterator.Key}]} calls
+				echo ${TimeSpentIterator.Value} - ${TimeSpentIterator.Key}ms in ${TimeCalled.Element[${TimeSpentIterator.Value}]} calls
 			}
-			while ${TimeSpentIterator:Next(exists)}
+			while ${TimeSpentIterator:Previous(exists)}
+		}
+		while ${count} < 9
+		{
+			UIElement[obj_ProfilingGauge${count}@Profiling@ComBotTab@ComBot]:SetValue[0]
+			UIElement[obj_ProfilingGauge${count}_Text@Profiling@ComBotTab@ComBot]:SetText[]
+			count:Inc
 		}
 		TimeSpent:Clear
 		TimeCalled:Clear
