@@ -344,7 +344,7 @@ Setting(bool, OrcaMode, SetOrcaMode)
 Setting(bool, UseBookmarks, SetUseBookmarks)	
 Setting(string, BeltPrefix, SetBeltPrefix)	
 Setting(string, IceBeltPrefix, SetIceBeltPrefix)	
-Setting(bool, Threshold, SetThreshold)	
+Setting(int, Threshold, SetThreshold)	
 
 }
 	

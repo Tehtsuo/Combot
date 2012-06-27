@@ -26,7 +26,6 @@ objectdef obj_Security inherits obj_State
 		This[parent]:Initialize
 		This.NonGameTiedPulse:Set[TRUE]
 		This:AssignStateQueueDisplay[obj_SecurityStateList@Security@ComBotTab@ComBot]
-		variable uint NonPC = ${LavishScript.CreateQuery[IsPC]}
 		
 		This:QueueState["CheckSafe", 500]
 	}
@@ -105,50 +104,52 @@ objectdef obj_Security inherits obj_State
 			
 		}
 		while ${Pilot_Iterator:Next(exists)}
-	
-		variable index:entity Threats
-		variable iterator Threat
-		variable int MyAllianceID
-		variable int MyCorpID
 
-/*		Me:GetTargetedBy[Threats]
-		Threats:RemoveByQuery[${LavishScript.CreateQuery[IsPC]}, FALSE]
-		Threats:Collapse
-		Threats:GetIterator[Threat]
-		if ${Me.Corp.ID} == -1
+		if ${Config.Security.TargetFlee}
 		{
-			MyCorpID:Set[0]
-			MyAllianceID:Set[0]
-		}
-		else
-		{
-			MyCorpID:Set[${Me.Corp.ID}]
-			if  ${Me.AllianceID} == -1
+			variable index:entity Threats
+			variable iterator Threat
+			variable int MyAllianceID
+			variable int MyCorpID
+
+			Me:GetTargetedBy[Threats]
+			Threats:RemoveByQuery[${LavishScript.CreateQuery[IsPC]}, FALSE]
+			Threats:Collapse
+			Threats:GetIterator[Threat]
+			if ${Me.Corp.ID} == -1
 			{
+				MyCorpID:Set[0]
 				MyAllianceID:Set[0]
 			}
 			else
 			{
-				MyAllianceID:Set[${Me.AllianceID}]
-			}
-		}
-		
-		if ${Threat:First(exists)}
-		do
-		{
-			if  ${MyCorpID} == ${Threat.Value.CorpID} || \
-				${MyAllianceID} == ${Threat.Value.AllianceID} || \
-				${Me.Fleet.IsMember[${Threat.Value.CharID}]}
-			{
-				continue
+				MyCorpID:Set[${Me.Corp.ID}]
+				if  ${Me.AllianceID} == -1
+				{
+					MyAllianceID:Set[0]
+				}
+				else
+				{
+					MyAllianceID:Set[${Me.AllianceID}]
+				}
 			}
 			
-			This:QueueState["Flee", 500, "${Threat.Value.Name} is targeting me!"]
-			Profiling:EndTrack
-			return TRUE
+			if ${Threat:First(exists)}
+			do
+			{
+				if  ${MyCorpID} == ${Threat.Value.CorpID} || \
+					${MyAllianceID} == ${Threat.Value.AllianceID} || \
+					${Me.Fleet.IsMember[${Threat.Value.CharID}]}
+				{
+					continue
+				}
+				
+				This:QueueState["Flee", 500, "${Threat.Value.Name} is targeting me!"]
+				Profiling:EndTrack
+				return TRUE
+			}
+			while ${Threat:Next(exists)}
 		}
-		while ${Threat:Next(exists)}	*/
-
 		
 
 		

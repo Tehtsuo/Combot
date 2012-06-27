@@ -144,7 +144,6 @@ objectdef obj_Miner inherits obj_State
 				}
 				break
 		}
-		This:QueueState["Mine"]
 		Profiling:EndTrack
 		return TRUE;
 	}
@@ -346,6 +345,12 @@ objectdef obj_Miner inherits obj_State
 			return TRUE
 		}
 	}
+
+	member:bool Undock()
+	{
+		Move:Undock
+		return TRUE
+	}
 	
 	member:bool Mine()
 	{
@@ -356,6 +361,8 @@ objectdef obj_Miner inherits obj_State
 		if !${Client.InSpace}
 		{
 			This:QueueState["CheckCargoHold", 1000]
+			This:QueueState["Undock"]
+			This:QueueState["Mine"]
 			Profiling:EndTrack
 			return TRUE
 		}
@@ -477,6 +484,7 @@ objectdef obj_Miner inherits obj_State
 			This:QueueState["MoveToBelt", 1000]
 			This:QueueState["Traveling", 1000]
 			This:QueueState["RemoveStoredBookmark", 1000]
+			This:QueueState["Mine"]
 			Profiling:EndTrack
 			return TRUE
 		}
@@ -521,6 +529,7 @@ objectdef obj_Miner inherits obj_State
 		if !${Config.Miner.Dropoff_Type.Equal[No Dropoff]}
 		{
 			This:QueueState["CheckCargoHold"]
+			This:QueueState["Mine"]
 			Profiling:EndTrack
 			return TRUE
 		}
