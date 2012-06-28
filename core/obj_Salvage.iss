@@ -138,7 +138,7 @@ objectdef obj_Salvage inherits obj_State
 		if ${BookmarkFound}
 		{
 			UI:Update["obj_Salvage", "Setting course for ${Target}", "g"]
-			Move:Bookmark[${Target}]
+			Move:Bookmark[${Target}, TRUE]
 			This:QueueState["Traveling"]
 			This:QueueState["Log", 1000, "Salvaging at ${Target}"]
 			This:QueueState["InitialUpdate", 100]
@@ -153,7 +153,7 @@ objectdef obj_Salvage inherits obj_State
 
 		
 		UI:Update["obj_Salvage", "No salvage bookmark found - returning to station", "g"]
-		Move:Bookmark[${Config.Salvager.Salvager_Dropoff}]
+		Move:Bookmark[${Config.Salvager.Salvager_Dropoff}, TRUE]
 		This:QueueState["Traveling"]
 		This:QueueState["PrepOffload"]
 		This:QueueState["Offload"]
