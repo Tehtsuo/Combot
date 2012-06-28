@@ -276,13 +276,8 @@ objectdef obj_Salvage inherits obj_State
 			Ship.ModuleList_SensorBoost:Activate
 		}
 		
-		if ${Entity[(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && HaveLootRights && !IsAbandoned && !IsMoribund].Distance} > ${MyShip.MaxTargetRange}
-		{
-			Move:Approach[${Entity[(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && HaveLootRights && !IsAbandoned && !IsMoribund].ID}]
-			return FALSE
-		}
 		
-		Wrecks.LockedTargetList:GetIterator[TargetIterator]
+		Wrecks.TargetList:GetIterator[TargetIterator]
 		if ${TargetIterator:First(exists)}
 		{
 			LootCans:Enable
