@@ -97,7 +97,6 @@ objectdef obj_Profiling inherits obj_State
 				UIElement[obj_ProfilingGauge${count}@Profiling@ComBotTab@ComBot]:SetValue[${TimeSpentIterator.Key}]
 				UIElement[obj_ProfilingGauge${count}_Text@Profiling@ComBotTab@ComBot]:SetText[${TimeSpentIterator.Value} - ${TimeSpentIterator.Key}ms in ${TimeCalled.Element[${TimeSpentIterator.Value}]} calls]
 				
-				echo ${TimeSpentIterator.Value} - ${TimeSpentIterator.Key}ms in ${TimeCalled.Element[${TimeSpentIterator.Value}]} calls
 			}
 			while ${TimeSpentIterator:Previous(exists)}
 		}

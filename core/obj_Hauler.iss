@@ -23,6 +23,9 @@ objectdef obj_Hauler inherits obj_State
 {
 	variable float OrcaCargo
 	variable index:fleetmember FleetMembers
+	
+	variable obj_TargetList IR_Cans
+	variable obj_TargetList OOR_Cans
 
 	method Initialize()
 	{
@@ -31,6 +34,9 @@ objectdef obj_Hauler inherits obj_State
 		Event[ComBot_Orca_Cargo]:AttachAtom[This:OrcaCargoUpdate]
 		This:AssignStateQueueDisplay[obj_HaulerStateList@Hauler@ComBotTab@ComBot]
 		PulseFrequency:Set[20]
+		IR_Cans.MaxRange:Set[LOOT_RANGE]
+		OOR_Cans.MaxRange:Set[WARP_RANGE]
+		OOR_Cans.MinRange:Set[LOOT_RANGE]
 	}
 
 	method Shutdown()
@@ -46,6 +52,17 @@ objectdef obj_Hauler inherits obj_State
 			This:QueueState["Haul"]
 		}
 	}
+	
+	method PopulateTargetList(int64 ID)
+	{
+		variable int64 CharID = ${Entity[${ID}].CharID}
+		IR_Cans:ClearQueryString
+		IR_Cans:AddQueryString[GroupID==GROUP_CARGOCONTAINER && OwnerID == ${CharID}]
+		IR_Cans.DistanceTarget:Set[${ID}]
+		OOR_Cans:ClearQueryString
+		OOR_Cans:AddQueryString["GroupID==GROUP_CARGOCONTAINER && OwnerID == ${CharID}"]
+		OOR_Cans.DistanceTarget:Set[${ID}]
+	}	
 	
 	member:bool OpenCargoHold()
 	{
@@ -223,10 +240,14 @@ objectdef obj_Hauler inherits obj_State
 		return TRUE
 	}
 	
-	member:bool LootCans()
+	member:bool LootCans(int64 ID)
 	{
-
+		This:PopulateTargetList[${ID}]
+		IR_Cans.AutoLock:Set[TRUE]
+		OOR_Cans.AutoLock:Set[TRUE]
 		
+		echo ${IR_Cans.TargetList.Used} cans in range
+		echo ${IR_Cans.TargetList.Used} cans out of range
 		
 		return TRUE
 	}
@@ -374,16 +395,17 @@ objectdef obj_Hauler inherits obj_State
 				echo Entity exists - ${Entity[Name = "${FleetMembers.Get[1].ToPilot.Name}"](exists)}
 				if ${Entity[Name = "${FleetMembers.Get[1].ToPilot.Name}"](exists)}
 				{
+					UI:Update["obj_Miner", "Looting cans for ${FleetMembers.Get[1].ToPilot.Name}", "g"]
+					This:Clear
+					This:QueueState["LootCans", 2000, ${Entity[Name = "${FleetMembers.Get[1].ToPilot.Name}"].ID}]
+					This:QueueState["Haul"]
 					FleetMembers:Remove[1]
 					FleetMembers:Collapse
-					This:Clear
-					This:QueueState["LootCans", 2000]
-					This:QueueState["Haul"]
 					return TRUE
 				}
 				else
 				{
-					echo Warping to ${FleetMembers.Get[1].ToPilot.Name}
+					UI:Update["obj_Miner", "Warping to ${FleetMembers.Get[1].ToPilot.Name}", "g"]
 					FleetMembers.Get[1]:WarpTo[]
 					Client:Wait[5000]
 					This:Clear

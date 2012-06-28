@@ -35,6 +35,7 @@ objectdef obj_TargetList inherits obj_State
 	variable set LockedAndLockingTargets
 	variable int64 DistanceTarget
 	variable int MaxRange = 20000
+	variable int MinRange = 0
 	variable bool ListOutOfRange = TRUE
 	variable bool AutoLock = FALSE
 	variable int MinLockCount = 2
@@ -159,25 +160,32 @@ objectdef obj_TargetList inherits obj_State
 		{
 			do
 			{
-				if ${entity_iterator.Value.IsLockedTarget} || ${entity_iterator.Value.BeingTargeted}
+				if ${entity_iterator.Value.DistanceTo[${DistanceTarget}]} > ${MinRange}
 				{
-					TargetList_DeadDelay:Set[${entity_iterator.Value.ID}, ${Math.Calc[${LavishScript.RunningTime} + 5000]}]
-				}
-				if ${entity_iterator.Value.DistanceTo[${DistanceTarget}]} <= ${MaxRange}
-				{
-					This.TargetListBuffer:Insert[${entity_iterator.Value.ID}]
-					if ${entity_iterator.Value.IsLockedTarget}
+					if ${entity_iterator.Value.IsLockedTarget} || ${entity_iterator.Value.BeingTargeted}
 					{
-						This.LockedTargetListBuffer:Insert[${entity_iterator.Value.ID}]
+						TargetList_DeadDelay:Set[${entity_iterator.Value.ID}, ${Math.Calc[${LavishScript.RunningTime} + 5000]}]
+					}
+					if ${entity_iterator.Value.DistanceTo[${DistanceTarget}]} <= ${MaxRange}
+					{
+						This.TargetListBuffer:Insert[${entity_iterator.Value.ID}]
+						if ${entity_iterator.Value.IsLockedTarget}
+						{
+							This.LockedTargetListBuffer:Insert[${entity_iterator.Value.ID}]
+						}
+					}
+					else
+					{
+						This.TargetListBufferOOR:Insert[${entity_iterator.Value.ID}]
+						if ${entity_iterator.Value.IsLockedTarget}
+						{
+							This.LockedTargetListBufferOOR:Insert[${entity_iterator.Value.ID}]
+						}
 					}
 				}
 				else
 				{
-					This.TargetListBufferOOR:Insert[${entity_iterator.Value.ID}]
-					if ${entity_iterator.Value.IsLockedTarget}
-					{
-						This.LockedTargetListBufferOOR:Insert[${entity_iterator.Value.ID}]
-					}
+					echo Inside minrange
 				}
 			}
 			while ${entity_iterator:Next(exists)}
