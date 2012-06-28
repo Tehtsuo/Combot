@@ -30,11 +30,14 @@ objectdef obj_Salvage inherits obj_State
 	variable bool NonDedicatedNPCRun = FALSE
 	variable bool Dedicated = TRUE
 	variable bool Salvaging = FALSE
+	
+	variable obj_TargetList Wrecks
 
 	method Initialize()
 	{
 		This[parent]:Initialize
 		This:AssignStateQueueDisplay[obj_SalvageStateList@Salvager@ComBotTab@ComBot]
+		Wrecks:AddQueryString["(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && HaveLootRights && !IsAbandoned && !IsMoribund && IsInteractive"]
 	}
 
 	method Start()
@@ -138,6 +141,8 @@ objectdef obj_Salvage inherits obj_State
 			Move:Bookmark[${Target}]
 			This:QueueState["Traveling"]
 			This:QueueState["Log", 1000, "Salvaging at ${Target}"]
+			This:QueueState["InitialUpdate", 100]
+			This:QueueState["Updated", 100]
 			This:QueueState["SalvageWrecks", 500, "${BookmarkCreator}"]
 			This:QueueState["ClearAlreadySalvaged", 100]
 			This:QueueState["DeleteBookmark", 1000, "${BookmarkCreator}"]
@@ -175,6 +180,8 @@ objectdef obj_Salvage inherits obj_State
 		Dedicated:Set[FALSE]
 		NonDedicatedFullPercent:Set[${FullThreshold}]
 		NonDedicatedNPCRun:Set[${NPCRun}]
+		This:QueueState["InitialUpdate", 100]
+		This:QueueState["Updated", 100]
 		This:QueueState["SalvageWrecks", 500, "0"]
 		This:QueueState["DoneSalvaging"]
 		Salvaging:Set[TRUE]
@@ -185,10 +192,20 @@ objectdef obj_Salvage inherits obj_State
 		Salvaging:Set[FALSE]
 		Dedicated:Set[TRUE]
 	}
+	
+	member:bool InitialUpdate()
+	{
+		Wrecks:RequestUpdate
+		return TRUE
+	}
+	
+	member:bool Updated()
+	{
+		return ${Wrecks.Updated}
+	}
 
 	member:bool SalvageWrecks(int64 BookmarkCreator)
 	{
-		variable index:entity TargetIndex
 		variable iterator TargetIterator
 		variable queue:int LootRangeAndTractored
 		variable int MaxTarget = ${MyShip.MaxLockedTargets}
@@ -240,48 +257,26 @@ objectdef obj_Salvage inherits obj_State
 		{
 			MaxTarget:Set[${Me.MaxLockedTargets}]
 		}
+		
+		Wrecks:RequestUpdate
+		
 		echo Inactive Tractor Beams - ${Ship.ModuleList_TractorBeams.InactiveCount}
-		EVE:QueryEntities[TargetIndex, "(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && HaveLootRights && !IsAbandoned"]
-		TargetIndex:GetIterator[TargetIterator]
-		if ${TargetIterator:First(exists)}
+		
+		if ${Wrecks.TargetList.Used} > 0
 		{
 			Ship.ModuleList_SensorBoost:Activate
+		}
+		
+		Wrecks.LockedTargetList:GetIterator[TargetIterator]
+		if ${TargetIterator:First(exists)}
+		{
 			LootCans:Enable
 			do
 			{
-				if ${TargetIterator.Value.IsLockedTarget} || ${TargetIterator.Value.BeingTargeted}
-				{
-					AlreadySalvaged:Set[${TargetIterator.Value.ID}, ${Math.Calc[${LavishScript.RunningTime} + 5000]}]
-				}
 				echo Before Salvage
-				if  !${TargetIterator.Value.BeingTargeted} && \
-					!${TargetIterator.Value.IsLockedTarget} && \
-					${Targets.Locked} == ${MaxTarget}
-				{
-					if ${TargetIterator.Value.Distance} > ${Ship.Module_TractorBeams_Range}
-					{
-						Move:Approach[${TargetIterator.Value}]
-						return FALSE
-					}
-					if !${SalvageMultiTarget.Equal[-1]} && ${Ship.ModuleList_Salvagers.InactiveCount} > 0
-					{
-						Ship.ModuleList_Salvagers:Activate[${SalvageMultiTarget}]
-						return FALSE
-					}
-				}
+				
 				echo After Salvage
-				if  !${TargetIterator.Value.BeingTargeted} && \
-					!${TargetIterator.Value.IsLockedTarget} && \
-					${Targets.Locked.Used} < ${MaxTarget} && \
-					${TargetIterator.Value.Distance} < ${MyShip.MaxTargetRange} && \
-					!(${AlreadySalvaged.Element[${TargetIterator.Value.ID}]} >= ${LavishScript.RunningTime}) && \
-					!${Target.Value.Name.Equal["Cargo Container"]}
-				{
-					UI:Update["obj_Salvage", "Locking - ${TargetIterator.Value.Name}", "g"]
-					TargetIterator.Value:LockTarget
-					AlreadySalvaged:Set[${TargetIterator.Value.ID}, ${Math.Calc[${LavishScript.RunningTime} + 5000]}]
-					return FALSE
-				}
+
 				if ${TargetIterator.Value.Distance} > ${Ship.Module_TractorBeams_Range}
 				{
 					Move:Approach[${TargetIterator.Value}]
@@ -345,8 +340,19 @@ objectdef obj_Salvage inherits obj_State
 		}
 		else
 		{
-			LootCans:Disable
-			return TRUE
+			if ${Wrecks.TargetList.Used} > 0
+			{
+				if ${Wrecks.TargetList.Get[1].Distance} > ${Ship.Module_TractorBeams_Range}
+				{
+					Move:Approach[${TargetIterator.Value}]
+					return FALSE
+				}
+			}
+			else
+			{
+				LootCans:Disable
+				return TRUE
+			}
 		}
 		if !${SalvageMultiTarget.Equal[-1]} && ${Ship.ModuleList_Salvagers.InactiveCount} > 0
 		{
@@ -389,6 +395,8 @@ objectdef obj_Salvage inherits obj_State
 				Move:Gate[${Entity[GroupID == GROUP_WARPGATE].ID}]
 				This:QueueState["Idle", 5000]
 				This:QueueState["Traveling"]
+				This:QueueState["InitialUpdate", 100]
+				This:QueueState["Updated", 100]
 				This:QueueState["SalvageWrecks", 500, "${BookmarkCreator}"]
 				This:QueueState["ClearAlreadySalvaged", 100]
 				This:QueueState["DeleteBookmark", 1000, "${BookmarkCreator}"]
@@ -401,8 +409,6 @@ objectdef obj_Salvage inherits obj_State
 			{
 				UI:Update["obj_Salvage", "Gate found, but no more bookmarks from player.  Ignoring", "g"]
 				This:Clear
-				This:QueueState["JumpToCelestial"]
-				This:QueueState["Traveling"]
 			}
 		}
 		This:QueueState["OpenCargoHold", 500]
