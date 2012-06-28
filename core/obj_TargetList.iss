@@ -156,36 +156,53 @@ objectdef obj_TargetList inherits obj_State
 		EVE:QueryEntities[entity_index, "${QueryString.Escape}"]
 		Profiling:EndTrack
 		entity_index:GetIterator[entity_iterator]
+		
 		if ${entity_iterator:First(exists)}
 		{
 			do
 			{
-				if ${entity_iterator.Value.DistanceTo[${DistanceTarget}]} > ${MinRange}
+				if ${entity_iterator.Value.DistanceTo[${DistanceTarget}]} >= ${MinRange}
 				{
-					if ${entity_iterator.Value.IsLockedTarget} || ${entity_iterator.Value.BeingTargeted}
-					{
-						TargetList_DeadDelay:Set[${entity_iterator.Value.ID}, ${Math.Calc[${LavishScript.RunningTime} + 5000]}]
-					}
-					if ${entity_iterator.Value.DistanceTo[${DistanceTarget}]} <= ${MaxRange}
-					{
-						This.TargetListBuffer:Insert[${entity_iterator.Value.ID}]
-						if ${entity_iterator.Value.IsLockedTarget}
-						{
-							This.LockedTargetListBuffer:Insert[${entity_iterator.Value.ID}]
-						}
-					}
-					else
-					{
-						This.TargetListBufferOOR:Insert[${entity_iterator.Value.ID}]
-						if ${entity_iterator.Value.IsLockedTarget}
-						{
-							This.LockedTargetListBufferOOR:Insert[${entity_iterator.Value.ID}]
-						}
-					}
+					break;
 				}
 				else
 				{
 					echo Inside minrange
+				}
+			}
+			while ${entity_iterator:Next(exists)}
+			
+			do
+			{
+				if ${entity_iterator.Value.IsLockedTarget} || ${entity_iterator.Value.BeingTargeted}
+				{
+					TargetList_DeadDelay:Set[${entity_iterator.Value.ID}, ${Math.Calc[${LavishScript.RunningTime} + 5000]}]
+				}
+				if ${entity_iterator.Value.DistanceTo[${DistanceTarget}]} <= ${MaxRange}
+				{
+					This.TargetListBuffer:Insert[${entity_iterator.Value.ID}]
+					if ${entity_iterator.Value.IsLockedTarget}
+					{
+						This.LockedTargetListBuffer:Insert[${entity_iterator.Value.ID}]
+					}
+				}
+				else
+				{
+					break;
+				}
+			}
+			while ${entity_iterator:Next(exists)}
+			
+			do
+			{
+				if ${entity_iterator.Value.IsLockedTarget} || ${entity_iterator.Value.BeingTargeted}
+				{
+					TargetList_DeadDelay:Set[${entity_iterator.Value.ID}, ${Math.Calc[${LavishScript.RunningTime} + 5000]}]
+				}
+				This.TargetListBufferOOR:Insert[${entity_iterator.Value.ID}]
+				if ${entity_iterator.Value.IsLockedTarget}
+				{
+					This.LockedTargetListBufferOOR:Insert[${entity_iterator.Value.ID}]
 				}
 			}
 			while ${entity_iterator:Next(exists)}
