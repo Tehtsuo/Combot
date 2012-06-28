@@ -37,7 +37,7 @@ objectdef obj_Salvage inherits obj_State
 	{
 		This[parent]:Initialize
 		This:AssignStateQueueDisplay[obj_SalvageStateList@Salvager@ComBotTab@ComBot]
-		Wrecks:AddQueryString["(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && HaveLootRights && !IsAbandoned && !IsMoribund && IsInteractive"]
+		Wrecks:AddQueryString["(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && HaveLootRights && !IsAbandoned && !IsMoribund"]
 	}
 
 	method Start()
@@ -214,6 +214,16 @@ objectdef obj_Salvage inherits obj_State
 		variable int64 SalvageMultiTarget = -1
 		variable float FullHold = 0.95
 		variable bool NPCRun = TRUE
+
+
+		if ${Me.MaxLockedTargets} < ${MyShip.MaxLockedTargets}
+		{
+			MaxTarget:Set[${Me.MaxLockedTargets}]
+		}
+		Wrecks.MaxRange:Set[${MyShip.MaxTargetRange.Round}}
+		Wrecks.MinLockCount:Set[${MaxTarget}]
+		Wrecks.AutoLock:Set[TRUE]
+		
 		if !${Dedicated}
 		{
 			FullHold:Set[${NonDedicatedFullPercent}]
@@ -234,6 +244,7 @@ objectdef obj_Salvage inherits obj_State
 				This:QueueState["RefreshBookmarks", 3000]
 				This:QueueState["CheckBookmarks"]
 			}
+			Wrecks.AutoLock:Set[FALSE]
 			return TRUE
 		}
 
@@ -250,13 +261,11 @@ objectdef obj_Salvage inherits obj_State
 				This:QueueState["RefreshBookmarks", 3000]
 				This:QueueState["CheckBookmarks"]
 			}
+			Wrecks.AutoLock:Set[FALSE]
 			return TRUE
 		}
 		
-		if ${Me.MaxLockedTargets} < ${MyShip.MaxLockedTargets}
-		{
-			MaxTarget:Set[${Me.MaxLockedTargets}]
-		}
+
 		
 		Wrecks:RequestUpdate
 		
@@ -277,7 +286,7 @@ objectdef obj_Salvage inherits obj_State
 				
 				echo After Salvage
 
-				if ${TargetIterator.Value.Distance} > ${Ship.Module_TractorBeams_Range}
+				if ${TargetIterator.Value.Distance} > ${Ship.ModuleList_TractorBeams.Range}
 				{
 					Move:Approach[${TargetIterator.Value}]
 					return FALSE
@@ -285,7 +294,7 @@ objectdef obj_Salvage inherits obj_State
 				echo ${TargetIterator.Value.Name} - ${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]}
 				
 				if  !${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]} &&\
-					${TargetIterator.Value.Distance} < ${Ship.Module_TractorBeams_Range} &&\
+					${TargetIterator.Value.Distance} < ${Ship.ModuleList_TractorBeams.Range} &&\
 					${TargetIterator.Value.Distance} > LOOT_RANGE &&\
 					${Ship.ModuleList_TractorBeams.InactiveCount} > 0 &&\
 					${TargetIterator.Value.IsLockedTarget}
@@ -296,7 +305,7 @@ objectdef obj_Salvage inherits obj_State
 				}
 				echo ${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]} - ${TargetIterator.Value.ID}
 				if  !${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]} &&\
-					${TargetIterator.Value.Distance} < ${Ship.Module_TractorBeams_Range} &&\
+					${TargetIterator.Value.Distance} < ${Ship.ModuleList_TractorBeams.Range} &&\
 					${TargetIterator.Value.Distance} > LOOT_RANGE &&\
 					${TargetIterator.Value.IsLockedTarget} &&\
 					${ReactivateTractor}
@@ -314,7 +323,7 @@ objectdef obj_Salvage inherits obj_State
 					ReactivateTractor:Set[TRUE]
 				}
 				if  !${Ship.ModuleList_Salvagers.IsActiveOn[${TargetIterator.Value.ID}]} &&\
-					${TargetIterator.Value.Distance} < ${Ship.Module_Salvagers_Range} &&\
+					${TargetIterator.Value.Distance} < ${Ship.ModuleList_Salvagers.Range} &&\
 					${Ship.ModuleList_Salvagers.InactiveCount} > 0 &&\
 					${TargetIterator.Value.IsLockedTarget} && ${Ship.ModuleList_Salvagers.Count} > 0
 				{
@@ -329,7 +338,7 @@ objectdef obj_Salvage inherits obj_State
 					TargetIterator.Value:Abandon
 					TargetIterator.Value:UnlockTarget
 				}
-				if  ${TargetIterator.Value.Distance} < ${Ship.Module_Salvagers_Range} &&\
+				if  ${TargetIterator.Value.Distance} < ${Ship.ModuleList_Salvagers.Range} &&\
 					${Ship.ModuleList_Salvagers.InactiveCount} > 0 &&\
 					${TargetIterator.Value.IsLockedTarget}
 				{
@@ -342,7 +351,7 @@ objectdef obj_Salvage inherits obj_State
 		{
 			if ${Wrecks.TargetList.Used} > 0
 			{
-				if ${Wrecks.TargetList.Get[1].Distance} > ${Ship.Module_TractorBeams_Range}
+				if ${Wrecks.TargetList.Get[1].Distance} > ${Ship.ModuleList_TractorBeams.Range}
 				{
 					Move:Approach[${TargetIterator.Value}]
 					return FALSE
@@ -351,6 +360,7 @@ objectdef obj_Salvage inherits obj_State
 			else
 			{
 				LootCans:Disable
+				Wrecks.AutoLock:Set[FALSE]
 				return TRUE
 			}
 		}
