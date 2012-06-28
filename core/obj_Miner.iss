@@ -91,16 +91,17 @@ objectdef obj_Miner inherits obj_State
 	member:bool CheckCargoHold()
 	{
 		Profiling:StartTrack["Miner_CheckCargohold"]
-		switch ${Config.Miner.Miner_Dropoff_Type}
+		switch ${Config.Miner.Dropoff_Type}
 		{
 			case Orca
-				if !${Entity[Name = "${Config.Miner.Miner_OrcaName}"](exists)} && ${Local[${Config.Miner.Miner_OrcaName}].ToFleetMember(exists)} && ${This.WarpToOrca}
+				if !${Entity[Name = "${Config.Miner.Container_Name}"](exists)} && ${Local[${Config.Miner.Container_Name}].ToFleetMember(exists)} && ${This.WarpToOrca}
 				{
-					UI:Update["obj_Miner", "Warping to ${Local[${Config.Miner.Miner_OrcaName}].ToFleetMember.ToPilot.Name}", "g"]
-					Local[${Config.Miner.Miner_OrcaName}].ToFleetMember:WarpTo
+					UI:Update["obj_Miner", "Warping to ${Local[${Config.Miner.Container_Name}].ToFleetMember.ToPilot.Name}", "g"]
+					Local[${Config.Miner.Container_Name}].ToFleetMember:WarpTo
 					Client:Wait[5000]
 					This:Clear
 					This:QueueState["Traveling", 1000]
+					This:QueueState["Mine"]
 				}
 				if !${This.WarpToOrca}
 				{
@@ -117,8 +118,9 @@ objectdef obj_Miner inherits obj_State
 					}
 					Bookmarks:StoreLocation
 					This:Clear
-					Move:Bookmark[${Config.Miner.Miner_Dropoff}]
+					Move:Bookmark[${Config.Miner.Dropoff}]
 					This:QueueState["Traveling", 1000]
+					This:QueueState["Mine"]
 				}
 				break
 			case No Dropoff
@@ -134,17 +136,17 @@ objectdef obj_Miner inherits obj_State
 						Bookmarks:StoreLocation
 					}
 					This:Clear
-					Move:Bookmark[${Config.Miner.Miner_Dropoff}]
+					Move:Bookmark[${Config.Miner.Dropoff}]
 					This:QueueState["Traveling", 1000]
 					This:QueueState["PrepOffload", 1000]
 					This:QueueState["Offload", 1000]
 					This:QueueState["StackItemHangar", 1000]
 					This:QueueState["GoToMiningSystem", 1000]
 					This:QueueState["Traveling", 1000]
+					This:QueueState["Mine"]
 				}
 				break
 		}
-		This:QueueState["Mine"]
 		Profiling:EndTrack
 		return TRUE;
 	}
@@ -170,7 +172,7 @@ objectdef obj_Miner inherits obj_State
 			MyShip:OpenCargo[]
 			return FALSE
 		}
-		switch ${Config.Miner.Miner_Dropoff_Type}
+		switch ${Config.Miner.Dropoff_Type}
 		{
 			case Personal Hangar
 				break
@@ -192,13 +194,13 @@ objectdef obj_Miner inherits obj_State
 		Profiling:StartTrack["Miner_Offload"]
 		UI:Update["obj_Miner", "Unloading cargo", "g"]
 		Cargo:PopulateCargoList[SHIP]
-		switch ${Config.Miner.Miner_Dropoff_Type}
+		switch ${Config.Miner.Dropoff_Type}
 		{
 			case Personal Hangar
 				Cargo:MoveCargoList[HANGAR]
 				break
 			default
-				Cargo:MoveCargoList[CORPORATEHANGAR, ${Config.Miner.Miner_Dropoff_Type}]
+				Cargo:MoveCargoList[CORPORATEHANGAR, ${Config.Miner.Dropoff_Type}]
 				break
 		}
 		Profiling:StartTrack["Drones_DroneControl"]
@@ -218,25 +220,25 @@ objectdef obj_Miner inherits obj_State
 		}
 
 		;UI:Update["obj_Miner", "Stacking dropoff container", "g"]
-		switch ${Config.Miner.Miner_Dropoff_Type}
+		switch ${Config.Miner.Dropoff_Type}
 		{
 			case Personal Hangar
 				EVE:StackItems[MyStationHangar, Hangar]
 				break
 			case Orca
-				if ${Entity[Name = "${Config.Miner.Miner_OrcaName}"](exists)}
+				if ${Entity[Name = "${Config.Miner.Container_Name}"](exists)}
 				{
-					EVE:StackItems[${Entity[Name = "${Config.Miner.Miner_OrcaName}"].ID}, CorpHangars]
+					EVE:StackItems[${Entity[Name = "${Config.Miner.Container_Name}"].ID}, CorpHangars]
 				}
 				break
 			case Container
-				if ${Entity[Name = "${Config.Miner.Miner_OrcaName}"](exists)}
+				if ${Entity[Name = "${Config.Miner.Container_Name}"](exists)}
 				{
-					EVE:StackItems[${Entity[Name = "${Config.Miner.Miner_OrcaName}"].ID}, CorpHangars]
+					EVE:StackItems[${Entity[Name = "${Config.Miner.Container_Name}"].ID}, CorpHangars]
 				}
 				break
 			default
-				EVE:StackItems[MyStationCorporateHangar, StationCorporateHangar, "${Config.Miner.Miner_Dropoff_Type.Escape}"]
+				EVE:StackItems[MyStationCorporateHangar, StationCorporateHangar, "${Config.Miner.Dropoff_Type.Escape}"]
 				break
 		}
 		Profiling:EndTrack
@@ -346,6 +348,12 @@ objectdef obj_Miner inherits obj_State
 			return TRUE
 		}
 	}
+
+	member:bool Undock()
+	{
+		Move:Undock
+		return TRUE
+	}
 	
 	member:bool Mine()
 	{
@@ -356,6 +364,8 @@ objectdef obj_Miner inherits obj_State
 		if !${Client.InSpace}
 		{
 			This:QueueState["CheckCargoHold", 1000]
+			This:QueueState["Undock"]
+			This:QueueState["Mine"]
 			Profiling:EndTrack
 			return TRUE
 		}
@@ -367,14 +377,14 @@ objectdef obj_Miner inherits obj_State
 		}
 		
 		Asteroids.MinLockCount:Set[${Ship.ModuleList_MiningLaser.Count}]
-		Asteroids.MaxRange:Set[${Ship.Module_MiningLaser_Range}]
+		Asteroids.MaxRange:Set[${Ship.ModuleList_MiningLaser.Range}]
 		
 		if ${Config.Miner.OrcaMode}
 		{
 			Asteroids.AutoLock:Set[FALSE]
 			Asteroids.AutoRelock:Set[FALSE]
 			Asteroids.AutoRelockPriority:Set[FALSE]
-			if ${Config.Miner.Miner_Dropoff_Type.Equal[Container]} && ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipCorpHangar]} > 0
+			if ${Config.Miner.Dropoff_Type.Equal[Container]} && ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipCorpHangar]} > 0
 			{
 				Cargo:PopulateCargoList[SHIPCORPORATEHANGAR]
 				Cargo:MoveCargoList[SHIP]
@@ -383,7 +393,7 @@ objectdef obj_Miner inherits obj_State
 				Profiling:EndTrack
 				return TRUE
 			}
-			if ${Config.Miner.Miner_Dropoff_Type.Equal[Jetcan]} && ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipCorpHangar]} > 0
+			if ${Config.Miner.Dropoff_Type.Equal[Jetcan]} && ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipCorpHangar]} > 0
 			{
 				Cargo:PopulateCargoList[SHIPCORPORATEHANGAR]
 				Cargo:MoveCargoList[SHIP]
@@ -394,12 +404,12 @@ objectdef obj_Miner inherits obj_State
 			}
 		}
 		
-		if ${Config.Miner.Miner_Dropoff_Type.Equal[Orca]} || ${Config.Miner.Miner_Dropoff_Type.Equal[Container]}
+		if ${Config.Miner.Dropoff_Type.Equal[Orca]} || ${Config.Miner.Dropoff_Type.Equal[Container]}
 		{
 			variable int64 Orca
-			if ${Entity[Name = "${Config.Miner.Miner_OrcaName}"](exists)}
+			if ${Entity[Name = "${Config.Miner.Container_Name}"](exists)}
 			{
-				Orca:Set[${Entity[Name = "${Config.Miner.Miner_OrcaName}"].ID}]
+				Orca:Set[${Entity[Name = "${Config.Miner.Container_Name}"].ID}]
 				Asteroids.DistanceTarget:Set[${Orca}]
 				if ${Entity[${Orca}].Distance} > LOOT_RANGE
 				{
@@ -413,7 +423,7 @@ objectdef obj_Miner inherits obj_State
 					{
 						if !${EVEWindow[ByName, Inventory].ChildWindowExists[${Orca}]}
 						{
-							UI:Update["obj_Miner", "Opening ${Config.Miner.Miner_OrcaName}", "g"]
+							UI:Update["obj_Miner", "Opening ${Config.Miner.Container_Name}", "g"]
 							Entity[${Orca}]:Open
 							Profiling:EndTrack
 							return FALSE
@@ -424,7 +434,7 @@ objectdef obj_Miner inherits obj_State
 							Profiling:EndTrack
 							return FALSE
 						}
-						;UI:Update["obj_Miner", "Unloading to ${Config.Miner.Miner_OrcaName}", "g"]
+						;UI:Update["obj_Miner", "Unloading to ${Config.Miner.Container_Name}", "g"]
 						Cargo:PopulateCargoList[SHIP]
 						Cargo:MoveCargoList[SHIPCORPORATEHANGAR, "", ${Orca}]
 						This:QueueState["Idle", 1000]
@@ -441,7 +451,7 @@ objectdef obj_Miner inherits obj_State
 			}
 		}
 		
-		if !${Config.Miner.Miner_Dropoff_Type.Equal[Orca]}
+		if !${Config.Miner.Dropoff_Type.Equal[Orca]}
 		{
 			Asteroids.DistanceTarget:Set[${MyShip.ID}]
 		}
@@ -454,7 +464,7 @@ objectdef obj_Miner inherits obj_State
 		}
 
 		
-		if ${Config.Miner.Miner_Dropoff_Type.Equal[Jetcan]}
+		if ${Config.Miner.Dropoff_Type.Equal[Jetcan]}
 		{
 			Jetcan:Enable
 		}
@@ -477,6 +487,7 @@ objectdef obj_Miner inherits obj_State
 			This:QueueState["MoveToBelt", 1000]
 			This:QueueState["Traveling", 1000]
 			This:QueueState["RemoveStoredBookmark", 1000]
+			This:QueueState["Mine"]
 			Profiling:EndTrack
 			return TRUE
 		}
@@ -498,7 +509,7 @@ objectdef obj_Miner inherits obj_State
 		{
 			if ${Entity[CategoryID==CATEGORYID_ORE].Distance} > ${MyShip.MaxTargetRange}
 			{
-				Move:Approach[${Entity[CategoryID==CATEGORYID_ORE]}, ${Ship.Module_MiningLaser_Range}]
+				Move:Approach[${Entity[CategoryID==CATEGORYID_ORE]}, ${Ship.ModuleList_MiningLaser.Range}]
 			}
 		}
 		
@@ -518,9 +529,10 @@ objectdef obj_Miner inherits obj_State
 			return TRUE
 		}
 		
-		if !${Config.Miner.Miner_Dropoff_Type.Equal[No Dropoff]}
+		if !${Config.Miner.Dropoff_Type.Equal[No Dropoff]}
 		{
 			This:QueueState["CheckCargoHold"]
+			This:QueueState["Mine"]
 			Profiling:EndTrack
 			return TRUE
 		}
@@ -543,9 +555,13 @@ objectdef obj_Miner inherits obj_State
 		if ${Roid:First(exists)}
 		do
 		{
-			if	${Roid.Value.Distance} > ${Ship.Module_MiningLaser_Range}
+			if !${Roid.Value.ID(exists)}
 			{
-				Move:Approach[${Roid.Value.ID}, ${Ship.Module_MiningLaser_Range}]
+				continue
+			}
+			if	${Roid.Value.Distance} > ${Ship.ModuleList_MiningLaser.Range}
+			{
+				Move:Approach[${Roid.Value.ID}, ${Ship.ModuleList_MiningLaser.Range}]
 				Profiling:EndTrack
 				return FALSE
 			}
@@ -575,9 +591,9 @@ objectdef obj_Miner inherits obj_State
 	member:bool ExpandContainer()
 	{
 		variable int64 Orca
-		if ${Entity[Name = "${Config.Miner.Miner_OrcaName}"](exists)}
+		if ${Entity[Name = "${Config.Miner.Container_Name}"](exists)}
 		{
-			Orca:Set[${Entity[Name = "${Config.Miner.Miner_OrcaName}"].ID}]
+			Orca:Set[${Entity[Name = "${Config.Miner.Container_Name}"].ID}]
 			if ${EVEWindow[ByName, Inventory].ChildWindowExists[${Orca}]}
 			{
 				${EVEWindow[ByName, Inventory]:OpenChildAsNewWindow[${Orca}]

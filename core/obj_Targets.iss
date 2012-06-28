@@ -30,7 +30,7 @@ objectdef obj_Targets inherits obj_State
 		This[parent]:Initialize
 		RandomDelta:Set[0]
 
-;		This:QueueState["Update", 1000]
+		This:QueueState["Update", 1000]
 	}
 
 

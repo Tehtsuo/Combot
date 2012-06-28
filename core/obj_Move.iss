@@ -501,12 +501,12 @@ objectdef obj_Move inherits obj_State
 		
 		if ${Config.Common.Propulsion}
 		{
-			if !${Ship.ModuleList_AB_MWD.ActiveCount} && ${MyShip.CapacitorPct} > 30
+			if !${Ship.ModuleList_AB_MWD.ActiveCount} && ${MyShip.CapacitorPct} > ${Config.Common.Propulsion_Threshold}
 			{
 				Ship.ModuleList_AB_MWD:Activate
 				return FALSE
 			}
-			if ${Ship.ModuleList_AB_MWD.ActiveCount} && ${MyShip.CapacitorPct} <= 30
+			if ${Ship.ModuleList_AB_MWD.ActiveCount} && ${MyShip.CapacitorPct} <= ${Config.Common.Propulsion_Threshold}
 			{
 				Ship.ModuleList_AB_MWD:Deactivate
 				return FALSE

@@ -41,8 +41,6 @@ objectdef obj_Jetcan inherits obj_State
 		variable index:item CargoList
 		variable index:entity Targets
 		variable iterator TargetIterator
-		; variable index:item TargetCargo
-		; variable iterator CargoIterator
 	
 		if !${Client.InSpace}
 		{
@@ -105,6 +103,10 @@ objectdef obj_Jetcan inherits obj_State
 			UI:Update["obj_Jetcan", "Renaming ${TargetIterator.Value.Name}", "g"]
 			TargetIterator.Value:SetName[${Me.Corp.Ticker} ${EVE.Time[short]}]
 			return TRUE
+		}
+		else
+		{
+			echo Jetcan not found
 		}
 		return TRUE
 	}

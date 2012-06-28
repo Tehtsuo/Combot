@@ -53,9 +53,46 @@ objectdef obj_Cargo inherits obj_State
 			case STATIONHANGAR
 				Me.Station:GetHangarItems[CargoList]
 				break
+			case CONTAINER
+				Entity[${ID}]:GetCargo[CargoList]
 		}
 	}
 
+	method DontPopCan()
+	{
+		variable iterator Cargo
+		variable index:int64 TransferIndex
+		variable float Volume = 0
+		variable bool EarlyBreak=FALSE
+
+		CargoList:GetIterator[Cargo]
+		if ${Cargo:First(exists)}
+			do
+			{
+				if (${Cargo.Value.Quantity} * ${Cargo.Value.Volume}) < ${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity} - ${Volume}]}
+				{
+					TransferIndex:Insert[${Cargo.Value.ID}]
+					Volume:Inc[${Math.Calc[${Cargo.Value.Quantity} * ${Cargo.Value.Volume}]}]
+				}
+				else
+				{
+					EarlyBreak:Set[TRUE]
+					Cargo.Value:MoveTo[MyShip, CargoHold, ${Math.Calc[(${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity} - ${Volume}) / ${Cargo.Value.Volume}] - 1}]
+					break
+				}
+			}
+			while ${Cargo:Next(exists)}
+			Cargo:Last
+			if !${EarlyBreak}
+			{
+				TransferIndex:RemoveByQuery[]
+				Cargo.Value:MoveTo[MyShip, CargoHold, ${Math.Calc[(${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity} - ${Volume}) / ${Cargo.Value.Volume}] - 1}]
+			}
+			
+		EVE:MoveItemsTo[TransferIndex, MyShip, CargoHold]
+	}
+	
+	
 	method MoveCargoList(string location, string folder="", int64 ID=-1)
 	{
 		variable iterator Cargo

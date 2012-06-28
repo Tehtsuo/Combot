@@ -65,14 +65,46 @@ objectdef obj_Profiling inherits obj_State
 	member:bool Update()
 	{
 		variable iterator TimeSpentIterator
+		variable int count=0
+		variable int upperlimit
+		
+		variable collection:string TimeSpentCopy
+		
 		TimeSpent:GetIterator[TimeSpentIterator]
+
 		if ${TimeSpentIterator:First(exists)}
 		{
 			do
 			{
-				echo ${TimeSpentIterator.Key} - ${TimeSpentIterator.Value}ms in ${TimeCalled.Element[${TimeSpentIterator.Key}]} calls
+				TimeSpentCopy:Set[${TimeSpentIterator.Value}, ${TimeSpentIterator.Key}]
 			}
 			while ${TimeSpentIterator:Next(exists)}
+		}
+		
+		
+		TimeSpentCopy:GetIterator[TimeSpentIterator]
+		if ${TimeSpentIterator:Last(exists)}
+		{
+			upperlimit:Set[${TimeSpentIterator.Key}]
+			do
+			{
+				count:Inc
+				if ${count} == 9
+				{
+					break
+				}
+				UIElement[obj_ProfilingGauge${count}@Profiling@ComBotTab@ComBot]:SetRange[${upperlimit}]
+				UIElement[obj_ProfilingGauge${count}@Profiling@ComBotTab@ComBot]:SetValue[${TimeSpentIterator.Key}]
+				UIElement[obj_ProfilingGauge${count}_Text@Profiling@ComBotTab@ComBot]:SetText[${TimeSpentIterator.Value} - ${TimeSpentIterator.Key}ms in ${TimeCalled.Element[${TimeSpentIterator.Value}]} calls]
+				
+			}
+			while ${TimeSpentIterator:Previous(exists)}
+		}
+		while ${count} < 9
+		{
+			UIElement[obj_ProfilingGauge${count}@Profiling@ComBotTab@ComBot]:SetValue[0]
+			UIElement[obj_ProfilingGauge${count}_Text@Profiling@ComBotTab@ComBot]:SetText[]
+			count:Inc
 		}
 		TimeSpent:Clear
 		TimeCalled:Clear

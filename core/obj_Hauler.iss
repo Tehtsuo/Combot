@@ -23,6 +23,9 @@ objectdef obj_Hauler inherits obj_State
 {
 	variable float OrcaCargo
 	variable index:fleetmember FleetMembers
+	
+	variable obj_TargetList IR_Cans
+	variable obj_TargetList OOR_Cans
 
 	method Initialize()
 	{
@@ -31,6 +34,9 @@ objectdef obj_Hauler inherits obj_State
 		Event[ComBot_Orca_Cargo]:AttachAtom[This:OrcaCargoUpdate]
 		This:AssignStateQueueDisplay[obj_HaulerStateList@Hauler@ComBotTab@ComBot]
 		PulseFrequency:Set[20]
+		IR_Cans.MaxRange:Set[LOOT_RANGE]
+		OOR_Cans.MaxRange:Set[WARP_RANGE]
+		OOR_Cans.MinRange:Set[LOOT_RANGE]
 	}
 
 	method Shutdown()
@@ -46,6 +52,17 @@ objectdef obj_Hauler inherits obj_State
 			This:QueueState["Haul"]
 		}
 	}
+	
+	method PopulateTargetList(int64 ID)
+	{
+		variable int64 CharID = ${Entity[${ID}].CharID}
+		IR_Cans:ClearQueryString
+		IR_Cans:AddQueryString[GroupID==GROUP_CARGOCONTAINER && OwnerID == ${CharID}]
+		IR_Cans.DistanceTarget:Set[${ID}]
+		OOR_Cans:ClearQueryString
+		OOR_Cans:AddQueryString["GroupID==GROUP_CARGOCONTAINER && OwnerID == ${CharID}"]
+		OOR_Cans.DistanceTarget:Set[${ID}]
+	}	
 	
 	member:bool OpenCargoHold()
 	{
@@ -119,16 +136,33 @@ objectdef obj_Hauler inherits obj_State
 	}
 
 	member:bool PrepOffload()
-	{
+	{	
+		if ${Client.InSpace}
+		{
+			return TRUE
+		}
+		if !${EVEWindow[ByName, "Inventory"](exists)}
+		{
+			UI:Update["obj_Hauler", "Opening inventory", "g"]
+			MyShip:OpenCargo[]
+			return FALSE
+		}
 		switch ${Config.Hauler.Dropoff_Type}
 		{
 			case Personal Hangar
 				break
 			default
+				if !${EVEWindow[ByName, Inventory].ChildWindowExists[Corporation Hangars]}
+				{
+					UI:Update["obj_Hauler", "Delivery Location: Corporate Hangars child not found", "r"]
+					UI:Update["obj_Hauler", "Closing inventory to fix possible EVE bug", "y"]
+					EVEWindow[ByName, Inventory]:Close
+					return FALSE
+				}
 				EVEWindow[ByName, Inventory]:MakeChildActive[Corporation Hangars]
 				break
 		}
-		return TRUE
+		return TRUE		
 	}
 	
 	member:bool Offload()
@@ -206,16 +240,16 @@ objectdef obj_Hauler inherits obj_State
 		return TRUE
 	}
 	
-	member:bool LootCans()
+	member:bool LootCans(int64 ID)
 	{
-		if ${Salvager.Salvaging} 
-		{
-			return FALSE
-		}
-		else
-		{
-			return TRUE
-		}
+		This:PopulateTargetList[${ID}]
+		IR_Cans.AutoLock:Set[TRUE]
+		OOR_Cans.AutoLock:Set[TRUE]
+		
+		echo ${IR_Cans.TargetList.Used} cans in range
+		echo ${IR_Cans.TargetList.Used} cans out of range
+		
+		return TRUE
 	}
 	
 	
@@ -243,6 +277,7 @@ objectdef obj_Hauler inherits obj_State
 			This:QueueState["Haul"]
 			if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) >= ${Config.Hauler.Threshold} * .01
 			{
+				echo Exiting before Haul - (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) >= ${Config.Hauler.Threshold} * .01
 				return TRUE
 			}
 		}
@@ -256,6 +291,7 @@ objectdef obj_Hauler inherits obj_State
 		switch ${Config.Hauler.Pickup_Type}
 		{
 			case Orca
+				echo Orca
 				if ${Entity[Name = "${Config.Hauler.Pickup_ContainerName}"](exists)}
 				{
 					Container:Set[${Entity[Name = "${Config.Hauler.Pickup_ContainerName}"].ID}]
@@ -291,9 +327,10 @@ objectdef obj_Hauler inherits obj_State
 				}
 				else
 				{
+					echo Check for orca
 					if ${Local[${Config.Hauler.Pickup_ContainerName}].ToFleetMember(exists)}
 						{
-							UI:Update["obj_Miner", "Warping to ${Local[${Config.Hauler.Pickup_ContainerName}].ToFleetMember.ToPilot.Name}", "g"]
+							UI:Update["obj_Hauler", "Warping to ${Local[${Config.Hauler.Pickup_ContainerName}].ToFleetMember.ToPilot.Name}", "g"]
 							Local[${Config.Hauler.Pickup_ContainerName}].ToFleetMember:WarpTo
 							Client:Wait[5000]
 							This:Clear
@@ -355,20 +392,22 @@ objectdef obj_Hauler inherits obj_State
 					FleetMembers:RemoveByQuery[${LavishScript.CreateQuery[ID == ${Me.CharID}]}]
 					FleetMembers:Collapse
 				}
-				echo ${FleetMembers.Get[1].ID}
+				echo Entity exists - ${Entity[Name = "${FleetMembers.Get[1].ToPilot.Name}"](exists)}
 				if ${Entity[Name = "${FleetMembers.Get[1].ToPilot.Name}"](exists)}
 				{
-					FleetMembers:Remove[1]
-					Salvager:NonDedicatedSalvage[0.95, FALSE]
+					UI:Update["obj_Miner", "Looting cans for ${FleetMembers.Get[1].ToPilot.Name}", "g"]
 					This:Clear
-					This:QueueState["LootCans"]
+					This:QueueState["LootCans", 2000, ${Entity[Name = "${FleetMembers.Get[1].ToPilot.Name}"].ID}]
 					This:QueueState["Haul"]
+					FleetMembers:Remove[1]
+					FleetMembers:Collapse
 					return TRUE
 				}
 				else
 				{
-					echo Warping to ${FleetMembers.Get[1].ToPilot.Name}
+					UI:Update["obj_Miner", "Warping to ${FleetMembers.Get[1].ToPilot.Name}", "g"]
 					FleetMembers.Get[1]:WarpTo[]
+					Client:Wait[5000]
 					This:Clear
 					This:QueueState["Traveling", 1000]
 					This:QueueState["Haul"]
