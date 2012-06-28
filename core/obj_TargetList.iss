@@ -167,7 +167,7 @@ objectdef obj_TargetList inherits obj_State
 				}
 				else
 				{
-					echo Inside minrange - ${entity_iterator.Value.Name}
+
 				}
 			}
 			while ${entity_iterator:Next(exists)}

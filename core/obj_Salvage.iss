@@ -276,73 +276,78 @@ objectdef obj_Salvage inherits obj_State
 			Ship.ModuleList_SensorBoost:Activate
 		}
 		
+		if ${Entity[(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && HaveLootRights && !IsAbandoned && !IsMoribund].Distance} > ${MyShip.MaxTargetRange}
+		{
+			Move:Approach[${Entity[(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && HaveLootRights && !IsAbandoned && !IsMoribund].ID}]
+			return FALSE
+		}
+		
 		Wrecks.LockedTargetList:GetIterator[TargetIterator]
 		if ${TargetIterator:First(exists)}
 		{
 			LootCans:Enable
 			do
 			{
-				echo Before Salvage
-				
-				echo After Salvage
-
-				if ${TargetIterator.Value.Distance} > ${Ship.ModuleList_TractorBeams.Range}
+				if ${TargetIterator.Value.ID(exists)}
 				{
-					Move:Approach[${TargetIterator.Value}]
-					return FALSE
-				}
-				echo ${TargetIterator.Value.Name} - ${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]}
-				
-				if  !${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]} &&\
-					${TargetIterator.Value.Distance} < ${Ship.ModuleList_TractorBeams.Range} &&\
-					${TargetIterator.Value.Distance} > LOOT_RANGE &&\
-					${Ship.ModuleList_TractorBeams.InactiveCount} > 0 &&\
-					${TargetIterator.Value.IsLockedTarget}
-				{
-					UI:Update["obj_Salvage", "Activating tractor beam - ${TargetIterator.Value.Name}", "g"]
-					Ship.ModuleList_TractorBeams:Activate[${TargetIterator.Value.ID}]
-					return FALSE
-				}
-				echo ${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]} - ${TargetIterator.Value.ID}
-				if  !${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]} &&\
-					${TargetIterator.Value.Distance} < ${Ship.ModuleList_TractorBeams.Range} &&\
-					${TargetIterator.Value.Distance} > LOOT_RANGE &&\
-					${TargetIterator.Value.IsLockedTarget} &&\
-					${ReactivateTractor}
-				{
-					UI:Update["obj_Salvage", "Reactivating tractor beam - ${TargetIterator.Value.Name}", "g"]
-					Ship.ModuleList_TractorBeams:Reactivate[${ClosestTractorKey}, ${TargetIterator.Value.ID}]
-					return FALSE
-				}
-				if  ${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]} &&\
-					${TargetIterator.Value.Distance} < LOOT_RANGE &&\
-					!${ReactivateTractor}
-				{
-					; UI:Update["obj_Salvage", "Deactivating tractor beam - ${TargetIterator.Value.Name}", "g"]
-					ClosestTractorKey:Set[${Ship.ModuleList_TractorBeams.GetActiveOn[${TargetIterator.Value.ID}]}]
-					ReactivateTractor:Set[TRUE]
-				}
-				if  !${Ship.ModuleList_Salvagers.IsActiveOn[${TargetIterator.Value.ID}]} &&\
-					${TargetIterator.Value.Distance} < ${Ship.ModuleList_Salvagers.Range} &&\
-					${Ship.ModuleList_Salvagers.InactiveCount} > 0 &&\
-					${TargetIterator.Value.IsLockedTarget} && ${Ship.ModuleList_Salvagers.Count} > 0
-				{
-					UI:Update["obj_Salvage", "Activating salvager - ${TargetIterator.Value.Name}", "g"]
-					Ship.ModuleList_Salvagers:Activate[${TargetIterator.Value.ID}]
-					return FALSE
-				}
-				if  !${Ship.ModuleList_Salvagers.IsActiveOn[${TargetIterator.Value.ID}]} &&\
-					${TargetIterator.Value.IsWreckEmpty} &&\
-					${TargetIterator.Value.IsLockedTarget} && ${Ship.ModuleList_Salvagers.Count} == 0
-				{
-					TargetIterator.Value:Abandon
-					TargetIterator.Value:UnlockTarget
-				}
-				if  ${TargetIterator.Value.Distance} < ${Ship.ModuleList_Salvagers.Range} &&\
-					${Ship.ModuleList_Salvagers.InactiveCount} > 0 &&\
-					${TargetIterator.Value.IsLockedTarget}
-				{
-					SalvageMultiTarget:Set[${TargetIterator.Value.ID}]
+					if ${TargetIterator.Value.Distance} > ${Ship.ModuleList_TractorBeams.Range}
+					{
+						Move:Approach[${TargetIterator.Value.ID}]
+						return FALSE
+					}
+					echo ${TargetIterator.Value.Name} - ${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]}
+					
+					if  !${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]} &&\
+						${TargetIterator.Value.Distance} < ${Ship.ModuleList_TractorBeams.Range} &&\
+						${TargetIterator.Value.Distance} > LOOT_RANGE &&\
+						${Ship.ModuleList_TractorBeams.InactiveCount} > 0 &&\
+						${TargetIterator.Value.IsLockedTarget}
+					{
+						UI:Update["obj_Salvage", "Activating tractor beam - ${TargetIterator.Value.Name}", "g"]
+						Ship.ModuleList_TractorBeams:Activate[${TargetIterator.Value.ID}]
+						return FALSE
+					}
+					echo ${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]} - ${TargetIterator.Value.ID}
+					if  !${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]} &&\
+						${TargetIterator.Value.Distance} < ${Ship.ModuleList_TractorBeams.Range} &&\
+						${TargetIterator.Value.Distance} > LOOT_RANGE &&\
+						${TargetIterator.Value.IsLockedTarget} &&\
+						${ReactivateTractor}
+					{
+						UI:Update["obj_Salvage", "Reactivating tractor beam - ${TargetIterator.Value.Name}", "g"]
+						Ship.ModuleList_TractorBeams:Reactivate[${ClosestTractorKey}, ${TargetIterator.Value.ID}]
+						return FALSE
+					}
+					if  ${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]} &&\
+						${TargetIterator.Value.Distance} < LOOT_RANGE &&\
+						!${ReactivateTractor}
+					{
+						; UI:Update["obj_Salvage", "Deactivating tractor beam - ${TargetIterator.Value.Name}", "g"]
+						ClosestTractorKey:Set[${Ship.ModuleList_TractorBeams.GetActiveOn[${TargetIterator.Value.ID}]}]
+						ReactivateTractor:Set[TRUE]
+					}
+					if  !${Ship.ModuleList_Salvagers.IsActiveOn[${TargetIterator.Value.ID}]} &&\
+						${TargetIterator.Value.Distance} < ${Ship.ModuleList_Salvagers.Range} &&\
+						${Ship.ModuleList_Salvagers.InactiveCount} > 0 &&\
+						${TargetIterator.Value.IsLockedTarget} && ${Ship.ModuleList_Salvagers.Count} > 0
+					{
+						UI:Update["obj_Salvage", "Activating salvager - ${TargetIterator.Value.Name}", "g"]
+						Ship.ModuleList_Salvagers:Activate[${TargetIterator.Value.ID}]
+						return FALSE
+					}
+					if  !${Ship.ModuleList_Salvagers.IsActiveOn[${TargetIterator.Value.ID}]} &&\
+						${TargetIterator.Value.IsWreckEmpty} &&\
+						${TargetIterator.Value.IsLockedTarget} && ${Ship.ModuleList_Salvagers.Count} == 0
+					{
+						TargetIterator.Value:Abandon
+						TargetIterator.Value:UnlockTarget
+					}
+					if  ${TargetIterator.Value.Distance} < ${Ship.ModuleList_Salvagers.Range} &&\
+						${Ship.ModuleList_Salvagers.InactiveCount} > 0 &&\
+						${TargetIterator.Value.IsLockedTarget}
+					{
+						SalvageMultiTarget:Set[${TargetIterator.Value.ID}]
+					}
 				}
 			}
 			while ${TargetIterator:Next(exists)}

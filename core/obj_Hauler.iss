@@ -233,10 +233,10 @@ objectdef obj_Hauler inherits obj_State
 	{
 		variable int64 CharID = ${Entity[${ID}].CharID}
 		IR_Cans:ClearQueryString
-		IR_Cans:AddQueryString[GroupID==GROUP_CARGOCONTAINER && OwnerID == ${CharID}]
+		IR_Cans:AddQueryString[GroupID == GROUP_CARGOCONTAINER && OwnerID == ${CharID}]
 		IR_Cans.DistanceTarget:Set[${ID}]
 		OOR_Cans:ClearQueryString
-		OOR_Cans:AddQueryString[GroupID==GROUP_CARGOCONTAINER && OwnerID == ${CharID}]
+		OOR_Cans:AddQueryString[GroupID == GROUP_CARGOCONTAINER && OwnerID == ${CharID}]
 		OOR_Cans.DistanceTarget:Set[${ID}]
 
 		IR_Cans.AutoLock:Set[TRUE]
@@ -247,11 +247,9 @@ objectdef obj_Hauler inherits obj_State
 	
 	member:bool LootCans(int64 ID)
 	{
+		echo ${IR_Cans.AutoLock} - ${OOR_Cans.AutoLock}
 		
-		echo ${IR_Cans.TargetList.Used} cans in range
-		echo ${OOR_Cans.TargetList.Used} cans out of range
-		
-		return TRUE
+		return FALSE
 	}
 
 	member:bool DepopulateTargetList()
