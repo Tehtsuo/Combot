@@ -116,12 +116,13 @@ objectdef obj_Configuration_Common
 		This.CommonRef:AddSetting[AlwaysShieldBoost, FALSE]
 	}
 
-Setting(string, ComBot_Mode, SetComBot_Mode)
-Setting(bool, AutoStart, SetAutoStart)
-Setting(bool, WarpPulse, SetWarpPulse)
-Setting(bool, Propulsion, SetPropulsion)
-Setting(bool, AlwaysShieldBoost, SetAlwaysShieldBoost)
-	}
+	Setting(string, ComBot_Mode, SetComBot_Mode)
+	Setting(bool, AutoStart, SetAutoStart)
+	Setting(bool, WarpPulse, SetWarpPulse)
+	Setting(bool, Propulsion, SetPropulsion)
+	Setting(int, Propulsion_Threshold, SetPropulsion_Threshold)
+	Setting(bool, AlwaysShieldBoost, SetAlwaysShieldBoost)
+}
 
 objectdef obj_Configuration_Salvager
 {
@@ -150,9 +151,9 @@ objectdef obj_Configuration_Salvager
 		This.CommonRef:AddSetting[Salvager_Prefix,Salvage:]
 	}
 
-Setting(string, Salvager_Prefix, SetSalvager_Prefix)
-Setting(string, Salvager_Dropoff, SetSalvager_Dropoff)
-Setting(string, Salvager_Dropoff_Type, SetSalvager_DropoffType)
+	Setting(string, Salvager_Prefix, SetSalvager_Prefix)
+	Setting(string, Salvager_Dropoff, SetSalvager_Dropoff)
+	Setting(string, Salvager_Dropoff_Type, SetSalvager_DropoffType)
 }
 
 objectdef obj_Configuration_HangarSale
@@ -183,11 +184,11 @@ objectdef obj_Configuration_HangarSale
 		This.CommonRef:AddSetting[UndercutValue,1000]
 	}
 	
-Setting(string, PriceMode, SetPriceMode)
-Setting(int, UndercutPercent, SetUndercutPercent)
-Setting(int, UndercutValue, SetUndercutValue)
-Setting(bool, RePrice, SetRePrice)
-Setting(bool, Sell, SetSell)
+	Setting(string, PriceMode, SetPriceMode)
+	Setting(int, UndercutPercent, SetUndercutPercent)
+	Setting(int, UndercutValue, SetUndercutValue)
+	Setting(bool, RePrice, SetRePrice)
+	Setting(bool, Sell, SetSell)
 }
 	
 objectdef obj_Configuration_Hauler
@@ -218,15 +219,15 @@ objectdef obj_Configuration_Hauler
 		
 	}
 	
-Setting(string, MiningSystem, SetMiningSystem)	
-Setting(string, JetCanMode, SetJetCanMode)
-Setting(string, Dropoff_Bookmark, SetDropoff_Bookmark)
-Setting(string, Pickup_Bookmark, SetPickup_Bookmark)
-Setting(string, Dropoff_Type, SetDropoff_Type)
-Setting(string, Pickup_Type, SetPickup_Type)
-Setting(string, Dropoff_ContainerName, SetDropoff_ContainerName)
-Setting(string, Pickup_ContainerName, SetPickup_ContainerName)
-Setting(int, Threshold, SetThreshold)	
+	Setting(string, MiningSystem, SetMiningSystem)	
+	Setting(string, JetCanMode, SetJetCanMode)
+	Setting(string, Dropoff_Bookmark, SetDropoff_Bookmark)
+	Setting(string, Pickup_Bookmark, SetPickup_Bookmark)
+	Setting(string, Dropoff_Type, SetDropoff_Type)
+	Setting(string, Pickup_Type, SetPickup_Type)
+	Setting(string, Dropoff_ContainerName, SetDropoff_ContainerName)
+	Setting(string, Pickup_ContainerName, SetPickup_ContainerName)
+	Setting(int, Threshold, SetThreshold)	
 	
 }
 
@@ -334,17 +335,18 @@ objectdef obj_Configuration_Miner
 		This.CommonRef:AddSetting[Miner_OrcaName,""]
 		
 	}
-Setting(string, MiningSystem, SetMiningSystem)	
-Setting(string, Dropoff, SetDropoff)	
-Setting(string, Dropoff_Type, SetDropoff_Type)	
-Setting(string, Dropoff_Type, SetDropoff_Type)	
-Setting(string, Container_Name, SetContainer_Name)	
-Setting(bool, IceMining, SetIceMining)	
-Setting(bool, OrcaMode, SetOrcaMode)	
-Setting(bool, UseBookmarks, SetUseBookmarks)	
-Setting(string, BeltPrefix, SetBeltPrefix)	
-Setting(string, IceBeltPrefix, SetIceBeltPrefix)	
-Setting(int, Threshold, SetThreshold)	
+	
+	Setting(string, MiningSystem, SetMiningSystem)	
+	Setting(string, Dropoff, SetDropoff)	
+	Setting(string, Dropoff_Type, SetDropoff_Type)	
+	Setting(string, Dropoff_Type, SetDropoff_Type)	
+	Setting(string, Container_Name, SetContainer_Name)	
+	Setting(bool, IceMining, SetIceMining)	
+	Setting(bool, OrcaMode, SetOrcaMode)	
+	Setting(bool, UseBookmarks, SetUseBookmarks)	
+	Setting(string, BeltPrefix, SetBeltPrefix)	
+	Setting(string, IceBeltPrefix, SetIceBeltPrefix)	
+	Setting(int, Threshold, SetThreshold)	
 
 }
 	
@@ -374,32 +376,32 @@ objectdef obj_Configuration_Security
 		
 	}
 
-Setting(bool, MeToPilot, SetMeToPilot)	
-Setting(bool, MeToCorp, SetMeToCorp)	
-Setting(bool, MeToAlliance, SetMeToAlliance)	
-Setting(bool, CorpToPilot, SetCorpToPilot)	
-Setting(bool, CorpToCorp, SetCorpToCorp)	
-Setting(bool, CorpToAlliance, SetCorpToAlliance)	
-Setting(bool, AllianceToPilot, SetAllianceToPilot)	
-Setting(bool, AllianceToCorp, SetAllianceToCorp)	
-Setting(bool, AllianceToAlliance, SetAllianceToAlliance)	
-Setting(int, MeToPilot_Value, SetMeToPilot_Value)	
-Setting(int, MeToCorp_Value, SetMeToCorp_Value)	
-Setting(int, MeToAlliance_Value, SetMeToAlliance_Value)	
-Setting(int, CorpToPilot_Value, SetCorpToPilot_Value)	
-Setting(int, CorpToCorp_Value, SetCorpToCorp_Value)	
-Setting(int, CorpToAlliance_Value, SetCorpToAlliance_Value)	
-Setting(int, AllianceToPilot_Value, SetAllianceToPilot_Value)	
-Setting(int, AllianceToCorp_Value, SetAllianceToCorp_Value)	
-Setting(int, AllianceToAlliance_Value, SetAllianceToAlliance_Value)	
-Setting(bool, FleeWaitTime_Enabled, SetFleeWaitTime_Enabled)	
-Setting(int, FleeWaitTime, SetFleeWaitTime)	
-Setting(bool, Break_Enabled, SetBreak_Enabled)	
-Setting(int, Break_Duration, SetBreak_Duration)	
-Setting(int, Break_Interval, SetBreak_Interval)	
-Setting(bool, OverrideFleeBookmark_Enabled, SetOverrideFleeBookmark_Enabled)	
-Setting(string, OverrideFleeBookmark, SetOverrideFleeBookmark)	
-Setting(bool, TargetFlee, SetTargetFlee)	
+	Setting(bool, MeToPilot, SetMeToPilot)	
+	Setting(bool, MeToCorp, SetMeToCorp)	
+	Setting(bool, MeToAlliance, SetMeToAlliance)	
+	Setting(bool, CorpToPilot, SetCorpToPilot)	
+	Setting(bool, CorpToCorp, SetCorpToCorp)	
+	Setting(bool, CorpToAlliance, SetCorpToAlliance)	
+	Setting(bool, AllianceToPilot, SetAllianceToPilot)	
+	Setting(bool, AllianceToCorp, SetAllianceToCorp)	
+	Setting(bool, AllianceToAlliance, SetAllianceToAlliance)	
+	Setting(int, MeToPilot_Value, SetMeToPilot_Value)	
+	Setting(int, MeToCorp_Value, SetMeToCorp_Value)	
+	Setting(int, MeToAlliance_Value, SetMeToAlliance_Value)	
+	Setting(int, CorpToPilot_Value, SetCorpToPilot_Value)	
+	Setting(int, CorpToCorp_Value, SetCorpToCorp_Value)	
+	Setting(int, CorpToAlliance_Value, SetCorpToAlliance_Value)	
+	Setting(int, AllianceToPilot_Value, SetAllianceToPilot_Value)	
+	Setting(int, AllianceToCorp_Value, SetAllianceToCorp_Value)	
+	Setting(int, AllianceToAlliance_Value, SetAllianceToAlliance_Value)	
+	Setting(bool, FleeWaitTime_Enabled, SetFleeWaitTime_Enabled)	
+	Setting(int, FleeWaitTime, SetFleeWaitTime)	
+	Setting(bool, Break_Enabled, SetBreak_Enabled)	
+	Setting(int, Break_Duration, SetBreak_Duration)	
+	Setting(int, Break_Interval, SetBreak_Interval)	
+	Setting(bool, OverrideFleeBookmark_Enabled, SetOverrideFleeBookmark_Enabled)	
+	Setting(string, OverrideFleeBookmark, SetOverrideFleeBookmark)	
+	Setting(bool, TargetFlee, SetTargetFlee)	
 
 	
 }	

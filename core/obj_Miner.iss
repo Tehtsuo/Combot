@@ -101,6 +101,7 @@ objectdef obj_Miner inherits obj_State
 					Client:Wait[5000]
 					This:Clear
 					This:QueueState["Traveling", 1000]
+					This:QueueState["Mine"]
 				}
 				if !${This.WarpToOrca}
 				{
@@ -119,6 +120,7 @@ objectdef obj_Miner inherits obj_State
 					This:Clear
 					Move:Bookmark[${Config.Miner.Dropoff}]
 					This:QueueState["Traveling", 1000]
+					This:QueueState["Mine"]
 				}
 				break
 			case No Dropoff
@@ -141,6 +143,7 @@ objectdef obj_Miner inherits obj_State
 					This:QueueState["StackItemHangar", 1000]
 					This:QueueState["GoToMiningSystem", 1000]
 					This:QueueState["Traveling", 1000]
+					This:QueueState["Mine"]
 				}
 				break
 		}
