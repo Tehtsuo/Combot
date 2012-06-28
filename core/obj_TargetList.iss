@@ -161,9 +161,13 @@ objectdef obj_TargetList inherits obj_State
 		{
 			do
 			{
+				if ${entity_iterator.Value.IsLockedTarget} || ${entity_iterator.Value.BeingTargeted}
+				{
+					TargetList_DeadDelay:Set[${entity_iterator.Value.ID}, ${Math.Calc[${LavishScript.RunningTime} + 5000]}]
+				}
 				if ${entity_iterator.Value.DistanceTo[${DistanceTarget}]} >= ${MinRange}
 				{
-					break;
+					break
 				}
 				else
 				{
@@ -172,40 +176,46 @@ objectdef obj_TargetList inherits obj_State
 			}
 			while ${entity_iterator:Next(exists)}
 			
-			do
+			if ${entity_iterator(exists)}
 			{
-				if ${entity_iterator.Value.IsLockedTarget} || ${entity_iterator.Value.BeingTargeted}
+				do
 				{
-					TargetList_DeadDelay:Set[${entity_iterator.Value.ID}, ${Math.Calc[${LavishScript.RunningTime} + 5000]}]
-				}
-				if ${entity_iterator.Value.DistanceTo[${DistanceTarget}]} <= ${MaxRange}
-				{
-					This.TargetListBuffer:Insert[${entity_iterator.Value.ID}]
-					if ${entity_iterator.Value.IsLockedTarget}
+					if ${entity_iterator.Value.IsLockedTarget} || ${entity_iterator.Value.BeingTargeted}
 					{
-						This.LockedTargetListBuffer:Insert[${entity_iterator.Value.ID}]
+						TargetList_DeadDelay:Set[${entity_iterator.Value.ID}, ${Math.Calc[${LavishScript.RunningTime} + 5000]}]
+					}
+					if ${entity_iterator.Value.DistanceTo[${DistanceTarget}]} <= ${MaxRange}
+					{
+						This.TargetListBuffer:Insert[${entity_iterator.Value.ID}]
+						if ${entity_iterator.Value.IsLockedTarget}
+						{
+							This.LockedTargetListBuffer:Insert[${entity_iterator.Value.ID}]
+						}
+					}
+					else
+					{
+						break
 					}
 				}
-				else
-				{
-					break;
-				}
+				while ${entity_iterator:Next(exists)}
 			}
-			while ${entity_iterator:Next(exists)}
 			
-			do
+			if ${entity_iterator(exists)}
 			{
-				if ${entity_iterator.Value.IsLockedTarget} || ${entity_iterator.Value.BeingTargeted}
+				do
 				{
-					TargetList_DeadDelay:Set[${entity_iterator.Value.ID}, ${Math.Calc[${LavishScript.RunningTime} + 5000]}]
+					if ${entity_iterator.Value.IsLockedTarget} || ${entity_iterator.Value.BeingTargeted}
+					{
+						TargetList_DeadDelay:Set[${entity_iterator.Value.ID}, ${Math.Calc[${LavishScript.RunningTime} + 5000]}]
+					}
+					This.TargetListBufferOOR:Insert[${entity_iterator.Value.ID}]
+					if ${entity_iterator.Value.IsLockedTarget}
+					{
+						This.LockedTargetListBufferOOR:Insert[${entity_iterator.Value.ID}]
+					}
 				}
-				This.TargetListBufferOOR:Insert[${entity_iterator.Value.ID}]
-				if ${entity_iterator.Value.IsLockedTarget}
-				{
-					This.LockedTargetListBufferOOR:Insert[${entity_iterator.Value.ID}]
-				}
+				while ${entity_iterator:Next(exists)}
 			}
-			while ${entity_iterator:Next(exists)}
 		}
 		Profiling:EndTrack
 		return TRUE
