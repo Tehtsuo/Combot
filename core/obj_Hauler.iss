@@ -53,17 +53,6 @@ objectdef obj_Hauler inherits obj_State
 		}
 	}
 	
-	method PopulateTargetList(int64 ID)
-	{
-		variable int64 CharID = ${Entity[${ID}].CharID}
-		IR_Cans:ClearQueryString
-		IR_Cans:AddQueryString[GroupID==GROUP_CARGOCONTAINER && OwnerID == ${CharID}]
-		IR_Cans.DistanceTarget:Set[${ID}]
-		OOR_Cans:ClearQueryString
-		OOR_Cans:AddQueryString["GroupID==GROUP_CARGOCONTAINER && OwnerID == ${CharID}"]
-		OOR_Cans.DistanceTarget:Set[${ID}]
-	}	
-	
 	member:bool OpenCargoHold()
 	{
 		if !${EVEWindow[ByName, "Inventory"](exists)}
@@ -240,17 +229,37 @@ objectdef obj_Hauler inherits obj_State
 		return TRUE
 	}
 	
-	member:bool LootCans(int64 ID)
+	member:bool PopulateTargetList(int64 ID)
 	{
-		This:PopulateTargetList[${ID}]
+		variable int64 CharID = ${Entity[${ID}].CharID}
+		IR_Cans:ClearQueryString
+		IR_Cans:AddQueryString[GroupID==GROUP_CARGOCONTAINER && OwnerID == ${CharID}]
+		IR_Cans.DistanceTarget:Set[${ID}]
+		OOR_Cans:ClearQueryString
+		OOR_Cans:AddQueryString[GroupID==GROUP_CARGOCONTAINER && OwnerID == ${CharID}]
+		OOR_Cans.DistanceTarget:Set[${ID}]
+
 		IR_Cans.AutoLock:Set[TRUE]
 		OOR_Cans.AutoLock:Set[TRUE]
+		return TRUE
+	}	
+
+	
+	member:bool LootCans(int64 ID)
+	{
 		
 		echo ${IR_Cans.TargetList.Used} cans in range
-		echo ${IR_Cans.TargetList.Used} cans out of range
+		echo ${OOR_Cans.TargetList.Used} cans out of range
 		
 		return TRUE
 	}
+
+	member:bool DepopulateTargetList()
+	{
+		IR_Cans.AutoLock:Set[FALSE]
+		OOR_Cans.AutoLock:Set[FALSE]
+		return TRUE
+	}	
 	
 	
 	member:bool Haul()
@@ -397,7 +406,9 @@ objectdef obj_Hauler inherits obj_State
 				{
 					UI:Update["obj_Miner", "Looting cans for ${FleetMembers.Get[1].ToPilot.Name}", "g"]
 					This:Clear
-					This:QueueState["LootCans", 2000, ${Entity[Name = "${FleetMembers.Get[1].ToPilot.Name}"].ID}]
+					This:QueueState["PopulateTargetList", 2000, ${Entity[Name = "${FleetMembers.Get[1].ToPilot.Name}"].ID}]
+					This:QueueState["LootCans", 2000]
+					This:QueueState["DepopulateTargetList", 2000]
 					This:QueueState["Haul"]
 					FleetMembers:Remove[1]
 					FleetMembers:Collapse

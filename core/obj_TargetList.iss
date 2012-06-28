@@ -163,7 +163,7 @@ objectdef obj_TargetList inherits obj_State
 			{
 				if ${entity_iterator.Value.DistanceTo[${DistanceTarget}]} >= ${MinRange}
 				{
-					break;
+					break
 				}
 				else
 				{
@@ -188,7 +188,7 @@ objectdef obj_TargetList inherits obj_State
 				}
 				else
 				{
-					break;
+					break
 				}
 			}
 			while ${entity_iterator:Next(exists)}
