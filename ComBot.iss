@@ -51,6 +51,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 #include core/obj_Drones.iss
 #include core/obj_Defense.iss
 #include core/obj_Profiling.iss
+#include core/obj_Delay.iss
 
 
 function atexit()
@@ -88,6 +89,7 @@ function main()
 	declarevariable Drones obj_Drones script
 	declarevariable Jetcan obj_Jetcan script
 	declarevariable Defense obj_Defense script
+	declarevariable Delay obj_Delay script
 
 	UI:Update["ComBot", "Module initialization complete", "y"]
 	
