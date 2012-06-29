@@ -280,8 +280,8 @@ objectdef obj_TargetList inherits obj_State
 			{
 				if !${Entity[${EntityIterator.Value}](exists)} || (!${Entity[${EntityIterator.Value}].IsLockedTarget} && !${Entity[${EntityIterator.Value}].BeingTargeted})
 				{
-					LockedAndLockingTargets:Remove[${EntityIterator.Value}]
 					OwnedTargets:Remove[${EntityIterator.Value}]
+					LockedAndLockingTargets:Remove[${EntityIterator.Value}]
 				}
 			}
 			while ${EntityIterator:Next(exists)}
