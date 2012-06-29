@@ -430,7 +430,7 @@ objectdef obj_Move inherits obj_State
 
 	
 	
-	method Approach(int64 target, int distance=0)
+	method Approach(int64 target, int distance=0, bool Warp=FALSE)
 	{
 		;	If we're already approaching the target, ignore the request
 		if ${target} == ${This.ApproachingID} && ${This.Approaching}
@@ -452,11 +452,11 @@ objectdef obj_Move inherits obj_State
 		This.ApproachingDistance:Set[${distance}]
 		This.TimeStartedApproaching:Set[-1]
 		This.Approaching:Set[TRUE]
-		This:QueueState["CheckApproach"]
+		This:QueueState["CheckApproach", 1000, ${Warp}]
 	}
 	
 	
-	member:bool CheckApproach()
+	member:bool CheckApproach(bool Warp)
 	{
 		;	Clear approach if we're in warp or the entity no longer exists
 		if ${Me.ToEntity.Mode} == 3 || !${Entity[${This.ApproachingID}](exists)}
@@ -466,7 +466,7 @@ objectdef obj_Move inherits obj_State
 		}			
 		
 		;	Find out if we need to warp to the target
-		if ${Entity[${This.ApproachingID}].Distance} > WARP_RANGE 
+		if ${Entity[${This.ApproachingID}].Distance} > WARP_RANGE && ${Warp}
 		{
 			UI:Update["obj_Move", "${Entity[${This.ApproachingID}].Name} is a long way away.  Warping to it", "g"]
 			This:Warp[${This.ApproachingID}]
