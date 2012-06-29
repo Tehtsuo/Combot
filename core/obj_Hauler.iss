@@ -247,9 +247,27 @@ objectdef obj_Hauler inherits obj_State
 	
 	member:bool LootCans(int64 ID)
 	{
-		echo ${IR_Cans.AutoLock} - ${OOR_Cans.AutoLock}
+		variable iterator i
+		IR_Cans.TargetList:GetIterator[i]
+		echo ${IR_Cans.TargetList.Used} cans in range
+		if ${i:First(exists)}
+		do
+		{
+			echo ${i.Value.Name}
+		}
+		while ${i:Next(exists)}
+		OOR_Cans.TargetList:GetIterator[i]
+		echo ${OOR_Cans.TargetList.Used} cans out of range
+		if ${i:First(exists)}
+		do
+		{
+			echo ${i.Value.Name}
+		}
+		while ${i:Next(exists)}
 		
-		return FALSE
+		
+		
+		return TRUE
 	}
 
 	member:bool DepopulateTargetList()
