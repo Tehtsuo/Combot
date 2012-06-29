@@ -155,7 +155,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							<Items>
 								<Item Value='Miner'>Miner</Item>
 								<Item Value='Hauler'>Hauler</Item>
-								<Item Value='Salvager'>Dedicated Salvager</Item>
+								<Item Value='Salvage'>Dedicated Salvager</Item>
 								<Item Value='HangerSale'>Hanger Sale</Item>
 								<Item Value='Combat'>Simple Clear Agro and Pocket</Item>
 							</Items>
@@ -286,16 +286,16 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								Script[ComBot].VariableScope.Config.Common:SetAlwaysShieldBoost[${This.Checked}]
 							</OnLeftClick>
 						</Checkbox>
-						<button	Name='FleetConfig'>
+						<button	Name='ModuleSettings'>
 							<Font template='Button.Font' />
 							<BackgroundColor>FF000000</BackgroundColor>
 							<X>0%</X>
 							<Y>90%</Y>
 							<Width>100%</Width>
 							<Height>10%</Height>
-							<Text>Fleet Configuration</Text>
+							<Text>Current Module Configuration</Text>
 							<OnLeftClick>
-								timedcommand 0 "ui -load \"&filepath;/ComBotGUI_Fleet.xml\""
+								timedcommand 0 "ui -load \"&filepath;/../${Script[ComBot].VariableScope.Config.Common.ComBot_Mode}.xml\""
 							</OnLeftClick>
 						</button>							
 					</Tab>
