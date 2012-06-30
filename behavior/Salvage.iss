@@ -36,13 +36,13 @@ objectdef obj_Salvage inherits obj_State
 	method Initialize()
 	{
 		This[parent]:Initialize
-		This:AssignStateQueueDisplay[obj_SalvageStateList@Salvager@ComBotTab@ComBot]
 		Wrecks:AddQueryString["(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && HaveLootRights && !IsAbandoned && !IsMoribund"]
 	}
 
 	method Start()
 	{
 		UI:Update["obj_Salvage", "Started", "g"]
+		This:AssignStateQueueDisplay[DebugStateList@Debug@ComBotTab@ComBot]
 		if ${This.IsIdle}
 		{
 			This:QueueState["OpenCargoHold", 500]
@@ -75,8 +75,6 @@ objectdef obj_Salvage inherits obj_State
 		
 		EVE:GetBookmarks[Bookmarks]
 		Bookmarks:GetIterator[BookmarkIterator]
-		UIElement[obj_SalvageBookmarkList@Salvager@ComBotTab@ComBot]:SetSortType[value]
-		UIElement[obj_SalvageBookmarkList@Salvager@ComBotTab@ComBot]:ClearItems
 		
 		HoldOffTimer:GetIterator[HoldOffIterator]
 		if ${HoldOffIterator:First(exists)}
@@ -106,15 +104,12 @@ objectdef obj_Salvage inherits obj_State
 		{	
 			if ${BookmarkIterator.Value.Label.Left[8].Upper.Equal[${Config.Salvager.Salvager_Prefix}]}
 			{
-				UIElement[obj_SalvageBookmarkList@Salvager@ComBotTab@ComBot]:AddItem[${BookmarkIterator.Value.Label}, ${BookmarkIterator.Value.DateCreated}${BookmarkIterator.Value.TimeCreated}]
-				UIElement[obj_SalvageBookmarkList@Salvager@ComBotTab@ComBot]:Sort
 				InHoldOff:Set[FALSE]
 				if ${HoldOffIterator:First(exists)}
 				do
 				{
 					if ${HoldOffIterator.Value.Equal[${BookmarkIterator.Value.CreatorID}]}
 					{
-						UIElement[obj_SalvageBookmarkList@Salvager@ComBotTab@ComBot].ItemByText[${BookmarkIterator.Value.Label}]:SetTextColor[FFFF0000]
 						InHoldOff:Set[TRUE]
 					}
 				}
@@ -123,7 +118,6 @@ objectdef obj_Salvage inherits obj_State
 				{
 					if (${BookmarkIterator.Value.TimeCreated.Compare[${BookmarkTime}]} < 0 && ${BookmarkIterator.Value.DateCreated.Compare[${BookmarkDate}]} <= 0) || ${BookmarkIterator.Value.DateCreated.Compare[${BookmarkDate}]} < 0
 					{
-						UIElement[obj_SalvageBookmarkList@Salvager@ComBotTab@ComBot].ItemByText[${BookmarkIterator.Value.Label}]:SetTextColor[FF00FF00]
 						Target:Set[${BookmarkIterator.Value.Label}]
 						BookmarkTime:Set[${BookmarkIterator.Value.TimeCreated}]
 						BookmarkDate:Set[${BookmarkIterator.Value.DateCreated}]

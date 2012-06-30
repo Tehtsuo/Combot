@@ -84,7 +84,6 @@ objectdef obj_HangerSale inherits obj_State
 	method Initialize()
 	{
 		This[parent]:Initialize
-		This:AssignStateQueueDisplay[obj_HangerSaleStateList@Hangar_Sale@ComBotTab@ComBot]
 		PulseFrequency:Set[1000]
 		Event[isxGames_onHTTPResponse]:AttachAtom[This:ParsePrice]
 	}
@@ -92,6 +91,7 @@ objectdef obj_HangerSale inherits obj_State
 	method Start()
 	{
 		UI:Update["obj_HangerSale", "Started", "g"]
+		This:AssignStateQueueDisplay[DebugStateList@Debug@ComBotTab@ComBot]
 		if ${This.IsIdle}
 		{
 			RemainingToProcess:Set[7]

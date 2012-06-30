@@ -29,7 +29,6 @@ objectdef obj_Miner inherits obj_State
 		This[parent]:Initialize
 		LavishScript:RegisterEvent[ComBot_Orca_InBelt]
 		Event[ComBot_Orca_InBelt]:AttachAtom[This:OrcaInBelt]
-		This:AssignStateQueueDisplay[obj_MinerStateList@Miner@ComBotTab@ComBot]
 		PulseFrequency:Set[20]
 	}
 
@@ -43,6 +42,7 @@ objectdef obj_Miner inherits obj_State
 		This:PopulateTargetList
 
 		UI:Update["obj_Miner", "Started", "g"]
+		This:AssignStateQueueDisplay[DebugStateList@Debug@ComBotTab@ComBot]
 		if ${This.IsIdle}
 		{
 			This:QueueState["Mine"]

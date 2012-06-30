@@ -32,7 +32,6 @@ objectdef obj_Hauler inherits obj_State
 		This[parent]:Initialize
 		LavishScript:RegisterEvent[ComBot_Orca_Cargo]
 		Event[ComBot_Orca_Cargo]:AttachAtom[This:OrcaCargoUpdate]
-		This:AssignStateQueueDisplay[obj_HaulerStateList@Hauler@ComBotTab@ComBot]
 		PulseFrequency:Set[20]
 		IR_Cans.MaxRange:Set[LOOT_RANGE]
 		OOR_Cans.MaxRange:Set[WARP_RANGE]
@@ -47,6 +46,7 @@ objectdef obj_Hauler inherits obj_State
 	method Start()
 	{
 		UI:Update["obj_Hauler", "Started", "g"]
+		This:AssignStateQueueDisplay[DebugStateList@Debug@ComBotTab@ComBot]
 		if ${This.IsIdle}
 		{
 			This:QueueState["Haul"]

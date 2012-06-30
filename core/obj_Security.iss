@@ -36,6 +36,13 @@ objectdef obj_Security inherits obj_State
 		Profiling:StartTrack["Security_CheckSafe"]
 		variable index:pilot Pilots
 		variable iterator Pilot_Iterator
+		
+		if ${This.InPod}
+		{
+				This:QueueState["Flee", 500, "I am in a pod!"]
+				Profiling:EndTrack
+				return TRUE
+		}
 
 		Profiling:StartTrack["GetLocalPilots"]
 		EVE:GetLocalPilots[Pilots]
@@ -48,7 +55,6 @@ objectdef obj_Security inherits obj_State
 		
 			if ${Config.Security.MeToPilot} && ${Pilot_Iterator.Value.Standing.MeToPilot} < ${Config.Security.MeToPilot_Value}
 			{
-				echo Me to ${Pilot_Iterator.Value.Name} - ${Pilot_Iterator.Value.Standing.MeToPilot}
 				This:QueueState["Flee", 500, "${Pilot_Iterator.Value.Name}(pilot) is ${Pilot_Iterator.Value.Standing.MeToPilot} standing to you"]
 				Profiling:EndTrack
 				return TRUE
@@ -221,4 +227,27 @@ objectdef obj_Security inherits obj_State
 		return TRUE
 	}
 	
+	member:bool InPod()
+	{
+		variable string ShipName = ${MyShip}
+		variable int GroupID
+		variable int TypeID
+
+		if ${Client.InSpace}
+		{
+			GroupID:Set[${MyShip.ToEntity.GroupID}]
+			TypeID:Set[${MyShip.ToEntity.TypeID}]
+		}
+		else
+		{
+			GroupID:Set[${MyShip.ToItem.GroupID}]
+			TypeID:Set[${MyShip.ToItem.TypeID}]
+		}
+		if ${ShipName.Right[10].Equal["'s Capsule"]} || \
+			${GroupID} == GROUP_CAPSULE
+		{
+			return TRUE
+		}
+		return FALSE
+	}	
 }
