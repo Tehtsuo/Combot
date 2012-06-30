@@ -180,6 +180,31 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							UIElement[obj_Miner_ThresholdTitle@ComBot_Miner_Frame@ComBot_Miner]:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Config.Miner.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Config.Miner.Threshold} * .01 * ${MyShip.CargoCapacity}].Round} m3]
 						</OnChange>
 					</Slider>						 
+					<Text name='obj_Miner_MaxLockTitle'> 
+						<X>38%</X> 
+						<Y>70%</Y> 
+						<Width>30%</Width> 
+						<Height>2%</Height> 
+						<Alignment>Center</Alignment>
+						<OnLoad>
+							This:SetText[Lock ${Script[ComBot].VariableScope.Config.Miner.MaxLaserLocks} targets for mining]
+						</OnLoad>
+					</Text>						 
+					<Slider name='obj_Miner_MaxLock'> 
+						<X>38%</X> 
+						<Y>72%</Y> 
+						<Width>30%</Width> 
+						<Height>5%</Height> 
+						<Border>1</Border>
+						<OnLoad>
+							This:SetRange[10]
+							This:SetValue[${Script[ComBot].VariableScope.Config.Miner.MaxLaserLocks}]
+						</OnLoad>
+						<OnChange>
+							Script[ComBot].VariableScope.Config.Miner:SetMaxLaserLocks[${This.Value}]
+							UIElement[obj_Miner_MaxLockTitle@ComBot_Miner_Frame@ComBot_Miner]:SetText[Lock ${Script[ComBot].VariableScope.Config.Miner.MaxLaserLocks} targets for mining]
+						</OnChange>
+					</Slider>						 
 					<Textentry name='obj_MinerOrePrefix'>
 						<X>17%</X>
 						<Y>88%</Y>
