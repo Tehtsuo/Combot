@@ -168,6 +168,50 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							Script[ComBot].VariableScope.Config.Salvager:SetSalvager_Dropoff_Type[${This.SelectedItem.Text}]
 						</OnSelect>
 					</listbox>
+					<Checkbox name='obj_SalvageBeltPatrol'> 
+						<X>61%</X> 
+						<Y>27%</Y> 
+						<Width>30%</Width> 
+						<Height>3%</Height> 
+						<Alignment>Center</Alignment>
+						<Text>Patrol asteroid belts by default</Text>
+						<OnLoad>
+							if ${Script[ComBot].VariableScope.Config.Salvager.BeltPatrol}
+							{
+								This:SetChecked
+							}
+						</OnLoad>
+						<OnLeftClick>
+							Script[ComBot].VariableScope.Config.Salvager:SetBeltPatrol[${This.Checked}]
+						</OnLeftClick>
+					</Checkbox>
+					<listbox Name="obj_SalvageBeltPatrolBookmark">
+						<BackgroundColor>FF000000</BackgroundColor>
+						<Border>1</Border>
+						<BorderColor>FFFFFFFF</BorderColor>
+						<X>61%</X>
+						<Y>30%</Y>
+						<Width>30%</Width>
+						<Height>40%</Height>
+						<OnLoad>
+							variable index:bookmark Bookmarks
+							variable iterator BookmarkIterator
+
+							EVE:GetBookmarks[Bookmarks]
+							Bookmarks:GetIterator[BookmarkIterator]
+
+							if ${BookmarkIterator:First(exists)}
+								do
+								{	
+									This:AddItem[${BookmarkIterator.Value.Label}]
+								}
+								while ${BookmarkIterator:Next(exists)}
+							This.ItemByText[${Script[ComBot].VariableScope.Config.Salvager.BeltPatrolBookmark}]:Select
+						</OnLoad>
+						<OnSelect>
+							Script[ComBot].VariableScope.Config.Salvager:SetBeltPatrolBookmark[${This.SelectedItem.Text}]
+						</OnSelect>
+					</listbox>
 				</Children>
 			</Frame>
 		</Children>

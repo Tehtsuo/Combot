@@ -30,6 +30,7 @@ objectdef obj_Salvage inherits obj_State
 	variable bool NonDedicatedNPCRun = FALSE
 	variable bool Dedicated = TRUE
 	variable bool Salvaging = FALSE
+	variable queue:entity BeltPatrol
 	
 	variable obj_TargetList Wrecks
 
@@ -145,13 +146,32 @@ objectdef obj_Salvage inherits obj_State
 			return TRUE
 		}
 
-		
-		UI:Update["obj_Salvage", "No salvage bookmark found - returning to station", "g"]
-		Move:Bookmark[${Config.Salvager.Salvager_Dropoff}, TRUE]
-		This:QueueState["Traveling"]
-		This:QueueState["PrepOffload"]
-		This:QueueState["Offload"]
-		return TRUE
+		if ${Config.Salvager.BeltPatrol}
+		{
+			UI:Update["obj_Salvage", "No salvage bookmark found - beginning belt patrol", "g"]
+			Move:System[${EVE.Bookmark[${Config.Salvager.BeltPatrolBookmark}].SolarSystemID}]
+			This:QueueState["Traveling"]
+			This:QueueState["MoveToBelt"]
+			This:QueueState["Traveling"]
+			This:QueueState["Log", 1000, "Salvaging in belt"]
+			This:QueueState["InitialUpdate", 100]
+			This:QueueState["Updated", 100]
+			This:QueueState["SalvageWrecks", 500, "${Me.CharID}"]
+			This:QueueState["ClearAlreadySalvaged", 100]
+			This:QueueState["RefreshBookmarks", 3000]
+			This:QueueState["OpenCargoHold", 500]
+			This:QueueState["CheckCargoHold", 500]
+			return TRUE
+		}
+		else
+		{
+			UI:Update["obj_Salvage", "No salvage bookmark found - returning to station", "g"]
+			Move:Bookmark[${Config.Salvager.Salvager_Dropoff}, TRUE]
+			This:QueueState["Traveling"]
+			This:QueueState["PrepOffload"]
+			This:QueueState["Offload"]
+			return TRUE
+		}
 	}
 
 	member:bool Traveling()
@@ -406,7 +426,6 @@ objectdef obj_Salvage inherits obj_State
 				This:QueueState["DeleteBookmark", 1000, "${BookmarkCreator}"]
 				This:QueueState["RefreshBookmarks", 1000]
 				This:QueueState["GateCheck", 1000, "${BookmarkCreator}"]
-				This:QueueState["JumpToCelestial"]
 				This:QueueState["Traveling"]
 			}
 			else
@@ -577,6 +596,34 @@ objectdef obj_Salvage inherits obj_State
 		EVE:RefreshBookmarks
 		return TRUE
 	}
+	
+	member:bool MoveToBelt()
+	{
+		if !${Client.InSpace}
+		{
+			Move:Undock
+			return FALSE
+		}
+
+		if ${BeltPatrol.Used} == 0
+		{
+			variable index:entity Belts
+			variable iterator BeltIterator
+			EVE:QueryEntities[Belts, "GroupID = GROUP_ASTEROIDBELT"]
+			Belts:GetIterator[BeltIterator]
+			if ${BeltIterator:First(exists)}
+				do
+				{
+					BeltPatrol:Queue[${BeltIterator.Value}]
+				}
+				while ${BeltIterator:Next(exists)}
+		}
+		
+		
+		Move:Object[${BeltPatrol.Peek.ID}]
+		BeltPatrol:Dequeue
+		return TRUE
+	}	
 	
 
 }
