@@ -51,6 +51,14 @@ objectdef obj_Combat inherits obj_State
 		}
 	}
 	
+	method Stop()
+	{
+		This:DeactivateStateQueueDisplay
+
+		UI:Update["obj_Combat", "Stopped", "r"]
+		This:Clear
+	}		
+	
 	member:bool WaitForAgro(int cooldown=5)
 	{
 		UI:Update["obj_Combat", "Cooldown ${cooldown}", "r"]

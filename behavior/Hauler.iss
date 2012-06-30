@@ -53,6 +53,15 @@ objectdef obj_Hauler inherits obj_State
 		}
 	}
 	
+	method Stop()
+	{
+		This:DeactivateStateQueueDisplay
+
+		UI:Update["obj_Hauler", "Stopped", "r"]
+		This:Clear
+	}
+	
+	
 	member:bool OpenCargoHold()
 	{
 		if !${EVEWindow[ByName, "Inventory"](exists)}

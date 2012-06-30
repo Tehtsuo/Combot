@@ -114,6 +114,14 @@ objectdef obj_HangerSale inherits obj_State
 		}
 	}
 	
+	method Stop()
+	{
+		This:DeactivateStateQueueDisplay
+
+		UI:Update["obj_HangerSale", "Stopped", "r"]
+		This:Clear
+	}	
+	
 	member:bool OpenHanger()
 	{
 		if !${EVEWindow[ByName, "Inventory"](exists)}

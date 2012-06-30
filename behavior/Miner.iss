@@ -49,6 +49,14 @@ objectdef obj_Miner inherits obj_State
 		}
 	}
 	
+	method Stop()
+	{
+		This:DeactivateStateQueueDisplay
+
+		UI:Update["obj_Miner", "Stopped", "r"]
+		This:Clear
+	}
+	
 	method PopulateTargetList()
 	{
 		Asteroids:ClearQueryString
