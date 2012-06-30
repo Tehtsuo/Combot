@@ -191,6 +191,8 @@ objectdef obj_Configuration_HangarSale
 	Setting(int, UndercutValue, SetUndercutValue)
 	Setting(bool, RePrice, SetRePrice)
 	Setting(bool, Sell, SetSell)
+	Setting(bool, MoveRefines, SetMoveRefines)
+	Setting(int64, MoveRefinesTarget, SetMoveRefinesTarget)
 }
 	
 objectdef obj_Configuration_Hauler
