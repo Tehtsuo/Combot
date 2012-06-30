@@ -334,7 +334,7 @@ objectdef obj_Configuration_Miner
 		This.CommonRef:AddSetting[Miner_Dropoff_Type,Personal Hangar]
 		This.CommonRef:AddSetting[BeltPrefix,Belt:]
 		This.CommonRef:AddSetting[IceBeltPrefix,Ice Belt:]
-		This.CommonRef:AddSetting[Miner_OrcaName,""]
+		This.CommonRef:AddSetting[MaxLasers,3]
 		
 	}
 	
@@ -349,6 +349,7 @@ objectdef obj_Configuration_Miner
 	Setting(string, BeltPrefix, SetBeltPrefix)	
 	Setting(string, IceBeltPrefix, SetIceBeltPrefix)	
 	Setting(int, Threshold, SetThreshold)	
+	Setting(int, MaxLasers, SetMaxLasers)	
 
 }
 	
