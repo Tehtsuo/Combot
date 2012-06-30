@@ -108,6 +108,7 @@ objectdef obj_Miner inherits obj_State
 					Local[${Config.Miner.Container_Name}].ToFleetMember:WarpTo
 					Client:Wait[5000]
 					This:Clear
+					Asteroids.LockedTargetList:Clear
 					This:QueueState["Traveling", 1000]
 					This:QueueState["Mine"]
 				}
@@ -126,6 +127,7 @@ objectdef obj_Miner inherits obj_State
 					}
 					Bookmarks:StoreLocation
 					This:Clear
+					Asteroids.LockedTargetList:Clear
 					Move:Bookmark[${Config.Miner.Dropoff}]
 					This:QueueState["Traveling", 1000]
 					This:QueueState["Mine"]
@@ -144,6 +146,7 @@ objectdef obj_Miner inherits obj_State
 						Bookmarks:StoreLocation
 					}
 					This:Clear
+					Asteroids.LockedTargetList:Clear
 					Move:Bookmark[${Config.Miner.Dropoff}]
 					This:QueueState["Traveling", 1000]
 					This:QueueState["PrepOffload", 1000]
@@ -522,7 +525,7 @@ objectdef obj_Miner inherits obj_State
 		}
 		
 		Drones:RemainDocked
-		Drones:Aggressive
+		Drones:Defensive
 		
 		if ${Ship.ModuleList_GangLinks.ActiveCount} < ${Ship.ModuleList_GangLinks.Count}
 		{
