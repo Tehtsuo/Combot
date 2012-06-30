@@ -105,6 +105,11 @@ objectdef obj_Miner inherits obj_State
 			case Orca
 				if !${Entity[Name = "${Config.Miner.Container_Name}"](exists)} && ${Local[${Config.Miner.Container_Name}].ToFleetMember(exists)} && ${This.WarpToOrca}
 				{
+					if ${Drones.DronesInSpace}
+					{
+						Drones:Recall
+						return FALSE
+					}
 					UI:Update["obj_Miner", "Warping to ${Local[${Config.Miner.Container_Name}].ToFleetMember.ToPilot.Name}", "g"]
 					Local[${Config.Miner.Container_Name}].ToFleetMember:WarpTo
 					Client:Wait[5000]
@@ -121,6 +126,11 @@ objectdef obj_Miner inherits obj_State
 			case Container
 				if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) >= ${Config.Miner.Threshold} * .01
 				{
+					if ${Drones.DronesInSpace}
+					{
+						Drones:Recall
+						return FALSE
+					}
 					UI:Update["obj_Miner", "Unload trip required", "g"]
 					if ${Config.Miner.OrcaMode}
 					{
@@ -129,6 +139,7 @@ objectdef obj_Miner inherits obj_State
 					Bookmarks:StoreLocation
 					This:Clear
 					Asteroids.LockedTargetList:Clear
+					Drones:Recall
 					Move:Bookmark[${Config.Miner.Dropoff}]
 					This:QueueState["Traveling", 1000]
 					This:QueueState["Mine"]
@@ -141,6 +152,11 @@ objectdef obj_Miner inherits obj_State
 			default
 				if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) >= ${Config.Miner.Threshold} * .01
 				{
+					if ${Drones.DronesInSpace}
+					{
+						Drones:Recall
+						return FALSE
+					}
 					UI:Update["obj_Miner", "Unload trip required", "g"]
 					if ${Client.InSpace}
 					{
@@ -148,6 +164,7 @@ objectdef obj_Miner inherits obj_State
 					}
 					This:Clear
 					Asteroids.LockedTargetList:Clear
+					Drones:Recall
 					Move:Bookmark[${Config.Miner.Dropoff}]
 					This:QueueState["Traveling", 1000]
 					This:QueueState["PrepOffload", 1000]

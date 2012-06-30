@@ -85,6 +85,13 @@ objectdef obj_Drones inherits obj_State
 		DronesOut:Set[TRUE]
 	}
 	
+	member:int DronesInSpace()
+	{
+		variable index:activedrone ActiveDrones
+		Me:GetActiveDrones[ActiveDrones]
+		return ${ActiveDrones.Used}
+	}
+	
 	member:bool DroneControl()
 	{
 		Profiling:StartTrack["Drones_DroneControl"]
