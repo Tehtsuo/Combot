@@ -329,8 +329,25 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							<X>00%</X>
 							<Y>10%</Y>
 							<Width>40%</Width>
-							<Height>80%</Height>
+							<Height>90%</Height>
 						</listbox>
+						<Text name='DebugGuage1_Text'>
+							<X>40%</X>
+							<Y>5%</Y>
+							<Height>3%</Height>
+							<Width>60%</Width>
+							<Alignment>Center</Alignment>
+							<Text>Cargo Hold</Text>
+						</Text>
+						<gauge name='DebugGuage1'>
+							<X>41%</X>
+							<Y>10%</Y>
+							<Height>10%</Height>
+							<Width>58%</Width>
+							<OnLoad>
+								This:SetLeftClickThru[TRUE]
+							</OnLoad>
+						</gauge>
 					</Tab>
 					
 
