@@ -201,6 +201,7 @@ objectdef obj_Move inherits obj_State
 		UI:Update["obj_Move", "Activating ${Entity[${ID}].Name}", "g"]
 		Entity[${ID}]:Activate
 		Client:Wait[5000]
+		This.Traveling:Set[FALSE]
 		return TRUE
 	}
 	
