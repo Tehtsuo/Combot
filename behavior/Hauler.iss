@@ -23,6 +23,7 @@ objectdef obj_Hauler inherits obj_State
 {
 	variable float OrcaCargo
 	variable index:fleetmember FleetMembers
+	variable set CheckedCans
 	
 	variable obj_TargetList IR_Cans
 	variable obj_TargetList OOR_Cans
@@ -34,6 +35,7 @@ objectdef obj_Hauler inherits obj_State
 		Event[ComBot_Orca_Cargo]:AttachAtom[This:OrcaCargoUpdate]
 		PulseFrequency:Set[500]
 		IR_Cans.MaxRange:Set[LOOT_RANGE]
+		IR_Cans.ListOutOfRange:Set[FALSE]
 		OOR_Cans.MaxRange:Set[WARP_RANGE]
 		OOR_Cans.MinRange:Set[LOOT_RANGE]
 	}
@@ -266,10 +268,122 @@ objectdef obj_Hauler inherits obj_State
 	
 	member:bool LootCans(int64 ID)
 	{
-		variable iterator i
-		IR_Cans.TargetList:GetIterator[i]
+		variable iterator CanIter
+		
 		echo ${IR_Cans.TargetList.Used} cans in range
 		echo ${OOR_Cans.TargetList.Used} cans out of range
+				
+		OOR_Cans.MinLockCount:Set[2]
+		OOR_Cans.AutoLock:Set[TRUE]
+		OOR_Cans:RequestUpdate[]
+		
+		if ${OOR_Cans.TargetList.Used} > 0
+		{
+			if ${OOR_Cans.LockedTargetList.Used} > 0
+			{
+				if ${OOR_Cans.LockedTargetList.Get[1].Distance} > LOOT_RANGE
+				{
+					if ${Ship.ModuleList_TractorBeams.Count} > 0
+					{
+						if !${Ship.ModuleList_TractorBeams.IsActiveOn[${OOR_Cans.LockedTargetList.Get[1].ID}]}
+						{
+							Ship.ModuleList_TractorBeams:Activate[${OOR_Cans.LockedTargetList.Get[1].ID}]
+							return FALSE
+						}
+					}
+					else
+					{
+						Move:Approach[${OOR_Cans.LockedTargetList.Get[1].ID}, LOOT_RANGE]
+						return FALSE
+					}
+				}
+				else
+				{
+					if !${EVEWindow[ByName, Inventory].ChildWindowExists[${OOR_Cans.LockedTargetList.Get[1].ID}]}
+					{
+						UI:Update["obj_Hauler", "Opening - ${OOR_Cans.LockedTargetList.Get[1].Name}", "g"]
+						IR_Cans.TargetList.Get[1]:OpenCargo
+						return FALSE
+					}
+					if !${EVEWindow[ByItemID, ${OOR_Cans.LockedTargetList.Get[1].ID}](exists)}
+					{
+						UI:Update["obj_Hauler", "Activating - ${OOR_Cans.LockedTargetList.Get[1].Name}", "g"]
+						EVEWindow[ByName, Inventory]:MakeChildActive[${OOR_Cans.LockedTargetList.Get[1].ID}]
+						return FALSE
+					}
+					UI:Update["obj_Hauler", "Looting - ${OOR_Cans.LockedTargetList.Get[1].Name}", "g"]
+					Cargo:PopulateCargoList[CONTAINER, ${OOR_Cans.LockedTargetList.Get[1].ID}]
+					if ${EVEWindow[ByItemID, ${OOR_Cans.LockedTargetList.Get[1].ID}].UsedCapacity} > ${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}]}
+					{
+						Cargo:MoveCargoList[SHIP]
+						Ship.ModuleList_TractorBeams:Deactivate[${OOR_Cans.LockedTargetList.Get[1].ID}]
+						return TRUE
+					}
+					else
+					{
+						Cargo:MoveCargoList[SHIP]
+					}
+					return FALSE
+				}
+			}
+			return FALSE
+		}
+		
+		IR_Cans.MinLockCount:Set[2]
+		IR_Cans.AutoLock:Set[TRUE]
+		IR_Cans:RequestUpdate[]
+		
+		if ${IR_Cans.TargetList.Used} > 1
+		{
+			if ${IR_Cans.LockedTargetList.Used} > 0
+			{
+				if ${IR_Cans.LockedTargetList.Get[1].Distance} > LOOT_RANGE
+				{
+					if ${Ship.ModuleList_TractorBeams.Count} > 0
+					{
+						if !${Ship.ModuleList_TractorBeams.IsActiveOn[${IR_Cans.LockedTargetList.Get[1].ID}]}
+						{
+							Ship.ModuleList_TractorBeams:Activate[${IR_Cans.LockedTargetList.Get[1].ID}]
+							return FALSE
+						}
+					}
+					else
+					{
+						Move:Approach[${IR_Cans.LockedTargetList.Get[1].ID}, LOOT_RANGE]
+						return FALSE
+					}
+				}
+				else
+				{
+					if !${EVEWindow[ByName, Inventory].ChildWindowExists[${IR_Cans.LockedTargetList.Get[1].ID}]}
+					{
+						UI:Update["obj_Hauler", "Opening - ${IR_Cans.LockedTargetList.Get[1].Name}", "g"]
+						IR_Cans.TargetList.Get[1]:OpenCargo
+						return FALSE
+					}
+					if !${EVEWindow[ByItemID, ${IR_Cans.LockedTargetList.Get[1].ID}](exists)}
+					{
+						UI:Update["obj_Hauler", "Activating - ${IR_Cans.LockedTargetList.Get[1].Name}", "g"]
+						EVEWindow[ByName, Inventory]:MakeChildActive[${IR_Cans.LockedTargetList.Get[1].ID}]
+						return FALSE
+					}
+					UI:Update["obj_Hauler", "Looting - ${IR_Cans.LockedTargetList.Get[1].Name}", "g"]
+					Cargo:PopulateCargoList[CONTAINER, ${IR_Cans.LockedTargetList.Get[1].ID}]
+					if ${EVEWindow[ByItemID, ${IR_Cans.LockedTargetList.Get[1].ID}].UsedCapacity} > ${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}]}
+					{
+						Cargo:MoveCargoList[SHIP]
+						Ship.ModuleList_TractorBeams:Deactivate[${IR_Cans.LockedTargetList.Get[1].ID}]
+						return TRUE
+					}
+					else
+					{
+						Cargo:MoveCargoList[SHIP]
+					}
+					return FALSE
+				}
+			}
+			return FALSE
+		}
 		
 		if ${IR_Cans.TargetList.Used} > 0
 		{
@@ -280,13 +394,13 @@ objectdef obj_Hauler inherits obj_State
 				{
 					UI:Update["obj_Hauler", "Opening - ${IR_Cans.TargetList.Get[1].Name}", "g"]
 					IR_Cans.TargetList.Get[1]:OpenCargo
-					return TRUE
+					return FALSE
 				}
 				if !${EVEWindow[ByItemID, ${IR_Cans.TargetList.Get[1].ID}](exists)}
 				{
 					UI:Update["obj_Hauler", "Activating - ${IR_Cans.TargetList.Get[1].Name}", "g"]
 					EVEWindow[ByName, Inventory]:MakeChildActive[${IR_Cans.TargetList.Get[1].ID}]
-					return TRUE
+					return FALSE
 				}
 				UI:Update["obj_Hauler", "Looting - ${IR_Cans.TargetList.Get[1].Name}", "g"]
 				Cargo:PopulateCargoList[CONTAINER, ${IR_Cans.TargetList.Get[1].ID}]
@@ -296,7 +410,7 @@ objectdef obj_Hauler inherits obj_State
 		}
 		
 		
-		return TRUE
+		return FALSE
 	}
 
 	member:bool DepopulateTargetList()
