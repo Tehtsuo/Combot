@@ -384,14 +384,14 @@ objectdef obj_Salvage inherits obj_State
 			{
 				do
 				{
-					echo if ${BookmarkIterator.Value.Label.Left[8].Upper.Equal[${Config.Salvager.Salvager_Prefix}]} && ${BookmarkIterator.Value.CreatorID.Equal[${BookmarkCreator}]}
 					if ${BookmarkIterator.Value.Label.Left[8].Upper.Equal[${Config.Salvager.Salvager_Prefix}]} && ${BookmarkIterator.Value.CreatorID.Equal[${BookmarkCreator}]}
 					{
-						UseJumpGate:Set[True}
+						UseJumpGate:Set[TRUE]
 					}
 				}
 				while ${BookmarkIterator:Next(exists)}
 			}
+			
 			if ${UseJumpGate}
 			{
 				UI:Update["obj_Salvage", "Gate found, activating", "g"]
