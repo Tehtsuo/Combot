@@ -102,7 +102,7 @@ objectdef obj_Move inherits obj_State
 	
 	
 	
-	method Bookmark(string DestinationBookmarkLabel, int Dist=0)
+	method Bookmark(string DestinationBookmarkLabel, bool IgnoreGate=FALSE)
 	{
 		if ${This.Traveling}
 		{
@@ -118,8 +118,7 @@ objectdef obj_Move inherits obj_State
 
 		UI:Update["obj_Move", "Movement queued.  Destination: ${DestinationBookmarkLabel}", "g"]
 		This.Traveling:Set[TRUE]
-		This.Distance:Set[${Dist}]
-		This:QueueState["BookmarkMove", 2000, ${DestinationBookmarkLabel}]
+		This:QueueState["BookmarkMove", 2000, "${DestinationBookmarkLabel}, ${IgnoreGate}"]
 	}
 
 	method System(string SystemID)
@@ -202,6 +201,7 @@ objectdef obj_Move inherits obj_State
 		UI:Update["obj_Move", "Activating ${Entity[${ID}].Name}", "g"]
 		Entity[${ID}]:Activate
 		Client:Wait[5000]
+		This.Traveling:Set[FALSE]
 		return TRUE
 	}
 	
@@ -211,7 +211,7 @@ objectdef obj_Move inherits obj_State
 		return TRUE
 	}
 	
-	member:bool BookmarkMove(string Bookmark)
+	member:bool BookmarkMove(string Bookmark, bool IgnoreGate=FALSE)
 	{
 
 		if ${Me.InStation}
@@ -250,7 +250,7 @@ objectdef obj_Move inherits obj_State
 		{
 			if ${EVE.Bookmark[${Bookmark}].Distance} > WARP_RANGE
 			{
-				if ${Entity[GroupID == GROUP_WARPGATE](exists)}
+				if ${Entity[GroupID == GROUP_WARPGATE](exists)} && !${IgnoreGate}
 				{
 					UI:Update["obj_Move", "Gate found, activating", "g"]
 					This:Gate[${Entity[GroupID == GROUP_WARPGATE].ID}]
@@ -261,7 +261,8 @@ objectdef obj_Move inherits obj_State
 				UI:Update["obj_Move", "Warping to ${Bookmark}", "g"]
 				EVE.Bookmark[${Bookmark}]:WarpTo[${This.Distance}]
 				Client:Wait[5000]
-				return FALSE
+				This:QueueState["BookmarkMove", 2000, ${Bookmark}]
+				return TRUE
 			}
 			else
 			{
@@ -430,7 +431,7 @@ objectdef obj_Move inherits obj_State
 
 	
 	
-	method Approach(int64 target, int distance=0)
+	method Approach(int64 target, int distance=0, bool Warp=FALSE)
 	{
 		;	If we're already approaching the target, ignore the request
 		if ${target} == ${This.ApproachingID} && ${This.Approaching}
@@ -452,11 +453,11 @@ objectdef obj_Move inherits obj_State
 		This.ApproachingDistance:Set[${distance}]
 		This.TimeStartedApproaching:Set[-1]
 		This.Approaching:Set[TRUE]
-		This:QueueState["CheckApproach"]
+		This:QueueState["CheckApproach", 1000, ${Warp}]
 	}
 	
 	
-	member:bool CheckApproach()
+	member:bool CheckApproach(bool Warp)
 	{
 		;	Clear approach if we're in warp or the entity no longer exists
 		if ${Me.ToEntity.Mode} == 3 || !${Entity[${This.ApproachingID}](exists)}
@@ -466,7 +467,7 @@ objectdef obj_Move inherits obj_State
 		}			
 		
 		;	Find out if we need to warp to the target
-		if ${Entity[${This.ApproachingID}].Distance} > WARP_RANGE 
+		if ${Entity[${This.ApproachingID}].Distance} > WARP_RANGE && ${Warp}
 		{
 			UI:Update["obj_Move", "${Entity[${This.ApproachingID}].Name} is a long way away.  Warping to it", "g"]
 			This:Warp[${This.ApproachingID}]

@@ -29,7 +29,6 @@ objectdef obj_Miner inherits obj_State
 		This[parent]:Initialize
 		LavishScript:RegisterEvent[ComBot_Orca_InBelt]
 		Event[ComBot_Orca_InBelt]:AttachAtom[This:OrcaInBelt]
-		This:AssignStateQueueDisplay[obj_MinerStateList@Miner@ComBotTab@ComBot]
 		PulseFrequency:Set[500]
 		Asteroids.LockOutOfRange:Set[FALSE]
 	}
@@ -44,10 +43,19 @@ objectdef obj_Miner inherits obj_State
 		This:PopulateTargetList
 
 		UI:Update["obj_Miner", "Started", "g"]
+		This:AssignStateQueueDisplay[DebugStateList@Debug@ComBotTab@ComBot]
 		if ${This.IsIdle}
 		{
 			This:QueueState["Mine"]
 		}
+	}
+	
+	method Stop()
+	{
+		This:DeactivateStateQueueDisplay
+
+		UI:Update["obj_Miner", "Stopped", "r"]
+		This:Clear
 	}
 	
 	method PopulateTargetList()
@@ -101,6 +109,7 @@ objectdef obj_Miner inherits obj_State
 					Local[${Config.Miner.Container_Name}].ToFleetMember:WarpTo
 					Client:Wait[5000]
 					This:Clear
+					Asteroids.LockedTargetList:Clear
 					This:QueueState["Traveling", 1000]
 					This:QueueState["Mine"]
 				}
@@ -119,6 +128,7 @@ objectdef obj_Miner inherits obj_State
 					}
 					Bookmarks:StoreLocation
 					This:Clear
+					Asteroids.LockedTargetList:Clear
 					Move:Bookmark[${Config.Miner.Dropoff}]
 					This:QueueState["Traveling", 1000]
 					This:QueueState["Mine"]
@@ -137,6 +147,7 @@ objectdef obj_Miner inherits obj_State
 						Bookmarks:StoreLocation
 					}
 					This:Clear
+					Asteroids.LockedTargetList:Clear
 					Move:Bookmark[${Config.Miner.Dropoff}]
 					This:QueueState["Traveling", 1000]
 					This:QueueState["PrepOffload", 1000]
@@ -526,7 +537,7 @@ objectdef obj_Miner inherits obj_State
 		}
 		
 		Drones:RemainDocked
-		Drones:Aggressive
+		Drones:Defensive
 		
 		if ${Ship.ModuleList_GangLinks.ActiveCount} < ${Ship.ModuleList_GangLinks.Count}
 		{

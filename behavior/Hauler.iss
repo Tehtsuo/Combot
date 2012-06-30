@@ -32,7 +32,6 @@ objectdef obj_Hauler inherits obj_State
 		This[parent]:Initialize
 		LavishScript:RegisterEvent[ComBot_Orca_Cargo]
 		Event[ComBot_Orca_Cargo]:AttachAtom[This:OrcaCargoUpdate]
-		This:AssignStateQueueDisplay[obj_HaulerStateList@Hauler@ComBotTab@ComBot]
 		PulseFrequency:Set[500]
 		IR_Cans.MaxRange:Set[LOOT_RANGE]
 		OOR_Cans.MaxRange:Set[WARP_RANGE]
@@ -47,12 +46,20 @@ objectdef obj_Hauler inherits obj_State
 	method Start()
 	{
 		UI:Update["obj_Hauler", "Started", "g"]
+		This:AssignStateQueueDisplay[DebugStateList@Debug@ComBotTab@ComBot]
 		if ${This.IsIdle}
 		{
 			This:QueueState["Haul"]
 		}
 	}
 	
+	method Stop()
+	{
+		This:DeactivateStateQueueDisplay
+
+		UI:Update["obj_Hauler", "Stopped", "r"]
+		This:Clear
+	}
 	method PopulateTargetList(int64 ID)
 	{
 		variable int64 CharID = ${Entity[${ID}].CharID}
@@ -63,6 +70,7 @@ objectdef obj_Hauler inherits obj_State
 		OOR_Cans:AddQueryString["GroupID==GROUP_CARGOCONTAINER && OwnerID == ${CharID}"]
 		OOR_Cans.DistanceTarget:Set[${ID}]
 	}	
+	
 	
 	member:bool OpenCargoHold()
 	{
@@ -240,12 +248,26 @@ objectdef obj_Hauler inherits obj_State
 		return TRUE
 	}
 	
-	member:bool LootCans(int64 ID)
+	member:bool PopulateTargetList(int64 ID)
 	{
-		This:PopulateTargetList[${ID}]
+		variable int64 CharID = ${Entity[${ID}].CharID}
+		IR_Cans:ClearQueryString
+		IR_Cans:AddQueryString[GroupID == GROUP_CARGOCONTAINER && OwnerID == ${CharID}]
+		IR_Cans.DistanceTarget:Set[${ID}]
+		OOR_Cans:ClearQueryString
+		OOR_Cans:AddQueryString[GroupID == GROUP_CARGOCONTAINER && OwnerID == ${CharID}]
+		OOR_Cans.DistanceTarget:Set[${ID}]
+
 		IR_Cans.AutoLock:Set[FALSE]
 		OOR_Cans.AutoLock:Set[FALSE]
-		
+		return TRUE
+	}	
+
+	
+	member:bool LootCans(int64 ID)
+	{
+		variable iterator i
+		IR_Cans.TargetList:GetIterator[i]
 		echo ${IR_Cans.TargetList.Used} cans in range
 		echo ${OOR_Cans.TargetList.Used} cans out of range
 		
@@ -276,6 +298,13 @@ objectdef obj_Hauler inherits obj_State
 		
 		return TRUE
 	}
+
+	member:bool DepopulateTargetList()
+	{
+		IR_Cans.AutoLock:Set[FALSE]
+		OOR_Cans.AutoLock:Set[FALSE]
+		return TRUE
+	}	
 	
 	
 	member:bool Haul()
@@ -422,7 +451,9 @@ objectdef obj_Hauler inherits obj_State
 				{
 					UI:Update["obj_Miner", "Looting cans for ${FleetMembers.Get[1].ToPilot.Name}", "g"]
 					This:Clear
-					This:QueueState["LootCans", 10000, ${Entity[Name = "${FleetMembers.Get[1].ToPilot.Name}"].ID}]
+					This:QueueState["PopulateTargetList", 2000, ${Entity[Name = "${FleetMembers.Get[1].ToPilot.Name}"].ID}]
+					This:QueueState["LootCans", 2000]
+					This:QueueState["DepopulateTargetList", 2000]
 					This:QueueState["Haul"]
 					FleetMembers:Remove[1]
 					FleetMembers:Collapse

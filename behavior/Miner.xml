@@ -57,7 +57,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					<Height>20</Height>
 					<Text>Close</Text>
 					<OnLeftClick>
-						ui -unload "&filepath;/ComBotGUI_Miner"
+						ui -unload "&filepath;/Miner"
 					</OnLeftClick>
 				</button>
 			</Children>

@@ -154,6 +154,8 @@ objectdef obj_Configuration_Salvager
 	Setting(string, Salvager_Prefix, SetSalvager_Prefix)
 	Setting(string, Salvager_Dropoff, SetSalvager_Dropoff)
 	Setting(string, Salvager_Dropoff_Type, SetSalvager_DropoffType)
+	Setting(bool, BeltPatrol, SetBeltPatrol)
+	Setting(string, BeltPatrolBookmark, SetBeltPatrolBookmark)
 }
 
 objectdef obj_Configuration_HangarSale

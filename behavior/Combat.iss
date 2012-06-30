@@ -29,7 +29,6 @@ objectdef obj_Combat inherits obj_State
 	{
 		This[parent]:Initialize
 		PulseFrequency:Set[500]
-		This:AssignStateQueueDisplay[obj_CombatStateList@Combat@ComBotTab@ComBot]
 	}
 	
 	method Start()
@@ -37,6 +36,7 @@ objectdef obj_Combat inherits obj_State
 		if ${This.IsIdle}
 		{
 			UI:Update["obj_Combat", "Started", "g"]
+			This:AssignStateQueueDisplay[DebugStateList@Debug@ComBotTab@ComBot]
 			This:QueueState["WaitForAgro", 1000]
 			This:QueueState["ClearTargets"]
 			This:QueueState["AddTargetingMe"]
@@ -50,6 +50,14 @@ objectdef obj_Combat inherits obj_State
 			Drones.DroneTargets.MinLockCount:Set[0]
 		}
 	}
+	
+	method Stop()
+	{
+		This:DeactivateStateQueueDisplay
+
+		UI:Update["obj_Combat", "Stopped", "r"]
+		This:Clear
+	}		
 	
 	member:bool WaitForAgro(int cooldown=5)
 	{
