@@ -28,7 +28,10 @@ objectdef obj_Jetcan inherits obj_State
 	
 	method Enable()
 	{
-		This:QueueState["Fill", 1500]
+		if ${States.Used} == 0
+		{
+			This:QueueState["Fill", 1500]
+		}
 	}
 	
 	method Disable()
@@ -118,7 +121,12 @@ objectdef obj_Jetcan inherits obj_State
 			MyShip:Open
 			return FALSE
 		}
-		EVE:StackItems[${ID}, CargoHold]
+		if !${EVEWindow[ByItemID, ${ID}](exists)}
+		{
+			EVEWindow[ByName, Inventory]:MakeChildActive[${ID}]
+			return FALSE
+		}
+		EVEWindow[ByItemID, ${ID}]:StackAll
 		return TRUE
 	}
 }

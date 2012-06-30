@@ -144,6 +144,25 @@ objectdef obj_ModuleList
 		return ${countActive}
 	}
 	
+	member:int ActiveCountOn(int64 checkTarget)
+	{
+		variable int countActive=0
+		variable iterator ModuleIterator
+		Modules:GetIterator[ModuleIterator]
+		if ${ModuleIterator:First(exists)}
+		{
+			do
+			{
+				if ${ModuleIterator.Value.IsActiveOn[${checkTarget}]}
+				{
+					countActive:Inc
+				}
+			}
+			while ${ModuleIterator:Next(exists)}
+		}
+		return ${countActive}
+	}
+	
 	member:int Count()
 	{
 		return ${Modules.Used}

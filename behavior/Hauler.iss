@@ -32,7 +32,7 @@ objectdef obj_Hauler inherits obj_State
 		This[parent]:Initialize
 		LavishScript:RegisterEvent[ComBot_Orca_Cargo]
 		Event[ComBot_Orca_Cargo]:AttachAtom[This:OrcaCargoUpdate]
-		PulseFrequency:Set[20]
+		PulseFrequency:Set[500]
 		IR_Cans.MaxRange:Set[LOOT_RANGE]
 		OOR_Cans.MaxRange:Set[WARP_RANGE]
 		OOR_Cans.MinRange:Set[LOOT_RANGE]
@@ -60,6 +60,16 @@ objectdef obj_Hauler inherits obj_State
 		UI:Update["obj_Hauler", "Stopped", "r"]
 		This:Clear
 	}
+	method PopulateTargetList(int64 ID)
+	{
+		variable int64 CharID = ${Entity[${ID}].CharID}
+		IR_Cans:ClearQueryString
+		IR_Cans:AddQueryString["GroupID==GROUP_CARGOCONTAINER && OwnerID == ${CharID}"]
+		IR_Cans.DistanceTarget:Set[${ID}]
+		OOR_Cans:ClearQueryString
+		OOR_Cans:AddQueryString["GroupID==GROUP_CARGOCONTAINER && OwnerID == ${CharID}"]
+		OOR_Cans.DistanceTarget:Set[${ID}]
+	}	
 	
 	
 	member:bool OpenCargoHold()
@@ -248,8 +258,8 @@ objectdef obj_Hauler inherits obj_State
 		OOR_Cans:AddQueryString[GroupID == GROUP_CARGOCONTAINER && OwnerID == ${CharID}]
 		OOR_Cans.DistanceTarget:Set[${ID}]
 
-		IR_Cans.AutoLock:Set[TRUE]
-		OOR_Cans.AutoLock:Set[TRUE]
+		IR_Cans.AutoLock:Set[FALSE]
+		OOR_Cans.AutoLock:Set[FALSE]
 		return TRUE
 	}	
 
@@ -259,21 +269,31 @@ objectdef obj_Hauler inherits obj_State
 		variable iterator i
 		IR_Cans.TargetList:GetIterator[i]
 		echo ${IR_Cans.TargetList.Used} cans in range
-		if ${i:First(exists)}
-		do
-		{
-			echo ${i.Value.Name}
-		}
-		while ${i:Next(exists)}
-		OOR_Cans.TargetList:GetIterator[i]
 		echo ${OOR_Cans.TargetList.Used} cans out of range
-		if ${i:First(exists)}
-		do
-		{
-			echo ${i.Value.Name}
-		}
-		while ${i:Next(exists)}
 		
+		if ${IR_Cans.TargetList.Used} > 0
+		{
+			Move:Approach[${IR_Cans.TargetList.Get[1].ID}, LOOT_RANGE]
+			if ${IR_Cans.TargetList.Get[1].Distance} < LOOT_RANGE
+			{
+				if !${EVEWindow[ByName, Inventory].ChildWindowExists[${IR_Cans.TargetList.Get[1].ID}]}
+				{
+					UI:Update["obj_Hauler", "Opening - ${IR_Cans.TargetList.Get[1].Name}", "g"]
+					IR_Cans.TargetList.Get[1]:OpenCargo
+					return TRUE
+				}
+				if !${EVEWindow[ByItemID, ${IR_Cans.TargetList.Get[1].ID}](exists)}
+				{
+					UI:Update["obj_Hauler", "Activating - ${IR_Cans.TargetList.Get[1].Name}", "g"]
+					EVEWindow[ByName, Inventory]:MakeChildActive[${IR_Cans.TargetList.Get[1].ID}]
+					return TRUE
+				}
+				UI:Update["obj_Hauler", "Looting - ${IR_Cans.TargetList.Get[1].Name}", "g"]
+				Cargo:PopulateCargoList[CONTAINER, ${IR_Cans.TargetList.Get[1].ID}]
+				Cargo:DontPopCan
+				return TRUE
+			}
+		}
 		
 		
 		return TRUE

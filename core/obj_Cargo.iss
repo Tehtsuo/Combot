@@ -64,20 +64,26 @@ objectdef obj_Cargo inherits obj_State
 		variable index:int64 TransferIndex
 		variable float Volume = 0
 		variable bool EarlyBreak=FALSE
+		variable int64 LastItem = -1
 
 		CargoList:GetIterator[Cargo]
 		if ${Cargo:First(exists)}
+		{
 			do
 			{
+				if !${LastItem.Equal[-1]}
+				{
+					TransferIndex:Insert[${LastItem}]
+				}
 				if (${Cargo.Value.Quantity} * ${Cargo.Value.Volume}) < ${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity} - ${Volume}]}
 				{
-					TransferIndex:Insert[${Cargo.Value.ID}]
+					LastItem:Set[${Cargo.Value.ID}]
 					Volume:Inc[${Math.Calc[${Cargo.Value.Quantity} * ${Cargo.Value.Volume}]}]
 				}
 				else
 				{
 					EarlyBreak:Set[TRUE]
-					Cargo.Value:MoveTo[MyShip, CargoHold, ${Math.Calc[(${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity} - ${Volume}) / ${Cargo.Value.Volume}] - 1}]
+					Cargo.Value:MoveTo[MyShip, CargoHold, ${Math.Calc[(${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity} - ${Volume}) / ${Cargo.Value.Volume} - 1]}]
 					break
 				}
 			}
@@ -85,11 +91,16 @@ objectdef obj_Cargo inherits obj_State
 			Cargo:Last
 			if !${EarlyBreak}
 			{
-				TransferIndex:RemoveByQuery[]
-				Cargo.Value:MoveTo[MyShip, CargoHold, ${Math.Calc[(${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity} - ${Volume}) / ${Cargo.Value.Volume}] - 1}]
+				if ${Cargo.Value.Quantity} > 1 
+				{
+					Cargo.Value:MoveTo[MyShip, CargoHold, ${Math.Calc[${Cargo.Value.Quantity} - 1]}]
+				}
 			}
-			
-		EVE:MoveItemsTo[TransferIndex, MyShip, CargoHold]
+			if ${TransferIndex.Used} > 0
+			{
+				EVE:MoveItemsTo[TransferIndex, MyShip, CargoHold]
+			}
+		}
 	}
 	
 	

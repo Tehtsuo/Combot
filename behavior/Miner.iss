@@ -29,7 +29,8 @@ objectdef obj_Miner inherits obj_State
 		This[parent]:Initialize
 		LavishScript:RegisterEvent[ComBot_Orca_InBelt]
 		Event[ComBot_Orca_InBelt]:AttachAtom[This:OrcaInBelt]
-		PulseFrequency:Set[20]
+		PulseFrequency:Set[500]
+		Asteroids.LockOutOfRange:Set[FALSE]
 	}
 
 	method Shutdown()
@@ -77,7 +78,7 @@ objectdef obj_Miner inherits obj_State
 			{
 				Asteroids:AddQueryString[CategoryID==CATEGORYID_ORE && Name =- "${OreTypeIterator.Key}"]
 			}
-			while ${OreTypeIterator:Next(exists)}			
+			while ${OreTypeIterator:Next(exists)}
 		}
 		else
 		{
@@ -214,7 +215,7 @@ objectdef obj_Miner inherits obj_State
 				Cargo:MoveCargoList[CORPORATEHANGAR, ${Config.Miner.Dropoff_Type}]
 				break
 		}
-		Profiling:StartTrack["Drones_DroneControl"]
+		Profiling:EndTrack
 		return TRUE
 	}
 	
@@ -387,7 +388,18 @@ objectdef obj_Miner inherits obj_State
 			return FALSE
 		}
 		
-		Asteroids.MinLockCount:Set[${Ship.ModuleList_MiningLaser.Count}]
+		variable int MaxTarget = ${Math.Calc[${MyShip.MaxLockedTargets} - 2]}
+		if ${Math.Calc[${Me.MaxLockedTargets} - 2]} < ${MaxTarget}
+		{
+			MaxTarget:Set[${Math.Calc[${Me.MaxLockedTargets} - 2]}]
+		}
+		if ${Ship.ModuleList_MiningLaser.Count} < ${MaxTarget}
+		{
+			MaxTarget:Set[${Ship.ModuleList_MiningLaser.Count}]
+		}
+		
+		
+		Asteroids.MinLockCount:Set[${MaxTarget}]
 		Asteroids.MaxRange:Set[${Ship.ModuleList_MiningLaser.Range}]
 		
 		if ${Config.Miner.OrcaMode}
@@ -518,9 +530,9 @@ objectdef obj_Miner inherits obj_State
 		}
 		else
 		{
-			if ${Entity[CategoryID==CATEGORYID_ORE].Distance} > ${MyShip.MaxTargetRange}
+			if ${Entity[CategoryID==CATEGORYID_ORE].Distance} > ${Math.Calc[${Ship.ModuleList_MiningLaser.Range} * (2/3)]}
 			{
-				Move:Approach[${Entity[CategoryID==CATEGORYID_ORE]}, ${Ship.ModuleList_MiningLaser.Range}]
+				Move:Approach[${Entity[CategoryID==CATEGORYID_ORE]}, ${Math.Calc[${Ship.ModuleList_MiningLaser.Range} * (1/2)]}]
 			}
 		}
 		
@@ -534,7 +546,7 @@ objectdef obj_Miner inherits obj_State
 		
 		if ${Ship.ModuleList_MiningLaser.ActiveCount} < ${Ship.ModuleList_MiningLaser.Count}
 		{
-			This:QueueState["ActivateLasers"]
+			This:QueueState["ActivateLasers", 2000]
 			This:QueueState["Mine"]
 			Profiling:EndTrack
 			return TRUE
@@ -562,39 +574,61 @@ objectdef obj_Miner inherits obj_State
 		}
 		Asteroids:RequestUpdate
 		variable iterator Roid
+		variable int64 FirstRoid = -1
+		variable int RoidActiveCount
 		Asteroids.LockedTargetList:GetIterator[Roid]
+		
 		if ${Roid:First(exists)}
-		do
 		{
-			if !${Roid.Value.ID(exists)}
+			do
 			{
-				continue
-			}
-			if	${Roid.Value.Distance} > ${Ship.ModuleList_MiningLaser.Range}
-			{
-				Move:Approach[${Roid.Value.ID}, ${Ship.ModuleList_MiningLaser.Range}]
-				Profiling:EndTrack
-				return FALSE
-			}
-			if ${Config.Miner.IceMining}
-			{
-				UI:Update["obj_Miner", "Activating ${Ship.ModuleList_MiningLaser.InActiveCount} laser(s) on ${Roid.Value.Name} (${ComBot.MetersToKM_Str[${Roid.Value.Distance}]})", "y"]
-				Ship.ModuleList_MiningLaser:ActivateCount[${Ship.ModuleList_MiningLaser.InActiveCount}, ${Roid.Value.ID}]
-				Profiling:EndTrack
-				return TRUE
-			}
-			else
-			{
-				if !${Ship.ModuleList_MiningLaser.IsActiveOn[${Roid.Value.ID}]}
+				if !${Roid.Value.ID(exists)}
 				{
-					UI:Update["obj_Miner", "Activating 1 laser on ${Roid.Value.Name} (${ComBot.MetersToKM_Str[${Roid.Value.Distance}]})", "y"]
-					Ship.ModuleList_MiningLaser:Activate[${Roid.Value.ID}]
+					continue
+				}
+				if ${FirstRoid.Equal[-1]}
+				{
+					FirstRoid:Set[${Roid.Value.ID}]
+					echo roid active count ${Ship.ModuleList_MiningLaser.ActiveCountOn[${FirstRoid}]}
+					RoidActiveCount:Set[${Ship.ModuleList_MiningLaser.ActiveCountOn[${FirstRoid}]}]
+				}
+				if ${RoidActiveCount} > ${Ship.ModuleList_MiningLaser.ActiveCountOn[${Roid.Value.ID}]}
+				{
+					FirstRoid:Set[${Roid.Value.ID}]
+					RoidActiveCount:Set[${Ship.ModuleList_MiningLaser.ActiveCountOn[${FirstRoid}]}]
+				}
+				if ${Roid.Value.Distance} > ${Ship.ModuleList_MiningLaser.Range}
+				{
+					Move:Approach[${Roid.Value.ID}, ${Ship.ModuleList_MiningLaser.Range}]
 					Profiling:EndTrack
 					return FALSE
 				}
+				if ${Config.Miner.IceMining}
+				{
+					UI:Update["obj_Miner", "Activating ${Ship.ModuleList_MiningLaser.InActiveCount} laser(s) on ${Roid.Value.Name} (${ComBot.MetersToKM_Str[${Roid.Value.Distance}]})", "y"]
+					Ship.ModuleList_MiningLaser:ActivateCount[${Ship.ModuleList_MiningLaser.InActiveCount}, ${Roid.Value.ID}]
+					Profiling:EndTrack
+					return TRUE
+				}
+				else
+				{
+					if !${Ship.ModuleList_MiningLaser.IsActiveOn[${Roid.Value.ID}]}
+					{
+						UI:Update["obj_Miner", "Activating 1 laser on ${Roid.Value.Name} (${ComBot.MetersToKM_Str[${Roid.Value.Distance}]})", "y"]
+						Ship.ModuleList_MiningLaser:Activate[${Roid.Value.ID}]
+						Profiling:EndTrack
+						return FALSE
+					}
+				}
 			}
+			while ${Roid:Next(exists)}
 		}
-		while ${Roid:Next(exists)}
+		
+		if ${Asteroids.MinLockCount} <= ${Asteroids.LockedTargetList.Used}
+		{
+			Ship.ModuleList_MiningLaser:Activate[${FirstRoid}]
+		}
+		
 		Profiling:EndTrack
 		return FALSE
 	}
