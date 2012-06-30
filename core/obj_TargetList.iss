@@ -38,6 +38,7 @@ objectdef obj_TargetList inherits obj_State
 	variable int MinRange = 0
 	variable bool ListOutOfRange = TRUE
 	variable bool AutoLock = FALSE
+	variable bool LockOutOfRange = TRUE
 	variable int MinLockCount = 2
 	variable int MaxLockCount = 2
 	variable bool NeedUpdate = TRUE
@@ -46,7 +47,7 @@ objectdef obj_TargetList inherits obj_State
 	method Initialize()
 	{
 		This[parent]:Initialize
-		PulseFrequency:Set[100]
+		PulseFrequency:Set[20]
 		RandomDelta:Set[0]
 		This:QueueState["UpdateList"]
 		DistanceTarget:Set[${MyShip.ID}]
@@ -176,7 +177,7 @@ objectdef obj_TargetList inherits obj_State
 			}
 			while ${entity_iterator:Next(exists)}
 			
-			if ${entity_iterator(exists)}
+			if ${entity_iterator.Value(exists)}
 			{
 				do
 				{
@@ -200,7 +201,7 @@ objectdef obj_TargetList inherits obj_State
 				while ${entity_iterator:Next(exists)}
 			}
 			
-			if ${entity_iterator(exists)}
+			if ${entity_iterator.Value(exists)}
 			{
 				do
 				{
@@ -292,7 +293,7 @@ objectdef obj_TargetList inherits obj_State
 		{
 			do
 			{
-				if !${EntityIterator.Value.IsLockedTarget} && !${EntityIterator.Value.BeingTargeted} && ${LockedAndLockingTargets.Used} < ${MinLockCount} && ${MaxTarget} > (${Me.TargetCount} + ${Me.TargetingCount}) && ${EntityIterator.Value.Distance} < ${MyShip.MaxTargetRange}
+				if !${EntityIterator.Value.IsLockedTarget} && !${EntityIterator.Value.BeingTargeted} && ${LockedAndLockingTargets.Used} < ${MinLockCount} && ${MaxTarget} > (${Me.TargetCount} + ${Me.TargetingCount}) && ${EntityIterator.Value.Distance} < ${MyShip.MaxTargetRange} && (${EntityIterator.Value.Distance} < ${MaxRange} || ${LockOutOfRange})
 				{
 					EntityIterator.Value:LockTarget
 					LockedAndLockingTargets:Add[${EntityIterator.Value.ID}]
