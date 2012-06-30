@@ -23,7 +23,7 @@ objectdef obj_Hauler inherits obj_State
 {
 	variable float OrcaCargo
 	variable index:fleetmember FleetMembers
-	variable set CheckedCans
+	variable int64 CurrentCan
 	
 	variable obj_TargetList IR_Cans
 	variable obj_TargetList OOR_Cans
@@ -272,12 +272,17 @@ objectdef obj_Hauler inherits obj_State
 		
 		echo ${IR_Cans.TargetList.Used} cans in range
 		echo ${OOR_Cans.TargetList.Used} cans out of range
-				
-		OOR_Cans.MinLockCount:Set[2]
-		OOR_Cans.AutoLock:Set[TRUE]
-		OOR_Cans:RequestUpdate[]
 		
-		if ${OOR_Cans.TargetList.Used} > 0
+		OOR_Cans:RequestUpdate
+		IR_Cans:RequestUpdate
+		
+		if !${Entity[${CurrentCan}](exists)}
+		{
+		
+		
+		}
+		
+		if ${OOR_Cans.TargetList.Used} > 0 && ${CurrentCan.Equal[-1]}
 		{
 			if ${OOR_Cans.LockedTargetList.Used} > 0
 			{
@@ -328,10 +333,8 @@ objectdef obj_Hauler inherits obj_State
 			}
 			return FALSE
 		}
+
 		
-		IR_Cans.MinLockCount:Set[2]
-		IR_Cans.AutoLock:Set[TRUE]
-		IR_Cans:RequestUpdate[]
 		
 		if ${IR_Cans.TargetList.Used} > 1
 		{
