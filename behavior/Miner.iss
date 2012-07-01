@@ -103,6 +103,12 @@ objectdef obj_Miner inherits obj_State
 		switch ${Config.Miner.Dropoff_Type}
 		{
 			case Orca
+				if !${Client.InSpace}
+				{
+					This:QueueState["Undock"]
+					This:QueueState["Mine"]
+					return TRUE
+				}
 				if !${Entity[Name = "${Config.Miner.Container_Name}"](exists)} && ${Local[${Config.Miner.Container_Name}].ToFleetMember(exists)} && ${This.WarpToOrca}
 				{
 					if ${Drones.DronesInSpace}
@@ -121,6 +127,7 @@ objectdef obj_Miner inherits obj_State
 				if !${This.WarpToOrca}
 				{
 					This:Clear
+					This:QueueState["Mine"]
 				}
 				break
 			case Container
@@ -161,6 +168,10 @@ objectdef obj_Miner inherits obj_State
 					if ${Client.InSpace}
 					{
 						Bookmarks:StoreLocation
+					}
+					if ${Config.Miner.OrcaMode}
+					{
+						relay all -event ComBot_Orca_InBelt FALSE
 					}
 					This:Clear
 					Asteroids.LockedTargetList:Clear
@@ -424,19 +435,16 @@ objectdef obj_Miner inherits obj_State
 			Asteroids.AutoLock:Set[FALSE]
 			Asteroids.AutoRelock:Set[FALSE]
 			Asteroids.AutoRelockPriority:Set[FALSE]
-			if ${Config.Miner.Dropoff_Type.Equal[Container]} && ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipCorpHangar]} > 0
+			
+			
+			if ${Config.Miner.Dropoff_Type.Equal[No Dropoff]}
 			{
-				Cargo:PopulateCargoList[SHIPCORPORATEHANGAR]
-				Cargo:MoveCargoList[SHIP]
-				This:QueueState["Idle", 1000]
-				This:QueueState["Mine"]
-				Profiling:EndTrack
-				return TRUE
 			}
-			if ${Config.Miner.Dropoff_Type.Equal[Jetcan]} && ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipCorpHangar]} > 0
+			elseif ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipCorpHangar]} > 0
 			{
 				Cargo:PopulateCargoList[SHIPCORPORATEHANGAR]
 				Cargo:MoveCargoList[SHIP]
+				This:QueueState["CheckCargoHold", 1000]
 				This:QueueState["Idle", 1000]
 				This:QueueState["Mine"]
 				Profiling:EndTrack
