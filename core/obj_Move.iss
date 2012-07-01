@@ -180,6 +180,12 @@ objectdef obj_Move inherits obj_State
 
 	member:bool GateMove(int64 ID)
 	{
+		if !${Entity[${ID}](exists)}
+		{
+			This.Traveling:Set[FALSE]
+			return TRUE	
+		}
+
 		if !${This.CheckApproach}
 		{
 			return FALSE
