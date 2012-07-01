@@ -299,7 +299,7 @@ objectdef obj_Salvage inherits obj_State
 			{
 				if ${TargetIterator.Value.ID(exists)}
 				{
-					if ${TargetIterator.Value.Distance} > ${Ship.ModuleList_TractorBeams.Range}
+					if ${TargetIterator.Value.Distance} > ${Ship.ModuleList_TractorBeams.Range} || ${TargetIterator.Value.Distance} > ${MyShip.MaxTargetRange}
 					{
 						Move:Approach[${TargetIterator.Value.ID}]
 						return FALSE
