@@ -24,9 +24,8 @@ objectdef obj_Security inherits obj_State
 	method Initialize()
 	{
 		This[parent]:Initialize
-		;This.NonGameTiedPulse:Set[TRUE]
+		This.NonGameTiedPulse:Set[TRUE]
 		This:AssignStateQueueDisplay[obj_SecurityStateList@Security@ComBotTab@ComBot]
-		UI:Update["obj_Security", "Initialized", "g"]
 		
 		This:QueueState["CheckSafe", 500]
 	}
@@ -34,10 +33,20 @@ objectdef obj_Security inherits obj_State
 	
 	member:bool CheckSafe(bool ClearFlee=FALSE)
 	{
+		Profiling:StartTrack["Security_CheckSafe"]
 		variable index:pilot Pilots
 		variable iterator Pilot_Iterator
+		
+		if ${This.InPod}
+		{
+				This:QueueState["Flee", 500, "I am in a pod!"]
+				Profiling:EndTrack
+				return TRUE
+		}
 
+		Profiling:StartTrack["GetLocalPilots"]
 		EVE:GetLocalPilots[Pilots]
+		Profiling:EndTrack
 		Pilots:GetIterator[Pilot_Iterator]
 		
 		if ${Pilot_Iterator:First(exists)}
@@ -46,67 +55,124 @@ objectdef obj_Security inherits obj_State
 		
 			if ${Config.Security.MeToPilot} && ${Pilot_Iterator.Value.Standing.MeToPilot} < ${Config.Security.MeToPilot_Value}
 			{
-				echo Me to ${Pilot_Iterator.Value.Name} - ${Pilot_Iterator.Value.Standing.MeToPilot}
 				This:QueueState["Flee", 500, "${Pilot_Iterator.Value.Name}(pilot) is ${Pilot_Iterator.Value.Standing.MeToPilot} standing to you"]
+				Profiling:EndTrack
 				return TRUE
 			}
 			if ${Config.Security.MeToCorp} && ${Pilot_Iterator.Value.Standing.MeToCorp} < ${Config.Security.MeToCorp_Value}
 			{
 				This:QueueState["Flee", 500, "${Pilot_Iterator.Value.Corp.Name}(corp) is ${Pilot_Iterator.Value.Standing.MeToCorp} standing to you"]
+				Profiling:EndTrack
 				return TRUE
 			}
 			if ${Config.Security.MeToAlliance} && ${Pilot_Iterator.Value.Standing.MeToAlliance} < ${Config.Security.MeToAlliance_Value}
 			{
 				This:QueueState["Flee", 500, "${Pilot_Iterator.Value.Alliance.Name}(alliance) is ${Pilot_Iterator.Value.Standing.MeToAlliance} standing to you"]
+				Profiling:EndTrack
 				return TRUE
 			}
 			if ${Config.Security.CorpToPilot} && ${Pilot_Iterator.Value.Standing.CorpToPilot} < ${Config.Security.CorpToPilot_Value}
 			{
 				This:QueueState["Flee", 500, "${Pilot_Iterator.Value.Name}(pilot) is ${Pilot_Iterator.Value.Standing.CorpToPilot} standing to your corporation"]
+				Profiling:EndTrack
 				return TRUE
 			}
 			if ${Config.Security.CorpToCorp} && ${Pilot_Iterator.Value.Standing.CorpToCorp} < ${Config.Security.CorpToCorp_Value}
 			{
 				This:QueueState["Flee", 500, "${Pilot_Iterator.Value.Corp.Name}(corp) is ${Pilot_Iterator.Value.Standing.CorpToCorp} standing to your corporation"]
+				Profiling:EndTrack
 				return TRUE
 			}
 			if ${Config.Security.CorpToAlliance} && ${Pilot_Iterator.Value.Standing.CorpToAlliance} < ${Config.Security.CorpToAlliance_Value}
 			{
 				This:QueueState["Flee", 500, "${Pilot_Iterator.Value.Alliance.Name}(alliance) is ${Pilot_Iterator.Value.Standing.CorpToAlliance} standing to your corporation"]
+				Profiling:EndTrack
 				return TRUE
 			}
 			if ${Config.Security.AllianceToPilot} && ${Pilot_Iterator.Value.Standing.AllianceToPilot} < ${Config.Security.AllianceToPilot_Value}
 			{
 				This:QueueState["Flee", 500, "${Pilot_Iterator.Value.Name}(pilot) is ${Pilot_Iterator.Value.Standing.AllianceToPilot} standing to your alliance"]
+				Profiling:EndTrack
 				return TRUE
 			}
 			if ${Config.Security.AllianceToCorp} && ${Pilot_Iterator.Value.Standing.AllianceToCorp} < ${Config.Security.AllianceToCorp_Value}
 			{
 				This:QueueState["Flee", 500, "${Pilot_Iterator.Value.Corp.Name}(corp) is ${Pilot_Iterator.Value.Standing.AllianceToCorp} standing to your alliance"]
+				Profiling:EndTrack
 				return TRUE
 			}
 			if ${Config.Security.AllianceToAlliance} && ${Pilot_Iterator.Value.Standing.AllianceToAlliance} < ${Config.Security.AllianceToAlliance_Value}
 			{
 				This:QueueState["Flee", 500, "${Pilot_Iterator.Value.Alliance.Name}(alliance) is ${Pilot_Iterator.Value.Standing.AllianceToAlliance} standing to your alliance"]
+				Profiling:EndTrack
 				return TRUE
 			}
 			
 		}
 		while ${Pilot_Iterator:Next(exists)}
+
+		if ${Config.Security.TargetFlee}
+		{
+			variable index:entity Threats
+			variable iterator Threat
+			variable int MyAllianceID
+			variable int MyCorpID
+
+			Me:GetTargetedBy[Threats]
+			Threats:RemoveByQuery[${LavishScript.CreateQuery[IsPC]}, FALSE]
+			Threats:Collapse
+			Threats:GetIterator[Threat]
+			if ${Me.Corp.ID} == -1
+			{
+				MyCorpID:Set[0]
+				MyAllianceID:Set[0]
+			}
+			else
+			{
+				MyCorpID:Set[${Me.Corp.ID}]
+				if  ${Me.AllianceID} == -1
+				{
+					MyAllianceID:Set[0]
+				}
+				else
+				{
+					MyAllianceID:Set[${Me.AllianceID}]
+				}
+			}
+			
+			if ${Threat:First(exists)}
+			do
+			{
+				if  ${MyCorpID} == ${Threat.Value.CorpID} || \
+					${MyAllianceID} == ${Threat.Value.AllianceID} || \
+					${Me.Fleet.IsMember[${Threat.Value.CharID}]}
+				{
+					continue
+				}
+				
+				This:QueueState["Flee", 500, "${Threat.Value.Name} is targeting me!"]
+				Profiling:EndTrack
+				return TRUE
+			}
+			while ${Threat:Next(exists)}
+		}
+		
+
 		
 		if ${ClearFlee}
 		{
-			echo Resuming!
 			ComBot:Resume
 			This:QueueState["CheckSafe", 500]
+			Profiling:EndTrack
 			return TRUE
 		}
-		
+		Profiling:EndTrack
 		return FALSE
 	}
 	
 	member:bool Flee(string Message)
 	{
+		Profiling:StartTrack["Security_Flee"]
 		UI:Update["obj_Security", "Flee triggered!", "r"]
 		UI:Update["obj_Security", "${Message}", "r"]
 		Event[ComBot_Flee]:Execute[]
@@ -142,6 +208,7 @@ objectdef obj_Security inherits obj_State
 		}
 
 		This:QueueState["CheckSafe", 500, TRUE]
+		Profiling:EndTrack
 		return TRUE
 	}
 	
@@ -160,4 +227,27 @@ objectdef obj_Security inherits obj_State
 		return TRUE
 	}
 	
+	member:bool InPod()
+	{
+		variable string ShipName = ${MyShip}
+		variable int GroupID
+		variable int TypeID
+
+		if ${Client.InSpace}
+		{
+			GroupID:Set[${MyShip.ToEntity.GroupID}]
+			TypeID:Set[${MyShip.ToEntity.TypeID}]
+		}
+		else
+		{
+			GroupID:Set[${MyShip.ToItem.GroupID}]
+			TypeID:Set[${MyShip.ToItem.TypeID}]
+		}
+		if ${ShipName.Right[10].Equal["'s Capsule"]} || \
+			${GroupID} == GROUP_CAPSULE
+		{
+			return TRUE
+		}
+		return FALSE
+	}	
 }

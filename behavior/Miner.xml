@@ -57,7 +57,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					<Height>20</Height>
 					<Text>Close</Text>
 					<OnLeftClick>
-						ui -unload "&filepath;/ComBotGUI_Miner"
+						ui -unload "&filepath;/Miner"
 					</OnLeftClick>
 				</button>
 			</Children>
@@ -132,22 +132,6 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							Script[ComBot].VariableScope.Config.Miner:SetUseBookmarks[${This.Checked}]
 						</OnLeftClick>
 					</Checkbox>
-					<Checkbox name='obj_MinerAlwaysShieldBoost'>
-						<X>1%</X>
-						<Y>96%</Y>
-						<Width>20%</Width> 
-						<Height>20</Height> 
-						<Text>Always Shield Boost</Text>
-						<OnLoad>
-							if ${Script[ComBot].VariableScope.Config.Miner.AlwaysShieldBoost}
-							{
-								This:SetChecked
-							}
-						</OnLoad>
-						<OnLeftClick>
-							Script[ComBot].VariableScope.Config.Miner:SetAlwaysShieldBoost[${This.Checked}]
-						</OnLeftClick>
-					</Checkbox>
 					<Checkbox name='obj_MinerOrcaMode'>
 						<X>69%</X>
 						<Y>75%</Y>
@@ -171,6 +155,56 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Height>2%</Height> 
 						<Text>Belt Prefix:</Text>
 					</Text>
+					<Text name='obj_Miner_ThresholdTitle'> 
+						<X>38%</X> 
+						<Y>60%</Y> 
+						<Width>30%</Width> 
+						<Height>2%</Height> 
+						<Alignment>Center</Alignment>
+						<OnLoad>
+							This:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Config.Miner.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Config.Miner.Threshold} * .01 * ${MyShip.CargoCapacity}].Round} m3]
+						</OnLoad>
+					</Text>						 
+					<Slider name='obj_Miner_Threshold'> 
+						<X>38%</X> 
+						<Y>62%</Y> 
+						<Width>30%</Width> 
+						<Height>5%</Height> 
+						<Border>1</Border>
+						<OnLoad>
+							This:SetRange[100]
+							This:SetValue[${Script[ComBot].VariableScope.Config.Miner.Threshold}]
+						</OnLoad>
+						<OnChange>
+							Script[ComBot].VariableScope.Config.Miner:SetThreshold[${This.Value}]
+							UIElement[obj_Miner_ThresholdTitle@ComBot_Miner_Frame@ComBot_Miner]:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Config.Miner.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Config.Miner.Threshold} * .01 * ${MyShip.CargoCapacity}].Round} m3]
+						</OnChange>
+					</Slider>						 
+					<Text name='obj_Miner_MaxLockTitle'> 
+						<X>38%</X> 
+						<Y>70%</Y> 
+						<Width>30%</Width> 
+						<Height>2%</Height> 
+						<Alignment>Center</Alignment>
+						<OnLoad>
+							This:SetText[Lock ${Script[ComBot].VariableScope.Config.Miner.MaxLaserLocks} targets for mining]
+						</OnLoad>
+					</Text>						 
+					<Slider name='obj_Miner_MaxLock'> 
+						<X>38%</X> 
+						<Y>72%</Y> 
+						<Width>30%</Width> 
+						<Height>5%</Height> 
+						<Border>1</Border>
+						<OnLoad>
+							This:SetRange[10]
+							This:SetValue[${Script[ComBot].VariableScope.Config.Miner.MaxLaserLocks}]
+						</OnLoad>
+						<OnChange>
+							Script[ComBot].VariableScope.Config.Miner:SetMaxLaserLocks[${This.Value}]
+							UIElement[obj_Miner_MaxLockTitle@ComBot_Miner_Frame@ComBot_Miner]:SetText[Lock ${Script[ComBot].VariableScope.Config.Miner.MaxLaserLocks} targets for mining]
+						</OnChange>
+					</Slider>						 
 					<Textentry name='obj_MinerOrePrefix'>
 						<X>17%</X>
 						<Y>88%</Y>
@@ -238,10 +272,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									This:AddItem[${BookmarkIterator.Value.Label}]
 								}
 								while ${BookmarkIterator:Next(exists)}
-							This.ItemByText[${Script[ComBot].VariableScope.Config.Miner.Miner_Dropoff}]:Select
+							This.ItemByText[${Script[ComBot].VariableScope.Config.Miner.Dropoff}]:Select
 						</OnLoad>
 						<OnSelect>
-							Script[ComBot].VariableScope.Config.Miner:SetMiner_Dropoff[${This.SelectedItem.Text}]
+							Script[ComBot].VariableScope.Config.Miner:SetDropoff[${This.SelectedItem.Text}]
 						</OnSelect>
 					</listbox>
 					<Text name='obj_MinerOrcaNameTitle'> 
@@ -258,10 +292,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Width>36%</Width> 
 						<Height>3%</Height> 
 						<OnLoad>
-							This:SetText[${Script[ComBot].VariableScope.Config.Miner.Miner_OrcaName}]
+							This:SetText[${Script[ComBot].VariableScope.Config.Miner.Container_Name}]
 						</OnLoad>
 						<OnChange>
-							Script[ComBot].VariableScope.Config.Miner:SetMiner_OrcaName[${This.Text}]
+							Script[ComBot].VariableScope.Config.Miner:SetContainer_Name[${This.Text}]
 						</OnChange>
 					</TextEntry>
 
@@ -285,6 +319,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							<Item>Personal Hangar</Item>
 							<Item>Orca</Item>
 							<Item>Container</Item>
+							<Item>Jetcan</Item>
 							<Item>No Dropoff</Item>
 							<Item>Corporation Folder 1</Item>
 							<Item>Corporation Folder 2</Item>
@@ -295,10 +330,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							<Item>Corporation Folder 7</Item>
 						</Items>
 						<OnLoad>
-							This.ItemByText[${Script[ComBot].VariableScope.Config.Miner.Miner_Dropoff_Type}]:Select
+							This.ItemByText[${Script[ComBot].VariableScope.Config.Miner.Dropoff_Type}]:Select
 						</OnLoad>
 						<OnSelect>
-							Script[ComBot].VariableScope.Config.Miner:SetMiner_Dropoff_Type[${This.SelectedItem.Text}]
+							Script[ComBot].VariableScope.Config.Miner:SetDropoff_Type[${This.SelectedItem.Text}]
 						</OnSelect>
 					</listbox>
 					<Text name='obj_MinerOrePriorityTitle'> 

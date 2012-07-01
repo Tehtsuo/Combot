@@ -64,6 +64,7 @@ objectdef obj_HangerSale inherits obj_State
 	variable index:myorder MyOrderIndex
 	variable iterator MyOrderIterator
 	variable int RemainingToProcess
+	variable set MoveRefines
 	
 	variable float ToSellLowestTotal
 	variable float ToSellAverageTotal
@@ -84,7 +85,6 @@ objectdef obj_HangerSale inherits obj_State
 	method Initialize()
 	{
 		This[parent]:Initialize
-		This:AssignStateQueueDisplay[obj_HangerSaleStateList@Hangar_Sale@ComBotTab@ComBot]
 		PulseFrequency:Set[1000]
 		Event[isxGames_onHTTPResponse]:AttachAtom[This:ParsePrice]
 	}
@@ -92,6 +92,7 @@ objectdef obj_HangerSale inherits obj_State
 	method Start()
 	{
 		UI:Update["obj_HangerSale", "Started", "g"]
+		This:AssignStateQueueDisplay[DebugStateList@Debug@ComBotTab@ComBot]
 		if ${This.IsIdle}
 		{
 			RemainingToProcess:Set[7]
@@ -113,6 +114,14 @@ objectdef obj_HangerSale inherits obj_State
 			This:QueueState["CheckHanger"]
 		}
 	}
+	
+	method Stop()
+	{
+		This:DeactivateStateQueueDisplay
+
+		UI:Update["obj_HangerSale", "Stopped", "r"]
+		This:Clear
+	}	
 	
 	member:bool OpenHanger()
 	{
@@ -207,6 +216,39 @@ objectdef obj_HangerSale inherits obj_State
 		return TRUE
 	}
 	
+	member:bool MoveRefinesToContainer()
+	{
+		if ${Config.HangarSale.MoveRefines}
+		{
+			if ${MoveRefines.Used} > 0
+			{
+				UI:Update["obj_HangerSale", "Moving items marked for refining to container", "g"]
+				variable index:item Cargo
+				variable iterator RefineIterator
+				variable index:int64 MoveCargo
+				Me.Station:GetHangarItems[Cargo]
+				Cargo:GetIterator[RefineIterator]
+				if ${RefineIterator:First(exists)}
+					do
+					{
+						if ${MoveRefines.Contains[${RefineIterator.Value.TypeID}]}
+							MoveCargo:Insert[${RefineIterator.Value.ID}]
+					}
+					while ${RefineIterator:Next(exists)}
+				EVE:MoveItemsTo[MoveCargo, ${Config.HangarSale.MoveRefinesTarget}, CargoHold]
+				MoveRefines:Clear
+				return FALSE
+			}
+			else
+			{
+				UI:Update["obj_HangerSale", "Stacking Container", "g"]
+				EVE:StackItems[${Config.HangarSale.MoveRefinesTarget}, CargoHold]
+			}
+		}
+		return TRUE
+	}
+
+	
 	member:bool CheckItem()
 	{
 		variable int ItemCount = 0
@@ -218,7 +260,14 @@ objectdef obj_HangerSale inherits obj_State
 			{
 				RemainingToProcess:Dec
 				UIElement[obj_HangerSaleProcessingText@Hangar_Sale@ComBotTab@ComBot]:SetText[Processing ${RemainingToProcess} items from EVE-Central]
-				This:QueueState["AddToSellIfAboveValue", 10, "${HangerIterator.Value.TypeID}, ${HangerIterator.Value.PortionSize}, \"${HangerIterator.Value.Name.Escape}\", ${HangerIterator.Value.Quantity}"]
+				if ${HangerIterator.Value.GroupID} == GROUP_SECURECARGOCONTAINER || ${HangerIterator.Value.GroupID} == GROUP_AUDITLOGSECURECONTAINER
+				{
+					echo Skipping cargo container - ${HangerIterator.Value.Name}
+				}
+				else
+				{
+					This:QueueState["AddToSellIfAboveValue", 10, "${HangerIterator.Value.TypeID}, ${HangerIterator.Value.PortionSize}, \"${HangerIterator.Value.Name.Escape}\", ${HangerIterator.Value.Quantity}"]
+				}
 				ItemCount:Inc
 				TypeIDs:Concat["${Seperator}${HangerIterator.Value.TypeID}"]
 				Seperator:Set[", "]
@@ -235,6 +284,10 @@ objectdef obj_HangerSale inherits obj_State
 			{
 				This:QueueState["ProcessSells", 10000]
 			}
+			else
+			{
+				This:QueueState["MoveRefinesToContainer"]
+			}
 			UI:Update["obj_HangerSale", "Ready to sell ${SellItems.Used} item(s)", "g"]
 		}
 		return TRUE
@@ -250,6 +303,8 @@ objectdef obj_HangerSale inherits obj_State
 		variable float sellAveragePrice
 		variable float discount
 		
+		variable bool SendToRefine=TRUE
+		
 		discount:Set[${Math.Calc[${SellPrices[${TypeID}].Min}*(${Config.HangarSale.UndercutPercent} * .01)]}]
 		if ${discount} > ${Config.HangarSale.UndercutValue}
 		{
@@ -261,6 +316,7 @@ objectdef obj_HangerSale inherits obj_State
 			if ${Config.HangarSale.PriceMode.Equal["Undercut Lowest"]} 
 			{
 				SellItems:Set[${TypeID}, ${sellLowestPrice}]
+				SendToRefine:Set[FALSE]
 			}
 			ToSellLowestTotal:Inc[${Math.Calc[${sellLowestPrice} * ${Quantity}]}]
 			UIElement[obj_HangerSaleToSellLowestText@Hangar_Sale@ComBotTab@ComBot]:SetText["[Match Lowest]:    ${ComBot.ISK_To_Str[${ToSellLowestTotal}]}"]
@@ -272,6 +328,7 @@ objectdef obj_HangerSale inherits obj_State
 			if ${Config.HangarSale.PriceMode.Equal["Match Highest Buyout"]} 
 			{
 				SellItems:Set[${TypeID}, ${sellBuyoutPrice}]
+				SendToRefine:Set[FALSE]
 			}
 			ToSellBuyoutTotal:Inc[${Math.Calc[${sellBuyoutPrice} * ${Quantity}]}]
 			UIElement[obj_HangerSaleToSellBuyoutText@Hangar_Sale@ComBotTab@ComBot]:SetText["[Match Buyouts]:   ${ComBot.ISK_To_Str[${ToSellBuyoutTotal}]}"]
@@ -288,9 +345,15 @@ objectdef obj_HangerSale inherits obj_State
 			if ${Config.HangarSale.PriceMode.Equal["Undercut Average"]} 
 			{
 				SellItems:Set[${TypeID}, ${sellAveragePrice}]
+				SendToRefine:Set[FALSE]
 			}
 			ToSellAverageTotal:Inc[${Math.Calc[${sellAveragePrice} * ${Quantity}]}]
 			UIElement[obj_HangerSaleToSellAverageText@Hangar_Sale@ComBotTab@ComBot]:SetText["[Match Average]:   ${ComBot.ISK_To_Str[${ToSellAverageTotal}]}"]
+		}
+		
+		if ${Config.HangarSale.MoveRefines}
+		{
+			MoveRefines:Add[${TypeID}]
 		}
 
 		ToRefineTotal:Inc[${Math.Calc[${This.GetItemValue[${TypeID}, ${PortionSize}]} * ${Quantity}]}]
@@ -309,7 +372,7 @@ objectdef obj_HangerSale inherits obj_State
 		if ${CurrentSellOrders} >= ${This.MaxOrders}
 		{
 			TimeToNextRun:Set[${Math.Calc[60000 * ${Math.Rand[11]} + 1800000]}]
-			UI:Update["obj_HangerSale", "Operations complete - Beginning again in ${TimeToNextRun} minutes", "o"]
+			UI:Update["obj_HangerSale", "Operations complete - Beginning again in ${Math.Calc[${TimeToNextRun} / 60000]} minutes", "o"]
 			MineralNames:Clear
 			RemainingToProcess:Set[7]
 			MineralNames:Set[34, "Tritanium"]
@@ -319,6 +382,7 @@ objectdef obj_HangerSale inherits obj_State
 			MineralNames:Set[38, "Nocxium"]
 			MineralNames:Set[39, "Zydrine"]
 			MineralNames:Set[40, "Megacyte"]
+			This:QueueState["MoveRefinesToContainer"]
 			This:QueueState["Idle", ${TimeToNextRun}]
 			This:QueueState["OpenHanger"]
 			This:QueueState["FetchPrice", 100, "34, 35"]
@@ -335,7 +399,7 @@ objectdef obj_HangerSale inherits obj_State
 		if ${SellItem} == -1
 		{
 			TimeToNextRun:Set[${Math.Calc[60000 * ${Math.Rand[11]} + 1800000]}]
-			UI:Update["obj_HangerSale", "Operations complete - Beginning again in ${TimeToNextRun} minutes", "o"]
+			UI:Update["obj_HangerSale", "Operations complete - Beginning again in ${Math.Calc[${TimeToNextRun} / 60000]} minutes", "o"]
 			MineralNames:Clear
 			RemainingToProcess:Set[7]
 			MineralNames:Set[34, "Tritanium"]
@@ -345,6 +409,7 @@ objectdef obj_HangerSale inherits obj_State
 			MineralNames:Set[38, "Nocxium"]
 			MineralNames:Set[39, "Zydrine"]
 			MineralNames:Set[40, "Megacyte"]
+			This:QueueState["MoveRefinesToContainer"]
 			This:QueueState["Idle", ${TimeToNextRun}]
 			This:QueueState["OpenHanger"]
 			This:QueueState["FetchPrice", 100, "34, 35"]
@@ -382,7 +447,7 @@ objectdef obj_HangerSale inherits obj_State
 			while ${ItemIterator:Next(exists)}
 		}
 			TimeToNextRun:Set[${Math.Calc[60000 * ${Math.Rand[11]} + 1800000]}]
-			UI:Update["obj_HangerSale", "Operations complete - Beginning again in ${TimeToNextRun} minutes", "o"]
+			UI:Update["obj_HangerSale", "Operations complete - Beginning again in ${Math.Calc[${TimeToNextRun} / 60000]} minutes", "o"]
 			MineralNames:Clear
 			RemainingToProcess:Set[7]
 			MineralNames:Set[34, "Tritanium"]
@@ -392,6 +457,7 @@ objectdef obj_HangerSale inherits obj_State
 			MineralNames:Set[38, "Nocxium"]
 			MineralNames:Set[39, "Zydrine"]
 			MineralNames:Set[40, "Megacyte"]
+			This:QueueState["MoveRefinesToContainer"]
 			This:QueueState["Idle", ${TimeToNextRun}]
 			This:QueueState["OpenHanger"]
 			This:QueueState["FetchPrice", 100, "34, 35"]

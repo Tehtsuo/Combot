@@ -26,16 +26,24 @@ objectdef obj_Salvage inherits obj_State
 	variable index:int64 HoldOffPlayer
 	variable index:int HoldOffTimer
 	variable collection:int64 AlreadySalvaged
+	variable float NonDedicatedFullPercent = 0.95
+	variable bool NonDedicatedNPCRun = FALSE
+	variable bool Dedicated = TRUE
+	variable bool Salvaging = FALSE
+	variable queue:entity BeltPatrol
+	
+	variable obj_TargetList Wrecks
 
 	method Initialize()
 	{
 		This[parent]:Initialize
-		This:AssignStateQueueDisplay[obj_SalvageStateList@Salvager@ComBotTab@ComBot]
+		Wrecks:AddQueryString["(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && HaveLootRights && !IsAbandoned && !IsMoribund"]
 	}
 
 	method Start()
 	{
 		UI:Update["obj_Salvage", "Started", "g"]
+		This:AssignStateQueueDisplay[DebugStateList@Debug@ComBotTab@ComBot]
 		if ${This.IsIdle}
 		{
 			This:QueueState["OpenCargoHold", 500]
@@ -68,8 +76,6 @@ objectdef obj_Salvage inherits obj_State
 		
 		EVE:GetBookmarks[Bookmarks]
 		Bookmarks:GetIterator[BookmarkIterator]
-		UIElement[obj_SalvageBookmarkList@Salvager@ComBotTab@ComBot]:SetSortType[value]
-		UIElement[obj_SalvageBookmarkList@Salvager@ComBotTab@ComBot]:ClearItems
 		
 		HoldOffTimer:GetIterator[HoldOffIterator]
 		if ${HoldOffIterator:First(exists)}
@@ -99,15 +105,12 @@ objectdef obj_Salvage inherits obj_State
 		{	
 			if ${BookmarkIterator.Value.Label.Left[8].Upper.Equal[${Config.Salvager.Salvager_Prefix}]}
 			{
-				UIElement[obj_SalvageBookmarkList@Salvager@ComBotTab@ComBot]:AddItem[${BookmarkIterator.Value.Label}, ${BookmarkIterator.Value.DateCreated}${BookmarkIterator.Value.TimeCreated}]
-				UIElement[obj_SalvageBookmarkList@Salvager@ComBotTab@ComBot]:Sort
 				InHoldOff:Set[FALSE]
 				if ${HoldOffIterator:First(exists)}
 				do
 				{
 					if ${HoldOffIterator.Value.Equal[${BookmarkIterator.Value.CreatorID}]}
 					{
-						UIElement[obj_SalvageBookmarkList@Salvager@ComBotTab@ComBot].ItemByText[${BookmarkIterator.Value.Label}]:SetTextColor[FFFF0000]
 						InHoldOff:Set[TRUE]
 					}
 				}
@@ -116,7 +119,6 @@ objectdef obj_Salvage inherits obj_State
 				{
 					if (${BookmarkIterator.Value.TimeCreated.Compare[${BookmarkTime}]} < 0 && ${BookmarkIterator.Value.DateCreated.Compare[${BookmarkDate}]} <= 0) || ${BookmarkIterator.Value.DateCreated.Compare[${BookmarkDate}]} < 0
 					{
-						UIElement[obj_SalvageBookmarkList@Salvager@ComBotTab@ComBot].ItemByText[${BookmarkIterator.Value.Label}]:SetTextColor[FF00FF00]
 						Target:Set[${BookmarkIterator.Value.Label}]
 						BookmarkTime:Set[${BookmarkIterator.Value.TimeCreated}]
 						BookmarkDate:Set[${BookmarkIterator.Value.DateCreated}]
@@ -131,9 +133,11 @@ objectdef obj_Salvage inherits obj_State
 		if ${BookmarkFound}
 		{
 			UI:Update["obj_Salvage", "Setting course for ${Target}", "g"]
-			Move:Bookmark[${Target}]
+			Move:Bookmark[${Target}, TRUE]
 			This:QueueState["Traveling"]
 			This:QueueState["Log", 1000, "Salvaging at ${Target}"]
+			This:QueueState["InitialUpdate", 100]
+			This:QueueState["Updated", 100]
 			This:QueueState["SalvageWrecks", 500, "${BookmarkCreator}"]
 			This:QueueState["ClearAlreadySalvaged", 100]
 			This:QueueState["DeleteBookmark", 1000, "${BookmarkCreator}"]
@@ -142,13 +146,32 @@ objectdef obj_Salvage inherits obj_State
 			return TRUE
 		}
 
-		
-		UI:Update["obj_Salvage", "No salvage bookmark found - returning to station", "g"]
-		Move:Bookmark[${Config.Salvager.Salvager_Dropoff}]
-		This:QueueState["Traveling"]
-		This:QueueState["PrepOffload"]
-		This:QueueState["Offload"]
-		return TRUE
+		if ${Config.Salvager.BeltPatrol}
+		{
+			UI:Update["obj_Salvage", "No salvage bookmark found - beginning belt patrol", "g"]
+			Move:System[${EVE.Bookmark[${Config.Salvager.BeltPatrolBookmark}].SolarSystemID}]
+			This:QueueState["Traveling"]
+			This:QueueState["MoveToBelt"]
+			This:QueueState["Traveling"]
+			This:QueueState["Log", 1000, "Salvaging in belt"]
+			This:QueueState["InitialUpdate", 100]
+			This:QueueState["Updated", 100]
+			This:QueueState["SalvageWrecks", 500, "${Me.CharID}"]
+			This:QueueState["ClearAlreadySalvaged", 100]
+			This:QueueState["RefreshBookmarks", 3000]
+			This:QueueState["OpenCargoHold", 500]
+			This:QueueState["CheckCargoHold", 500]
+			return TRUE
+		}
+		else
+		{
+			UI:Update["obj_Salvage", "No salvage bookmark found - returning to station", "g"]
+			Move:Bookmark[${Config.Salvager.Salvager_Dropoff}, TRUE]
+			This:QueueState["Traveling"]
+			This:QueueState["PrepOffload"]
+			This:QueueState["Offload"]
+			return TRUE
+		}
 	}
 
 	member:bool Traveling()
@@ -165,145 +188,195 @@ objectdef obj_Salvage inherits obj_State
 		UI:Update["obj_Salvage", "${text}", "g"]
 		return TRUE
 	}
+	
+	method NonDedicatedSalvage(float FullThreshold = 0.95, bool NPCRun = FALSE)
+	{
+		Dedicated:Set[FALSE]
+		NonDedicatedFullPercent:Set[${FullThreshold}]
+		NonDedicatedNPCRun:Set[${NPCRun}]
+		This:QueueState["InitialUpdate", 100]
+		This:QueueState["Updated", 100]
+		This:QueueState["SalvageWrecks", 500, "0"]
+		This:QueueState["DoneSalvaging"]
+		Salvaging:Set[TRUE]
+	}
+	
+	member:bool DoneSalvaging()
+	{
+		Salvaging:Set[FALSE]
+		Dedicated:Set[TRUE]
+	}
+	
+	member:bool InitialUpdate()
+	{
+		Wrecks:RequestUpdate
+		return TRUE
+	}
+	
+	member:bool Updated()
+	{
+		return ${Wrecks.Updated}
+	}
 
 	member:bool SalvageWrecks(int64 BookmarkCreator)
 	{
-		variable index:entity TargetIndex
 		variable iterator TargetIterator
 		variable queue:int LootRangeAndTractored
 		variable int MaxTarget = ${MyShip.MaxLockedTargets}
 		variable int ClosestTractorKey
 		variable bool ReactivateTractor = FALSE
 		variable int64 SalvageMultiTarget = -1
-		
-		if ${Targets.NPC}
-		{
-			UI:Update["obj_Salvage", "Pocket has NPCs - Jumping Clear", "g"]
-			HoldOffPlayer:Insert[${BookmarkCreator}]
-			HoldOffTimer:Insert[${Math.Calc[${LavishScript.RunningTime} + 600000]}]
-			This:Clear
-			This:QueueState["JumpToCelestial"]
-			This:QueueState["Traveling"]
-			This:QueueState["RefreshBookmarks", 3000]
-			This:QueueState["CheckBookmarks"]
-			return TRUE
-		}
+		variable float FullHold = 0.95
+		variable bool NPCRun = TRUE
 
-		if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) > 0.95
-		{
-			UI:Update["obj_Salvage", "Unload trip required", "g"]
-			Move:Bookmark[${Config.Salvager.Salvager_Dropoff}]
-			This:QueueState["Traveling"]
-			This:QueueState["PrepOffload"]
-			This:QueueState["RefreshBookmarks", 3000]
-			This:QueueState["CheckBookmarks"]
-			return TRUE
-		}		
-		
+
 		if ${Me.MaxLockedTargets} < ${MyShip.MaxLockedTargets}
 		{
 			MaxTarget:Set[${Me.MaxLockedTargets}]
 		}
+		Wrecks.MaxRange:Set[${MyShip.MaxTargetRange.Round}}
+		Wrecks.MinLockCount:Set[${MaxTarget}]
+		Wrecks.AutoLock:Set[TRUE]
+		
+		if !${Dedicated}
+		{
+			FullHold:Set[${NonDedicatedFullPercent}]
+			NPCRun:Set[${NonDedicatedNPCRun}]
+		}
+		
+		if ${Targets.NPC} && ${NPCRun}
+		{
+			UI:Update["obj_Salvage", "Pocket has NPCs - Jumping Clear", "g"]
+			LootCans:Disable
+			if ${Dedicated}
+			{
+				HoldOffPlayer:Insert[${BookmarkCreator}]
+				HoldOffTimer:Insert[${Math.Calc[${LavishScript.RunningTime} + 600000]}]
+				This:Clear
+				This:QueueState["JumpToCelestial"]
+				This:QueueState["Traveling"]
+				This:QueueState["RefreshBookmarks", 3000]
+				This:QueueState["CheckBookmarks"]
+			}
+			Wrecks.AutoLock:Set[FALSE]
+			return TRUE
+		}
+
+		if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) > ${FullHold}
+		{
+			UI:Update["obj_Salvage", "Unload trip required", "g"]
+			LootCans:Disable
+			if ${Dedicated}
+			{
+				Move:Bookmark[${Config.Salvager.Salvager_Dropoff}]
+				This:Clear
+				This:QueueState["Traveling"]
+				This:QueueState["Offload"]
+				This:QueueState["RefreshBookmarks", 3000]
+				This:QueueState["CheckBookmarks"]
+			}
+			Wrecks.AutoLock:Set[FALSE]
+			return TRUE
+		}
+		
+
+		
+		Wrecks:RequestUpdate
+		
 		echo Inactive Tractor Beams - ${Ship.ModuleList_TractorBeams.InactiveCount}
-		EVE:QueryEntities[TargetIndex, "(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && HaveLootRights && !IsAbandoned"]
-		TargetIndex:GetIterator[TargetIterator]
-		if ${TargetIterator:First(exists)}
+		
+		if ${Wrecks.TargetList.Used} > 0
 		{
 			Ship.ModuleList_SensorBoost:Activate
+		}
+		
+		
+		Wrecks.TargetList:GetIterator[TargetIterator]
+		if ${TargetIterator:First(exists)}
+		{
 			LootCans:Enable
 			do
 			{
-				if ${TargetIterator.Value.IsLockedTarget} || ${TargetIterator.Value.BeingTargeted}
+				if ${TargetIterator.Value.ID(exists)}
 				{
-					AlreadySalvaged:Set[${TargetIterator.Value.ID}, ${Math.Calc[${LavishScript.RunningTime} + 5000]}]
-				}
-				echo Before Salvage
-				if  !${TargetIterator.Value.BeingTargeted} && \
-					!${TargetIterator.Value.IsLockedTarget} && \
-					${Targets.Locked} == ${MaxTarget}
-				{
-					if ${TargetIterator.Value.Distance} > ${Ship.Module_TractorBeams_Range}
+					if ${TargetIterator.Value.Distance} > ${Ship.ModuleList_TractorBeams.Range} || ${TargetIterator.Value.Distance} > ${MyShip.MaxTargetRange}
 					{
-						Move:Approach[${TargetIterator.Value}]
+						Move:Approach[${TargetIterator.Value.ID}]
 						return FALSE
 					}
-					if !${SalvageMultiTarget.Equal[-1]} && ${Ship.ModuleList_Salvagers.InactiveCount} > 0
+					echo ${TargetIterator.Value.Name} - ${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]}
+					
+					if  !${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]} &&\
+						${TargetIterator.Value.Distance} < ${Ship.ModuleList_TractorBeams.Range} &&\
+						${TargetIterator.Value.Distance} > LOOT_RANGE &&\
+						${Ship.ModuleList_TractorBeams.InactiveCount} > 0 &&\
+						${TargetIterator.Value.IsLockedTarget}
 					{
-						Ship.ModuleList_Salvagers:Activate[${SalvageMultiTarget}]
+						UI:Update["obj_Salvage", "Activating tractor beam - ${TargetIterator.Value.Name}", "g"]
+						Ship.ModuleList_TractorBeams:Activate[${TargetIterator.Value.ID}]
 						return FALSE
 					}
-				}
-				echo After Salvage
-				if  !${TargetIterator.Value.BeingTargeted} && \
-					!${TargetIterator.Value.IsLockedTarget} && \
-					${Targets.Locked} < ${MaxTarget} && \
-					${TargetIterator.Value.Distance} < ${MyShip.MaxTargetRange} && \
-					!${AlreadySalvaged.Element[${TargetIterator.Value.ID}] >= ${LavishScript.RunningTime}} && \
-					!${Target.Value.Name.Equal["Cargo Container"]}
-				{
-					UI:Update["obj_Salvage", "Locking - ${TargetIterator.Value.Name}", "g"]
-					TargetIterator.Value:LockTarget
-					AlreadySalvaged:Set[${TargetIterator.Value.ID}, ${Math.Calc[${LavishScript.RunningTime} + 5000]}]
-					return FALSE
-				}
-				if ${TargetIterator.Value.Distance} > ${Ship.Module_TractorBeams_Range}
-				{
-					Move:Approach[${TargetIterator.Value}]
-					return FALSE
-				}
-				echo ${TargetIterator.Value.Name} - ${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]}
-				
-				if  !${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]} &&\
-					${TargetIterator.Value.Distance} < ${Ship.Module_TractorBeams_Range} &&\
-					${TargetIterator.Value.Distance} > LOOT_RANGE &&\
-					${Ship.ModuleList_TractorBeams.InactiveCount} > 0 &&\
-					${TargetIterator.Value.IsLockedTarget}
-				{
-					UI:Update["obj_Salvage", "Activating tractor beam - ${TargetIterator.Value.Name}", "g"]
-					Ship.ModuleList_TractorBeams:Activate[${TargetIterator.Value.ID}]
-					return FALSE
-				}
-				echo ${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]} - ${TargetIterator.Value.ID}
-				if  !${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]} &&\
-					${TargetIterator.Value.Distance} < ${Ship.Module_TractorBeams_Range} &&\
-					${TargetIterator.Value.Distance} > LOOT_RANGE &&\
-					${TargetIterator.Value.IsLockedTarget} &&\
-					${ReactivateTractor}
-				{
-					UI:Update["obj_Salvage", "Reactivating tractor beam - ${TargetIterator.Value.Name}", "g"]
-					Ship.ModuleList_TractorBeams:Reactivate[${ClosestTractorKey}, ${TargetIterator.Value.ID}]
-					return FALSE
-				}
-				if  ${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]} &&\
-					${TargetIterator.Value.Distance} < LOOT_RANGE &&\
-					!${ReactivateTractor}
-				{
-					; UI:Update["obj_Salvage", "Deactivating tractor beam - ${TargetIterator.Value.Name}", "g"]
-					ClosestTractorKey:Set[${Ship.ModuleList_TractorBeams.GetActiveOn[${TargetIterator.Value.ID}]}]
-					ReactivateTractor:Set[TRUE]
-				}
-				if  !${Ship.ModuleList_Salvagers.IsActiveOn[${TargetIterator.Value.ID}]} &&\
-					${TargetIterator.Value.Distance} < ${Ship.Module_Salvagers_Range} &&\
-					${Ship.ModuleList_Salvagers.InactiveCount} > 0 &&\
-					${TargetIterator.Value.IsLockedTarget}
-				{
-					UI:Update["obj_Salvage", "Activating salvager - ${TargetIterator.Value.Name}", "g"]
-					Ship.ModuleList_Salvagers:Activate[${TargetIterator.Value.ID}]
-					return FALSE
-				}
-				if  ${TargetIterator.Value.Distance} < ${Ship.Module_Salvagers_Range} &&\
-					${Ship.ModuleList_Salvagers.InactiveCount} > 0 &&\
-					${TargetIterator.Value.IsLockedTarget}
-				{
-					SalvageMultiTarget:Set[${TargetIterator.Value.ID}]
+					echo ${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]} - ${TargetIterator.Value.ID}
+					if  !${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]} &&\
+						${TargetIterator.Value.Distance} < ${Ship.ModuleList_TractorBeams.Range} &&\
+						${TargetIterator.Value.Distance} > LOOT_RANGE &&\
+						${TargetIterator.Value.IsLockedTarget} &&\
+						${ReactivateTractor}
+					{
+						UI:Update["obj_Salvage", "Reactivating tractor beam - ${TargetIterator.Value.Name}", "g"]
+						Ship.ModuleList_TractorBeams:Reactivate[${ClosestTractorKey}, ${TargetIterator.Value.ID}]
+						return FALSE
+					}
+					if  ${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]} &&\
+						${TargetIterator.Value.Distance} < LOOT_RANGE &&\
+						!${ReactivateTractor}
+					{
+						; UI:Update["obj_Salvage", "Deactivating tractor beam - ${TargetIterator.Value.Name}", "g"]
+						ClosestTractorKey:Set[${Ship.ModuleList_TractorBeams.GetActiveOn[${TargetIterator.Value.ID}]}]
+						ReactivateTractor:Set[TRUE]
+					}
+					if  !${Ship.ModuleList_Salvagers.IsActiveOn[${TargetIterator.Value.ID}]} &&\
+						${TargetIterator.Value.Distance} < ${Ship.ModuleList_Salvagers.Range} &&\
+						${Ship.ModuleList_Salvagers.InactiveCount} > 0 &&\
+						${TargetIterator.Value.IsLockedTarget} && ${Ship.ModuleList_Salvagers.Count} > 0
+					{
+						UI:Update["obj_Salvage", "Activating salvager - ${TargetIterator.Value.Name}", "g"]
+						Ship.ModuleList_Salvagers:Activate[${TargetIterator.Value.ID}]
+						return FALSE
+					}
+					if  !${Ship.ModuleList_Salvagers.IsActiveOn[${TargetIterator.Value.ID}]} &&\
+						${TargetIterator.Value.IsWreckEmpty} &&\
+						${TargetIterator.Value.IsLockedTarget} && ${Ship.ModuleList_Salvagers.Count} == 0
+					{
+						TargetIterator.Value:Abandon
+						TargetIterator.Value:UnlockTarget
+					}
+					if  ${TargetIterator.Value.Distance} < ${Ship.ModuleList_Salvagers.Range} &&\
+						${Ship.ModuleList_Salvagers.InactiveCount} > 0 &&\
+						${TargetIterator.Value.IsLockedTarget}
+					{
+						SalvageMultiTarget:Set[${TargetIterator.Value.ID}]
+					}
 				}
 			}
 			while ${TargetIterator:Next(exists)}
 		}
 		else
 		{
-			LootCans:Disable
-			return TRUE
+			if ${Wrecks.TargetList.Used} > 0
+			{
+				if ${Wrecks.TargetList.Get[1].Distance} > ${Ship.ModuleList_TractorBeams.Range}
+				{
+					Move:Approach[${TargetIterator.Value}]
+					return FALSE
+				}
+			}
+			else
+			{
+				LootCans:Disable
+				Wrecks.AutoLock:Set[FALSE]
+				return TRUE
+			}
 		}
 		if !${SalvageMultiTarget.Equal[-1]} && ${Ship.ModuleList_Salvagers.InactiveCount} > 0
 		{
@@ -331,14 +404,14 @@ objectdef obj_Salvage inherits obj_State
 			{
 				do
 				{
-					echo if ${BookmarkIterator.Value.Label.Left[8].Upper.Equal[${Config.Salvager.Salvager_Prefix}]} && ${BookmarkIterator.Value.CreatorID.Equal[${BookmarkCreator}]}
 					if ${BookmarkIterator.Value.Label.Left[8].Upper.Equal[${Config.Salvager.Salvager_Prefix}]} && ${BookmarkIterator.Value.CreatorID.Equal[${BookmarkCreator}]}
 					{
-						UseJumpGate:Set[True}
+						UseJumpGate:Set[TRUE]
 					}
 				}
 				while ${BookmarkIterator:Next(exists)}
 			}
+			
 			if ${UseJumpGate}
 			{
 				UI:Update["obj_Salvage", "Gate found, activating", "g"]
@@ -346,20 +419,19 @@ objectdef obj_Salvage inherits obj_State
 				Move:Gate[${Entity[GroupID == GROUP_WARPGATE].ID}]
 				This:QueueState["Idle", 5000]
 				This:QueueState["Traveling"]
+				This:QueueState["InitialUpdate", 100]
+				This:QueueState["Updated", 100]
 				This:QueueState["SalvageWrecks", 500, "${BookmarkCreator}"]
 				This:QueueState["ClearAlreadySalvaged", 100]
 				This:QueueState["DeleteBookmark", 1000, "${BookmarkCreator}"]
 				This:QueueState["RefreshBookmarks", 1000]
 				This:QueueState["GateCheck", 1000, "${BookmarkCreator}"]
-				This:QueueState["JumpToCelestial"]
 				This:QueueState["Traveling"]
 			}
 			else
 			{
 				UI:Update["obj_Salvage", "Gate found, but no more bookmarks from player.  Ignoring", "g"]
 				This:Clear
-				This:QueueState["JumpToCelestial"]
-				This:QueueState["Traveling"]
 			}
 		}
 		This:QueueState["OpenCargoHold", 500]
@@ -444,11 +516,28 @@ objectdef obj_Salvage inherits obj_State
 
 	member:bool PrepOffload()
 	{
+		if ${Client.InSpace}
+		{
+			return TRUE
+		}
+		if !${EVEWindow[ByName, "Inventory"](exists)}
+		{
+			UI:Update["obj_Salvage", "Opening inventory", "g"]
+			MyShip:OpenCargo[]
+			return FALSE
+		}
 		switch ${Config.Salvager.Salvager_Dropoff_Type}
 		{
 			case Personal Hangar
 				break
 			default
+				if !${EVEWindow[ByName, Inventory].ChildWindowExists[Corporation Hangars]}
+				{
+					UI:Update["obj_Salvage", "Delivery Location: Corporate Hangars child not found", "r"]
+					UI:Update["obj_Salvage", "Closing inventory to fix possible EVE bug", "y"]
+					EVEWindow[ByName, Inventory]:Close
+					return FALSE
+				}
 				EVEWindow[ByName, Inventory]:MakeChildActive[Corporation Hangars]
 				break
 		}
@@ -507,6 +596,34 @@ objectdef obj_Salvage inherits obj_State
 		EVE:RefreshBookmarks
 		return TRUE
 	}
+	
+	member:bool MoveToBelt()
+	{
+		if !${Client.InSpace}
+		{
+			Move:Undock
+			return FALSE
+		}
+
+		if ${BeltPatrol.Used} == 0
+		{
+			variable index:entity Belts
+			variable iterator BeltIterator
+			EVE:QueryEntities[Belts, "GroupID = GROUP_ASTEROIDBELT"]
+			Belts:GetIterator[BeltIterator]
+			if ${BeltIterator:First(exists)}
+				do
+				{
+					BeltPatrol:Queue[${BeltIterator.Value}]
+				}
+				while ${BeltIterator:Next(exists)}
+		}
+		
+		
+		Move:Object[${BeltPatrol.Peek.ID}]
+		BeltPatrol:Dequeue
+		return TRUE
+	}	
 	
 
 }

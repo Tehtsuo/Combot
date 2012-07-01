@@ -57,7 +57,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					<Height>20</Height>
 					<Text>Close</Text>
 					<OnLeftClick>
-						ui -unload "&filepath;/ComBotGUI_Hauler"
+						ui -unload "&filepath;/Hauler"
 					</OnLeftClick>
 				</button>
 			</Children>
@@ -79,46 +79,11 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Width>98%</Width> 
 						<Height>18%</Height> 
 						<Wrap />
-						<Text></Text>
+						<Text>ComBot's Hauler mode offers both simplicity and versatility.  It provides dropoff service to Station Hangar, Station Corporation Hangar, and even Player Owned Station structures.  It can pick up cargo from an Orca, a Jetcan, Player Owned Station structure, Personal Hangar, or Corporation Hangar.  Keep in mind, to move cargo from one Player Owned Station structure to another, they must have unique names.  If your source and destination containers are the same name, it will simply pick up cargo and immediately drop it back off!  Unfortunately, folder selection for picking up Corporation Hangar cargo is not available at this time.  As you can select hangars and containers for both source and destination, the hauler can be used as a simple freight module, however it does not have any utility to determine if a source has cargo to haul, so it will keep traveling between source and destination even after all the cargo is hauled.</Text>
 					</Text>						 
-					<Text name='obj_Hauler_MiningSystemTitle'> 
-						<X>69%</X> 
-						<Y>28%</Y> 
-						<Width>30%</Width> 
-						<Height>2%</Height> 
-						<Alignment>Center</Alignment>
-						<Text>Mining System Bookmark</Text>
-					</Text>						 
-					<listbox Name="obj_Hauler_MiningSystem">
-						<BackgroundColor>FF000000</BackgroundColor>
-						<Border>1</Border>
-						<BorderColor>FFFFFFFF</BorderColor>
-						<X>69%</X>
-						<Y>30%</Y>
-						<Width>30%</Width>
-						<Height>20%</Height>
-						<OnLoad>
-							variable index:bookmark Bookmarks
-							variable iterator BookmarkIterator
-
-							EVE:GetBookmarks[Bookmarks]
-							Bookmarks:GetIterator[BookmarkIterator]
-
-							if ${BookmarkIterator:First(exists)}
-								do
-								{	
-									This:AddItem[${BookmarkIterator.Value.Label}]
-								}
-								while ${BookmarkIterator:Next(exists)}
-							This.ItemByText[${Script[ComBot].VariableScope.Config.Hauler.MiningSystem}]:Select
-						</OnLoad>
-						<OnSelect>
-							Script[ComBot].VariableScope.Config.Hauler:SetMiningSystem[${This.SelectedItem.Text}]
-						</OnSelect>
-					</listbox>
 					<Text name='obj_Hauler_JetcanModeTitle'> 
 						<X>69%</X> 
-						<Y>52%</Y> 
+						<Y>60%</Y> 
 						<Width>30%</Width> 
 						<Height>2%</Height> 
 						<Alignment>Center</Alignment>
@@ -126,12 +91,11 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					</Text>						 
 					<ComboBox name='obj_Hauler_JetcanMode'> 
 						<X>69%</X> 
-						<Y>54%</Y> 
+						<Y>62%</Y> 
 						<Width>30%</Width> 
 						<Height>3%</Height> 
 						<Items>
-							<Item>Service Fleet</Item>
-							<Item>On-Demand</Item>
+							<Item Default="1">Service Fleet</Item>
 						</Items>
 						<OnLoad>
 							This.ItemByText[${Script[ComBot].VariableScope.Config.Hauler.JetCanMode}]:Select
@@ -143,27 +107,27 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 					<Text name='obj_Hauler_ThresholdTitle'> 
 						<X>69%</X> 
-						<Y>60%</Y> 
+						<Y>70%</Y> 
 						<Width>30%</Width> 
 						<Height>2%</Height> 
 						<Alignment>Center</Alignment>
 						<OnLoad>
-							This:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Config.Hauler.Threshold}]
+							This:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Config.Hauler.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Config.Hauler.Threshold} * .01 * ${MyShip.CargoCapacity}].Round} m3]
 						</OnLoad>
 					</Text>						 
 					<Slider name='obj_Hauler_Threshold'> 
 						<X>69%</X> 
-						<Y>63%</Y> 
+						<Y>72%</Y> 
 						<Width>30%</Width> 
 						<Height>5%</Height> 
 						<Border>1</Border>
 						<OnLoad>
-							This:SetRange[${MyShip.CargoCapacity}]
+							This:SetRange[100]
 							This:SetValue[${Script[ComBot].VariableScope.Config.Hauler.Threshold}]
 						</OnLoad>
 						<OnChange>
 							Script[ComBot].VariableScope.Config.Hauler:SetThreshold[${This.Value}]
-							UIElement[obj_Hauler_ThresholdTitle@ComBot_Hauler_Frame@ComBot_Hauler]:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Config.Hauler.Threshold}]
+							UIElement[obj_Hauler_ThresholdTitle@ComBot_Hauler_Frame@ComBot_Hauler]:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Config.Hauler.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Config.Hauler.Threshold} * .01 * ${MyShip.CargoCapacity}].Round} m3]
 						</OnChange>
 					</Slider>						 
 					
@@ -299,7 +263,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Width>36%</Width> 
 						<Height>2%</Height> 
 						<Alignment>Center</Alignment>
-						<Text>Orca Name</Text>
+						<Text>Orca/Container Name</Text>
 					</Text>
 					<TextEntry name='obj_Hauler_Pickup_ContainerName'> 
 						<X>1%</X> 
@@ -333,6 +297,9 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Items>
 							<Item>Orca</Item>
 							<Item>Jetcan</Item>
+							<Item>Container</Item>
+							<Item>Personal Hangar</Item>
+							<Item>Corporation Hangar</Item>
 						</Items>
 						<OnLoad>
 							This.ItemByText[${Script[ComBot].VariableScope.Config.Hauler.Pickup_Type}]:Select

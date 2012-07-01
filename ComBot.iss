@@ -36,19 +36,23 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 #include core/obj_ModuleList.iss
 #include core/obj_Ship.iss
 #include core/obj_Cargo.iss
-#include core/obj_Salvage.iss
 #include core/obj_Security.iss
 #include core/obj_Targets.iss
-#include core/obj_Miner.iss
-#include core/obj_Hauler.iss
 #include core/obj_Agents.iss
-#include core/obj_HangerSale.iss
-#include core/obj_Combat.iss
+#include core/obj_Jetcan.iss
 #include core/obj_Bookmarks.iss
 #include core/obj_AgentDialog.iss
 #include core/obj_TargetList.iss
 #include core/obj_Drones.iss
 #include core/obj_Defense.iss
+#include core/obj_Profiling.iss
+#include core/obj_Delay.iss
+
+#include behavior/Salvage.iss
+#include behavior/Miner.iss
+#include behavior/Hauler.iss
+#include behavior/HangerSale.iss
+#include behavior/Combat.iss
 
 
 function atexit()
@@ -66,25 +70,29 @@ function main()
 	declarevariable Config obj_Configuration script
 	UI:Reload
 	
+	declarevariable Profiling obj_Profiling script
 	declarevariable Client obj_Client script
 	declarevariable Move obj_Move script
 	declarevariable InstaWarp obj_InstaWarp script
 	declarevariable Ship obj_Ship script
 	declarevariable Cargo obj_Cargo script
-	declarevariable Salvager obj_Salvage script
 	declarevariable Security obj_Security script
 	declarevariable Targets obj_Targets script
-	declarevariable Miner obj_Miner script
-	declarevariable Hauler obj_Hauler script
 	declarevariable Bookmarks obj_Bookmarks script
 	declarevariable Agents obj_Agents script
-	declarevariable HangerSale obj_HangerSale script
 	declarevariable RefineData obj_Configuration_RefineData script
-	declarevariable Combat obj_Combat script
 	declarevariable AgentDialog obj_AgentDialog script
 	declarevariable Drones obj_Drones script
+	declarevariable Jetcan obj_Jetcan script
 	declarevariable Defense obj_Defense script
+	declarevariable Delay obj_Delay script
 
+	declarevariable Salvage obj_Salvage script
+	declarevariable Miner obj_Miner script
+	declarevariable Hauler obj_Hauler script
+	declarevariable Combat obj_Combat script
+	declarevariable HangerSale obj_HangerSale script
+	
 	UI:Update["ComBot", "Module initialization complete", "y"]
 	
 	

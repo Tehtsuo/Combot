@@ -19,6 +19,19 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
+#macro Setting(type, name, setname)
+	member:type name()
+	{
+		return ${This.CommonRef.FindSetting[name]}
+	}
+
+	method setname(type value)
+	{
+		This.CommonRef:AddSetting[name,${value}]
+		Config:Save
+	}
+#endmac
+
 objectdef obj_Configuration_BaseConfig
 {
 	variable filepath CONFIG_PATH = "${Script.CurrentDirectory}/config"
@@ -64,6 +77,7 @@ objectdef obj_Configuration
 	variable obj_Configuration_Security Security
 	variable obj_Configuration_HangarSale HangarSale
 	variable obj_Configuration_Hauler Hauler
+	variable obj_Configuration_Fleet Fleet
 	method Save()
 	{
 		BaseConfig:Save[]
@@ -99,48 +113,15 @@ objectdef obj_Configuration_Common
 		BaseConfig.BaseRef:AddSet[${This.SetName}]
 
 		This.CommonRef:AddSetting[ComBot_Mode,Salvager]
+		This.CommonRef:AddSetting[AlwaysShieldBoost, FALSE]
 	}
 
-	member:string ComBot_Mode()
-	{
-		return ${This.CommonRef.FindSetting[ComBot_Mode]}
-	}
-
-	method SetComBot_Mode(string value)
-	{
-		This.CommonRef:AddSetting[ComBot_Mode,${value}]
-	}
-
-	member:bool AutoStart()
-	{
-		return ${This.CommonRef.FindSetting[AutoStart]}
-	}
-
-	method SetAutoStart(bool value)
-	{
-		This.CommonRef:AddSetting[AutoStart,${value}]
-	}
-
-	member:bool WarpPulse()
-	{
-		return ${This.CommonRef.FindSetting[WarpPulse]}
-	}
-
-	method SetWarpPulse(bool value)
-	{
-		This.CommonRef:AddSetting[WarpPulse,${value}]
-	}
-	
-	member:bool Propulsion()
-	{
-		return ${This.CommonRef.FindSetting[Propulsion]}
-	}
-
-	method SetPropulsion(bool value)
-	{
-		This.CommonRef:AddSetting[Propulsion,${value}]
-	}
-	
+	Setting(string, ComBot_Mode, SetComBot_Mode)
+	Setting(bool, AutoStart, SetAutoStart)
+	Setting(bool, WarpPulse, SetWarpPulse)
+	Setting(bool, Propulsion, SetPropulsion)
+	Setting(int, Propulsion_Threshold, SetPropulsion_Threshold)
+	Setting(bool, AlwaysShieldBoost, SetAlwaysShieldBoost)
 }
 
 objectdef obj_Configuration_Salvager
@@ -170,35 +151,11 @@ objectdef obj_Configuration_Salvager
 		This.CommonRef:AddSetting[Salvager_Prefix,Salvage:]
 	}
 
-	member:string Salvager_Prefix()
-	{
-		return ${This.CommonRef.FindSetting[Salvager_Prefix]}
-	}
-
-	method SetSalvager_Prefix(string value)
-	{
-		This.CommonRef:AddSetting[Salvager_Prefix,${value}]
-	}
-	
-	member:string Salvager_Dropoff()
-	{
-		return ${This.CommonRef.FindSetting[Salvager_Dropoff]}
-	}
-
-	method SetSalvager_Dropoff(string value)
-	{
-		This.CommonRef:AddSetting[Salvager_Dropoff,${value}]
-	}
-
-	member:string Salvager_Dropoff_Type()
-	{
-		return ${This.CommonRef.FindSetting[Salvager_Dropoff_Type]}
-	}
-
-	method SetSalvager_Dropoff_Type(string value)
-	{
-		This.CommonRef:AddSetting[Salvager_Dropoff_Type,${value}]
-	}
+	Setting(string, Salvager_Prefix, SetSalvager_Prefix)
+	Setting(string, Salvager_Dropoff, SetSalvager_Dropoff)
+	Setting(string, Salvager_Dropoff_Type, SetSalvager_DropoffType)
+	Setting(bool, BeltPatrol, SetBeltPatrol)
+	Setting(string, BeltPatrolBookmark, SetBeltPatrolBookmark)
 }
 
 objectdef obj_Configuration_HangarSale
@@ -229,56 +186,13 @@ objectdef obj_Configuration_HangarSale
 		This.CommonRef:AddSetting[UndercutValue,1000]
 	}
 	
-	
-	member:string PriceMode()
-	{
-		return ${This.CommonRef.FindSetting[PriceMode]}
-	}
-
-	method SetPriceMode(string value)
-	{
-		This.CommonRef:AddSetting[PriceMode,${value}]
-	}
-
-	member:int UndercutPercent()
-	{
-		return ${This.CommonRef.FindSetting[UndercutPercent]}
-	}
-
-	method SetUndercutPercent(int value)
-	{
-		This.CommonRef:AddSetting[UndercutPercent,${value}]
-	}
-
-	member:int UndercutValue()
-	{
-		return ${This.CommonRef.FindSetting[UndercutValue]}
-	}
-
-	method SetUndercutValue(int value)
-	{
-		This.CommonRef:AddSetting[UndercutValue,${value}]
-	}
-
-	member:bool RePrice()
-	{
-		return ${This.CommonRef.FindSetting[RePrice]}
-	}
-
-	method SetRePrice(bool value)
-	{
-		This.CommonRef:AddSetting[RePrice,${value}]
-	}
-	
-	member:bool Sell()
-	{
-		return ${This.CommonRef.FindSetting[Sell]}
-	}
-
-	method SetSell(bool value)
-	{
-		This.CommonRef:AddSetting[Sell,${value}]
-	}
+	Setting(string, PriceMode, SetPriceMode)
+	Setting(int, UndercutPercent, SetUndercutPercent)
+	Setting(int, UndercutValue, SetUndercutValue)
+	Setting(bool, RePrice, SetRePrice)
+	Setting(bool, Sell, SetSell)
+	Setting(bool, MoveRefines, SetMoveRefines)
+	Setting(int64, MoveRefinesTarget, SetMoveRefinesTarget)
 }
 	
 objectdef obj_Configuration_Hauler
@@ -309,96 +223,15 @@ objectdef obj_Configuration_Hauler
 		
 	}
 	
-	
-	member:string MiningSystem()
-	{
-		return ${This.CommonRef.FindSetting[MiningSystem]}
-	}
-
-	method SetMiningSystem(string value)
-	{
-		This.CommonRef:AddSetting[MiningSystem,${value}]
-	}
-
-	member:string JetCanMode()
-	{
-		return ${This.CommonRef.FindSetting[JetCanMode]}
-	}
-
-	method SetJetCanMode(string value)
-	{
-		This.CommonRef:AddSetting[JetCanMode,${value}]
-	}
-
-	member:string Dropoff_Bookmark()
-	{
-		return ${This.CommonRef.FindSetting[Dropoff_Bookmark]}
-	}
-
-	method SetDropoff_Bookmark(string value)
-	{
-		This.CommonRef:AddSetting[Dropoff_Bookmark,${value}]
-	}
-
-	member:string Pickup_Bookmark()
-	{
-		return ${This.CommonRef.FindSetting[Pickup_Bookmark]}
-	}
-
-	method SetPickup_Bookmark(string value)
-	{
-		This.CommonRef:AddSetting[Pickup_Bookmark,${value}]
-	}
-
-	member:string Dropoff_Type()
-	{
-		return ${This.CommonRef.FindSetting[Dropoff_Type]}
-	}
-
-	method SetDropoff_Type(string value)
-	{
-		This.CommonRef:AddSetting[Dropoff_Type,${value}]
-	}
-	
-	member:string Pickup_Type()
-	{
-		return ${This.CommonRef.FindSetting[Pickup_Type]}
-	}
-
-	method SetPickup_Type(string value)
-	{
-		This.CommonRef:AddSetting[Pickup_Type,${value}]
-	}
-	
-	member:string Dropoff_ContainerName()
-	{
-		return ${This.CommonRef.FindSetting[Dropoff_ContainerName]}
-	}
-
-	method SetDropoff_ContainerName(string value)
-	{
-		This.CommonRef:AddSetting[Dropoff_ContainerName,${value}]
-	}
-	
-	member:string Pickup_ContainerName()
-	{
-		return ${This.CommonRef.FindSetting[Pickup_ContainerName]}
-	}
-
-	method SetPickup_ContainerName(string value)
-	{
-		This.CommonRef:AddSetting[Pickup_ContainerName,${value}]
-	}
-
-	member:int Threshold()
-	{
-		return ${This.CommonRef.FindSetting[Threshold]}
-	}
-
-	method SetThreshold(int value)
-	{
-		This.CommonRef:AddSetting[Threshold,${value}]
-	}
+	Setting(string, MiningSystem, SetMiningSystem)	
+	Setting(string, JetCanMode, SetJetCanMode)
+	Setting(string, Dropoff_Bookmark, SetDropoff_Bookmark)
+	Setting(string, Pickup_Bookmark, SetPickup_Bookmark)
+	Setting(string, Dropoff_Type, SetDropoff_Type)
+	Setting(string, Pickup_Type, SetPickup_Type)
+	Setting(string, Dropoff_ContainerName, SetDropoff_ContainerName)
+	Setting(string, Pickup_ContainerName, SetPickup_ContainerName)
+	Setting(int, Threshold, SetThreshold)	
 	
 }
 
@@ -503,109 +336,23 @@ objectdef obj_Configuration_Miner
 		This.CommonRef:AddSetting[Miner_Dropoff_Type,Personal Hangar]
 		This.CommonRef:AddSetting[BeltPrefix,Belt:]
 		This.CommonRef:AddSetting[IceBeltPrefix,Ice Belt:]
-		This.CommonRef:AddSetting[Miner_OrcaName,""]
+		This.CommonRef:AddSetting[MaxLasers,3]
 		
 	}
-
-	member:string MiningSystem()
-	{
-		return ${This.CommonRef.FindSetting[MiningSystem]}
-	}
-
-	method SetMiningSystem(string value)
-	{
-		This.CommonRef:AddSetting[MiningSystem,${value}]
-	}
-
-	member:string Miner_Dropoff()
-	{
-		return ${This.CommonRef.FindSetting[Miner_Dropoff]}
-	}
-
-	method SetMiner_Dropoff(string value)
-	{
-		This.CommonRef:AddSetting[Miner_Dropoff,${value}]
-	}
-
-	member:string Miner_Dropoff_Type()
-	{
-		return ${This.CommonRef.FindSetting[Miner_Dropoff_Type]}
-	}
-
-	method SetMiner_Dropoff_Type(string value)
-	{
-		This.CommonRef:AddSetting[Miner_Dropoff_Type,${value}]
-	}
 	
-	member:string Miner_OrcaName()
-	{
-		return ${This.CommonRef.FindSetting[Miner_OrcaName]}
-	}
+	Setting(string, MiningSystem, SetMiningSystem)	
+	Setting(string, Dropoff, SetDropoff)	
+	Setting(string, Dropoff_Type, SetDropoff_Type)	
+	Setting(string, Dropoff_Type, SetDropoff_Type)	
+	Setting(string, Container_Name, SetContainer_Name)	
+	Setting(bool, IceMining, SetIceMining)	
+	Setting(bool, OrcaMode, SetOrcaMode)	
+	Setting(bool, UseBookmarks, SetUseBookmarks)	
+	Setting(string, BeltPrefix, SetBeltPrefix)	
+	Setting(string, IceBeltPrefix, SetIceBeltPrefix)	
+	Setting(int, Threshold, SetThreshold)	
+	Setting(int, MaxLaserLocks, SetMaxLaserLocks)	
 
-	method SetMiner_OrcaName(string value)
-	{
-		This.CommonRef:AddSetting[Miner_OrcaName,${value}]
-	}
-	
-	member:bool IceMining()
-	{
-		return ${This.CommonRef.FindSetting[IceMining]}
-	}
-
-	method SetIceMining(bool value)
-	{
-		This.CommonRef:AddSetting[IceMining,${value}]
-	}
-	
-	member:bool OrcaMode()
-	{
-		return ${This.CommonRef.FindSetting[OrcaMode]}
-	}
-
-	method SetOrcaMode(bool value)
-	{
-		This.CommonRef:AddSetting[OrcaMode,${value}]
-	}
-	
-	member:bool UseBookmarks()
-	{
-		return ${This.CommonRef.FindSetting[UseBookmarks]}
-	}
-
-	method SetUseBookmarks(bool value)
-	{
-		This.CommonRef:AddSetting[UseBookmarks,${value}]
-	}
-
-	member:bool AlwaysShieldBoost()
-	{
-		return ${This.CommonRef.FindSetting[AlwaysShieldBoost]}
-	}
-
-	method SetAlwaysShieldBoost(bool value)
-	{
-		This.CommonRef:AddSetting[AlwaysShieldBoost,${value}]
-	}
-	
-	member:string BeltPrefix()
-	{
-		return ${This.CommonRef.FindSetting[BeltPrefix]}
-	}
-
-	method SetBeltPrefix(string value)
-	{
-		This.CommonRef:AddSetting[BeltPrefix,${value}]
-	}
-
-	member:string IceBeltPrefix()
-	{
-		return ${This.CommonRef.FindSetting[IceBeltPrefix]}
-	}
-
-	method SetIceBeltPrefix(string value)
-	{
-		This.CommonRef:AddSetting[IceBeltPrefix,${value}]
-	}
 }
 	
 objectdef obj_Configuration_Security
@@ -634,268 +381,115 @@ objectdef obj_Configuration_Security
 		
 	}
 
-	member:bool MeToPilot()
-	{
-		return ${This.CommonRef.FindSetting[MeToPilot]}
-	}
-
-	method SetMeToPilot(bool value)
-	{
-		This.CommonRef:AddSetting[MeToPilot,${value}]
-	}
-
-	member:bool MeToCorp()
-	{
-		return ${This.CommonRef.FindSetting[MeToCorp]}
-	}
-
-	method SetMeToCorp(bool value)
-	{
-		This.CommonRef:AddSetting[MeToCorp,${value}]
-	}
-
-	member:bool MeToAlliance()
-	{
-		return ${This.CommonRef.FindSetting[MeToAlliance]}
-	}
-
-	method SetMeToAlliance(bool value)
-	{
-		This.CommonRef:AddSetting[MeToAlliance,${value}]
-	}
-
-	member:bool CorpToPilot()
-	{
-		return ${This.CommonRef.FindSetting[CorpToPilot]}
-	}
-
-	method SetCorpToPilot(bool value)
-	{
-		This.CommonRef:AddSetting[CorpToPilot,${value}]
-	}
-
-	member:bool CorpToCorp()
-	{
-		return ${This.CommonRef.FindSetting[CorpToCorp]}
-	}
-
-	method SetCorpToCorp(bool value)
-	{
-		This.CommonRef:AddSetting[CorpToCorp,${value}]
-	}
-
-	member:bool CorpToAlliance()
-	{
-		return ${This.CommonRef.FindSetting[CorpToAlliance]}
-	}
-
-	method SetCorpToAlliance(bool value)
-	{
-		This.CommonRef:AddSetting[CorpToAlliance,${value}]
-	}
-	
-	member:bool AllianceToPilot()
-	{
-		return ${This.CommonRef.FindSetting[AllianceToPilot]}
-	}
-
-	method SetAllianceToPilot(bool value)
-	{
-		This.CommonRef:AddSetting[AllianceToPilot,${value}]
-	}
-
-	member:bool AllianceToCorp()
-	{
-		return ${This.CommonRef.FindSetting[AllianceToCorp]}
-	}
-
-	method SetAllianceToCorp(bool value)
-	{
-		This.CommonRef:AddSetting[AllianceToCorp,${value}]
-	}
-
-	member:bool AllianceToAlliance()
-	{
-		return ${This.CommonRef.FindSetting[AllianceToAlliance]}
-	}
-
-	method SetAllianceToAlliance(bool value)
-	{
-		This.CommonRef:AddSetting[AllianceToAlliance,${value}]
-	}
-	
-	member:int MeToPilot_Value()
-	{
-		return ${This.CommonRef.FindSetting[MeToPilot_Value]}
-	}
-
-	method SetMeToPilot_Value(int value)
-	{
-		This.CommonRef:AddSetting[MeToPilot_Value,${value}]
-	}
-	
-	member:int MeToCorp_Value()
-	{
-		return ${This.CommonRef.FindSetting[MeToCorp_Value]}
-	}
-
-	method SetMeToCorp_Value(int value)
-	{
-		This.CommonRef:AddSetting[MeToCorp_Value,${value}]
-	}
-	
-	member:int MeToAlliance_Value()
-	{
-		return ${This.CommonRef.FindSetting[MeToAlliance_Value]}
-	}
-
-	method SetMeToAlliance_Value(int value)
-	{
-		This.CommonRef:AddSetting[MeToAlliance_Value,${value}]
-	}
-	
-	member:int CorpToPilot_Value()
-	{
-		return ${This.CommonRef.FindSetting[CorpToPilot_Value]}
-	}
-
-	method SetCorpToPilot_Value(int value)
-	{
-		This.CommonRef:AddSetting[CorpToPilot_Value,${value}]
-	}
-	
-	member:int CorpToCorp_Value()
-	{
-		return ${This.CommonRef.FindSetting[CorpToCorp_Value]}
-	}
-
-	method SetCorpToCorp_Value(int value)
-	{
-		This.CommonRef:AddSetting[CorpToCorp_Value,${value}]
-	}
-	
-	member:int CorpToAlliance_Value()
-	{
-		return ${This.CommonRef.FindSetting[CorpToAlliance_Value]}
-	}
-
-	method SetCorpToAlliance_Value(int value)
-	{
-		This.CommonRef:AddSetting[CorpToAlliance_Value,${value}]
-	}
-	
-	member:int AllianceToPilot_Value()
-	{
-		return ${This.CommonRef.FindSetting[AllianceToPilot_Value]}
-	}
-
-	method SetAllianceToPilot_Value(int value)
-	{
-		This.CommonRef:AddSetting[AllianceToPilot_Value,${value}]
-	}
-	
-	member:int AllianceToCorp_Value()
-	{
-		return ${This.CommonRef.FindSetting[AllianceToCorp_Value]}
-	}
-
-	method SetAllianceToCorp_Value(int value)
-	{
-		This.CommonRef:AddSetting[AllianceToCorp_Value,${value}]
-	}
-	
-	member:int AllianceToAlliance_Value()
-	{
-		return ${This.CommonRef.FindSetting[AllianceToAlliance_Value]}
-	}
-
-	method SetAllianceToAlliance_Value(int value)
-	{
-		This.CommonRef:AddSetting[AllianceToAlliance_Value,${value}]
-	}
-	
-	member:bool FleeWaitTime_Enabled()
-	{
-		return ${This.CommonRef.FindSetting[FleeWaitTime_Enabled]}
-	}
-
-	method SetFleeWaitTime_Enabled(bool value)
-	{
-		This.CommonRef:AddSetting[FleeWaitTime_Enabled,${value}]
-	}
-
-	member:int FleeWaitTime()
-	{
-		return ${This.CommonRef.FindSetting[FleeWaitTime]}
-	}
-
-	method SetFleeWaitTime(int value)
-	{
-		This.CommonRef:AddSetting[FleeWaitTime,${value}]
-	}
-	
-	member:bool Break_Enabled()
-	{
-		return ${This.CommonRef.FindSetting[Break_Enabled]}
-	}
-
-	method SetBreak_Enabled(bool value)
-	{
-		This.CommonRef:AddSetting[Break_Enabled,${value}]
-	}
-
-	member:int Break_Duration()
-	{
-		return ${This.CommonRef.FindSetting[Break_Duration]}
-	}
-
-	method SetBreak_Duration(int value)
-	{
-		This.CommonRef:AddSetting[Break_Duration,${value}]
-	}
-	
-	member:int Break_Interval()
-	{
-		return ${This.CommonRef.FindSetting[Break_Interval]}
-	}
-
-	method SetBreak_Interval(int value)
-	{
-		This.CommonRef:AddSetting[Break_Interval,${value}]
-	}
-	
-	member:bool OverrideFleeBookmark_Enabled()
-	{
-		return ${This.CommonRef.FindSetting[OverrideFleeBookmark_Enabled]}
-	}
-
-	method SetOverrideFleeBookmark_Enabled(bool value)
-	{
-		This.CommonRef:AddSetting[OverrideFleeBookmark_Enabled,${value}]
-	}
-
-	member:string OverrideFleeBookmark()
-	{
-		return ${This.CommonRef.FindSetting[OverrideFleeBookmark]}
-	}
-
-	method SetOverrideFleeBookmark(string value)
-	{
-		This.CommonRef:AddSetting[OverrideFleeBookmark,${value}]
-	}
-
-	member:bool TargetFlee()
-	{
-		return ${This.CommonRef.FindSetting[TargetFlee]}
-	}
-
-	method SetTargetFlee(bool value)
-	{
-		This.CommonRef:AddSetting[TargetFlee,${value}]
-	}
+	Setting(bool, MeToPilot, SetMeToPilot)	
+	Setting(bool, MeToCorp, SetMeToCorp)	
+	Setting(bool, MeToAlliance, SetMeToAlliance)	
+	Setting(bool, CorpToPilot, SetCorpToPilot)	
+	Setting(bool, CorpToCorp, SetCorpToCorp)	
+	Setting(bool, CorpToAlliance, SetCorpToAlliance)	
+	Setting(bool, AllianceToPilot, SetAllianceToPilot)	
+	Setting(bool, AllianceToCorp, SetAllianceToCorp)	
+	Setting(bool, AllianceToAlliance, SetAllianceToAlliance)	
+	Setting(int, MeToPilot_Value, SetMeToPilot_Value)	
+	Setting(int, MeToCorp_Value, SetMeToCorp_Value)	
+	Setting(int, MeToAlliance_Value, SetMeToAlliance_Value)	
+	Setting(int, CorpToPilot_Value, SetCorpToPilot_Value)	
+	Setting(int, CorpToCorp_Value, SetCorpToCorp_Value)	
+	Setting(int, CorpToAlliance_Value, SetCorpToAlliance_Value)	
+	Setting(int, AllianceToPilot_Value, SetAllianceToPilot_Value)	
+	Setting(int, AllianceToCorp_Value, SetAllianceToCorp_Value)	
+	Setting(int, AllianceToAlliance_Value, SetAllianceToAlliance_Value)	
+	Setting(bool, FleeWaitTime_Enabled, SetFleeWaitTime_Enabled)	
+	Setting(int, FleeWaitTime, SetFleeWaitTime)	
+	Setting(bool, Break_Enabled, SetBreak_Enabled)	
+	Setting(int, Break_Duration, SetBreak_Duration)	
+	Setting(int, Break_Interval, SetBreak_Interval)	
+	Setting(bool, OverrideFleeBookmark_Enabled, SetOverrideFleeBookmark_Enabled)	
+	Setting(string, OverrideFleeBookmark, SetOverrideFleeBookmark)	
+	Setting(bool, TargetFlee, SetTargetFlee)	
 
 	
 }	
+	
+
+
+objectdef obj_FleetMember
+{
+	variable string FleetMemberName
+	variable bool FleetCommander
+	variable int Wing
+	variable bool WingCommander
+	variable int Squad
+	variable bool SquadCommander
+
+	method Initialize(string arg_FleetMemberName, bool arg_FleetCommander, int arg_Wing, bool arg_WingCommander, int arg_Squad, bool arg_SquadCommander)
+	{
+		FleetMemberName:Set[${arg_FleetMemberName}]
+		FleetCommander:Set[${arg_FleetCommander}]
+		Wing:Set[${arg_Wing}]
+		WingCommander:Set[${arg_WingCommander}]
+		Squad:Set[${arg_Squad}]
+		SquadCommander:Set[${arg_SquadCommander}]
+	}
+}
+
+
+objectdef obj_Configuration_Fleet
+{
+	variable string SetName = "Fleet"
+	variable index:obj_FleetMember FleetMembers
+
+	method Initialize()
+	{
+		if !${BaseConfig.BaseRef.FindSet[${This.SetName}](exists)} || !${BaseConfig.BaseRef.FindSet[${This.SetName}].FindSet[FleetMembers](exists)}
+		{
+			UI:Update["obj_Configuration", " ${This.SetName} settings missing - initializing", "o"]
+			This:Set_Default_Values[]
+		}
+		UI:Update["obj_Configuration", " ${This.SetName}: Initialized", "-g"]
+	}
+
+	member:settingsetref FleetRef()
+	{
+		return ${BaseConfig.BaseRef.FindSet[${This.SetName}]}
+	}
+	member:settingsetref FleetMembersRef()
+	{
+		return ${This.FleetRef.FindSet[FleetMembers]}
+	}
+	method Set_Default_Values()
+	{
+		BaseConfig.BaseRef:AddSet[${This.SetName}]
+		This.FleetRef:AddSet[FleetMembers]
+	}
+
+	member:bool ManageFleet()
+	{
+		return ${This.FleetRef.FindSetting[Manage Fleet, FALSE]}
+	}
+
+	method SetManageFleet(bool value)
+	{
+		This.FleetRef:AddSetting[Manage Fleet, ${value}]
+	}
+
+	member:string FleetLeader()
+	{
+		return ${This.FleetRef.FindSetting[Fleet Leader, ""]}
+	}
+
+	method SetFleetLeader(string value)
+	{
+		This.FleetRef:AddSetting[Fleet Leader, ${value}]
+	}
+
+	
+	
+
+}	
+	
+	
+	
 	
 objectdef obj_Configuration_RefineData
 {
@@ -958,5 +552,8 @@ objectdef obj_Configuration_RefineData
 	{
 		return ${This.BaseRef.FindSet["${ID}"].FindSetting["40"]}
 	}
-
 }
+
+
+
+

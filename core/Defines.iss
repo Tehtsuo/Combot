@@ -296,6 +296,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 #define GROUP_SCANNERPROBE 																						479
 #define GROUP_SCORDITE 																							460
 #define GROUP_SECURECARGOCONTAINER 																				340
+#define GROUP_AUDITLOGSECURECONTAINER																			448
 #define GROUP_SENSORBOOSTER 																					212
 #define GROUP_SENSORDAMPENINGBATTERY 																			440
 #define GROUP_SENTRYGUN 																						99

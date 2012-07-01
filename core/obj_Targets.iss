@@ -30,7 +30,7 @@ objectdef obj_Targets inherits obj_State
 		This[parent]:Initialize
 		RandomDelta:Set[0]
 
-		;This:QueueState["Update", 20]
+		This:QueueState["Update", 1000]
 	}
 
 
@@ -82,8 +82,10 @@ objectdef obj_Targets inherits obj_State
 		{
 			return FALSE
 		}
+		Profiling:StartTrack["Targets_UpdateLocked"]
 		EVE:QueryEntities[Locked, "IsLockedTarget || BeingTargeted"]
-		EVE:QueryEntities[Asteroids, "IsLockedTarget || BeingTargeted && CategoryID == CATEGORYID_ORE"]
+		Profiling:EndTrack
+;		EVE:QueryEntities[Asteroids, "IsLockedTarget || BeingTargeted && CategoryID == CATEGORYID_ORE"]
 		return FALSE
 	}
 

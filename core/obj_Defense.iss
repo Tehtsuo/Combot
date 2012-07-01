@@ -35,15 +35,17 @@ objectdef obj_Defense inherits obj_State
 	
 	member:bool Defend()
 	{
+		Profiling:StartTrack["Defense_Defend"]
 		if !${Client.InSpace}
 		{
+			Profiling:EndTrack
 			return FALSE
 		}
-		if ${Ship.ModuleList_Regen_Shield.InactiveCount} && ${MyShip.ShieldPct} < 95
+		if ${Ship.ModuleList_Regen_Shield.InactiveCount} && (${MyShip.ShieldPct} < 95 || ${Config.Common.AlwaysShieldBoost})
 		{
 			Ship.ModuleList_Regen_Shield:ActivateCount[${Ship.ModuleList_Regen_Shield.InactiveCount}]
 		}
-		if ${Ship.ModuleList_Regen_Shield.ActiveCount} && ${MyShip.ShieldPct} > 95
+		if ${Ship.ModuleList_Regen_Shield.ActiveCount} && ${MyShip.ShieldPct} > 95 && !${Config.Common.AlwaysShieldBoost}
 		{
 			Ship.ModuleList_Regen_Shield:DeactivateCount[${Ship.ModuleList_Regen_Shield.ActiveCount}]
 		}
@@ -52,6 +54,7 @@ objectdef obj_Defense inherits obj_State
 		{
 			Ship.ModuleList_ActiveResists:ActivateCount[${Ship.ModuleList_ActiveResists.Count}]
 		}
+		Profiling:EndTrack
 		return FALSE	
 	}
 		

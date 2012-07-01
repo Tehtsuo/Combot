@@ -54,8 +54,8 @@ objectdef obj_ComBot
 	method Pause()
 	{
 		UIElement[Run@TitleBar@ComBot]:SetText[Run]
-		UI:Update["obj_ComBot", "Combot Paused", "r"]
 		This.Paused:Set[TRUE]
+		${Config.Common.ComBot_Mode}:Stop
 	}
 
 	method Resume()

@@ -57,7 +57,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					<Height>20</Height>
 					<Text>Close</Text>
 					<OnLeftClick>
-						ui -unload "&filepath;/ComBotGUI_HangerSale"
+						ui -unload "&filepath;/HangerSale"
 					</OnLeftClick>
 				</button>
 			</Children>
@@ -129,7 +129,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Width>30%</Width> 
 						<Height>20</Height> 
 						<Text>Place new sell orders</Text>
-							<OnLoad>
+						<OnLoad>
 							if ${Script[ComBot].VariableScope.Config.HangarSale.Sell}
 							{
 								This:SetChecked
@@ -190,6 +190,63 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						</OnChange>
 					</Slider>						 
 
+					<Checkbox name='MoveRefines'> 
+						<X>1%</X> 
+						<Y>60%</Y> 
+						<Width>36%</Width> 
+						<Height>3%</Height> 
+						<Text>Move items marked for refining</Text>
+						<OnLoad>
+							if ${Script[ComBot].VariableScope.Config.HangarSale.MoveRefines}
+							{
+								This:SetChecked
+							}
+						</OnLoad>
+						<OnLeftClick>
+							Script[ComBot].VariableScope.Config.HangarSale:SetMoveRefines[${This.Checked}]
+						</OnLeftClick>
+					</Checkbox>						 
+					<listbox Name="MoveRefinesTarget">
+						<BackgroundColor>FF000000</BackgroundColor>
+						<Border>1</Border>
+						<BorderColor>FFFFFFFF</BorderColor>
+						<X>1%</X>
+						<Y>63%</Y>
+						<Width>36%</Width>
+						<Height>20%</Height>
+						<OnLoad>
+							variable index:string Names
+							variable index:int64 IDs
+							variable iterator NameIterator
+							
+							variable index:item StationCargo
+							variable iterator CargoIterator
+							
+							EVEWindow[ByName, Inventory]:GetChildren[Names,IDs]
+							Me.Station:GetHangarItems[StationCargo]
+							IDs:GetIterator[NameIterator]
+							StationCargo:GetIterator[CargoIterator]
+
+							if ${NameIterator:First(exists)}
+								do
+								{	
+									if ${CargoIterator:First(exists)}
+									do
+									{
+										if ${CargoIterator.Value.ID} == ${NameIterator.Value}
+											This:AddItem[${CargoIterator.Value.Name}, ${CargoIterator.Value.ID}]
+									}
+									while ${CargoIterator:Next(exists)}
+									
+									
+								}
+								while ${NameIterator:Next(exists)}
+							This.ItemByValue[${Script[ComBot].VariableScope.Config.HangarSale.MoveRefinesTarget}]:Select
+						</OnLoad>
+						<OnSelect>
+							Script[ComBot].VariableScope.Config.HangarSale:SetMoveRefinesTarget[${This.SelectedItem.Value}]
+						</OnSelect>
+					</listbox>
 
 				</Children>
 			</Frame>

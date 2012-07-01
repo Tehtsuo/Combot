@@ -35,6 +35,13 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 		<Bold>TRUE</Bold>
 	</template>	
 
+	<template name='Gauge.Font'>	
+		<Name>Verdana</Name>
+		<Size>16</Size>
+		<Color>FFFF0000</Color>
+		<Bold />
+	</template>	
+
 	<window name='ComBot'>
 		<Visible>1</Visible>
 		<BackGroundColor></BackGroundColor>
@@ -148,8 +155,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							<Items>
 <!--								<Item Value='Miner'>Miner</Item>
 								<Item Value='Hauler'>Hauler</Item>
-								<Item Value='Combat'>Simple Clear Agro and Pocket</Item>-->
-								<Item Value='Salvager'>Dedicated Salvager</Item>
+								<Item Value='Salvage'>Dedicated Salvager</Item>
 								<Item Value='HangerSale'>Hanger Sale</Item>
 							</Items>
 							<OnLoad>
@@ -228,7 +234,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							<Y>12%</Y>
 							<Width>48%</Width> 
 							<Height>6%</Height> 
-							<Text>Use AB/MWD for approaching objects</Text>
+							<Text>Use AB/MWD for approaching objects if over</Text>
 							<OnLoad>
 								if ${Script[ComBot].VariableScope.Config.Common.Propulsion}
 								{
@@ -239,73 +245,62 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								Script[ComBot].VariableScope.Config.Common:SetPropulsion[${This.Checked}]
 							</OnLeftClick>
 						</Checkbox>
-						
-					</Tab>
-					<Tab Name='Salvager'>
-						<frame name='obj_SalvageFillerFrame'>
-							<BackgroundColor>FF000000</BackgroundColor>
+						<Slider name='Propulsion_Threshold'> 
+							<X>50%</X>
+							<Y>12%</Y>
+							<Width>20%</Width> 
+							<Height>6%</Height> 
 							<Border>1</Border>
-							<BorderColor>FFFFFFFF</BorderColor>
-							<X>0</X>
-							<Y>0</Y>
-							<Height>100%</Height>
-							<Width>100%</Width>
 							<OnLoad>
-								This:SetLeftClickThru[TRUE]
+								This:SetRange[100]
+								This:SetValue[${Script[ComBot].VariableScope.Config.Common.Propulsion_Threshold}]
 							</OnLoad>
-						</frame>					
-						<Text name='obj_SalvageBookmarkListTitle'> 
-									<X>0</X> 
-									<Y>5%</Y> 
-									<Width>40%</Width> 
-									<Height>5%</Height> 
-									<Alignment>Center</Alignment>
-									<Text>Salvage Bookmarks</Text>
-						</Text>						 
-						<listbox Name="obj_SalvageBookmarkList">
-							<BackgroundColor>FF000000</BackgroundColor>
-							<Border>1</Border>
-							<BorderColor>FFFFFFFF</BorderColor>
-							<X>0</X>
-							<Y>10%</Y>
-							<Width>40%</Width>
-							<Height>80%</Height>
-						</listbox>
-						<Text name='obj_SalvageStateListTitle'> 
-									<X>40%</X> 
-									<Y>5%</Y> 
-									<Width>40%</Width> 
-									<Height>5%</Height> 
-									<Alignment>Center</Alignment>
-									<Text>Pending States</Text>
-						</Text>						 
-						<listbox Name="obj_SalvageStateList">
-							<Font template='Listbox.Font' />
-							<BackgroundColor>FF000000</BackgroundColor>
-							<Border>1</Border>
-							<BorderColor>FFFFFFFF</BorderColor>
-							<X>40%</X>
-							<Y>10%</Y>
-							<Width>40%</Width>
-							<Height>80%</Height>
-						</listbox>
-						<button	Name='Config'>
+							<OnChange>
+								Script[ComBot].VariableScope.Config.Common:SetPropulsion_Threshold[${This.Value}]
+								UIElement[Propulsion_Text@Settings@ComBotTab@ComBot]:SetText[${Script[ComBot].VariableScope.Config.Common.Propulsion_Threshold}% capacitor]
+							</OnChange>
+						</Slider>		
+						<Text name='Propulsion_Text'>
+							<X>70%</X>
+							<Y>12%</Y>
+							<Width>48%</Width> 
+							<Height>6%</Height> 
+							<OnLoad>
+								This:SetText[${Script[ComBot].VariableScope.Config.Common.Propulsion_Threshold}% capacitor]
+							</OnLoad>
+						</Text>
+						<Checkbox name='AlwaysShieldBoost'>
+							<X>1%</X>
+							<Y>19%</Y>
+							<Width>48%</Width> 
+							<Height>6%</Height> 
+							<Text>Always Shield Boost</Text>
+							<OnLoad>
+								if ${Script[ComBot].VariableScope.Config.Common.AlwaysShieldBoost}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[ComBot].VariableScope.Config.Common:SetAlwaysShieldBoost[${This.Checked}]
+							</OnLeftClick>
+						</Checkbox>
+						<button	Name='ModuleSettings'>
 							<Font template='Button.Font' />
 							<BackgroundColor>FF000000</BackgroundColor>
 							<X>0%</X>
 							<Y>90%</Y>
 							<Width>100%</Width>
 							<Height>10%</Height>
-							<Text>Settings</Text>
+							<Text>Current Module Configuration</Text>
 							<OnLeftClick>
-								timedcommand 0 "ui -load \"&filepath;/ComBotGUI_DedicatedSalvager.xml\""
+								timedcommand 0 "ui -load \"${Script[ComBot].CurrentDirectory}/behavior/${Script[ComBot].VariableScope.Config.Common.ComBot_Mode}.xml\""
 							</OnLeftClick>
-						</button>						
+						</button>							
 					</Tab>
 
-
-<!--					<Tab Name='Miner'>
-						<frame name='obj_MinerFillerFrame'>
+					<Tab Name='Debug'>
+						<frame name='DebugFillerFrame'>
 							<BackgroundColor>FF000000</BackgroundColor>
 							<Border>1</Border>
 							<BorderColor>FFFFFFFF</BorderColor>
@@ -317,69 +312,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								This:SetLeftClickThru[TRUE]
 							</OnLoad>
 						</frame>					
-						<Text name='obj_MinerBookmarkListTitle'> 
-									<X>0</X> 
-									<Y>5%</Y> 
-									<Width>40%</Width> 
-									<Height>5%</Height> 
-									<Alignment>Center</Alignment>
-									<Text>Miner Bookmarks</Text>
-						</Text>						 
-						<listbox Name="obj_MinerBookmarkList">
-							<BackgroundColor>FF000000</BackgroundColor>
-							<Border>1</Border>
-							<BorderColor>FFFFFFFF</BorderColor>
-							<X>0</X>
-							<Y>10%</Y>
-							<Width>40%</Width>
-							<Height>80%</Height>
-						</listbox>
-						<Text name='obj_MinerStateListTitle'> 
-									<X>40%</X> 
-									<Y>5%</Y> 
-									<Width>40%</Width> 
-									<Height>5%</Height> 
-									<Alignment>Center</Alignment>
-									<Text>Pending States</Text>
-						</Text>						 
-						<listbox Name="obj_MinerStateList">
-							<Font template='Listbox.Font' />
-							<BackgroundColor>FF000000</BackgroundColor>
-							<Border>1</Border>
-							<BorderColor>FFFFFFFF</BorderColor>
-							<X>40%</X>
-							<Y>10%</Y>
-							<Width>40%</Width>
-							<Height>80%</Height>
-						</listbox>
-						<button	Name='Config'>
-							<Font template='Button.Font' />
-							<BackgroundColor>FF000000</BackgroundColor>
-							<X>0%</X>
-							<Y>90%</Y>
-							<Width>100%</Width>
-							<Height>10%</Height>
-							<Text>Settings</Text>
-							<OnLeftClick>
-								timedcommand 0 "ui -load \"&filepath;/ComBotGUI_Miner.xml\""
-							</OnLeftClick>
-						</button>						
-					</Tab>
-					
-					<Tab Name='Hauler'>
-						<frame name='obj_HaulerFillerFrame'>
-							<BackgroundColor>FF000000</BackgroundColor>
-							<Border>1</Border>
-							<BorderColor>FFFFFFFF</BorderColor>
-							<X>0</X>
-							<Y>0</Y>
-							<Height>100%</Height>
-							<Width>100%</Width>
-							<OnLoad>
-								This:SetLeftClickThru[TRUE]
-							</OnLoad>
-						</frame>					
-						<Text name='obj_HaulerStateListTitle'> 
+						<Text name='DebugStateListTitle'> 
 									<X>0%</X> 
 									<Y>5%</Y> 
 									<Width>40%</Width> 
@@ -387,36 +320,36 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									<Alignment>Center</Alignment>
 									<Text>Pending States</Text>
 						</Text>						 
-						<listbox Name="obj_HaulerStateList">
+						<listbox Name="DebugStateList">
 							<Font template='Listbox.Font' />
 							<BackgroundColor>FF000000</BackgroundColor>
 							<Border>1</Border>
 							<BorderColor>FFFFFFFF</BorderColor>
-							<X>0%</X>
+							<X>00%</X>
 							<Y>10%</Y>
 							<Width>40%</Width>
-							<Height>80%</Height>
+							<Height>90%</Height>
 						</listbox>
-						<Text name='obj_HaulerOrcaCargo'> 
-									<X>41%</X> 
-									<Y>10%</Y> 
-									<Width>60%</Width> 
-									<Height>5%</Height> 
-									<Text>Orca Cargo Hold: XXX</Text>
-						</Text>						 
-						<button	Name='Config'>
-							<Font template='Button.Font' />
-							<BackgroundColor>FF000000</BackgroundColor>
-							<X>0%</X>
-							<Y>90%</Y>
-							<Width>100%</Width>
+						<Text name='DebugGuage1_Text'>
+							<X>40%</X>
+							<Y>5%</Y>
+							<Height>3%</Height>
+							<Width>60%</Width>
+							<Alignment>Center</Alignment>
+							<Text>Cargo Hold</Text>
+						</Text>
+						<gauge name='DebugGuage1'>
+							<X>41%</X>
+							<Y>10%</Y>
 							<Height>10%</Height>
-							<Text>Settings</Text>
-							<OnLeftClick>
-								timedcommand 0 "ui -load \"&filepath;/ComBotGUI_Hauler.xml\""
-							</OnLeftClick>
-						</button>						
+							<Width>58%</Width>
+							<OnLoad>
+								This:SetLeftClickThru[TRUE]
+							</OnLoad>
+						</gauge>
 					</Tab>-->
+					
+
 					
 					<Tab Name='Hangar_Sale'>
 						<frame name='obj_Hangar_SaleFillerFrame'>
@@ -506,70 +439,6 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						</button>						
 					</Tab>
 
-<!--					<Tab Name='Combat'>
-						<frame name='obj_CombatFillerFrame'>
-							<BackgroundColor>FF000000</BackgroundColor>
-							<Border>1</Border>
-							<BorderColor>FFFFFFFF</BorderColor>
-							<X>0</X>
-							<Y>0</Y>
-							<Height>100%</Height>
-							<Width>100%</Width>
-							<OnLoad>
-								This:SetLeftClickThru[TRUE]
-							</OnLoad>
-						</frame>					
-						<Text name='obj_CombatListTitle'> 
-									<X>0</X> 
-									<Y>5%</Y> 
-									<Width>40%</Width> 
-									<Height>5%</Height> 
-									<Alignment>Center</Alignment>
-									<Text>Target List</Text>
-						</Text>						 
-						<listbox Name="obj_CombatList">
-							<Font template='Console.Font' />
-							<BackgroundColor>FF000000</BackgroundColor>
-							<Border>1</Border>
-							<BorderColor>FFFFFFFF</BorderColor>
-							<X>0</X>
-							<Y>10%</Y>
-							<Width>40%</Width>
-							<Height>80%</Height>
-						</listbox>
-						<Text name='obj_CombatStateListTitle'> 
-									<X>40%</X> 
-									<Y>5%</Y> 
-									<Width>40%</Width> 
-									<Height>5%</Height> 
-									<Alignment>Center</Alignment>
-									<Text>Pending States</Text>
-						</Text>						 
-						<listbox Name="obj_CombatStateList">
-							<Font template='Listbox.Font' />
-							<BackgroundColor>FF000000</BackgroundColor>
-							<Border>1</Border>
-							<BorderColor>FFFFFFFF</BorderColor>
-							<X>40%</X>
-							<Y>10%</Y>
-							<Width>40%</Width>
-							<Height>80%</Height>
-						</listbox>
-						<button	Name='Config'>
-							<Font template='Button.Font' />
-							<BackgroundColor>FF000000</BackgroundColor>
-							<X>0%</X>
-							<Y>90%</Y>
-							<Width>100%</Width>
-							<Height>10%</Height>
-							<Text>Settings</Text>
-							<OnLeftClick>
-								timedcommand 0 "ui -load \"&filepath;/ComBotGUI_Combat.xml\""
-							</OnLeftClick>
-						</button>						
-					</Tab>-->
-					
-					
 					<Tab Name='Security'>
 						<frame name='obj_SecurityFillerFrame'>
 							<BackgroundColor>FF000000</BackgroundColor>
@@ -631,7 +500,181 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								timedcommand 0 "ui -load \"&filepath;/ComBotGUI_Security.xml\""
 							</OnLeftClick>
 						</button>						
-					</Tab>
+					</Tab>-->
+					<Tab Name='Profiling'>
+						<frame name='obj_ProfilingFillerFrame'>
+							<BackgroundColor>FF000000</BackgroundColor>
+							<Border>1</Border>
+							<BorderColor>FFFFFFFF</BorderColor>
+							<X>0</X>
+							<Y>0</Y>
+							<Height>100%</Height>
+							<Width>100%</Width>
+							<OnLoad>
+								This:SetLeftClickThru[TRUE]
+							</OnLoad>
+						</frame>			
+						<gauge name='obj_ProfilingGauge1'>
+							<X>0%</X>
+							<Y>0%</Y>
+							<Height>10%</Height>
+							<Width>100%</Width>
+							<OnLoad>
+								This:SetLeftClickThru[TRUE]
+							</OnLoad>
+						</gauge>
+						<gauge name='obj_ProfilingGauge2'>
+							<X>0%</X>
+							<Y>10%</Y>
+							<Height>10%</Height>
+							<Width>100%</Width>
+							<OnLoad>
+								This:SetLeftClickThru[TRUE]
+							</OnLoad>
+						</gauge>
+						<gauge name='obj_ProfilingGauge3'>
+							<X>0%</X>
+							<Y>20%</Y>
+							<Height>10%</Height>
+							<Width>100%</Width>
+							<OnLoad>
+								This:SetLeftClickThru[TRUE]
+							</OnLoad>
+						</gauge>
+						<gauge name='obj_ProfilingGauge4'>
+							<X>0%</X>
+							<Y>30%</Y>
+							<Height>10%</Height>
+							<Width>100%</Width>
+							<OnLoad>
+								This:SetLeftClickThru[TRUE]
+							</OnLoad>
+						</gauge>
+						<gauge name='obj_ProfilingGauge5'>
+							<X>0%</X>
+							<Y>40%</Y>
+							<Height>10%</Height>
+							<Width>100%</Width>
+							<OnLoad>
+								This:SetLeftClickThru[TRUE]
+							</OnLoad>
+						</gauge>
+						<gauge name='obj_ProfilingGauge6'>
+							<X>0%</X>
+							<Y>50%</Y>
+							<Height>10%</Height>
+							<Width>100%</Width>
+							<OnLoad>
+								This:SetLeftClickThru[TRUE]
+							</OnLoad>
+						</gauge>
+						<gauge name='obj_ProfilingGauge7'>
+							<X>0%</X>
+							<Y>60%</Y>
+							<Height>10%</Height>
+							<Width>100%</Width>
+							<OnLoad>
+								This:SetLeftClickThru[TRUE]
+							</OnLoad>
+						</gauge>
+						<gauge name='obj_ProfilingGauge8'>
+							<X>0%</X>
+							<Y>70%</Y>
+							<Height>10%</Height>
+							<Width>100%</Width>
+							<OnLoad>
+								This:SetLeftClickThru[TRUE]
+							</OnLoad>
+						</gauge>
+						<gauge name='obj_ProfilingGauge9'>
+							<X>0%</X>
+							<Y>80%</Y>
+							<Height>10%</Height>
+							<Width>100%</Width>
+							<OnLoad>
+								This:SetLeftClickThru[TRUE]
+							</OnLoad>
+						</gauge>
+						<gauge name='obj_ProfilingGauge10'>
+							<X>0%</X>
+							<Y>90%</Y>
+							<Height>10%</Height>
+							<Width>100%</Width>
+							<OnLoad>
+								This:SetLeftClickThru[TRUE]
+							</OnLoad>
+						</gauge>
+						<Text name='obj_ProfilingGauge1_Text'>
+							<X>2%</X>
+							<Y>2%</Y>
+							<Height>10%</Height>
+							<Width>100%</Width>
+							<Font template='Gauge.Font' />
+						</Text>
+						<Text name='obj_ProfilingGauge2_Text'>
+							<X>2%</X>
+							<Y>12%</Y>
+							<Height>10%</Height>
+							<Width>100%</Width>
+							<Font template='Gauge.Font' />
+						</Text>
+						<Text name='obj_ProfilingGauge3_Text'>
+							<X>2%</X>
+							<Y>22%</Y>
+							<Height>10%</Height>
+							<Width>100%</Width>
+							<Font template='Gauge.Font' />
+						</Text>
+						<Text name='obj_ProfilingGauge4_Text'>
+							<X>2%</X>
+							<Y>32%</Y>
+							<Height>10%</Height>
+							<Width>100%</Width>
+							<Font template='Gauge.Font' />
+						</Text>
+						<Text name='obj_ProfilingGauge5_Text'>
+							<X>2%</X>
+							<Y>42%</Y>
+							<Height>10%</Height>
+							<Width>100%</Width>
+							<Font template='Gauge.Font' />
+						</Text>
+						<Text name='obj_ProfilingGauge6_Text'>
+							<X>2%</X>
+							<Y>52%</Y>
+							<Height>10%</Height>
+							<Width>100%</Width>
+							<Font template='Gauge.Font' />
+						</Text>
+						<Text name='obj_ProfilingGauge7_Text'>
+							<X>2%</X>
+							<Y>62%</Y>
+							<Height>10%</Height>
+							<Width>100%</Width>
+							<Font template='Gauge.Font' />
+						</Text>
+						<Text name='obj_ProfilingGauge8_Text'>
+							<X>2%</X>
+							<Y>72%</Y>
+							<Height>10%</Height>
+							<Width>100%</Width>
+							<Font template='Gauge.Font' />
+						</Text>
+						<Text name='obj_ProfilingGauge9_Text'>
+							<X>2%</X>
+							<Y>82%</Y>
+							<Height>10%</Height>
+							<Width>100%</Width>
+							<Font template='Gauge.Font' />
+						</Text>
+						<Text name='obj_ProfilingGauge10_Text'>
+							<X>2%</X>
+							<Y>92%</Y>
+							<Height>10%</Height>
+							<Width>100%</Width>
+							<Font template='Gauge.Font' />
+						</Text>
+					</Tab>					
 				</Tabs>
 			</TabControl>
 		</Children>

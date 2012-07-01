@@ -85,8 +85,16 @@ objectdef obj_Drones inherits obj_State
 		DronesOut:Set[TRUE]
 	}
 	
+	member:int DronesInSpace()
+	{
+		variable index:activedrone ActiveDrones
+		Me:GetActiveDrones[ActiveDrones]
+		return ${ActiveDrones.Used}
+	}
+	
 	member:bool DroneControl()
 	{
+		Profiling:StartTrack["Drones_DroneControl"]
 		variable index:activedrone drones
 		variable iterator droneIterator
 		variable index:int64 droneIDs
@@ -94,6 +102,7 @@ objectdef obj_Drones inherits obj_State
 		
 		if !${Client.InSpace}
 		{
+			Profiling:EndTrack
 			return FALSE
 		}
 		if ${Me.ToEntity.Mode} == 3
@@ -102,13 +111,15 @@ objectdef obj_Drones inherits obj_State
 			{
 				This:Recall
 			}
+			Profiling:EndTrack
 			return FALSE
 		}
-		
+		DroneTargets:RequestUpdate
 		
 		Me:GetActiveDrones[drones]
 		
 		DroneTargets.LockedTargetList:GetIterator[TargetIterator]
+		
 		
 		if !${Entity[${CurrentTarget}](exists)} || !${Entity[${CurrentTarget}].IsLockedTarget}
 		{
@@ -120,13 +131,15 @@ objectdef obj_Drones inherits obj_State
 			if !${DronesOut}
 			{
 				This:Deploy
+				Profiling:EndTrack
 				return FALSE
 			}
 			do
 			{
-				if ${CurrentTarget.Equal[-1]}
+				if ${CurrentTarget.Equal[-1]} && ${TargetIterator.Value.Distance} < ${Me.DroneControlDistance}
 				{
 					CurrentTarget:Set[${TargetIterator.Value.ID}]
+					Profiling:EndTrack
 					return FALSE
 				}
 				if ${CurrentTarget.Equal[${TargetIterator.Value.ID}]}
@@ -151,6 +164,7 @@ objectdef obj_Drones inherits obj_State
 							return FALSE
 						}
 						EVE:DronesEngageMyTarget[droneIDs]
+						Profiling:EndTrack
 						return FALSE
 					}
 				}
@@ -164,6 +178,7 @@ objectdef obj_Drones inherits obj_State
 				This:Recall
 			}
 		}
+		Profiling:EndTrack
 		return FALSE
 	}
 }
