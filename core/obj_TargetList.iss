@@ -201,7 +201,7 @@ objectdef obj_TargetList inherits obj_State
 				while ${entity_iterator:Next(exists)}
 			}
 			
-			if ${entity_iterator.Value(exists)}
+			if ${entity_iterator.Value(exists)} && ${ListOutOfRange}
 			{
 				do
 				{

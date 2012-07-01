@@ -23,6 +23,8 @@ objectdef obj_Hauler inherits obj_State
 {
 	variable float OrcaCargo
 	variable index:fleetmember FleetMembers
+	variable int64 CurrentCan
+	variable bool PopCan
 	
 	variable obj_TargetList IR_Cans
 	variable obj_TargetList OOR_Cans
@@ -34,6 +36,7 @@ objectdef obj_Hauler inherits obj_State
 		Event[ComBot_Orca_Cargo]:AttachAtom[This:OrcaCargoUpdate]
 		PulseFrequency:Set[500]
 		IR_Cans.MaxRange:Set[LOOT_RANGE]
+		IR_Cans.ListOutOfRange:Set[FALSE]
 		OOR_Cans.MaxRange:Set[WARP_RANGE]
 		OOR_Cans.MinRange:Set[LOOT_RANGE]
 	}
@@ -260,43 +263,129 @@ objectdef obj_Hauler inherits obj_State
 
 		IR_Cans.AutoLock:Set[FALSE]
 		OOR_Cans.AutoLock:Set[FALSE]
+		
+		OOR_Cans:RequestUpdate
+		IR_Cans:RequestUpdate
+		
 		return TRUE
-	}	
+	}
+	
+	member:bool CheckTargetList()
+	{
+		if ${IR_Cans.Updated} && ${OOR_Cans.Updated}
+		{
+			return TRUE
+		}
+		return FALSE
+	}
 
 	
 	member:bool LootCans(int64 ID)
 	{
-		variable iterator i
-		IR_Cans.TargetList:GetIterator[i]
+		variable iterator CanIter
+		
 		echo ${IR_Cans.TargetList.Used} cans in range
 		echo ${OOR_Cans.TargetList.Used} cans out of range
 		
-		if ${IR_Cans.TargetList.Used} > 0
+		OOR_Cans:RequestUpdate
+		IR_Cans:RequestUpdate
+		
+		if !${Entity[${CurrentCan}](exists)}
 		{
-			Move:Approach[${IR_Cans.TargetList.Get[1].ID}, LOOT_RANGE]
-			if ${IR_Cans.TargetList.Get[1].Distance} < LOOT_RANGE
+			CurrentCan:Set[-1]
+		}
+		
+		if ${OOR_Cans.TargetList.Used} > 0 && ${CurrentCan.Equal[-1]}
+		{
+			CurrentCan:Set[${OOR_Cans.TargetList.Get[1].ID}]
+			PopCan:Set[TRUE]
+		}
+
+		if ${IR_Cans.TargetList.Used} > 0 && ${CurrentCan.Equal[-1]}
+		{
+			CurrentCan:Set[${IR_Cans.TargetList.Get[1].ID}]
+			PopCan:Set[TRUE]
+			if ${IR_Cans.TargetList.Used} == 1
 			{
-				if !${EVEWindow[ByName, Inventory].ChildWindowExists[${IR_Cans.TargetList.Get[1].ID}]}
-				{
-					UI:Update["obj_Hauler", "Opening - ${IR_Cans.TargetList.Get[1].Name}", "g"]
-					IR_Cans.TargetList.Get[1]:OpenCargo
-					return TRUE
-				}
-				if !${EVEWindow[ByItemID, ${IR_Cans.TargetList.Get[1].ID}](exists)}
-				{
-					UI:Update["obj_Hauler", "Activating - ${IR_Cans.TargetList.Get[1].Name}", "g"]
-					EVEWindow[ByName, Inventory]:MakeChildActive[${IR_Cans.TargetList.Get[1].ID}]
-					return TRUE
-				}
-				UI:Update["obj_Hauler", "Looting - ${IR_Cans.TargetList.Get[1].Name}", "g"]
-				Cargo:PopulateCargoList[CONTAINER, ${IR_Cans.TargetList.Get[1].ID}]
-				Cargo:DontPopCan
-				return TRUE
+				PopCan:Set[FALSE]
 			}
 		}
 		
+		if ${CurrentCan.Equal[-1]}
+		{
+			return TRUE
+		}
 		
-		return TRUE
+		if !${Entity[${CurrentCan}].IsLockedTarget}
+		{
+			if !${Entity[${CurrentCan}].BeingTargeted}
+			{
+				Entity[${CurrentCan}]:LockTarget
+				return FALSE
+			}
+			return FALSE
+		}
+		
+		if ${Entity[${CurrentCan}].Distance} > LOOT_RANGE
+		{
+			if ${Ship.ModuleList_TractorBeams.Count} > 0
+			{
+				if !${Ship.ModuleList_TractorBeams.IsActiveOn[${CurrentCan}]}
+				{
+					Ship.ModuleList_TractorBeams:Activate[${CurrentCan}]
+					return FALSE
+				}
+			}
+			else
+			{
+				Move:Approach[${CurrentCan}, LOOT_RANGE]
+				return FALSE
+			}
+		}
+		else
+		{
+			if !${EVEWindow[ByName, Inventory].ChildWindowExists[${CurrentCan}]}
+			{
+				UI:Update["obj_Hauler", "Opening - ${Entity[${CurrentCan}].Name}", "g"]
+				IR_Cans.TargetList.Get[1]:OpenCargo
+				return FALSE
+			}
+			if !${EVEWindow[ByItemID, ${CurrentCan}](exists)}
+			{
+				UI:Update["obj_Hauler", "Activating - ${Entity[${CurrentCan}].Name}", "g"]
+				EVEWindow[ByName, Inventory]:MakeChildActive[${CurrentCan}]
+				return FALSE
+			}
+			UI:Update["obj_Hauler", "Looting - ${Entity[${CurrentCan}].Name}", "g"]
+			Cargo:PopulateCargoList[CONTAINER, ${CurrentCan}]
+			if ${EVEWindow[ByItemID, ${CurrentCan}].UsedCapacity} > ${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}]}
+			{
+				if ${PopCan}
+				{
+					Cargo:MoveCargoList[SHIP]
+				}
+				else
+				{
+					Cargo:DontPopCan
+				}
+				Ship.ModuleList_TractorBeams:Deactivate[${CurrentCan}]
+				return TRUE
+			}
+			else
+			{
+				if ${PopCan}
+				{
+					Cargo:MoveCargoList[SHIP]
+				}
+				else
+				{
+					Cargo:DontPopCan
+					return TRUE
+				}
+			}
+			return FALSE
+		}
+		return FALSE
 	}
 
 	member:bool DepopulateTargetList()
@@ -452,6 +541,7 @@ objectdef obj_Hauler inherits obj_State
 					UI:Update["obj_Miner", "Looting cans for ${FleetMembers.Get[1].ToPilot.Name}", "g"]
 					This:Clear
 					This:QueueState["PopulateTargetList", 2000, ${Entity[Name = "${FleetMembers.Get[1].ToPilot.Name}"].ID}]
+					This:QueueState["CheckTargetList", 50]
 					This:QueueState["LootCans", 2000]
 					This:QueueState["DepopulateTargetList", 2000]
 					This:QueueState["Haul"]
