@@ -20,6 +20,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 variable set OwnedTargets
+variable collection:int TargetList_DeadDelay
 
 objectdef obj_TargetList inherits obj_State
 {
@@ -293,7 +294,7 @@ objectdef obj_TargetList inherits obj_State
 		{
 			do
 			{
-				if !${EntityIterator.Value.IsLockedTarget} && !${EntityIterator.Value.BeingTargeted} && ${LockedAndLockingTargets.Used} < ${MinLockCount} && ${MaxTarget} > (${Me.TargetCount} + ${Me.TargetingCount}) && ${EntityIterator.Value.Distance} < ${MyShip.MaxTargetRange} && (${EntityIterator.Value.Distance} < ${MaxRange} || ${LockOutOfRange})
+				if !${EntityIterator.Value.IsLockedTarget} && !${EntityIterator.Value.BeingTargeted} && ${LockedAndLockingTargets.Used} < ${MinLockCount} && ${MaxTarget} > (${Me.TargetCount} + ${Me.TargetingCount}) && ${EntityIterator.Value.Distance} < ${MyShip.MaxTargetRange} && (${EntityIterator.Value.Distance} < ${MaxRange} || ${LockOutOfRange}) && ${TargetList_DeadDelay.Element[${EntityIterator.Value.ID}]} < ${LavishScript.RunningTime}
 				{
 					EntityIterator.Value:LockTarget
 					LockedAndLockingTargets:Add[${EntityIterator.Value.ID}]

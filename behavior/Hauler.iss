@@ -328,7 +328,7 @@ objectdef obj_Hauler inherits obj_State
 		
 		if ${Entity[${CurrentCan}].Distance} > LOOT_RANGE
 		{
-			if ${Ship.ModuleList_TractorBeams.Count} > 0
+			if ${Ship.ModuleList_TractorBeams.Count} > 0 && ${PopCan}
 			{
 				if !${Ship.ModuleList_TractorBeams.IsActiveOn[${CurrentCan}]}
 				{
