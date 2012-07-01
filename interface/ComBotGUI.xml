@@ -153,7 +153,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							<Width>48%</Width>
 							<Height>6%</Height>
 							<Items>
-<!--								<Item Value='Miner'>Miner</Item>
+								<Item Value='Miner'>Miner</Item>
 								<Item Value='Hauler'>Hauler</Item>
 								<Item Value='Salvage'>Dedicated Salvager</Item>
 								<Item Value='HangerSale'>Hanger Sale</Item>
@@ -347,7 +347,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								This:SetLeftClickThru[TRUE]
 							</OnLoad>
 						</gauge>
-					</Tab>-->
+					</Tab>
 					
 
 					
