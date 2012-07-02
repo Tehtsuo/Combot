@@ -54,7 +54,7 @@ objectdef obj_Salvage inherits obj_State
 	method Stop()
 	{
 		UI:Update["obj_Salvage", "Salvage stopped, setting destination to station", "g"]
-		This:Clear()
+		This:Clear
 		Move:Bookmark[${Config.Salvager.Salvager_Dropoff}]
 		This:QueueState["Traveling"]
 	}
