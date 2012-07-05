@@ -369,6 +369,7 @@ objectdef obj_Hauler inherits obj_State
 					Cargo:DontPopCan
 				}
 				Ship.ModuleList_TractorBeams:Deactivate[${CurrentCan}]
+				Entity[${CurrentCan}]:UnlockTarget
 				return TRUE
 			}
 			else
@@ -380,6 +381,7 @@ objectdef obj_Hauler inherits obj_State
 				else
 				{
 					Cargo:DontPopCan
+					Entity[${CurrentCan}]:UnlockTarget
 					return TRUE
 				}
 			}
@@ -392,6 +394,7 @@ objectdef obj_Hauler inherits obj_State
 	{
 		IR_Cans.AutoLock:Set[FALSE]
 		OOR_Cans.AutoLock:Set[FALSE]
+		CurrentCan:Set[-1]
 		return TRUE
 	}	
 	
