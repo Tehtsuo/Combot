@@ -151,7 +151,7 @@ objectdef obj_TargetList inherits obj_State
 		{
 			do
 			{
-				This:QueueState["GetQueryString", 250, "${QueryStringIterator.Value.Escape}"]
+				This:QueueState["GetQueryString", 20, "${QueryStringIterator.Value.Escape}"]
 			}
 			while ${QueryStringIterator:Next(exists)}
 		}
