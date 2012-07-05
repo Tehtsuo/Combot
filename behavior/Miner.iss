@@ -574,10 +574,13 @@ objectdef obj_Miner inherits obj_State
 		}
 		Asteroids:RequestUpdate
 		variable iterator Roid
-		variable int64 FirstRoid = -1
-		variable int RoidActiveCount
-		variable int GoodCount = 0
 		Asteroids.LockedTargetList:GetIterator[Roid]
+		
+		variable float LaserSplitCount = ${Math.Calc[${Ship.ModuleList_MiningLaser.Count} / ${Asteroids.MinLockCount}]}
+		variable int LaserRoidSplitCount = ${Math.Calc[${Ship.ModuleList_MiningLaser.Count} % ${Asteroids.MinLockCount}]}
+		variable int LaserCount = ${LaserSplitCount.Ceil}
+		variable int LaserRoidCount = 0
+		
 		
 		if ${Roid:First(exists)}
 		{
@@ -585,23 +588,10 @@ objectdef obj_Miner inherits obj_State
 			{
 				if ${Roid.Value.ID(exists)}
 				{
-					GoodCount:Inc
-					if ${FirstRoid.Equal[-1]}
+					LaserRoidCount:Inc
+					if ${LaserRoidCount} > ${LaserRoidSplitCount}
 					{
-						FirstRoid:Set[${Roid.Value.ID}]
-						echo roid active count ${Ship.ModuleList_MiningLaser.ActiveCountOn[${FirstRoid}]}
-						RoidActiveCount:Set[${Ship.ModuleList_MiningLaser.ActiveCountOn[${FirstRoid}]}]
-					}
-					if ${RoidActiveCount} > ${Ship.ModuleList_MiningLaser.ActiveCountOn[${Roid.Value.ID}]}
-					{
-						FirstRoid:Set[${Roid.Value.ID}]
-						RoidActiveCount:Set[${Ship.ModuleList_MiningLaser.ActiveCountOn[${FirstRoid}]}]
-					}
-					if ${Roid.Value.Distance} > ${Ship.ModuleList_MiningLaser.Range}
-					{
-						Move:Approach[${Roid.Value.ID}, ${Ship.ModuleList_MiningLaser.Range}]
-						Profiling:EndTrack
-						return FALSE
+						LaserCount:Set[${LaserSplitCount.Int}]
 					}
 					if ${Config.Miner.IceMining}
 					{
@@ -612,7 +602,7 @@ objectdef obj_Miner inherits obj_State
 					}
 					else
 					{
-						if !${Ship.ModuleList_MiningLaser.IsActiveOn[${Roid.Value.ID}]}
+						if ${Ship.ModuleList_MiningLaser.ActiveCountOn[${Roid.Value.ID}]} < ${LaserCount}
 						{
 							UI:Update["obj_Miner", "Activating 1 laser on ${Roid.Value.Name} (${ComBot.MetersToKM_Str[${Roid.Value.Distance}]})", "y"]
 							Ship.ModuleList_MiningLaser:Activate[${Roid.Value.ID}]
@@ -623,11 +613,6 @@ objectdef obj_Miner inherits obj_State
 				}
 			}
 			while ${Roid:Next(exists)}
-		}
-		
-		if ${Asteroids.MinLockCount} <= ${GoodCount}
-		{
-			Ship.ModuleList_MiningLaser:Activate[${FirstRoid}]
 		}
 		
 		Profiling:EndTrack

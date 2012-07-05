@@ -73,6 +73,35 @@ objectdef obj_TargetList inherits obj_State
 	
 	method RequestUpdate()
 	{
+		variable iterator TargetIterator
+		TargetList:GetIterator[TargetIterator]
+		if ${TargetIterator:First(exists)}
+		{
+			do
+			{
+				if !${TargetIterator.Value.ID(exists)}
+				{
+					TargetList:Remove[${TargetIterator.Key}]
+				}
+			}
+			while ${TargetIterator:Next(exists)}
+		}
+		TargetList:Collapse
+		
+		LockedTargetList:GetIterator[TargetIterator]
+		if ${TargetIterator:First(exists)}
+		{
+			do
+			{
+				if !${TargetIterator.Value.ID(exists)}
+				{
+					TargetList:Remove[${TargetIterator.Key}]
+				}
+			}
+			while ${TargetIterator:Next(exists)}
+		}
+		LockedTargetList:Collapse
+		
 		NeedUpdate:Set[TRUE]
 		Updated:Set[FALSE]
 	}
