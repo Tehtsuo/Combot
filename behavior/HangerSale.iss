@@ -195,7 +195,6 @@ objectdef obj_HangerSale inherits obj_State
 		Me:GetHangarItems[HangerItems]
 		
 		RemainingToProcess:Set[${HangerItems.Used}]
-		UIElement[obj_HangerSaleProcessingText@Hangar_Sale@ComBotTab@ComBot]:SetText[Processing ${RemainingToProcess} items from EVE-Central]
 		ToSellLowestTotal:Set[0]
 		ToSellAverageTotal:Set[0]
 		ToSellBuyoutTotal:Set[0]
@@ -207,7 +206,6 @@ objectdef obj_HangerSale inherits obj_State
 			UI:Update["obj_HangerSale", "Retrieving Item prices for \ar${HangerItems.Used}\ao items from EVE-Central API", "o"]
 			RandomDelta:Set[0]
 			RemainingToProcess:Dec
-			UIElement[obj_HangerSaleProcessingText@Hangar_Sale@ComBotTab@ComBot]:SetText[Processing ${RemainingToProcess} items from EVE-Central]
 			
 			This:QueueState["FetchPrice", 10, ${HangerIterator.Value.TypeID}]
 			This:QueueState["AddToSellIfAboveValue", 10, "${HangerIterator.Value.TypeID}, ${HangerIterator.Value.PortionSize}, \"${HangerIterator.Value.Name.Escape}\", ${HangerIterator.Value.Quantity}"]
@@ -259,7 +257,6 @@ objectdef obj_HangerSale inherits obj_State
 			do
 			{
 				RemainingToProcess:Dec
-				UIElement[obj_HangerSaleProcessingText@Hangar_Sale@ComBotTab@ComBot]:SetText[Processing ${RemainingToProcess} items from EVE-Central]
 				if ${HangerIterator.Value.GroupID} == GROUP_SECURECARGOCONTAINER || ${HangerIterator.Value.GroupID} == GROUP_AUDITLOGSECURECONTAINER
 				{
 					echo Skipping cargo container - ${HangerIterator.Value.Name}
@@ -319,7 +316,6 @@ objectdef obj_HangerSale inherits obj_State
 				SendToRefine:Set[FALSE]
 			}
 			ToSellLowestTotal:Inc[${Math.Calc[${sellLowestPrice} * ${Quantity}]}]
-			UIElement[obj_HangerSaleToSellLowestText@Hangar_Sale@ComBotTab@ComBot]:SetText["[Match Lowest]:    ${ComBot.ISK_To_Str[${ToSellLowestTotal}]}"]
 		}
 
 		sellBuyoutPrice:Set[${BuyPrices[${TypeID}].Max}]
@@ -331,7 +327,6 @@ objectdef obj_HangerSale inherits obj_State
 				SendToRefine:Set[FALSE]
 			}
 			ToSellBuyoutTotal:Inc[${Math.Calc[${sellBuyoutPrice} * ${Quantity}]}]
-			UIElement[obj_HangerSaleToSellBuyoutText@Hangar_Sale@ComBotTab@ComBot]:SetText["[Match Buyouts]:   ${ComBot.ISK_To_Str[${ToSellBuyoutTotal}]}"]
 		}
 
 		discount:Set[${Math.Calc[${SellPrices[${TypeID}].Average}*(${Config.HangarSale.UndercutPercent} * .01)]}]
@@ -348,7 +343,6 @@ objectdef obj_HangerSale inherits obj_State
 				SendToRefine:Set[FALSE]
 			}
 			ToSellAverageTotal:Inc[${Math.Calc[${sellAveragePrice} * ${Quantity}]}]
-			UIElement[obj_HangerSaleToSellAverageText@Hangar_Sale@ComBotTab@ComBot]:SetText["[Match Average]:   ${ComBot.ISK_To_Str[${ToSellAverageTotal}]}"]
 		}
 		
 		if ${Config.HangarSale.MoveRefines}
@@ -357,7 +351,6 @@ objectdef obj_HangerSale inherits obj_State
 		}
 
 		ToRefineTotal:Inc[${Math.Calc[${This.GetItemValue[${TypeID}, ${PortionSize}]} * ${Quantity}]}]
-		UIElement[obj_HangerSaleToRefineText@Hangar_Sale@ComBotTab@ComBot]:SetText["[Refine]:          ${ComBot.ISK_To_Str[${ToRefineTotal}]}"]
 		return TRUE
 	}
 	
