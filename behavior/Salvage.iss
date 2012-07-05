@@ -272,6 +272,7 @@ objectdef obj_Salvage inherits obj_State
 				Move:Bookmark[${Config.Salvager.Salvager_Dropoff}]
 				This:Clear
 				This:QueueState["Traveling"]
+				This:QueueState["PrepOffload"]
 				This:QueueState["Offload"]
 				This:QueueState["RefreshBookmarks", 3000]
 				This:QueueState["CheckBookmarks"]
