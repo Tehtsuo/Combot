@@ -25,6 +25,7 @@ objectdef obj_Client
 	variable int NextPulse
 	
 	variable bool Ready=TRUE
+	variable int64 SystemID=${Me.SolarSystemID}
 	
 	method Initialize()
 	{
@@ -40,6 +41,14 @@ objectdef obj_Client
 	{
 		if ${LavishScript.RunningTime} >= ${This.NextPulse}
 		{
+			if ${Me.SolarSystemID} != ${SystemID}
+			{
+				echo SolarSystemID:  ${Me.SolarSystemID}
+				SystemID:Set[${Me.SolarSystemID}]
+				This:Wait[5000]
+				return
+			}
+			
 			This.NextPulse:Set[${Math.Calc[${LavishScript.RunningTime} + ${PulseIntervalInMilliseconds} + ${Math.Rand[500]}]}]
 
 			if ${ComBot.Paused}
@@ -59,6 +68,8 @@ objectdef obj_Client
 		}
 		return FALSE
 	}
+	
+	
 
 	method Wait(int delay)
 	{
