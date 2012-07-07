@@ -155,7 +155,7 @@ objectdef obj_Miner inherits obj_State
 			case No Dropoff
 				break
 			case Jetcan
-				break
+				break		
 			default
 				if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) >= ${Config.Miner.Threshold} * .01
 				{
@@ -214,9 +214,7 @@ objectdef obj_Miner inherits obj_State
 		}
 		switch ${Config.Miner.Dropoff_Type}
 		{
-			case Personal Hangar
-				break
-			default
+			case Corporation Folder
 				if !${EVEWindow[ByName, Inventory].ChildWindowExists[Corporation Hangars]}
 				{
 					UI:Update["obj_Miner", "Delivery Location: Corporate Hangars child not found", "r"]
@@ -239,8 +237,8 @@ objectdef obj_Miner inherits obj_State
 			case Personal Hangar
 				Cargo:MoveCargoList[HANGAR]
 				break
-			default
-				Cargo:MoveCargoList[CORPORATEHANGAR, ${Config.Miner.Dropoff_Type}]
+			case Corporation Folder
+				Cargo:MoveCargoList[CORPORATEHANGAR, ${Config.Miner.Dropoff_SubType}]
 				break
 		}
 		Profiling:EndTrack
@@ -277,8 +275,10 @@ objectdef obj_Miner inherits obj_State
 					EVE:StackItems[${Entity[Name = "${Config.Miner.Container_Name}"].ID}, CorpHangars]
 				}
 				break
+			case Corporation Folder
+				EVE:StackItems[MyStationCorporateHangar, StationCorporateHangar, "${Config.Miner.Dropoff_SubType.Escape}"]
+				break
 			default
-				EVE:StackItems[MyStationCorporateHangar, StationCorporateHangar, "${Config.Miner.Dropoff_Type.Escape}"]
 				break
 		}
 		Profiling:EndTrack

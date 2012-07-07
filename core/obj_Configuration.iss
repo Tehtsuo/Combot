@@ -345,7 +345,7 @@ objectdef obj_Configuration_Miner
 	Setting(string, MiningSystem, SetMiningSystem)	
 	Setting(string, Dropoff, SetDropoff)	
 	Setting(string, Dropoff_Type, SetDropoff_Type)	
-	Setting(string, Dropoff_Type, SetDropoff_Type)	
+	Setting(string, Dropoff_SubType, SetDropoff_SubType)
 	Setting(string, Container_Name, SetContainer_Name)	
 	Setting(bool, IceMining, SetIceMining)	
 	Setting(bool, OrcaMode, SetOrcaMode)	
