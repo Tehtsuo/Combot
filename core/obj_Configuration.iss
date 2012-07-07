@@ -114,6 +114,7 @@ objectdef obj_Configuration_Common
 
 		This.CommonRef:AddSetting[ComBot_Mode,Salvager]
 		This.CommonRef:AddSetting[AlwaysShieldBoost, FALSE]
+		This.CommonRef:AddSetting[ActiveTab,Status]
 	}
 
 	Setting(string, ComBot_Mode, SetComBot_Mode)
@@ -122,6 +123,7 @@ objectdef obj_Configuration_Common
 	Setting(bool, Propulsion, SetPropulsion)
 	Setting(int, Propulsion_Threshold, SetPropulsion_Threshold)
 	Setting(bool, AlwaysShieldBoost, SetAlwaysShieldBoost)
+	Setting(string, ActiveTab, SetActiveTab)
 }
 
 objectdef obj_Configuration_Salvager

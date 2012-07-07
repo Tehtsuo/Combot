@@ -589,6 +589,9 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						</Text>
 					</Tab>					
 				</Tabs>
+				<OnSelect>
+					Script[ComBot].VariableScope.Config.Common:SetActiveTab[${This.SelectedTab.Name}]
+				</OnSelect>
 			</TabControl>
 		</Children>
 	</window>
