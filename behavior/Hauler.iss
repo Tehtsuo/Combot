@@ -316,7 +316,7 @@ objectdef obj_Hauler inherits obj_State
 			return TRUE
 		}
 		
-		if !${Entity[${CurrentCan}].IsLockedTarget}
+		if !${Entity[${CurrentCan}].IsLockedTarget} && ${PopCan} && ${Ship.ModuleList_TractorBeams.Count} > 0 && ${Entity[${CurrentCan}].Distance} > LOOT_RANGE
 		{
 			if !${Entity[${CurrentCan}].BeingTargeted}
 			{
@@ -347,7 +347,7 @@ objectdef obj_Hauler inherits obj_State
 			if !${EVEWindow[ByName, Inventory].ChildWindowExists[${CurrentCan}]}
 			{
 				UI:Update["obj_Hauler", "Opening - ${Entity[${CurrentCan}].Name}", "g"]
-				IR_Cans.TargetList.Get[1]:OpenCargo
+				Entity[${CurrentCan}]:OpenCargo
 				return FALSE
 			}
 			if !${EVEWindow[ByItemID, ${CurrentCan}](exists)}
