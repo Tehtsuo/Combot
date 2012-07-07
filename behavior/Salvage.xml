@@ -57,6 +57,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					<Height>20</Height>
 					<Text>Close</Text>
 					<OnLeftClick>
+						Script[ComBot].VariableScope.Salvage.SalvageUI:Stop
 						ui -unload "&filepath;/Salvage"
 					</OnLeftClick>
 				</button>
@@ -225,6 +226,9 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Y>33%</Y>
 						<Width>30%</Width>
 						<Height>37%</Height>
+						<OnLoad>
+							Script[ComBot].VariableScope.Salvage.SalvageUI:Start
+						</OnLoad>
 						<OnSelect>
 							UIElement[obj_SalvageBeltPatrolBookmark@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText[${This.SelectedItem.Text}]
 							Script[ComBot].VariableScope.Config.Salvager:SetBeltPatrolBookmark[${This.SelectedItem.Text}]

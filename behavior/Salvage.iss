@@ -723,7 +723,16 @@ objectdef obj_SalvageUI inherits obj_State
 	{
 		This[parent]:Initialize
 		This.NonGameTiedPulse:Set[TRUE]
-		This:QueueState["UpdateBookmarkLists", 500]
+	}
+	
+	method Start()
+	{
+		This:QueueState["UpdateBookmarkLists", 5]
+	}
+	
+	method Stop()
+	{
+		This:Clear
 	}
 
 	member:bool UpdateBookmarkLists()
