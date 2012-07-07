@@ -92,6 +92,7 @@ objectdef obj_HangerSale inherits obj_State
 	method Start()
 	{
 		UI:Update["obj_HangerSale", "Started", "g"]
+		Security:Stop
 		This:AssignStateQueueDisplay[DebugStateList@Debug@ComBotTab@ComBot]
 		if ${This.IsIdle}
 		{

@@ -104,6 +104,7 @@ function main()
 	else
 	{
 		UI:Update["ComBot", "Paused", "r"]
+		Security:Start
 	}
 	
 

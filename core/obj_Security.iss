@@ -27,7 +27,19 @@ objectdef obj_Security inherits obj_State
 		This.NonGameTiedPulse:Set[TRUE]
 		This:AssignStateQueueDisplay[obj_SecurityStateList@Security@ComBotTab@ComBot]
 		
-		This:QueueState["CheckSafe", 500]
+	}
+	
+	method Start()
+	{
+		if ${This.IsIdle}
+		{
+			This:QueueState["CheckSafe", 500]
+		}
+	}
+	
+	method Stop()
+	{
+		This:Clear
 	}
 
 	
