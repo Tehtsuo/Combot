@@ -353,7 +353,8 @@ objectdef obj_Configuration_Miner
 	Setting(string, BeltPrefix, SetBeltPrefix)	
 	Setting(string, IceBeltPrefix, SetIceBeltPrefix)	
 	Setting(int, Threshold, SetThreshold)	
-	Setting(int, MaxLaserLocks, SetMaxLaserLocks)	
+	Setting(int, MaxLaserLocks, SetMaxLaserLocks)
+	Setting(string, JetcanPrefix, SetJetcanPrefix)
 
 }
 	

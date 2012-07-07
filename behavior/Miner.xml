@@ -148,13 +148,6 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							Script[ComBot].VariableScope.Config.Miner:SetOrcaMode[${This.Checked}]
 						</OnLeftClick>
 					</Checkbox>
-					<Text name='obj_MinerOrePrefixTitle'>
-						<X>1%</X>
-						<Y>88%</Y>
-						<Width>20%</Width> 
-						<Height>2%</Height> 
-						<Text>Belt Prefix:</Text>
-					</Text>
 					<Text name='obj_Miner_ThresholdTitle'> 
 						<X>38%</X> 
 						<Y>70%</Y> 
@@ -205,6 +198,13 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							UIElement[obj_Miner_MaxLockTitle@ComBot_Miner_Frame@ComBot_Miner]:SetText[Lock ${Script[ComBot].VariableScope.Config.Miner.MaxLaserLocks} targets for mining]
 						</OnChange>
 					</Slider>						 
+					<Text name='obj_MinerOrePrefixTitle'>
+						<X>1%</X>
+						<Y>88%</Y>
+						<Width>20%</Width> 
+						<Height>2%</Height> 
+						<Text>Belt Prefix:</Text>
+					</Text>
 					<Textentry name='obj_MinerOrePrefix'>
 						<X>17%</X>
 						<Y>88%</Y>
@@ -239,6 +239,29 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							if ${This.Text.Length} > 0
 							{
 								Script[ComBot].VariableScope.Config.Miner:SetIceBeltPrefix[${This.Text}]
+							}
+						</OnChange>
+					</Textentry>
+					<Text name='obj_MinerJetcanPrefixTitle'>
+						<X>38%</X>
+						<Y>90%</Y>
+						<Width>30%</Width> 
+						<Height>2%</Height> 
+						<Alignment>Center</Alignment>
+						<Text>Jetcan Prefix:</Text>
+					</Text>
+					<Textentry name='obj_MinerJetcanPrefix'>
+						<X>38%</X>
+						<Y>92%</Y>
+						<Width>30%</Width> 
+						<Height>3%</Height> 
+						<OnLoad>
+							This:SetText[${Script[ComBot].VariableScope.Config.Miner.JetcanPrefix}]
+						</OnLoad>
+						<OnChange>
+							if ${This.Text.Length} > 0
+							{
+								Script[ComBot].VariableScope.Config.Miner:SetJetcanPrefix[${This.Text}]
 							}
 						</OnChange>
 					</Textentry>
@@ -381,9 +404,29 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								This:AddItem[Corporation Folder 7]
 							}
 							This.ItemByText[${Script[ComBot].VariableScope.Config.Miner.Dropoff_SubType}]:Select
+							if ${Script[ComBot].VariableScope.Config.Miner.Dropoff_SubType.Equal[Corporate Bookmark Jetcan]}
+							{
+								UIElement[obj_MinerJetcanPrefix@ComBot_Miner_Frame@ComBot_Miner]:Show
+								UIElement[obj_MinerJetcanPrefixTitle@ComBot_Miner_Frame@ComBot_Miner]:Show
+							}
+							else
+							{
+								UIElement[obj_MinerJetcanPrefix@ComBot_Miner_Frame@ComBot_Miner]:Hide
+								UIElement[obj_MinerJetcanPrefixTitle@ComBot_Miner_Frame@ComBot_Miner]:Hide
+							}
 						</OnLoad>
 						<OnSelect>
 							Script[ComBot].VariableScope.Config.Miner:SetDropoff_SubType[${This.SelectedItem.Text}]
+							if ${Script[ComBot].VariableScope.Config.Miner.Dropoff_SubType.Equal[Corporate Bookmark Jetcan]}
+							{
+								UIElement[obj_MinerJetcanPrefix@ComBot_Miner_Frame@ComBot_Miner]:Show
+								UIElement[obj_MinerJetcanPrefixTitle@ComBot_Miner_Frame@ComBot_Miner]:Show
+							}
+							else
+							{
+								UIElement[obj_MinerJetcanPrefix@ComBot_Miner_Frame@ComBot_Miner]:Hide
+								UIElement[obj_MinerJetcanPrefixTitle@ComBot_Miner_Frame@ComBot_Miner]:Hide
+							}
 						</OnSelect>
 					</listbox>
 \					<Text name='obj_MinerOrePriorityTitle'> 
