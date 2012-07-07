@@ -270,11 +270,15 @@ objectdef obj_Move inherits obj_State
 				This:QueueState["BookmarkMove", 2000, ${Bookmark}]
 				return TRUE
 			}
-			else
+			elseif ${EVE.Bookmark[${Bookmark}].Distance} > 0
 			{
 				UI:Update["obj_Move", "Reached ${Bookmark}", "g"]
 				This.Traveling:Set[FALSE]
 				return TRUE
+			}
+			else
+			{
+				return FALSE
 			}
 		}
 		else
@@ -287,10 +291,14 @@ objectdef obj_Move inherits obj_State
 					This:Warp[${EVE.Bookmark[${Bookmark}].ToEntity}, ${This.Distance}]
 					return FALSE
 				}
-				else
+				elseif ${EVE.Bookmark[${Bookmark}].ToEntity.Distance} > -1
 				{
 					UI:Update["obj_Move", "Reached ${Bookmark}, docking", "g"]
 					This:DockAtStation[${EVE.Bookmark[${Bookmark}].ItemID}]
+					return FALSE
+				}
+				else
+				{
 					return FALSE
 				}
 			}
@@ -303,11 +311,15 @@ objectdef obj_Move inherits obj_State
 					Client:Wait[5000]
 					return FALSE
 				}
-				else
+				elseif ${EVE.Bookmark[${Bookmark}].Distance} > 0
 				{
 					UI:Update["obj_Move", "Reached ${Bookmark}", "g"]
 					This.Traveling:Set[FALSE]
 					return TRUE
+				}
+				else
+				{
+					return FALSE
 				}
 			}
 		}
