@@ -155,9 +155,15 @@ objectdef obj_Security inherits obj_State
 			if ${Threat:First(exists)}
 			do
 			{
-				if  ${MyCorpID} == ${Threat.Value.CorpID} || \
-					${MyAllianceID} == ${Threat.Value.AllianceID} || \
-					${Me.Fleet.IsMember[${Threat.Value.CharID}]}
+				if ${MyCorpID} == ${Threat.Value.CorpID} && !${Config.Security.CorpFlee}
+				{
+					continue
+				}
+				if ${MyAllianceID} == ${Threat.Value.AllianceID} && !${Config.Security.AllianceFlee}
+				{
+					continue
+				}
+				if ${Me.Fleet.IsMember[${Threat.Value.CharID}]} && !${Config.Security.FleetFlee}
 				{
 					continue
 				}

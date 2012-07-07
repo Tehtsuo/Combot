@@ -407,7 +407,9 @@ objectdef obj_Configuration_Security
 	Setting(bool, OverrideFleeBookmark_Enabled, SetOverrideFleeBookmark_Enabled)	
 	Setting(string, OverrideFleeBookmark, SetOverrideFleeBookmark)	
 	Setting(bool, TargetFlee, SetTargetFlee)	
-
+	Setting(bool, CorpFlee, SetCorpFlee)
+	Setting(bool, AllianceFlee, SetAllianceFlee)
+	Setting(bool, FleetFlee, SetFleetFlee)
 	
 }	
 	
