@@ -131,7 +131,6 @@ objectdef obj_TargetList inherits obj_State
 			Profiling:EndTrack
 			return FALSE
 		}
-		NeedUpdate:Set[FALSE]
 		if !${Client.InSpace}
 		{
 			Profiling:EndTrack
@@ -162,6 +161,7 @@ objectdef obj_TargetList inherits obj_State
 		}
 		This:QueueState["SetUpdated"]
 		This:QueueState["UpdateList"]
+		NeedUpdate:Set[FALSE]
 		Profiling:EndTrack
 ;		echo UpdateList ${This.ObjectName}
 		return TRUE
@@ -187,7 +187,6 @@ objectdef obj_TargetList inherits obj_State
 		EVE:QueryEntities[entity_index, "${QueryString.Escape}"]
 		Profiling:EndTrack
 		entity_index:GetIterator[entity_iterator]
-		
 		if ${entity_iterator:First(exists)}
 		{
 			do
