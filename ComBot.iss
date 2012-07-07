@@ -99,8 +99,7 @@ function main()
 	
 	if ${Config.Common.AutoStart}
 	{
-		ComBot.Paused:Set[FALSE]
-		${Config.Common.ComBot_Mode}:Start
+		ComBot:Resume
 	}
 	else
 	{
