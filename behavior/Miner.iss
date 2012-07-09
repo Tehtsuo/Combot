@@ -416,10 +416,14 @@ objectdef obj_Miner inherits obj_State
 			return FALSE
 		}
 		
-		variable int MaxTarget = ${Math.Calc[${MyShip.MaxLockedTargets} - 2]}
-		if ${Math.Calc[${Me.MaxLockedTargets} - 2]} < ${MaxTarget}
+		variable int MaxTarget = ${MyShip.MaxLockedTargets}
+		if ${Me.MaxLockedTargets} < ${MaxTarget}
 		{
-			MaxTarget:Set[${Math.Calc[${Me.MaxLockedTargets} - 2]}]
+			MaxTarget:Set[${Math.Calc[${Me.MaxLockedTargets}]}]
+		}
+		if ${Config.Miner.MaxLaserLocks} < ${MaxTarget}
+		{
+			MaxTarget:Set[${Config.Miner.MaxLaserLocks}]
 		}
 		if ${Ship.ModuleList_MiningLaser.Count} < ${MaxTarget}
 		{
