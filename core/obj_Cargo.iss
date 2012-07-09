@@ -57,7 +57,15 @@ objectdef obj_Cargo inherits obj_State
 				Entity[${ID}]:GetCargo[CargoList]
 		}
 	}
-
+	
+	method Filter(string Filter, bool Mode=TRUE)
+	{
+		if ${CargoList.Used}
+		{
+			CargoList:RemoveByQuery[${LavishScript.CreateQuery["${Filter}"]}, ${Mode}]
+		}
+	}
+	
 	method DontPopCan()
 	{
 		variable iterator Cargo
@@ -102,7 +110,6 @@ objectdef obj_Cargo inherits obj_State
 			}
 		}
 	}
-	
 	
 	method MoveCargoList(string location, string folder="", int64 ID=-1)
 	{

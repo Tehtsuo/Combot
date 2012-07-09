@@ -645,7 +645,7 @@ objectdef obj_Miner inherits obj_State
 		}
 		
 		Profiling:EndTrack
-		return FALSE
+		return TRUE
 	}
 	
 	member:bool ExpandContainer()
