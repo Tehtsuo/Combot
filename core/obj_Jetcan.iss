@@ -202,7 +202,7 @@ objectdef obj_Jetcan inherits obj_State
 			return FALSE
 		}
 		Entity[${ID}]:GetCargo[CargoList]
-		CargoList.Get[1]:MoveTo[MyShip, CargoHold]
+		CargoList.Get[1]:MoveTo[MyShip, CargoHold, 1]
 		return TRUE
 	}
 	

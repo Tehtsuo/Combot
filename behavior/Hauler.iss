@@ -284,6 +284,11 @@ objectdef obj_Hauler inherits obj_State
 	{
 		variable iterator CanIter
 		
+		if ${MyShip.UsedCargoCapacity} > (${Config.Hauler.Threshold} * .01 * ${MyShip.CargoCapacity})
+		{
+			return TRUE
+		}
+		
 		echo ${IR_Cans.TargetList.Used} cans in range
 		echo ${OOR_Cans.TargetList.Used} cans out of range
 		
