@@ -413,6 +413,21 @@ objectdef obj_Salvage inherits obj_State
 				}
 				while ${BookmarkIterator:Next(exists)}
 			}
+
+			if ${EVEWindow[ByName, modal].Text.Find["This gate is locked!"](exists)}
+			{
+				UI:Update["obj_Salvage", "Locked gate detected - Jumping clear", "g"]
+				EVEWindow[ByName,modal]:ClickButtonOK
+				HoldOffPlayer:Insert[${BookmarkCreator}]
+				HoldOffTimer:Insert[${Math.Calc[${LavishScript.RunningTime} + 600000]}]
+				This:Clear
+				This:QueueState["JumpToCelestial"]
+				This:QueueState["Traveling"]
+				This:QueueState["RefreshBookmarks", 3000]
+				This:QueueState["CheckBookmarks"]
+				return TRUE
+			}
+
 			
 			if ${UseJumpGate}
 			{
