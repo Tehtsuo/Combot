@@ -190,18 +190,21 @@ objectdef obj_Move inherits obj_State
 		This:QueueState["AgentMove", 2000, ${Agent[AgentName].Index}]
 	}	
 
-	method Gate(int64 ID)
+	method Gate(int64 ID, bool CalledFromMove=FALSE)
 	{
 		UI:Update["obj_Move", "Movement queued.  Destination: ${Entity[${ID}].Name}", "g"]
 		This.Traveling:Set[TRUE]
-		This:QueueState["GateMove", 2000, ${ID}]
+		This:QueueState["GateMove", 2000, "${ID}, ${CalledFromMove}"]
 	}
 
-	member:bool GateMove(int64 ID)
+	member:bool GateMove(int64 ID, bool CalledFromMove)
 	{
 		if !${Entity[${ID}](exists)}
 		{
-			This.Traveling:Set[FALSE]
+			if !${CalledFromMove}
+			{
+				This.Traveling:Set[FALSE]
+			}
 			return TRUE	
 		}
 
@@ -226,7 +229,10 @@ objectdef obj_Move inherits obj_State
 		UI:Update["obj_Move", "Activating ${Entity[${ID}].Name}", "g"]
 		Entity[${ID}]:Activate
 		Client:Wait[5000]
-		This.Traveling:Set[FALSE]
+		if !${CalledFromMove}
+		{
+			This.Traveling:Set[FALSE]
+		}
 		return TRUE
 	}
 	
@@ -277,7 +283,7 @@ objectdef obj_Move inherits obj_State
 				if ${Entity[GroupID == GROUP_WARPGATE](exists)} && !${IgnoreGate}
 				{
 					UI:Update["obj_Move", "Gate found, activating", "g"]
-					This:Gate[${Entity[GroupID == GROUP_WARPGATE].ID}]
+					This:Gate[${Entity[GroupID == GROUP_WARPGATE].ID}, TRUE]
 					This:QueueState["FleetmemberMove", 2000, ${Bookmark}]
 					return TRUE
 				}
