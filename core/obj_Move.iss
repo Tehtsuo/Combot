@@ -102,6 +102,25 @@ objectdef obj_Move inherits obj_State
 	
 	
 	
+	method Fleetmember(int64 ID, bool IgnoreGate=FALSE)
+	{
+		if ${This.Traveling}
+		{
+			return
+		}
+		
+		if !${Me.Fleet.Member[${ID}](exists)}
+		{
+			UI:Update["obj_Move", "Fleet member does not exist", "r"]
+			UI:Update["obj_Move", "Fleet member CharID: ${ID}", "r"]
+			return
+		}
+
+		UI:Update["obj_Move", "Movement queued.  Destination: ${Me.Fleet.Member[${ID}].ToPilot.Name", "g"]
+		This.Traveling:Set[TRUE]
+		This:QueueState["FleetmemberMove", 2000, "${ID}, ${IgnoreGate}"]
+	}
+
 	method Bookmark(string DestinationBookmarkLabel, bool IgnoreGate=FALSE)
 	{
 		if ${This.Traveling}
@@ -217,6 +236,53 @@ objectdef obj_Move inherits obj_State
 		return TRUE
 	}
 	
+	member:bool FleetmemberMove(int64 ID, bool IgnoreGate=FALSE)
+	{
+
+		if ${Me.InStation}
+		{
+			UI:Update["obj_Move", "Undocking from ${Me.Station.Name}", "g"]
+			This:Undock
+			return FALSE
+		}
+
+		if !${Client.InSpace}
+		{
+			return FALSE
+		}
+
+		if ${Me.ToEntity.Mode} == 3
+		{
+			return FALSE
+		}
+		
+		if ${Me.Fleet.Member[${ID}].ToEntity(exists)}
+		{
+			if ${Me.Fleet.Member[${ID}].ToEntity.Distance} > WARP_RANGE
+			{
+				
+				UI:Update["obj_Move", "Warping to ${Me.Fleet.Member[${ID}]}", "g"]
+				Me.Fleet.Member[${ID}].ToEntity:WarpTo[${This.Distance}]
+				Client:Wait[5000]
+				return FALSE
+			}
+			else
+			{
+				if ${Entity[GroupID == GROUP_WARPGATE](exists)} && !${IgnoreGate}
+				{
+					UI:Update["obj_Move", "Gate found, activating", "g"]
+					This:Gate[${Entity[GroupID == GROUP_WARPGATE].ID}]
+					This:QueueState["FleetmemberMove", 2000, ${Bookmark}]
+					return TRUE
+				}
+				UI:Update["obj_Move", "Warping to ${Me.Fleet.Member[${ID}]}", "g"]
+				Me.Fleet.Member[${ID}]:WarpTo[${This.Distance}]
+				Client:Wait[5000]
+				return FALSE
+			}
+		}
+	}
+	
 	member:bool BookmarkMove(string Bookmark, bool IgnoreGate=FALSE)
 	{
 
@@ -324,7 +390,6 @@ objectdef obj_Move inherits obj_State
 			}
 		}
 	}
-	
 
 	member:bool AgentMove(int ID)
 	{
