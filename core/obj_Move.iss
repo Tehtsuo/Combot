@@ -116,7 +116,7 @@ objectdef obj_Move inherits obj_State
 			return
 		}
 
-		UI:Update["obj_Move", "Movement queued.  Destination: ${Me.Fleet.Member[${ID}].ToPilot.Name", "g"]
+		UI:Update["obj_Move", "Movement queued.  Destination: ${Me.Fleet.Member[${ID}].ToPilot.Name}", "g"]
 		This.Traveling:Set[TRUE]
 		This:QueueState["FleetmemberMove", 2000, "${ID}, ${IgnoreGate}"]
 	}
@@ -238,7 +238,6 @@ objectdef obj_Move inherits obj_State
 	
 	member:bool FleetmemberMove(int64 ID, bool IgnoreGate=FALSE)
 	{
-
 		if ${Me.InStation}
 		{
 			UI:Update["obj_Move", "Undocking from ${Me.Station.Name}", "g"]
@@ -255,19 +254,27 @@ objectdef obj_Move inherits obj_State
 		{
 			return FALSE
 		}
-		
+
 		if ${Me.Fleet.Member[${ID}].ToEntity(exists)}
 		{
 			if ${Me.Fleet.Member[${ID}].ToEntity.Distance} > WARP_RANGE
 			{
 				
-				UI:Update["obj_Move", "Warping to ${Me.Fleet.Member[${ID}]}", "g"]
+				UI:Update["obj_Move", "Warping to ${Me.Fleet.Member[${ID}].ToPilot.Name}", "g"]
 				Me.Fleet.Member[${ID}].ToEntity:WarpTo[${This.Distance}]
 				Client:Wait[5000]
 				return FALSE
 			}
 			else
 			{
+				UI:Update["obj_Move", "Warping to ${Me.Fleet.Member[${ID}].ToPilot.Name}", "g"]
+				Me.Fleet.Member[${ID}].ToEntity:WarpTo[${This.Distance}]
+				Client:Wait[5000]
+				return FALSE
+			}
+		}
+		else
+		{
 				if ${Entity[GroupID == GROUP_WARPGATE](exists)} && !${IgnoreGate}
 				{
 					UI:Update["obj_Move", "Gate found, activating", "g"]
@@ -275,11 +282,10 @@ objectdef obj_Move inherits obj_State
 					This:QueueState["FleetmemberMove", 2000, ${Bookmark}]
 					return TRUE
 				}
-				UI:Update["obj_Move", "Warping to ${Me.Fleet.Member[${ID}]}", "g"]
+				UI:Update["obj_Move", "Warping to ${Me.Fleet.Member[${ID}].ToPilot.Name}", "g"]
 				Me.Fleet.Member[${ID}]:WarpTo[${This.Distance}]
 				Client:Wait[5000]
 				return FALSE
-			}
 		}
 	}
 	
