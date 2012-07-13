@@ -267,10 +267,8 @@ objectdef obj_Move inherits obj_State
 			}
 			else
 			{
-				UI:Update["obj_Move", "Warping to ${Me.Fleet.Member[${ID}].ToPilot.Name}", "g"]
-				Me.Fleet.Member[${ID}].ToEntity:WarpTo[${This.Distance}]
-				Client:Wait[5000]
-				return FALSE
+				UI:Update["obj_Move", "Reached ${Me.Fleet.Member[${ID}].ToPilot.Name}", "g"]
+				return TRUE
 			}
 		}
 		else
