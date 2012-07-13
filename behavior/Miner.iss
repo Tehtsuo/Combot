@@ -232,6 +232,7 @@ objectdef obj_Miner inherits obj_State
 		Profiling:StartTrack["Miner_Offload"]
 		UI:Update["obj_Miner", "Unloading cargo", "g"]
 		Cargo:PopulateCargoList[SHIP]
+		Cargo:Filter["GroupID == CATEGORYID_ORE", FALSE]
 		switch ${Config.Miner.Dropoff_Type}
 		{
 			case Personal Hangar
@@ -447,6 +448,7 @@ objectdef obj_Miner inherits obj_State
 			elseif ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipCorpHangar]} > 0
 			{
 				Cargo:PopulateCargoList[SHIPCORPORATEHANGAR]
+				Cargo:Filter["GroupID == CATEGORYID_ORE", FALSE]
 				Cargo:MoveCargoList[SHIP]
 				This:QueueState["CheckCargoHold", 1000]
 				This:QueueState["Idle", 1000]
@@ -488,6 +490,7 @@ objectdef obj_Miner inherits obj_State
 						}
 						;UI:Update["obj_Miner", "Unloading to ${Config.Miner.Container_Name}", "g"]
 						Cargo:PopulateCargoList[SHIP]
+						Cargo:Filter["GroupID == CATEGORYID_ORE", FALSE]
 						Cargo:MoveCargoList[SHIPCORPORATEHANGAR, "", ${Orca}]
 						This:QueueState["Idle", 1000]
 						This:QueueState["StackItemHangar"]
