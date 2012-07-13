@@ -261,6 +261,7 @@ objectdef obj_Move inherits obj_State
 			return FALSE
 		}
 
+		echo Fleetmember (Entity) exists: ${Me.Fleet.Member[${ID}].ToEntity(exists)}
 		if ${Me.Fleet.Member[${ID}].ToEntity(exists)}
 		{
 			if ${Me.Fleet.Member[${ID}].ToEntity.Distance} > WARP_RANGE
@@ -337,7 +338,7 @@ objectdef obj_Move inherits obj_State
 				if ${Entity[GroupID == GROUP_WARPGATE](exists)} && !${IgnoreGate}
 				{
 					UI:Update["obj_Move", "Gate found, activating", "g"]
-					This:Gate[${Entity[GroupID == GROUP_WARPGATE].ID}]
+					This:Gate[${Entity[GroupID == GROUP_WARPGATE].ID}, TRUE]
 					This:QueueState["BookmarkMove", 2000, ${Bookmark}]
 					return TRUE
 				}			
