@@ -268,6 +268,7 @@ objectdef obj_Move inherits obj_State
 			else
 			{
 				UI:Update["obj_Move", "Reached ${Me.Fleet.Member[${ID}].ToPilot.Name}", "g"]
+				This.Traveling:Set[FALSE]
 				return TRUE
 			}
 		}
