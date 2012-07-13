@@ -84,7 +84,7 @@ objectdef obj_Jetcan inherits obj_State
 							}
 							This:QueueState["LootCan", 1000, ${TargetIterator.Key}]
 							This:QueueState["NewCan", 2000]
-							This:QueueState["TransferCanFrom", 10000, "${TargetIterator.Key}"]
+							This:QueueState["TransferCan", 10000, "${TargetIterator.Key}"]
 							This:QueueState["Rename", 1000]
 							This:QueueState["Fill"]
 							UI:Update["obj_Jetcan", "Popping old can - ${TargetIterator.Value.Name}", "g"]
@@ -116,6 +116,7 @@ objectdef obj_Jetcan inherits obj_State
 						return FALSE
 					}
 					Cargo:PopulateCargoList[SHIP]
+					Cargo:Filter["GroupID == CATEGORYID_ORE", FALSE]
 					Cargo:MoveCargoList[CONTAINER, "", ${TargetIterator.Value}]
 					This:QueueState["Stack", 1000, ${TargetIterator.Value}]
 					This:QueueState["Fill", 1500]
@@ -128,11 +129,21 @@ objectdef obj_Jetcan inherits obj_State
 		if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) > 0.10
 		{
 			Me.Ship:GetCargo[CargoList]
-			CargoList.Get[1]:Jettison
-			This:QueueState["Idle", 5000]
-			This:QueueState["Rename", 2000]
-			This:QueueState["Fill", 1500]
-			return TRUE
+			CargoList:GetIterator[TargetIterator]
+			if ${TargetIterator:First(exists)}
+				do
+				{
+					if ${TargetIterator.Value.GroupID} == CATEGORYID_ORE
+					{
+						CargoList.Get[1]:Jettison
+						This:QueueState["Idle", 5000]
+						This:QueueState["Rename", 2000]
+						This:QueueState["Fill", 1500]
+						return TRUE
+						break
+					}
+				}
+				while ${TargetIterator:Next(exists)}
 		}
 		return FALSE
 	}

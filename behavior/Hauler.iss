@@ -282,6 +282,11 @@ objectdef obj_Hauler inherits obj_State
 	
 	member:bool LootCans(int64 ID)
 	{
+		if !${Entity[${ID}](exists)}
+		{
+			return TRUE
+		}
+		
 		variable iterator CanIter
 		
 		if ${MyShip.UsedCargoCapacity} > (${Config.Hauler.Threshold} * .01 * ${MyShip.CargoCapacity})
