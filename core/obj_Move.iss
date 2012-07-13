@@ -285,7 +285,8 @@ objectdef obj_Move inherits obj_State
 				UI:Update["obj_Move", "Warping to ${Me.Fleet.Member[${ID}].ToPilot.Name}", "g"]
 				Me.Fleet.Member[${ID}]:WarpTo[${This.Distance}]
 				Client:Wait[5000]
-				return FALSE
+				This:QueueState["FleetmemberMove", 2000, ${Bookmark}]
+				return TRUE
 		}
 	}
 	
