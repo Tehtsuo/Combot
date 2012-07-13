@@ -549,12 +549,12 @@ objectdef obj_Hauler inherits obj_State
 					FleetMembers:RemoveByQuery[${LavishScript.CreateQuery[ID == ${Me.CharID}]}]
 					FleetMembers:Collapse
 				}
-				echo Entity exists - ${Entity[Name = "${FleetMembers.Get[1].ToPilot.Name}"](exists)}
-				if ${Entity[Name = "${FleetMembers.Get[1].ToPilot.Name}"](exists)}
+
+				if ${FleetMembers.Get[1].ToEntity(exists)}
 				{
 					UI:Update["obj_Miner", "Looting cans for ${FleetMembers.Get[1].ToPilot.Name}", "g"]
 					This:Clear
-					This:QueueState["PopulateTargetList", 2000, ${Entity[Name = "${FleetMembers.Get[1].ToPilot.Name}"].ID}]
+					This:QueueState["PopulateTargetList", 2000, ${FleetMembers.Get[1].ToEntity.ID}]
 					This:QueueState["CheckTargetList", 50]
 					This:QueueState["LootCans", 2000]
 					This:QueueState["DepopulateTargetList", 2000]
@@ -565,9 +565,7 @@ objectdef obj_Hauler inherits obj_State
 				}
 				else
 				{
-					UI:Update["obj_Miner", "Warping to ${FleetMembers.Get[1].ToPilot.Name}", "g"]
-					FleetMembers.Get[1]:WarpTo[]
-					Client:Wait[5000]
+					Move:Fleetmember[${FleetMembers.Get[1].ID}]
 					This:Clear
 					This:QueueState["Traveling", 1000]
 					This:QueueState["Haul"]
