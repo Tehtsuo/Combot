@@ -559,7 +559,7 @@ objectdef obj_Hauler inherits obj_State
 				}
 				else
 				{
-					Move:Fleetmember[${FleetMembers.Get[1].ID}]
+					Move:Fleetmember[${FleetMembers.Get[1].ID}, TRUE]
 					This:Clear
 					This:QueueState["Traveling", 1000]
 					This:QueueState["Haul"]
