@@ -21,6 +21,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 objectdef obj_Miner inherits obj_State
 {
+	variable obj_MinerUI MinerUI
 	variable obj_TargetList Asteroids
 	variable bool WarpToOrca=FALSE
 
@@ -675,3 +676,73 @@ objectdef obj_Miner inherits obj_State
 	}
 	
 }	
+
+
+
+
+
+
+objectdef obj_MinerUI inherits obj_State
+{
+
+
+	method Initialize()
+	{
+		This[parent]:Initialize
+		This.NonGameTiedPulse:Set[TRUE]
+	}
+	
+	method Start()
+	{
+		This:QueueState["UpdateBookmarkLists", 5]
+	}
+	
+	method Stop()
+	{
+		This:Clear
+	}
+
+	member:bool UpdateBookmarkLists()
+	{
+		variable index:bookmark Bookmarks
+		variable iterator BookmarkIterator
+
+		EVE:GetBookmarks[Bookmarks]
+		Bookmarks:GetIterator[BookmarkIterator]
+		
+		UIElement[MiningSystemList@Miner_Frame@ComBot_Miner]:ClearItems
+		if ${BookmarkIterator:First(exists)}
+			do
+			{	
+				if ${UIElement[MiningSystem@Miner_Frame@ComBot_Miner].Text.Length}
+				{
+					if ${BookmarkIterator.Value.Label.Left[${Config.Miner.MiningSystem.Length}].Equal[${Config.Miner.MiningSystem}]} && ${BookmarkIterator.Value.Label.NotEqual[${Config.Miner.MiningSystem}]}
+						UIElement[MiningSystemList@Miner_Frame@ComBot_Miner]:AddItem[${BookmarkIterator.Value.Label}]
+				}
+				else
+				{
+					UIElement[MiningSystemList@Miner_Frame@ComBot_Miner]:AddItem[${BookmarkIterator.Value.Label}]
+				}
+			}
+			while ${BookmarkIterator:Next(exists)}
+
+		UIElement[DropoffList@Miner_Frame@ComBot_Miner]:ClearItems
+		if ${BookmarkIterator:First(exists)}
+			do
+			{	
+				if ${UIElement[Dropoff@Miner_Frame@ComBot_Miner].Text.Length}
+				{
+					if ${BookmarkIterator.Value.Label.Left[${Config.Miner.Dropoff.Length}].Equal[${Config.Miner.Dropoff}]}
+						UIElement[DropoffList@Miner_Frame@ComBot_Miner]:AddItem[${BookmarkIterator.Value.Label}]
+				}
+				else
+				{
+					UIElement[DropoffList@Miner_Frame@ComBot_Miner]:AddItem[${BookmarkIterator.Value.Label}]
+				}
+			}
+			while ${BookmarkIterator:Next(exists)}
+			
+		return FALSE
+	}
+
+}
