@@ -74,6 +74,17 @@ objectdef obj_Module inherits obj_State
 		{
 			This:Deactivate
 		}
+		if ${newTarget} == -1
+		{
+			newTarget:Set[${Me.ActiveTarget.ID}]
+		}
+		echo ${Entity[${newTarget}].CategoryID} == CATEGORYID_ORE && ${MyShip.Module[${ModuleID}].ToItem.GroupID} == GROUP_FREQUENCY_MINING_LASER
+		if ${Entity[${newTarget}].CategoryID} == CATEGORYID_ORE && ${MyShip.Module[${ModuleID}].ToItem.GroupID} == GROUP_FREQUENCY_MINING_LASER
+		{
+			echo Queued LoadMiningCrystal
+			This:QueueState["LoadMiningCrystal", 50, ${Entity[${newTarget}].Type}]
+		}
+		
 		This:QueueState["ActivateOn", 50, "${newTarget}"]
 		This:QueueState["WaitTillActive", 50, 20]
 		This:QueueState["WaitTillInactive"]
@@ -82,6 +93,42 @@ objectdef obj_Module inherits obj_State
 			CurrentTarget:Set[${newTarget}]
 			Activated:Set[TRUE]
 		}
+	}
+	
+	member:bool LoadMiningCrystal(string OreType)
+	{
+		variable index:item Crystals
+		variable iterator Crystal
+		echo LoadMiningCrystal
+		if ${OreType.Find[${MyShip.Module[${ModuleID}].Charge.Name.Token[1," "]}]}
+		{
+			return TRUE
+		}
+		else
+		{
+			MyShip.Module[${ModuleID}]:GetAvailableAmmo[Crystals]
+			
+			if ${Crystals.Used} == 0
+			{
+				UI:Update["obj_Module", "No crystals available - mining ouput decreased", "o"]
+			}
+			
+			Crystals:GetIterator[Crystal]
+			
+			if ${Crystal:First(exists)}
+			do
+			{
+				if ${OreType.Find[${Crystal.Value.Name.Token[1, " "]}](exists)}
+				{
+					UI:Update["obj_Module", "Switching Crystal to ${Crystal.Value.Name}"]
+					Me.Ship.Module[${ModuleID}]:ChangeAmmo[${Crystal.Value.ID},1]
+					return TRUE
+				}
+			}
+			while ${CrystalIterator:Next(exists)}
+		}
+		
+		return TRUE
 	}
 	
 	member:bool ActivateOn(int64 newTarget)
