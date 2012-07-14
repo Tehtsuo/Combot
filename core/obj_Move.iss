@@ -216,9 +216,8 @@ objectdef obj_Move inherits obj_State
 		if ${Entity[${ID}].Distance} < 0
 		{
 			UI:Update["obj_Move", "Too close!  Orbiting ${Entity[${ID}].Name}", "g"]
-			This:Clear
-			This:QueueState["Orbit", 10000, ${Entity[${ID}].ID}]
-			This:QueueState["GateMove", 2000, "${ID}, ${CalledFromMove}"]
+			This:InsertState["Orbit", 10000, ${Entity[${ID}].ID}]
+			This:InsertState["GateMove", 2000, "${ID}, ${CalledFromMove}"]
 			return TRUE
 		}
 		if ${Entity[${ID}].Distance} > 3000
