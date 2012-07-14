@@ -763,34 +763,34 @@ objectdef obj_SalvageUI inherits obj_State
 		EVE:GetBookmarks[Bookmarks]
 		Bookmarks:GetIterator[BookmarkIterator]
 
-		UIElement[obj_SalvageDropoffBookmarkList@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:ClearItems
+		UIElement[DropoffList@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:ClearItems
 		if ${BookmarkIterator:First(exists)}
 			do
 			{	
-				if ${UIElement[obj_SalvageDropoffBookmark@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager].Text.Length}
+				if ${UIElement[Dropoff@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager].Text.Length}
 				{
 					if ${BookmarkIterator.Value.Label.Left[${Config.Salvager.Salvager_Dropoff.Length}].Equal[${Config.Salvager.Salvager_Dropoff}]}
-						UIElement[obj_SalvageDropoffBookmarkList@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[${BookmarkIterator.Value.Label}]
+						UIElement[DropoffList@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[${BookmarkIterator.Value.Label}]
 				}
 				else
 				{
-					UIElement[obj_SalvageDropoffBookmarkList@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[${BookmarkIterator.Value.Label}]
+					UIElement[DropoffList@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[${BookmarkIterator.Value.Label}]
 				}
 			}
 			while ${BookmarkIterator:Next(exists)}
 
-		UIElement[obj_SalvageBeltPatrolBookmarkList@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:ClearItems
+		UIElement[BeltPatrolBookmarkList@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:ClearItems
 		if ${BookmarkIterator:First(exists)}
 			do
 			{	
-				if ${UIElement[obj_SalvageBeltPatrolBookmark@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager].Text.Length}
+				if ${UIElement[BeltPatrolBookmark@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager].Text.Length}
 				{
 					if ${BookmarkIterator.Value.Label.Left[${Config.Salvager.BeltPatrolBookmark.Length}].Equal[${Config.Salvager.BeltPatrolBookmark}]}
-						UIElement[obj_SalvageBeltPatrolBookmarkList@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[${BookmarkIterator.Value.Label}]
+						UIElement[BeltPatrolBookmarkList@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[${BookmarkIterator.Value.Label}]
 				}
 				else
 				{
-					UIElement[obj_SalvageBeltPatrolBookmarkList@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[${BookmarkIterator.Value.Label}]
+					UIElement[BeltPatrolBookmarkList@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[${BookmarkIterator.Value.Label}]
 				}
 			}
 			while ${BookmarkIterator:Next(exists)}
