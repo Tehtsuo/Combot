@@ -561,7 +561,7 @@ objectdef obj_Hauler inherits obj_State
 					This:Clear
 					This:QueueState["PopulateTargetList", 2000, ${FleetMembers.Get[1].ToEntity.ID}]
 					This:QueueState["CheckTargetList", 50]
-					This:QueueState["LootCans", 2000]
+					This:QueueState["LootCans", 1000, ${FleetMembers.Get[1].ToEntity.ID}]
 					This:QueueState["DepopulateTargetList", 2000]
 					This:QueueState["Haul"]
 					FleetMembers:Remove[1]

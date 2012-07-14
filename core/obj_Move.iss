@@ -278,13 +278,14 @@ objectdef obj_Move inherits obj_State
 				{
 					UI:Update["obj_Move", "Gate found, activating", "g"]
 					This:Gate[${Entity[GroupID == GROUP_WARPGATE].ID}, TRUE]
-					This:QueueState["FleetmemberMove", 2000, ${Bookmark}]
+					This:QueueState["FleetmemberMove", 2000, ${ID}]
 					return TRUE
 				}
 				UI:Update["obj_Move", "Warping to ${Me.Fleet.Member[${ID}].ToPilot.Name}", "g"]
 				Me.Fleet.Member[${ID}]:WarpTo[${This.Distance}]
 				Client:Wait[5000]
-				This:QueueState["FleetmemberMove", 2000, ${Bookmark}]
+				This:QueueState["FleetmemberMove", 2000, ${ID}]
+				
 				return TRUE
 		}
 	}
