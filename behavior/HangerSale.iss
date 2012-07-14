@@ -541,23 +541,64 @@ objectdef obj_HangerSale inherits obj_State
 		variable int delay = 100
 		variable float discount
 		variable float sellPrice
-		discount:Set[${Math.Calc[${SellPrices[${MyOrderIterator.Value.TypeID}].Min}*(${Config.HangarSale.UndercutPercent} * .01)]}]
-		if ${discount} > ${Config.HangarSale.UndercutValue}
+		
+		if ${Config.HangarSale.PriceMode.Equal["Undercut Lowest"]} 
 		{
-			discount:Set[${Config.HangarSale.UndercutValue}]
+			discount:Set[${Math.Calc[${SellPrices[${MyOrderIterator.Value.TypeID}].Min}*(${Config.HangarSale.UndercutPercent} * .01)]}]
+			if ${discount} > ${Config.HangarSale.UndercutValue}
+			{
+				discount:Set[${Config.HangarSale.UndercutValue}]
+			}
+			sellPrice:Set[${Math.Calc[${SellPrices[${MyOrderIterator.Value.TypeID}].Min} - ${discount}]}]
+			UI:Update["obj_HangerSale", "${MyOrderIterator.Value.Name}", "y"]
+			if ${Math.Calc[${MyOrderIterator.Value.Price}-5]} > ${SellPrices[${MyOrderIterator.Value.TypeID}].Min}
+			{
+				UI:Update["obj_HangerSale", "Repricing from \ar${ComBot.ISK_To_Str[${MyOrderIterator.Value.Price}]} \ayto \ag${ComBot.ISK_To_Str[${sellPrice}]}", "y"]
+				MyOrderIterator.Value:Modify[${sellPrice}]
+				delay:Set[10000]
+			}
+			else
+			{
+				UI:Update["obj_HangerSale", "Repricing unneccessary", "y"]
+			}
 		}
-		sellPrice:Set[${Math.Calc[${SellPrices[${MyOrderIterator.Value.TypeID}].Min} - ${discount}]}]
-		UI:Update["obj_HangerSale", "${MyOrderIterator.Value.Name}", "y"]
-		if ${Math.Calc[${MyOrderIterator.Value.Price}-5]} > ${SellPrices[${MyOrderIterator.Value.TypeID}].Min}
+		if ${Config.HangarSale.PriceMode.Equal["Match Highest Buyout"]} 
 		{
-			UI:Update["obj_HangerSale", "Repricing from \ar${ComBot.ISK_To_Str[${MyOrderIterator.Value.Price}]} \ayto \ag${ComBot.ISK_To_Str[${sellPrice}]}", "y"]
-			MyOrderIterator.Value:Modify[${sellPrice}]
-			delay:Set[10000]
+			sellPrice:Set[${BuyPrices[${MyOrderIterator.Value.TypeID}].Max}]
+			UI:Update["obj_HangerSale", "${MyOrderIterator.Value.Name}", "y"]
+			if ${MyOrderIterator.Value.Price} > ${sellPrice}
+			{
+				UI:Update["obj_HangerSale", "Repricing from \ar${ComBot.ISK_To_Str[${MyOrderIterator.Value.Price}]} \ayto \ag${ComBot.ISK_To_Str[${sellPrice}]}", "y"]
+				MyOrderIterator.Value:Modify[${sellPrice}]
+				delay:Set[10000]
+			}
+			else
+			{
+				UI:Update["obj_HangerSale", "Repricing unneccessary", "y"]
+			}
 		}
-		else
+		if ${Config.HangarSale.PriceMode.Equal["Undercut Average"]} 
 		{
-			UI:Update["obj_HangerSale", "Repricing unneccessary", "y"]
+			discount:Set[${Math.Calc[${SellPrices[${MyOrderIterator.Value.TypeID}].avg}*(${Config.HangarSale.UndercutPercent} * .01)]}]
+			if ${discount} > ${Config.HangarSale.UndercutValue}
+			{
+				discount:Set[${Config.HangarSale.UndercutValue}]
+			}
+			sellPrice:Set[${Math.Calc[${SellPrices[${MyOrderIterator.Value.TypeID}].avg} - ${discount}]}]
+			UI:Update["obj_HangerSale", "${MyOrderIterator.Value.Name}", "y"]
+			if ${Math.Calc[${MyOrderIterator.Value.Price}-5]} > ${SellPrices[${MyOrderIterator.Value.TypeID}].avg}
+			{
+				UI:Update["obj_HangerSale", "Repricing from \ar${ComBot.ISK_To_Str[${MyOrderIterator.Value.Price}]} \ayto \ag${ComBot.ISK_To_Str[${sellPrice}]}", "y"]
+				MyOrderIterator.Value:Modify[${sellPrice}]
+				delay:Set[10000]
+			}
+			else
+			{
+				UI:Update["obj_HangerSale", "Repricing unneccessary", "y"]
+			}
 		}
+		
+		
 		if ${MyOrderIterator:Next(exists)}
 		{
 			This:InsertState["UpdateOrders", ${delay}]
