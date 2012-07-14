@@ -679,6 +679,11 @@ objectdef obj_LootCans inherits obj_State
 		{
 			return FALSE
 		}
+		
+		if ${Me.ToEntity.Mode} == 3
+		{
+			return FALSE
+		}
 
 		if ${Entity[(GroupID==GROUP_CARGOCONTAINER) && IsAbandoned](exists)}
 		{
