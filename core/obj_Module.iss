@@ -81,7 +81,6 @@ objectdef obj_Module inherits obj_State
 		echo ${Entity[${newTarget}].CategoryID} == CATEGORYID_ORE && ${MyShip.Module[${ModuleID}].ToItem.GroupID} == GROUP_FREQUENCY_MINING_LASER
 		if ${Entity[${newTarget}].CategoryID} == CATEGORYID_ORE && ${MyShip.Module[${ModuleID}].ToItem.GroupID} == GROUP_FREQUENCY_MINING_LASER
 		{
-			echo Queued LoadMiningCrystal
 			This:QueueState["LoadMiningCrystal", 50, ${Entity[${newTarget}].Type}]
 		}
 		
@@ -99,7 +98,6 @@ objectdef obj_Module inherits obj_State
 	{
 		variable index:item Crystals
 		variable iterator Crystal
-		echo LoadMiningCrystal
 		if ${OreType.Find[${MyShip.Module[${ModuleID}].Charge.Name.Token[1," "]}]}
 		{
 			return TRUE
@@ -125,7 +123,7 @@ objectdef obj_Module inherits obj_State
 					return TRUE
 				}
 			}
-			while ${CrystalIterator:Next(exists)}
+			while ${Crystal:Next(exists)}
 		}
 		
 		return TRUE
