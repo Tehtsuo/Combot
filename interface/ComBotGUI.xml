@@ -29,10 +29,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 	</template>	
 
 	<template name='Button.Font'>	
-		<Name>Arial</Name>
+		<Name>Verdana</Name>
 		<Size>12</Size>
 		<Color>FF000000</Color>
-		<Bold>TRUE</Bold>
+		<Bold />
 	</template>	
 
 	<template name='Gauge.Font'>	
@@ -41,6 +41,14 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 		<Color>FFFF0000</Color>
 		<Bold />
 	</template>	
+	
+	<template name='TitleBar.Font'>	
+		<Name>Verdana</Name>
+		<Size>16</Size>
+		<Color>FFFFFFFF</Color>
+		<Bold />
+	</template>	
+	
 
 	<window name='ComBot'>
 		<Visible>1</Visible>
@@ -79,7 +87,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 				<button	Name='Hide'>
 					<Font template='Button.Font' />
 					<BackgroundColor>FF000000</BackgroundColor>
-					<X>r80</X>
+					<X>r120</X>
 					<Y>0</Y>
 					<Width>40</Width>
 					<Height>20</Height>
@@ -95,6 +103,18 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							UIElement[ComBotTab@ComBot]:Show
 							This:SetText[Hide]
 						}
+					</OnLeftClick>
+				</button>
+				<button	Name='Help'>
+					<Font template='Button.Font' />
+					<BackgroundColor>FF000000</BackgroundColor>
+					<X>r80</X>
+					<Y>0</Y>
+					<Width>40</Width>
+					<Height>20</Height>
+					<Text>Help</Text>
+					<OnLeftClick>
+						timedcommand 0 "OSExecute http://eve.isxgames.com/wiki/index.php?title=ComBot#Experimental_Installation"
 					</OnLeftClick>
 				</button>
 				<button	Name='Run'>
