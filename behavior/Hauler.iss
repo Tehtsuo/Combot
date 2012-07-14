@@ -362,17 +362,17 @@ objectdef obj_Hauler inherits obj_State
 		{
 			if !${EVEWindow[ByName, Inventory].ChildWindowExists[${CurrentCan}]}
 			{
-				UI:Update["obj_Hauler", "Opening - ${Entity[${CurrentCan}].Name}", "g"]
+				;UI:Update["obj_Hauler", "Opening - ${Entity[${CurrentCan}].Name}", "g"]
 				Entity[${CurrentCan}]:OpenCargo
 				return FALSE
 			}
 			if !${EVEWindow[ByItemID, ${CurrentCan}](exists)}
 			{
-				UI:Update["obj_Hauler", "Activating - ${Entity[${CurrentCan}].Name}", "g"]
+				;UI:Update["obj_Hauler", "Activating - ${Entity[${CurrentCan}].Name}", "g"]
 				EVEWindow[ByName, Inventory]:MakeChildActive[${CurrentCan}]
 				return FALSE
 			}
-			UI:Update["obj_Hauler", "Looting - ${Entity[${CurrentCan}].Name}", "g"]
+			;UI:Update["obj_Hauler", "Looting - ${Entity[${CurrentCan}].Name}", "g"]
 			Cargo:PopulateCargoList[CONTAINER, ${CurrentCan}]
 			if ${EVEWindow[ByItemID, ${CurrentCan}].UsedCapacity} > ${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}]}
 			{
@@ -557,7 +557,7 @@ objectdef obj_Hauler inherits obj_State
 
 				if ${FleetMembers.Get[1].ToEntity(exists)}
 				{
-					UI:Update["obj_Miner", "Looting cans for ${FleetMembers.Get[1].ToPilot.Name}", "g"]
+					;UI:Update["obj_Miner", "Looting cans for ${FleetMembers.Get[1].ToPilot.Name}", "g"]
 					This:Clear
 					This:QueueState["PopulateTargetList", 2000, ${FleetMembers.Get[1].ToEntity.ID}]
 					This:QueueState["CheckTargetList", 50]
