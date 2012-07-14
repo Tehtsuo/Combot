@@ -213,12 +213,11 @@ objectdef obj_Move inherits obj_State
 			return FALSE
 		}
 
-		if ${Entity[${ID}].Distance} < 0
+		if ${Entity[${ID}].Distance} < -2000
 		{
 			UI:Update["obj_Move", "Too close!  Orbiting ${Entity[${ID}].Name}", "g"]
-			This:InsertState["Orbit", 10000, ${Entity[${ID}].ID}]
-			This:InsertState["GateMove", 2000, "${ID}, ${CalledFromMove}"]
-			return TRUE
+			Entity[${ID}]:Orbit
+			return FALSE
 		}
 		if ${Entity[${ID}].Distance} > 3000
 		{
@@ -235,11 +234,6 @@ objectdef obj_Move inherits obj_State
 		return TRUE
 	}
 	
-	member:bool Orbit(int64 ID)
-	{
-		Entity[${ID}]:Orbit
-		return TRUE
-	}
 	
 	member:bool FleetmemberMove(int64 ID, bool IgnoreGate=FALSE)
 	{
