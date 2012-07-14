@@ -116,7 +116,7 @@ objectdef obj_Jetcan inherits obj_State
 						return FALSE
 					}
 					Cargo:PopulateCargoList[SHIP]
-					Cargo:Filter["GroupID == CATEGORYID_ORE", FALSE]
+					Cargo:Filter["CategoryID == CATEGORYID_ORE", FALSE]
 					Cargo:MoveCargoList[CONTAINER, "", ${TargetIterator.Value}]
 					This:QueueState["Stack", 1000, ${TargetIterator.Value}]
 					This:QueueState["Fill", 1500]
@@ -133,9 +133,9 @@ objectdef obj_Jetcan inherits obj_State
 			if ${TargetIterator:First(exists)}
 				do
 				{
-					if ${TargetIterator.Value.GroupID} == CATEGORYID_ORE
+					if ${TargetIterator.Value.CategoryID} == CATEGORYID_ORE
 					{
-						CargoList.Get[1]:Jettison
+						TargetIterator.Value:Jettison
 						This:QueueState["Idle", 5000]
 						This:QueueState["Rename", 2000]
 						This:QueueState["Fill", 1500]
