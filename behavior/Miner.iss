@@ -625,6 +625,10 @@ objectdef obj_Miner inherits obj_State
 					{
 						LaserCount:Set[${LaserSplitCount.Int}]
 					}
+					if ${Roid.Value.Distance} > ${Ship.ModuleList_MiningLaser.Range}
+					{
+						continue
+					}
 					if ${Config.Miner.IceMining}
 					{
 						UI:Update["obj_Miner", "Activating ${Ship.ModuleList_MiningLaser.InActiveCount} laser(s) on ${Roid.Value.Name} (${ComBot.MetersToKM_Str[${Roid.Value.Distance}]})", "y"]
