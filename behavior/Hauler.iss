@@ -570,6 +570,7 @@ objectdef obj_Hauler inherits obj_State
 				}
 				else
 				{
+					echo Warping to ${FleetMembers.Get[1].ToPilot.Name} - ${FleetMembers.Get[1].ID}
 					Move:Fleetmember[${FleetMembers.Get[1].ID}, TRUE]
 					This:Clear
 					This:QueueState["Traveling", 1000]
