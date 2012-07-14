@@ -213,7 +213,7 @@ objectdef obj_Move inherits obj_State
 			return FALSE
 		}
 
-		if ${Entity[${ID}].Distance} == 0
+		if ${Entity[${ID}].Distance} < 0
 		{
 			UI:Update["obj_Move", "Too close!  Orbiting ${Entity[${ID}].Name}", "g"]
 			This:Clear
@@ -261,7 +261,7 @@ objectdef obj_Move inherits obj_State
 			return FALSE
 		}
 
-		echo Fleetmember (Entity) exists: ${Me.Fleet.Member[${ID}].ToEntity(exists)}
+		echo Me.Fleet.Member[${ID}].ToEntity(exists): ${Me.Fleet.Member[${ID}].ToEntity(exists)}
 		if ${Me.Fleet.Member[${ID}].ToEntity(exists)}
 		{
 			if ${Me.Fleet.Member[${ID}].ToEntity.Distance} > WARP_RANGE
@@ -295,7 +295,7 @@ objectdef obj_Move inherits obj_State
 				return TRUE
 		}
 	}
-	
+
 	member:bool BookmarkMove(string Bookmark, bool IgnoreGate=FALSE)
 	{
 
