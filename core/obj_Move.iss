@@ -21,12 +21,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 objectdef obj_Move inherits obj_State
 {
-
-	variable bool Approaching=FALSE
-	variable int64 ApproachingID
-	variable int ApproachingDistance
-	variable int TimeStartedApproaching = 0
-
+	variable obj_Approach ApproachModule
 
 	variable bool Traveling=FALSE
 	
@@ -208,14 +203,10 @@ objectdef obj_Move inherits obj_State
 			return TRUE	
 		}
 
-		if !${This.CheckApproach}
-		{
-			return FALSE
-		}
-
-		if ${Entity[${ID}].Distance} < -2000
+		if ${Entity[${ID}].Distance} < -3000
 		{
 			UI:Update["obj_Move", "Too close!  Orbiting ${Entity[${ID}].Name}", "g"]
+			Client:Wait[5000]
 			Entity[${ID}]:Orbit
 			return FALSE
 		}
@@ -231,7 +222,7 @@ objectdef obj_Move inherits obj_State
 		{
 			This.Traveling:Set[FALSE]
 		}
-		return TRUE
+		return FALSE
 	}
 	
 	
@@ -521,72 +512,61 @@ objectdef obj_Move inherits obj_State
 
 	
 	
-	method Approach(int64 target, int distance=0, bool Warp=FALSE)
+	method Approach(int64 ID, int distance=0)
 	{
 		;	If we're already approaching the target, ignore the request
-		if ${target} == ${This.ApproachingID} && ${This.Approaching}
+		if !${ApproachModule.IsIdle}
 		{
 			return
 		}
-		if !${Entity[${target}](exists)}
+		if !${Entity[${ID}](exists)}
 		{
 			UI:Update["obj_Move", "Attempted to approach a target that does not exist", "r"]
-			UI:Update["obj_Move", "Target ID: ${target}", "r"]
+			UI:Update["obj_Move", "Target ID: ${ID}", "r"]
 			return
 		}
-		if ${Entity[${target}].Distance} <= ${distance}
+		if ${Entity[${ID}].Distance} <= ${distance}
 		{
 			return
 		}
 
-		This.ApproachingID:Set[${target}]
-		This.ApproachingDistance:Set[${distance}]
-		This.TimeStartedApproaching:Set[-1]
-		This.Approaching:Set[TRUE]
-		This:QueueState["CheckApproach", 1000, ${Warp}]
+		ApproachModule:QueueState["CheckApproach", 1000, "${ID}, ${distance}"]
 	}
+
+}
 	
-	
-	member:bool CheckApproach(bool Warp)
+objectdef obj_Approach inherits obj_State
+{
+
+	method Initialize()
+	{
+		This[parent]:Initialize
+		This.NonGameTiedPulse:Set[TRUE]
+	}
+
+
+	member:bool CheckApproach(int64 ID, int distance)
 	{
 		;	Clear approach if we're in warp or the entity no longer exists
-		if ${Me.ToEntity.Mode} == 3 || !${Entity[${This.ApproachingID}](exists)}
+		if ${Me.ToEntity.Mode} == 3 || !${Entity[${ID}](exists)}
 		{
-			This.Approaching:Set[FALSE]
 			return TRUE
 		}			
 		
-		;	Find out if we need to warp to the target
-		if ${Entity[${This.ApproachingID}].Distance} > WARP_RANGE && ${Warp}
-		{
-			UI:Update["obj_Move", "${Entity[${This.ApproachingID}].Name} is a long way away.  Warping to it", "g"]
-			This:Warp[${This.ApproachingID}]
-			return FALSE
-		}
-		
 		;	Find out if we need to approach the target
-		if ${Entity[${This.ApproachingID}].Distance} > ${This.ApproachingDistance} && ${This.TimeStartedApproaching} == -1
+		if ${Entity[${ID}].Distance} > ${distance} && ${Me.ToEntity.Mode} != 1
 		{
-			UI:Update["obj_Move", "Approaching to within ${ComBot.MetersToKM_Str[${This.ApproachingDistance}]} of ${Entity[${This.ApproachingID}].Name}", "g"]
-			Entity[${This.ApproachingID}]:Approach[${distance}]
-			This.TimeStartedApproaching:Set[${Time.Timestamp}]
+			UI:Update["obj_Move", "Approaching to within ${ComBot.MetersToKM_Str[${distance}]} of ${Entity[${ID}].Name}", "g"]
+			Entity[${ID}]:Approach[${distance}]
 			return FALSE
-		}
-		
-		;	If we've been approaching for more than 1 minute, we need to give up
-		if ${Math.Calc[${This.TimeStartedApproaching}-${Time.Timestamp}]} < -60
-		{
-			This.Approaching:Set[FALSE]
-			return TRUE
 		}
 		
 		;	If we're approaching a target, find out if we need to stop doing so 
-		if ${Entity[${This.ApproachingID}].Distance} <= ${This.ApproachingDistance}
+		if ${Entity[${ID}].Distance} <= ${distance} && ${Me.ToEntity.Mode} == 1
 		{
-			UI:Update["obj_Move", "Within ${ComBot.MetersToKM_Str[${This.ApproachingDistance}]} of ${Entity[${This.ApproachingID}].Name}", "g"]
+			UI:Update["obj_Move", "Within ${ComBot.MetersToKM_Str[${distance}]} of ${Entity[${ID}].Name}", "g"]
 			EVE:Execute[CmdStopShip]
 			Ship.ModuleList_AB_MWD:Deactivate
-			This.Approaching:Set[FALSE]
 			return TRUE
 		}
 		
@@ -606,9 +586,11 @@ objectdef obj_Move inherits obj_State
 		
 		return FALSE
 	}
-
-}
 	
+	method Flee()
+	{
+	}	
+}
 	
 	
 objectdef obj_InstaWarp inherits obj_State
