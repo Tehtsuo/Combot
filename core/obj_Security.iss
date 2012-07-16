@@ -251,6 +251,11 @@ objectdef obj_Security inherits obj_State
 		variable int GroupID
 		variable int TypeID
 
+		if !${Client.Ready}
+		{
+			return FALSE
+		}
+		
 		if ${Client.InSpace}
 		{
 			GroupID:Set[${MyShip.ToEntity.GroupID}]
