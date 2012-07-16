@@ -285,7 +285,6 @@ objectdef obj_Salvage inherits obj_State
 		
 		Wrecks:RequestUpdate
 		
-		echo Inactive Tractor Beams - ${Ship.ModuleList_TractorBeams.InactiveCount}
 		
 		if ${Wrecks.TargetList.Used} > 0
 		{
@@ -306,7 +305,6 @@ objectdef obj_Salvage inherits obj_State
 						Move:Approach[${TargetIterator.Value.ID}]
 						return FALSE
 					}
-					echo ${TargetIterator.Value.Name} - ${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]}
 					
 					if  !${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]} &&\
 						${TargetIterator.Value.Distance} < ${Ship.ModuleList_TractorBeams.Range} &&\
@@ -318,7 +316,6 @@ objectdef obj_Salvage inherits obj_State
 						Ship.ModuleList_TractorBeams:Activate[${TargetIterator.Value.ID}]
 						return FALSE
 					}
-					echo ${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]} - ${TargetIterator.Value.ID}
 					if  !${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]} &&\
 						${TargetIterator.Value.Distance} < ${Ship.ModuleList_TractorBeams.Range} &&\
 						${TargetIterator.Value.Distance} > LOOT_RANGE &&\
@@ -465,7 +462,6 @@ objectdef obj_Salvage inherits obj_State
 	
 	member:bool DeleteBookmark(int64 BookmarkCreator)
 	{
-		echo DeleteBookmark
 		variable index:bookmark Bookmarks
 		variable iterator BookmarkIterator
 		EVE:GetBookmarks[Bookmarks]
@@ -473,7 +469,6 @@ objectdef obj_Salvage inherits obj_State
 		if ${BookmarkIterator:First(exists)}
 		do
 		{
-			echo ${BookmarkIterator.Value.Label.Left[8].Upper.Equal[${Config.Salvager.Salvager_Prefix}]} && ${BookmarkIterator.Value.CreatorID.Equal[${BookmarkCreator}]}
 			if ${BookmarkIterator.Value.Label.Left[8].Upper.Equal[${Config.Salvager.Salvager_Prefix}]} && ${BookmarkIterator.Value.CreatorID.Equal[${BookmarkCreator}]}
 			{
 				if ${BookmarkIterator.Value.JumpsTo} == 0

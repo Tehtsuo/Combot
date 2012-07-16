@@ -78,7 +78,6 @@ objectdef obj_Module inherits obj_State
 		{
 			newTarget:Set[${Me.ActiveTarget.ID}]
 		}
-		echo ${Entity[${newTarget}].CategoryID} == CATEGORYID_ORE && ${MyShip.Module[${ModuleID}].ToItem.GroupID} == GROUP_FREQUENCY_MINING_LASER
 		if ${Entity[${newTarget}].CategoryID} == CATEGORYID_ORE && ${MyShip.Module[${ModuleID}].ToItem.GroupID} == GROUP_FREQUENCY_MINING_LASER
 		{
 			This:QueueState["LoadMiningCrystal", 50, ${Entity[${newTarget}].Type}]
