@@ -24,7 +24,7 @@ objectdef obj_Security inherits obj_State
 	method Initialize()
 	{
 		This[parent]:Initialize
-		This.NonGameTiedPulse:Set[TRUE]
+		This.NonGameTiedPulse:Set[FALSE]
 		This:AssignStateQueueDisplay[obj_SecurityStateList@Security@ComBotTab@ComBot]
 		
 	}
