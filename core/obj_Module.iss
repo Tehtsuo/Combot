@@ -82,7 +82,6 @@ objectdef obj_Module inherits obj_State
 		{
 			This:QueueState["LoadMiningCrystal", 50, ${Entity[${newTarget}].Type}]
 		}
-		
 		This:QueueState["ActivateOn", 50, "${newTarget}"]
 		This:QueueState["WaitTillActive", 50, 20]
 		This:QueueState["WaitTillInactive"]
@@ -130,7 +129,8 @@ objectdef obj_Module inherits obj_State
 	
 	member:bool ActivateOn(int64 newTarget)
 	{
-		if ${newTarget} == -1
+		echo ActivateOn - ${newTarget}
+		if ${newTarget} == -1 || ${newTarget} == 0
 		{
 			MyShip.Module[${ModuleID}]:Activate
 		}
