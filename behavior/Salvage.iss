@@ -104,6 +104,37 @@ objectdef obj_Salvage inherits obj_State
 		if ${BookmarkIterator:First(exists)}
 		do
 		{	
+			if ${BookmarkIterator.Value.Label.Left[8].Upper.Equal[${Config.Salvager.Salvager_Prefix}]} && ${BookmarkIterator.Value.JumpsTo} <= 0
+			{
+				InHoldOff:Set[FALSE]
+				if ${HoldOffIterator:First(exists)}
+				do
+				{
+					if ${HoldOffIterator.Value.Equal[${BookmarkIterator.Value.CreatorID}]}
+					{
+						InHoldOff:Set[TRUE]
+					}
+				}
+				while ${HoldOffIterator:Next(exists)}
+				if !${InHoldOff}
+				{
+					if (${BookmarkIterator.Value.TimeCreated.Compare[${BookmarkTime}]} < 0 && ${BookmarkIterator.Value.DateCreated.Compare[${BookmarkDate}]} <= 0) || ${BookmarkIterator.Value.DateCreated.Compare[${BookmarkDate}]} < 0
+					{
+						echo Next bookmark set - ${BookmarkIterator.Value} - ${BookmarkIterator.Value.JumpsTo} Jumps
+						Target:Set[${BookmarkIterator.Value.Label}]
+						BookmarkTime:Set[${BookmarkIterator.Value.TimeCreated}]
+						BookmarkDate:Set[${BookmarkIterator.Value.DateCreated}]
+						BookmarkCreator:Set[${BookmarkIterator.Value.CreatorID}]
+						BookmarkFound:Set[TRUE]
+					}
+				}
+			}
+		}
+		while ${BookmarkIterator:Next(exists)}
+		
+		if ${BookmarkIterator:First(exists)} && !${BookmarkFound}
+		do
+		{	
 			if ${BookmarkIterator.Value.Label.Left[8].Upper.Equal[${Config.Salvager.Salvager_Prefix}]}
 			{
 				InHoldOff:Set[FALSE]
