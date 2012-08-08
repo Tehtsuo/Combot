@@ -132,7 +132,7 @@ objectdef obj_Miner inherits obj_State
 				}
 				break
 			case Container
-				if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) >= ${Config.Miner.Threshold} * .01
+				if (${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]}) >= ${Config.Miner.Threshold} * .01
 				{
 					if ${Drones.DronesInSpace}
 					{
@@ -158,7 +158,7 @@ objectdef obj_Miner inherits obj_State
 			case Jetcan
 				break		
 			default
-				if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) >= ${Config.Miner.Threshold} * .01
+				if (${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]}) >= ${Config.Miner.Threshold} * .01
 				{
 					if ${Drones.DronesInSpace}
 					{
@@ -232,8 +232,7 @@ objectdef obj_Miner inherits obj_State
 	{
 		Profiling:StartTrack["Miner_Offload"]
 		UI:Update["obj_Miner", "Unloading cargo", "g"]
-		Cargo:PopulateCargoList[SHIP]
-		Cargo:Filter["CategoryID == CATEGORYID_ORE", FALSE]
+		Cargo:PopulateCargoList[SHIPOREHOLD]
 		switch ${Config.Miner.Dropoff_Type}
 		{
 			case Personal Hangar
@@ -450,7 +449,7 @@ objectdef obj_Miner inherits obj_State
 			{
 				Cargo:PopulateCargoList[SHIPCORPORATEHANGAR]
 				Cargo:Filter["CategoryID == CATEGORYID_ORE", FALSE]
-				Cargo:MoveCargoList[SHIP]
+				Cargo:MoveCargoList[SHIPOREHOLD]
 				This:QueueState["CheckCargoHold", 1000]
 				This:QueueState["Idle", 1000]
 				This:QueueState["Mine"]
@@ -474,7 +473,7 @@ objectdef obj_Miner inherits obj_State
 				}
 				else
 				{
-					if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) > 0.10
+					if (${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]}) > 0.10
 					{
 						if !${EVEWindow[ByName, Inventory].ChildWindowExists[${Orca}]}
 						{
@@ -490,7 +489,7 @@ objectdef obj_Miner inherits obj_State
 							return FALSE
 						}
 						;UI:Update["obj_Miner", "Unloading to ${Config.Miner.Container_Name}", "g"]
-						Cargo:PopulateCargoList[SHIP]
+						Cargo:PopulateCargoList[SHIPOREHOLD]
 						Cargo:Filter["CategoryID == CATEGORYID_ORE", FALSE]
 						Cargo:MoveCargoList[SHIPCORPORATEHANGAR, "", ${Orca}]
 						This:QueueState["Idle", 1000]
