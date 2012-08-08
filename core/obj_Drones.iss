@@ -34,6 +34,7 @@ objectdef obj_Drones inherits obj_State
 		DroneTargets.MaxRange:Set[${Me.DroneControlDistance}]
 		DroneTargets.AutoLock:Set[TRUE]
 		DroneTargets.AutoRelock:Set[TRUE]
+		DroneTargets:AddIPCSet["DroneTargets"]
 		
 		variable index:activedrone ActiveDrones
 		Me:GetActiveDrones[ActiveDrones]
