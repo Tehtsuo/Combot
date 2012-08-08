@@ -23,6 +23,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 #else
 	#error ComBot requires ISXEVE to be loaded before running
 #endif
+module -require LSMIPC
 
 #include core/Defines.iss
 #include core/obj_ComBot.iss
