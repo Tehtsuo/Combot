@@ -142,6 +142,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Width>32%</Width>
 						<Height>17%</Height>
 						<OnLoad>
+							This:SetZOrder[alwaysontop]
 							This:Hide
 						</OnLoad>
 						<OnSelect>
@@ -413,6 +414,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Width>32%</Width>
 						<Height>17%</Height>
 						<OnLoad>
+							This:SetZOrder[alwaysontop]
 							This:Hide
 						</OnLoad>
 						<OnSelect>
