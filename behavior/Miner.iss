@@ -450,6 +450,7 @@ objectdef obj_Miner inherits obj_State
 				Cargo:PopulateCargoList[SHIPCORPORATEHANGAR]
 				Cargo:Filter["CategoryID == CATEGORYID_ORE", FALSE]
 				Cargo:MoveCargoList[SHIPOREHOLD]
+				This:QueueState["StackOreHold", 1000]
 				This:QueueState["CheckCargoHold", 1000]
 				This:QueueState["Idle", 1000]
 				This:QueueState["Mine"]
@@ -668,6 +669,12 @@ objectdef obj_Miner inherits obj_State
 	method OrcaInBelt(bool value)
 	{
 		WarpToOrca:Set[${value}]
+	}
+	
+	member:bool StackOreHold()
+	{
+		EVE:StackItems[MyShip,OreHold]
+		return TRUE
 	}
 	
 }	
