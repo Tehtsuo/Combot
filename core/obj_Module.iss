@@ -129,7 +129,6 @@ objectdef obj_Module inherits obj_State
 	
 	member:bool ActivateOn(int64 newTarget)
 	{
-		echo ActivateOn - ${newTarget}
 		if ${newTarget} == -1 || ${newTarget} == 0
 		{
 			MyShip.Module[${ModuleID}]:Activate
