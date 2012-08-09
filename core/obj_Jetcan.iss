@@ -115,8 +115,7 @@ objectdef obj_Jetcan inherits obj_State
 						EVEWindow[ByName, Inventory]:MakeChildActive[${TargetIterator.Value}]
 						return FALSE
 					}
-					Cargo:PopulateCargoList[SHIP]
-					Cargo:Filter["CategoryID == CATEGORYID_ORE", FALSE]
+					Cargo:PopulateCargoList[SHIPOREHOLD]
 					Cargo:MoveCargoList[CONTAINER, "", ${TargetIterator.Value}]
 					This:QueueState["Stack", 1000, ${TargetIterator.Value}]
 					This:QueueState["Fill", 1500]
@@ -126,24 +125,18 @@ objectdef obj_Jetcan inherits obj_State
 			while ${TargetIterator:Next(exists)}
 		}
 
-		if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) > 0.10
+		if (${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]}) >= ${Config.Miner.Threshold} * .01
 		{
-			Me.Ship:GetCargo[CargoList]
+			Me.Ship:GetOreHoldCargo[CargoList]
 			CargoList:GetIterator[TargetIterator]
 			if ${TargetIterator:First(exists)}
-				do
-				{
-					if ${TargetIterator.Value.CategoryID} == CATEGORYID_ORE
-					{
-						TargetIterator.Value:Jettison
-						This:QueueState["Idle", 5000]
-						This:QueueState["Rename", 2000]
-						This:QueueState["Fill", 1500]
-						return TRUE
-						break
-					}
-				}
-				while ${TargetIterator:Next(exists)}
+			{
+				TargetIterator.Value:Jettison
+				This:QueueState["Idle", 5000]
+				This:QueueState["Rename", 2000]
+				This:QueueState["Fill", 1500]
+				return TRUE
+			}
 		}
 		return FALSE
 	}
@@ -213,7 +206,7 @@ objectdef obj_Jetcan inherits obj_State
 			return FALSE
 		}
 		Entity[${ID}]:GetCargo[CargoList]
-		CargoList.Get[1]:MoveTo[MyShip, CargoHold, 1]
+		CargoList.Get[1]:MoveTo[MyShip, OreHold, 1]
 		return TRUE
 	}
 	
@@ -225,7 +218,7 @@ objectdef obj_Jetcan inherits obj_State
 			MyShip:Open
 			return FALSE
 		}
-		MyShip:GetCargo[CargoList]
+		MyShip:GetOreHoldCargo[CargoList]
 		CargoList.Get[1]:Jettison
 		return TRUE
 	}
