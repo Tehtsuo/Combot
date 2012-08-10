@@ -109,6 +109,9 @@ objectdef obj_Ship
 	
 	method UpdateModuleList()
 	{
+		variable iterator List
+		ModuleLists:GetIterator[List]
+
 		if !${Client.InSpace}
 		{
 			UI:Update["obj_Ship", "UpdateModuleList called while in station", "o"]
@@ -118,27 +121,13 @@ objectdef obj_Ship
 
 		/* build module lists */
 		This.ModuleList:Clear
-		This.ModuleList_MiningLaser:Clear
-		This.ModuleList_ECCM:Clear
-		This.ModuleList_Weapon:Clear
-		This.ModuleList_ActiveResists:Clear
-		This.ModuleList_Regen_Shield:Clear
-		This.ModuleList_Repair_Armor:Clear
-		This.ModuleList_AB_MWD:Clear
-		This.ModuleList_Passive:Clear
-		This.ModuleList_Repair_Armor:Clear
-		This.ModuleList_Repair_Hull:Clear
-		This.ModuleList_Salvagers:Clear
-		This.ModuleList_TractorBeams:Clear
-		This.ModuleList_Cloaks:Clear
-		This.ModuleList_StasisWeb:Clear
-		This.ModuleList_SensorBoost:Clear
-		This.ModuleList_TargetPainter:Clear
-		This.ModuleList_TrackingComputer:Clear
-		This.ModuleList_GangLinks:Clear
-		This.ModuleList_ShieldTransporters:Clear
-		This.ModuleList_ArmorProjectors:Clear
-		
+
+		if ${List:First(exists)}
+			do
+			{
+				This.ModuleList_${List.Value}:Clear
+			}
+			while ${List:Next(exists)}		
 
 		Me.Ship:GetModules[This.ModuleList]
 
@@ -267,8 +256,6 @@ objectdef obj_Ship
 
 		UI:Update["obj_Ship", "Ship Module Inventory", "y"]
 		
-		variable iterator List
-		ModuleLists:GetIterator[List]
 		if ${List:First(exists)}
 			do
 			{
