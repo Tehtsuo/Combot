@@ -490,6 +490,7 @@ objectdef obj_Miner inherits obj_State
 				}
 				else
 				{
+					echo UseOreHold: ${UseOreHold}
 					if  (${UseOreHold} &&\
 						(${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]}) >= ${Config.Miner.Threshold} * .01)) ||\
 						(!${UseOreHold} &&\
