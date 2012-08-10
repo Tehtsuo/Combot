@@ -51,7 +51,7 @@ objectdef obj_Jetcan inherits obj_State
 			return FALSE
 		}
 
-		if  ${UseOreHold}
+		if  ${Miner.UseOreHold}
 		{
 			if ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]} < ${Config.Miner.Threshold} * .01
 			{
@@ -143,7 +143,7 @@ objectdef obj_Jetcan inherits obj_State
 			while ${TargetIterator:Next(exists)}
 		}
 
-		if  ${UseOreHold}
+		if  ${Miner.UseOreHold}
 		{
 			if ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]} >= ${Config.Miner.Threshold} * .01
 			{
