@@ -48,6 +48,7 @@ objectdef obj_Miner inherits obj_State
 		This:AssignStateQueueDisplay[DebugStateList@Debug@ComBotTab@ComBot]
 		if ${This.IsIdle}
 		{
+			This:QueueState["OpenCargoHold"]
 			This:QueueState["Mine"]
 		}
 	}
