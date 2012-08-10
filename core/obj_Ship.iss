@@ -27,32 +27,49 @@ objectdef obj_Ship
 
 	variable int RetryUpdateModuleList=1
 	
+	variable index:string ModuleLists
 	variable index:module ModuleList
 	variable obj_ModuleList ModuleList_ArmorProjectors
+	ModuleLists:Insert[ArmorProjectors]
 	variable obj_ModuleList ModuleList_ShieldTransporters
+	ModuleLists:Insert[ShieldTransporters]
 	variable obj_ModuleList ModuleList_MiningLaser
+	ModuleLists:Insert[MiningLaser]
 	variable obj_ModuleList ModuleList_Weapon
+	ModuleLists:Insert[Weapon]
 	variable obj_ModuleList ModuleList_ECCM
+	ModuleLists:Insert[ECCM]
 	variable obj_ModuleList ModuleList_ActiveResists
+	ModuleLists:Insert[ActiveResists]
 	variable obj_ModuleList ModuleList_Regen_Shield
+	ModuleLists:Insert[Regen_Shield]
 	variable obj_ModuleList ModuleList_Repair_Armor
+	ModuleLists:Insert[Repair_Armor]
 	variable obj_ModuleList ModuleList_Repair_Hull
+	ModuleLists:Insert[Repair_Hull]
 	variable obj_ModuleList ModuleList_AB_MWD
-	variable index:module ModuleList_Passive
+	ModuleLists:Insert[AB_MWD]
+	variable obj_ModuleList ModuleList_Passive
+	ModuleLists:Insert[Passive]
 	variable obj_ModuleList ModuleList_Salvagers
+	ModuleLists:Insert[Salvagers]
 	variable obj_ModuleList ModuleList_TractorBeams
+	ModuleLists:Insert[TractorBeams]
 	variable obj_ModuleList ModuleList_Cloaks
+	ModuleLists:Insert[Cloaks]
 	variable obj_ModuleList ModuleList_StasisWeb
+	ModuleLists:Insert[StasisWeb]
 	variable obj_ModuleList ModuleList_SensorBoost
+	ModuleLists:Insert[SensorBoost]
 	variable obj_ModuleList ModuleList_TargetPainter
+	ModuleLists:Insert[TargetPainter]
 	variable obj_ModuleList ModuleList_TrackingComputer
+	ModuleLists:Insert[TrackingComputer]
 	variable obj_ModuleList ModuleList_GangLinks
-
-	variable float Module_Salvagers_Range
-	variable float Module_TractorBeams_Range
-	variable float Module_MiningLaser_Range
+	ModuleLists:Insert[GangLinks]
 
 
+	
 	
 
 	method Initialize()
@@ -121,6 +138,7 @@ objectdef obj_Ship
 		This.ModuleList_GangLinks:Clear
 		This.ModuleList_ShieldTransporters:Clear
 		This.ModuleList_ArmorProjectors:Clear
+		
 
 		Me.Ship:GetModules[This.ModuleList]
 
@@ -159,7 +177,6 @@ objectdef obj_Ship
 			
 			if ${ModuleIter.Value.MiningAmount(exists)}
 			{
-				This.Module_MiningLaser_Range:Set[${ModuleIter.Value.OptimalRange}]
 				This.ModuleList_MiningLaser:Insert[${ModuleIter.Value.ID}]
 				continue
 			}
@@ -212,16 +229,13 @@ objectdef obj_Ship
 				case GROUP_DATA_MINER
 					if ${TypeID} == TYPE_SALVAGER
 					{
-						This.Module_Salvagers_Range:Set[${ModuleIter.Value.OptimalRange}]
 						This.ModuleList_Salvagers:Insert[${ModuleIter.Value.ID}]
 					}
 					break
 				case GROUP_SALVAGER
-					This.Module_Salvagers_Range:Set[${ModuleIter.Value.OptimalRange}]
 					This.ModuleList_Salvagers:Insert[${ModuleIter.Value.ID}]
 					break
 				case GROUP_TRACTOR_BEAM
-					This.Module_TractorBeams_Range:Set[${ModuleIter.Value.OptimalRange}]
 					This.ModuleList_TractorBeams:Insert[${ModuleIter.Value.ID}]
 					break
 				case NONE
@@ -253,209 +267,27 @@ objectdef obj_Ship
 
 		UI:Update["obj_Ship", "Ship Module Inventory", "y"]
 		
-		This.ModuleList_Weapon:GetIterator[ModuleIter]
-		if ${ModuleIter:First(exists)}
-		{
-			UI:Update["obj_Ship", "Weapons:", "g"]
+		variable iterator List
+		ModuleLists:GetIterator[List]
+		if ${List:First(exists)}
 			do
 			{
-				UI:Update["obj_Ship", " Slot: ${ModuleIter.Value.ToItem.Slot} ${ModuleIter.Value.ToItem.Name}", "-g"]
+				This.ModuleList_${List.Value}:GetIterator[ModuleIter]
+				if ${ModuleIter:First(exists)}
+				{
+					UI:Update["obj_Ship", "${List.Value}:", "g"]
+					do
+					{
+						UI:Update["obj_Ship", " Slot: ${ModuleIter.Value.ToItem.Slot} ${ModuleIter.Value.ToItem.Name}", "-g"]
+					}
+					while ${ModuleIter:Next(exists)}
+				}
 			}
-			while ${ModuleIter:Next(exists)}
-		}
-
-		This.ModuleList_ECCM:GetIterator[ModuleIter]
-		if ${ModuleIter:First(exists)}
-		{
-			UI:Update["obj_Ship", "ECCM Modules:", "g"]
-			do
-			{
-				UI:Update["obj_Ship", " Slot: ${ModuleIter.Value.ToItem.Slot} ${ModuleIter.Value.ToItem.Name}", "-g"]
-			}
-			while ${ModuleIter:Next(exists)}
-		}
-
-		This.ModuleList_GangLinks:GetIterator[ModuleIter]
-		if ${ModuleIter:First(exists)}
-		{
-			UI:Update["obj_Ship", "Gang Link Modules:", "g"]
-			do
-			{
-				UI:Update["obj_Ship", " Slot: ${ModuleIter.Value.ToItem.Slot} ${ModuleIter.Value.ToItem.Name}", "-g"]
-			}
-			while ${ModuleIter:Next(exists)}
-		}
-		
-		This.ModuleList_ActiveResists:GetIterator[ModuleIter]
-		if ${ModuleIter:First(exists)}
-		{
-			UI:Update["obj_Ship", "Active Resistance Modules:", "g"]
-			do
-			{
-				UI:Update["obj_Ship", " Slot: ${ModuleIter.Value.ToItem.Slot}  ${ModuleIter.Value.ToItem.Name}", "-g"]
-			}
-			while ${ModuleIter:Next(exists)}
-		}
-
-		This.ModuleList_Passive:GetIterator[ModuleIter]
-		if ${ModuleIter:First(exists)}
-		{
-			UI:Update["obj_Ship", "Passive Modules:", "g"]
-			do
-			{
-				UI:Update["obj_Ship", " Slot: ${ModuleIter.Value.ToItem.Slot}  ${ModuleIter.Value.ToItem.Name}", "-g"]
-			}
-			while ${ModuleIter:Next(exists)}
-		}
-			
-		This.ModuleList_MiningLaser:GetIterator[ModuleIter]
-		if ${ModuleIter:First(exists)}
-		{
-			UI:Update["obj_Ship", "Mining Modules:", "g"]
-			do
-			{
-				UI:Update["obj_Ship", " Slot: ${ModuleIter.Value.ToItem.Slot}  ${ModuleIter.Value.ToItem.Name}", "-g"]
-			}
-			while ${ModuleIter:Next(exists)}
-		}
-			
-		This.ModuleList_Repair_Armor:GetIterator[ModuleIter]
-		if ${ModuleIter:First(exists)}
-		{
-			UI:Update["obj_Ship", "Armor Repair Modules:", "g"]
-			do
-			{
-				UI:Update["obj_Ship", " Slot: ${ModuleIter.Value.ToItem.Slot}  ${ModuleIter.Value.ToItem.Name}", "-g"]
-			}
-			while ${ModuleIter:Next(exists)}
-		}
-			
-		This.ModuleList_Regen_Shield:GetIterator[ModuleIter]
-		if ${ModuleIter:First(exists)}
-		{
-			UI:Update["obj_Ship", "Shield Regen Modules:", "g"]
-			do
-			{
-				UI:Update["obj_Ship", " Slot: ${ModuleIter.Value.ToItem.Slot}  ${ModuleIter.Value.ToItem.Name}", "-g"]
-			}
-			while ${ModuleIter:Next(exists)}
-		}
-
-		This.ModuleList_AB_MWD:GetIterator[ModuleIter]
-		if ${ModuleIter:First(exists)}
-		{
-			UI:Update["obj_Ship", "AfterBurner Modules:", "g"]
-			do
-			{
-				UI:Update["obj_Ship", " Slot: ${ModuleIter.Value.ToItem.Slot}  ${ModuleIter.Value.ToItem.Name}", "-g"]
-			}
-			while ${ModuleIter:Next(exists)}
-		}
-
-		This.ModuleList_Salvagers:GetIterator[ModuleIter]
-		if ${ModuleIter:First(exists)}
-		{
-			UI:Update["obj_Ship", "Salvaging Modules:", "g"]
-			do
-			{
-				UI:Update["obj_Ship", " Slot: ${ModuleIter.Value.ToItem.Slot}  ${ModuleIter.Value.ToItem.Name}", "-g"]
-			}
-			while ${ModuleIter:Next(exists)}
-		}
-
-		This.ModuleList_TractorBeams:GetIterator[ModuleIter]
-		if ${ModuleIter:First(exists)}
-		{
-			UI:Update["obj_Ship", "Tractor Beam Modules:", "g"]
-			do
-			{
-				UI:Update["obj_Ship", " Slot: ${ModuleIter.Value.ToItem.Slot}  ${ModuleIter.Value.ToItem.Name}", "-g"]
-			}
-			while ${ModuleIter:Next(exists)}
-		}
-
-		This.ModuleList_Cloaks:GetIterator[ModuleIter]
-		if ${ModuleIter:First(exists)}
-		{
-			UI:Update["obj_Ship", "Cloaking Device Modules:", "g"]
-			do
-			{
-				UI:Update["obj_Ship", " Slot: ${ModuleIter.Value.ToItem.Slot}  ${ModuleIter.Value.ToItem.Name}", "-g"]
-			}
-			while ${ModuleIter:Next(exists)}
-		}
-
-		This.ModuleList_StasisWeb:GetIterator[ModuleIter]
-		if ${ModuleIter:First(exists)}
-		{
-			UI:Update["obj_Ship", "Stasis Web Modules:", "g"]
-			do
-			{
-				UI:Update["obj_Ship", " Slot: ${ModuleIter.Value.ToItem.Slot}  ${ModuleIter.Value.ToItem.Name}", "-g"]
-			}
-			while ${ModuleIter:Next(exists)}
-		}
-
-		This.ModuleList_SensorBoost:GetIterator[ModuleIter]
-		if ${ModuleIter:First(exists)}
-		{
-			UI:Update["obj_Ship", "Sensor Boost Modules:", "g"]
-			do
-			{
-				UI:Update["obj_Ship", " Slot: ${ModuleIter.Value.ToItem.Slot}  ${ModuleIter.Value.ToItem.Name}", "-g"]
-			}
-			while ${ModuleIter:Next(exists)}
-		}
-
-		This.ModuleList_TargetPainter:GetIterator[ModuleIter]
-		if ${ModuleIter:First(exists)}
-		{
-			UI:Update["obj_Ship", "Target Painter Modules:", "g"]
-			do
-			{
-				UI:Update["obj_Ship", " Slot: ${ModuleIter.Value.ToItem.Slot}  ${ModuleIter.Value.ToItem.Name}", "-g"]
-			}
-			while ${ModuleIter:Next(exists)}
-		}
-			
-		This.ModuleList_TrackingComputer:GetIterator[ModuleIter]
-		if ${ModuleIter:First(exists)}
-		{
-			UI:Update["obj_Ship", "Tracking Computer Modules:", "g"]
-			do
-			{
-				UI:Update["obj_Ship", " Slot: ${ModuleIter.Value.ToItem.Slot}  ${ModuleIter.Value.ToItem.Name}", "-g"]
-			}
-			while ${ModuleIter:Next(exists)}
-		}
-
-		This.ModuleList_ShieldTransporters:GetIterator[ModuleIter]
-		if ${ModuleIter:First(exists)}
-		{
-			UI:Update["obj_Ship", "Shield Transporter Modules:", "g"]
-			do
-			{
-				UI:Update["obj_Ship", " Slot: ${ModuleIter.Value.ToItem.Slot}  ${ModuleIter.Value.ToItem.Name}", "-g"]
-			}
-			while ${ModuleIter:Next(exists)}
-		}
-		
-		This.ModuleList_ArmorProjectors:GetIterator[ModuleIter]
-		if ${ModuleIter:First(exists)}
-		{
-			UI:Update["obj_Ship", "Armor Projector Modules:", "g"]
-			do
-			{
-				UI:Update["obj_Ship", " Slot: ${ModuleIter.Value.ToItem.Slot}  ${ModuleIter.Value.ToItem.Name}", "-g"]
-			}
-			while ${ModuleIter:Next(exists)}
-		}
+			while ${List:Next(exists)}
 
 		if ${This.ModuleList_AB_MWD.Used} > 1
 		{
 			UI:Update["obj_Ship", "Warning: More than 1 Afterburner or MWD was detected, I will only use the first one.", "o"]
 		}
 	}
-
-
 }
