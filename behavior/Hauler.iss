@@ -282,7 +282,17 @@ objectdef obj_Hauler inherits obj_State
 	
 	member:bool LootCans(int64 ID)
 	{
+		if !${Entity[${ID}](exists)}
+		{
+			return TRUE
+		}
+		
 		variable iterator CanIter
+		
+		if ${MyShip.UsedCargoCapacity} > (${Config.Hauler.Threshold} * .01 * ${MyShip.CargoCapacity})
+		{
+			return TRUE
+		}
 		
 		echo ${IR_Cans.TargetList.Used} cans in range
 		echo ${OOR_Cans.TargetList.Used} cans out of range
@@ -316,7 +326,13 @@ objectdef obj_Hauler inherits obj_State
 			return TRUE
 		}
 		
-		if !${Entity[${CurrentCan}].IsLockedTarget} && ${PopCan}
+		if ${Entity[${CurrentCan}].Distance} > ${MyShip.MaxTargetRange}
+		{
+			Move:Approach[${CurrentCan}, LOOT_RANGE]
+			return FALSE
+		}
+		
+		if !${Entity[${CurrentCan}].IsLockedTarget} && ${PopCan} && ${Ship.ModuleList_TractorBeams.Count} > 0 && ${Entity[${CurrentCan}].Distance} > LOOT_RANGE
 		{
 			if !${Entity[${CurrentCan}].BeingTargeted}
 			{
@@ -328,7 +344,7 @@ objectdef obj_Hauler inherits obj_State
 		
 		if ${Entity[${CurrentCan}].Distance} > LOOT_RANGE
 		{
-			if ${Ship.ModuleList_TractorBeams.Count} > 0 && ${PopCan} && ${Entity[${CurrentCan}].Distance} < ${Ship.ModuleList_TractorBeams.Range}
+			if ${Ship.ModuleList_TractorBeams.Count} > 0 && ${PopCan} && ${Entity[${CurrentCan}].Distance} <= ${Ship.ModuleList_TractorBeams.Range}
 			{
 				if !${Ship.ModuleList_TractorBeams.IsActiveOn[${CurrentCan}]}
 				{
@@ -346,17 +362,17 @@ objectdef obj_Hauler inherits obj_State
 		{
 			if !${EVEWindow[ByName, Inventory].ChildWindowExists[${CurrentCan}]}
 			{
-				UI:Update["obj_Hauler", "Opening - ${Entity[${CurrentCan}].Name}", "g"]
+				;UI:Update["obj_Hauler", "Opening - ${Entity[${CurrentCan}].Name}", "g"]
 				Entity[${CurrentCan}]:OpenCargo
 				return FALSE
 			}
 			if !${EVEWindow[ByItemID, ${CurrentCan}](exists)}
 			{
-				UI:Update["obj_Hauler", "Activating - ${Entity[${CurrentCan}].Name}", "g"]
+				;UI:Update["obj_Hauler", "Activating - ${Entity[${CurrentCan}].Name}", "g"]
 				EVEWindow[ByName, Inventory]:MakeChildActive[${CurrentCan}]
 				return FALSE
 			}
-			UI:Update["obj_Hauler", "Looting - ${Entity[${CurrentCan}].Name}", "g"]
+			;UI:Update["obj_Hauler", "Looting - ${Entity[${CurrentCan}].Name}", "g"]
 			Cargo:PopulateCargoList[CONTAINER, ${CurrentCan}]
 			if ${EVEWindow[ByItemID, ${CurrentCan}].UsedCapacity} > ${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}]}
 			{
@@ -394,6 +410,7 @@ objectdef obj_Hauler inherits obj_State
 	{
 		IR_Cans.AutoLock:Set[FALSE]
 		OOR_Cans.AutoLock:Set[FALSE]
+		CurrentCan:Set[-1]
 		return TRUE
 	}	
 	
@@ -537,14 +554,14 @@ objectdef obj_Hauler inherits obj_State
 					FleetMembers:RemoveByQuery[${LavishScript.CreateQuery[ID == ${Me.CharID}]}]
 					FleetMembers:Collapse
 				}
-				echo Entity exists - ${Entity[Name = "${FleetMembers.Get[1].ToPilot.Name}"](exists)}
-				if ${Entity[Name = "${FleetMembers.Get[1].ToPilot.Name}"](exists)}
+
+				if ${FleetMembers.Get[1].ToEntity(exists)}
 				{
-					UI:Update["obj_Hauler", "Looting cans for ${FleetMembers.Get[1].ToPilot.Name}", "g"]
+					;UI:Update["obj_Miner", "Looting cans for ${FleetMembers.Get[1].ToPilot.Name}", "g"]
 					This:Clear
-					This:QueueState["PopulateTargetList", 2000, ${Entity[Name = "${FleetMembers.Get[1].ToPilot.Name}"].ID}]
+					This:QueueState["PopulateTargetList", 2000, ${FleetMembers.Get[1].ToEntity.ID}]
 					This:QueueState["CheckTargetList", 50]
-					This:QueueState["LootCans", 2000]
+					This:QueueState["LootCans", 1000, ${FleetMembers.Get[1].ToEntity.ID}]
 					This:QueueState["DepopulateTargetList", 2000]
 					This:QueueState["Haul"]
 					FleetMembers:Remove[1]
@@ -553,9 +570,8 @@ objectdef obj_Hauler inherits obj_State
 				}
 				else
 				{
-					UI:Update["obj_Hauler", "Warping to ${FleetMembers.Get[1].ToPilot.Name}", "g"]
-					FleetMembers.Get[1]:WarpTo[]
-					Client:Wait[5000]
+					echo Warping to ${FleetMembers.Get[1].ToPilot.Name} - ${FleetMembers.Get[1].ID}
+					Move:Fleetmember[${FleetMembers.Get[1].ID}, TRUE]
 					This:Clear
 					This:QueueState["Traveling", 1000]
 					This:QueueState["Haul"]

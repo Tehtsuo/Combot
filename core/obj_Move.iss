@@ -21,12 +21,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 objectdef obj_Move inherits obj_State
 {
-
-	variable bool Approaching=FALSE
-	variable int64 ApproachingID
-	variable int ApproachingDistance
-	variable int TimeStartedApproaching = 0
-
+	variable obj_Approach ApproachModule
 
 	variable bool Traveling=FALSE
 	
@@ -102,6 +97,25 @@ objectdef obj_Move inherits obj_State
 	
 	
 	
+	method Fleetmember(int64 ID, bool IgnoreGate=FALSE)
+	{
+		if ${This.Traveling}
+		{
+			return
+		}
+		
+		if !${Me.Fleet.Member[${ID}](exists)}
+		{
+			UI:Update["obj_Move", "Fleet member does not exist", "r"]
+			UI:Update["obj_Move", "Fleet member CharID: ${ID}", "r"]
+			return
+		}
+
+		UI:Update["obj_Move", "Movement queued.  Destination: ${Me.Fleet.Member[${ID}].ToPilot.Name}", "g"]
+		This.Traveling:Set[TRUE]
+		This:QueueState["FleetmemberMove", 2000, "${ID}, ${IgnoreGate}"]
+	}
+
 	method Bookmark(string DestinationBookmarkLabel, bool IgnoreGate=FALSE)
 	{
 		if ${This.Traveling}
@@ -171,27 +185,30 @@ objectdef obj_Move inherits obj_State
 		This:QueueState["AgentMove", 2000, ${Agent[AgentName].Index}]
 	}	
 
-	method Gate(int64 ID)
+	method Gate(int64 ID, bool CalledFromMove=FALSE)
 	{
 		UI:Update["obj_Move", "Movement queued.  Destination: ${Entity[${ID}].Name}", "g"]
 		This.Traveling:Set[TRUE]
-		This:QueueState["GateMove", 2000, ${ID}]
+		This:QueueState["GateMove", 2000, "${ID}, ${CalledFromMove}"]
 	}
 
-	member:bool GateMove(int64 ID)
+	member:bool GateMove(int64 ID, bool CalledFromMove)
 	{
-		if !${This.CheckApproach}
+		if !${Entity[${ID}](exists)}
 		{
-			return FALSE
+			if !${CalledFromMove}
+			{
+				This.Traveling:Set[FALSE]
+			}
+			return TRUE	
 		}
 
-		if ${Entity[${ID}].Distance} == 0
+		if ${Entity[${ID}].Distance} < -3000
 		{
 			UI:Update["obj_Move", "Too close!  Orbiting ${Entity[${ID}].Name}", "g"]
-			This:Clear
-			This:QueueState["Orbit", 10000, ${Entity[${ID}].ID}]
-			This:QueueState["GateMove"]
-			return TRUE
+			Client:Wait[5000]
+			Entity[${ID}]:Orbit
+			return FALSE
 		}
 		if ${Entity[${ID}].Distance} > 3000
 		{
@@ -201,16 +218,69 @@ objectdef obj_Move inherits obj_State
 		UI:Update["obj_Move", "Activating ${Entity[${ID}].Name}", "g"]
 		Entity[${ID}]:Activate
 		Client:Wait[5000]
-		This.Traveling:Set[FALSE]
-		return TRUE
+		if !${CalledFromMove}
+		{
+			This.Traveling:Set[FALSE]
+		}
+		return FALSE
 	}
 	
-	member:bool Orbit(int64 ID)
+	
+	member:bool FleetmemberMove(int64 ID, bool IgnoreGate=FALSE)
 	{
-		Entity[${ID}]:Orbit
-		return TRUE
+		if ${Me.InStation}
+		{
+			UI:Update["obj_Move", "Undocking from ${Me.Station.Name}", "g"]
+			This:Undock
+			return FALSE
+		}
+
+		if !${Client.InSpace}
+		{
+			return FALSE
+		}
+
+		if ${Me.ToEntity.Mode} == 3
+		{
+			return FALSE
+		}
+
+		echo Me.Fleet.Member[${ID}].ToEntity(exists): ${Me.Fleet.Member[${ID}].ToEntity(exists)}
+		if ${Me.Fleet.Member[${ID}].ToEntity(exists)}
+		{
+			if ${Me.Fleet.Member[${ID}].ToEntity.Distance} > WARP_RANGE
+			{
+				
+				UI:Update["obj_Move", "Warping to ${Me.Fleet.Member[${ID}].ToPilot.Name}", "g"]
+				Me.Fleet.Member[${ID}].ToEntity:WarpTo[${This.Distance}]
+				Client:Wait[5000]
+				return FALSE
+			}
+			else
+			{
+				UI:Update["obj_Move", "Reached ${Me.Fleet.Member[${ID}].ToPilot.Name}", "g"]
+				This.Traveling:Set[FALSE]
+				return TRUE
+			}
+		}
+		else
+		{
+				if ${Entity[GroupID == GROUP_WARPGATE](exists)} && !${IgnoreGate}
+				{
+					UI:Update["obj_Move", "Gate found, activating", "g"]
+					This:Gate[${Entity[GroupID == GROUP_WARPGATE].ID}, TRUE]
+					This:QueueState["FleetmemberMove", 2000, ${ID}]
+					return TRUE
+				}
+				UI:Update["obj_Move", "Warping to ${Me.Fleet.Member[${ID}].ToPilot.Name}", "g"]
+				Me.Fleet.Member[${ID}]:WarpTo[${This.Distance}]
+				Client:Wait[5000]
+				This:QueueState["FleetmemberMove", 2000, ${ID}]
+				
+				return TRUE
+		}
 	}
-	
+
 	member:bool BookmarkMove(string Bookmark, bool IgnoreGate=FALSE)
 	{
 
@@ -253,7 +323,7 @@ objectdef obj_Move inherits obj_State
 				if ${Entity[GroupID == GROUP_WARPGATE](exists)} && !${IgnoreGate}
 				{
 					UI:Update["obj_Move", "Gate found, activating", "g"]
-					This:Gate[${Entity[GroupID == GROUP_WARPGATE].ID}]
+					This:Gate[${Entity[GroupID == GROUP_WARPGATE].ID}, TRUE]
 					This:QueueState["BookmarkMove", 2000, ${Bookmark}]
 					return TRUE
 				}			
@@ -264,11 +334,15 @@ objectdef obj_Move inherits obj_State
 				This:QueueState["BookmarkMove", 2000, ${Bookmark}]
 				return TRUE
 			}
-			else
+			elseif ${EVE.Bookmark[${Bookmark}].Distance} != -1 && ${EVE.Bookmark[${Bookmark}].Distance(exists)}
 			{
 				UI:Update["obj_Move", "Reached ${Bookmark}", "g"]
 				This.Traveling:Set[FALSE]
 				return TRUE
+			}
+			else
+			{
+				return FALSE
 			}
 		}
 		else
@@ -281,10 +355,14 @@ objectdef obj_Move inherits obj_State
 					This:Warp[${EVE.Bookmark[${Bookmark}].ToEntity}, ${This.Distance}]
 					return FALSE
 				}
-				else
+				elseif ${EVE.Bookmark[${Bookmark}].ToEntity.Distance} != -1 && ${EVE.Bookmark[${Bookmark}].ToEntity.Distance(exists)}
 				{
 					UI:Update["obj_Move", "Reached ${Bookmark}, docking", "g"]
 					This:DockAtStation[${EVE.Bookmark[${Bookmark}].ItemID}]
+					return FALSE
+				}
+				else
+				{
 					return FALSE
 				}
 			}
@@ -297,16 +375,19 @@ objectdef obj_Move inherits obj_State
 					Client:Wait[5000]
 					return FALSE
 				}
-				else
+				elseif ${EVE.Bookmark[${Bookmark}].Distance} != -1 && ${EVE.Bookmark[${Bookmark}].Distance(exists)}
 				{
 					UI:Update["obj_Move", "Reached ${Bookmark}", "g"]
 					This.Traveling:Set[FALSE]
 					return TRUE
 				}
+				else
+				{
+					return FALSE
+				}
 			}
 		}
 	}
-	
 
 	member:bool AgentMove(int ID)
 	{
@@ -431,72 +512,61 @@ objectdef obj_Move inherits obj_State
 
 	
 	
-	method Approach(int64 target, int distance=0, bool Warp=FALSE)
+	method Approach(int64 ID, int distance=0)
 	{
 		;	If we're already approaching the target, ignore the request
-		if ${target} == ${This.ApproachingID} && ${This.Approaching}
+		if !${ApproachModule.IsIdle}
 		{
 			return
 		}
-		if !${Entity[${target}](exists)}
+		if !${Entity[${ID}](exists)}
 		{
 			UI:Update["obj_Move", "Attempted to approach a target that does not exist", "r"]
-			UI:Update["obj_Move", "Target ID: ${target}", "r"]
+			UI:Update["obj_Move", "Target ID: ${ID}", "r"]
 			return
 		}
-		if ${Entity[${target}].Distance} <= ${distance}
+		if ${Entity[${ID}].Distance} <= ${distance}
 		{
 			return
 		}
 
-		This.ApproachingID:Set[${target}]
-		This.ApproachingDistance:Set[${distance}]
-		This.TimeStartedApproaching:Set[-1]
-		This.Approaching:Set[TRUE]
-		This:QueueState["CheckApproach", 1000, ${Warp}]
+		ApproachModule:QueueState["CheckApproach", 1000, "${ID}, ${distance}"]
 	}
+
+}
 	
-	
-	member:bool CheckApproach(bool Warp)
+objectdef obj_Approach inherits obj_State
+{
+
+	method Initialize()
+	{
+		This[parent]:Initialize
+		This.NonGameTiedPulse:Set[TRUE]
+	}
+
+
+	member:bool CheckApproach(int64 ID, int distance)
 	{
 		;	Clear approach if we're in warp or the entity no longer exists
-		if ${Me.ToEntity.Mode} == 3 || !${Entity[${This.ApproachingID}](exists)}
+		if ${Me.ToEntity.Mode} == 3 || !${Entity[${ID}](exists)}
 		{
-			This.Approaching:Set[FALSE]
 			return TRUE
 		}			
 		
-		;	Find out if we need to warp to the target
-		if ${Entity[${This.ApproachingID}].Distance} > WARP_RANGE && ${Warp}
-		{
-			UI:Update["obj_Move", "${Entity[${This.ApproachingID}].Name} is a long way away.  Warping to it", "g"]
-			This:Warp[${This.ApproachingID}]
-			return FALSE
-		}
-		
 		;	Find out if we need to approach the target
-		if ${Entity[${This.ApproachingID}].Distance} > ${This.ApproachingDistance} && ${This.TimeStartedApproaching} == -1
+		if ${Entity[${ID}].Distance} > ${distance} && ${Me.ToEntity.Mode} != 1
 		{
-			UI:Update["obj_Move", "Approaching to within ${ComBot.MetersToKM_Str[${This.ApproachingDistance}]} of ${Entity[${This.ApproachingID}].Name}", "g"]
-			Entity[${This.ApproachingID}]:Approach[${distance}]
-			This.TimeStartedApproaching:Set[${Time.Timestamp}]
+			UI:Update["obj_Move", "Approaching to within ${ComBot.MetersToKM_Str[${distance}]} of ${Entity[${ID}].Name}", "g"]
+			Entity[${ID}]:Approach[${distance}]
 			return FALSE
-		}
-		
-		;	If we've been approaching for more than 1 minute, we need to give up
-		if ${Math.Calc[${This.TimeStartedApproaching}-${Time.Timestamp}]} < -60
-		{
-			This.Approaching:Set[FALSE]
-			return TRUE
 		}
 		
 		;	If we're approaching a target, find out if we need to stop doing so 
-		if ${Entity[${This.ApproachingID}].Distance} <= ${This.ApproachingDistance}
+		if ${Entity[${ID}].Distance} <= ${distance} && ${Me.ToEntity.Mode} == 1
 		{
-			UI:Update["obj_Move", "Within ${ComBot.MetersToKM_Str[${This.ApproachingDistance}]} of ${Entity[${This.ApproachingID}].Name}", "g"]
+			UI:Update["obj_Move", "Within ${ComBot.MetersToKM_Str[${distance}]} of ${Entity[${ID}].Name}", "g"]
 			EVE:Execute[CmdStopShip]
 			Ship.ModuleList_AB_MWD:Deactivate
-			This.Approaching:Set[FALSE]
 			return TRUE
 		}
 		
@@ -516,9 +586,11 @@ objectdef obj_Move inherits obj_State
 		
 		return FALSE
 	}
-
-}
 	
+	method Flee()
+	{
+	}	
+}
 	
 	
 objectdef obj_InstaWarp inherits obj_State

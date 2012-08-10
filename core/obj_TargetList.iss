@@ -44,6 +44,8 @@ objectdef obj_TargetList inherits obj_State
 	variable int MaxLockCount = 2
 	variable bool NeedUpdate = TRUE
 	variable bool Updated = FALSE
+	variable IPCSet IPCTargets
+	variable bool UseIPC = FALSE
 	
 	method Initialize()
 	{
@@ -71,8 +73,43 @@ objectdef obj_TargetList inherits obj_State
 		NeedUpdate:Set[TRUE]
 	}
 	
+	method AddIPCSet(string IPCName)
+	{
+		IPCTargets:SetIPCName[${IPCName}]
+		UseIPC:Set[TRUE]
+	}
+	
 	method RequestUpdate()
 	{
+		variable iterator TargetIterator
+		TargetList:GetIterator[TargetIterator]
+		if ${TargetIterator:First(exists)}
+		{
+			do
+			{
+				if !${TargetIterator.Value.ID(exists)}
+				{
+					TargetList:Remove[${TargetIterator.Key}]
+				}
+			}
+			while ${TargetIterator:Next(exists)}
+		}
+		TargetList:Collapse
+		
+		LockedTargetList:GetIterator[TargetIterator]
+		if ${TargetIterator:First(exists)}
+		{
+			do
+			{
+				if !${TargetIterator.Value.ID(exists)}
+				{
+					TargetList:Remove[${TargetIterator.Key}]
+				}
+			}
+			while ${TargetIterator:Next(exists)}
+		}
+		LockedTargetList:Collapse
+		
 		NeedUpdate:Set[TRUE]
 		Updated:Set[FALSE]
 	}
@@ -102,7 +139,6 @@ objectdef obj_TargetList inherits obj_State
 			Profiling:EndTrack
 			return FALSE
 		}
-		NeedUpdate:Set[FALSE]
 		if !${Client.InSpace}
 		{
 			Profiling:EndTrack
@@ -117,15 +153,21 @@ objectdef obj_TargetList inherits obj_State
 		
 		variable iterator QueryStringIterator
 		QueryStringList:GetIterator[QueryStringIterator]
-
+		
 		if ${QueryStringIterator:First(exists)}
 		{
 			do
 			{
-				This:QueueState["GetQueryString", 250, "${QueryStringIterator.Value.Escape}"]
+				This:QueueState["GetQueryString", 20, "${QueryStringIterator.Value.Escape}"]
 			}
 			while ${QueryStringIterator:Next(exists)}
 		}
+		
+		if ${UseIPC}
+		{
+			This:QueueState["AddIPC"]
+		}
+		
 		This:QueueState["PopulateList"]
 		if ${AutoLock}
 		{
@@ -133,6 +175,7 @@ objectdef obj_TargetList inherits obj_State
 		}
 		This:QueueState["SetUpdated"]
 		This:QueueState["UpdateList"]
+		NeedUpdate:Set[FALSE]
 		Profiling:EndTrack
 ;		echo UpdateList ${This.ObjectName}
 		return TRUE
@@ -158,7 +201,6 @@ objectdef obj_TargetList inherits obj_State
 		EVE:QueryEntities[entity_index, "${QueryString.Escape}"]
 		Profiling:EndTrack
 		entity_index:GetIterator[entity_iterator]
-		
 		if ${entity_iterator:First(exists)}
 		{
 			do
@@ -221,6 +263,109 @@ objectdef obj_TargetList inherits obj_State
 		}
 		Profiling:EndTrack
 		return TRUE
+	}
+	
+	member:bool AddIPC()
+	{
+		Profiling:StartTrack["TargetList_AddIPC"]
+		variable iterator EntityIterator
+
+		This.TargetListBuffer:GetIterator[EntityIterator]
+		if ${EntityIterator:First(exists)}
+		{
+			do
+			{
+				if !${This.IPCTargets.Contains[${EntityIterator.Value.ID}]}
+				{
+					This.IPCTargets:Add[${EntityIterator.Value.ID}]
+					echo "Adding ${EntityIterator.Value.Name}"
+				}
+			}
+			while ${EntityIterator:Next(exists)}
+		}
+		This.TargetListBufferOOR:GetIterator[EntityIterator]
+		if ${EntityIterator:First(exists)}
+		{
+			do
+			{
+				if !${This.IPCTargets.Contains[${EntityIterator.Value.ID}]}
+				{
+					This.IPCTargets:Add[${EntityIterator.Value.ID}]
+					echo "Adding ${EntityIterator.Value.Name}"
+				}
+			}
+			while ${EntityIterator:Next(exists)}
+		}
+		
+		This.TargetListBuffer:Clear
+		This.TargetListBufferOOR:Clear
+		This.LockedTargetListBuffer:Clear
+		This.LockedTargetListBufferOOR:Clear
+		
+		This.IPCTargets:GetIterator[EntityIterator]
+		if ${EntityIterator:First(exists)}
+		{
+			
+			do
+			{
+				if ${Entity[${EntityIterator.Value}].IsLockedTarget} || ${Entity[${EntityIterator.Value}].BeingTargeted}
+				{
+					TargetList_DeadDelay:Set[${EntityIterator.Value}, ${Math.Calc[${LavishScript.RunningTime} + 5000]}]
+				}
+				if ${Entity[${EntityIterator.Value}].DistanceTo[${DistanceTarget}]} >= ${MinRange}
+				{
+					break
+				}
+				else
+				{
+
+				}
+			}
+			while ${EntityIterator:Next(exists)}
+			
+			if ${EntityIterator.Value(exists)}
+			{
+				do
+				{
+					if ${Entity[${EntityIterator.Value}].IsLockedTarget} || ${Entity[${EntityIterator.Value}].Value.BeingTargeted}
+					{
+						TargetList_DeadDelay:Set[${EntityIterator.Value}, ${Math.Calc[${LavishScript.RunningTime} + 5000]}]
+					}
+					if ${Entity[${EntityIterator.Value}].DistanceTo[${DistanceTarget}]} <= ${MaxRange}
+					{
+						This.TargetListBuffer:Insert[${EntityIterator.Value}]
+						if ${Entity[${EntityIterator.Value}].IsLockedTarget}
+						{
+							This.LockedTargetListBuffer:Insert[${EntityIterator.Value}]
+						}
+					}
+					else
+					{
+						break
+					}
+				}
+				while ${EntityIterator:Next(exists)}
+			}
+			
+			if ${EntityIterator.Value(exists)} && ${ListOutOfRange}
+			{
+				do
+				{
+					if ${Entity[${EntityIterator.Value}].IsLockedTarget} || ${Entity[${EntityIterator.Value}].BeingTargeted}
+					{
+						TargetList_DeadDelay:Set[${EntityIterator.Value}, ${Math.Calc[${LavishScript.RunningTime} + 5000]}]
+					}
+					This.TargetListBufferOOR:Insert[${EntityIterator.Value}]
+					if ${Entity[${EntityIterator.Value}].IsLockedTarget}
+					{
+						This.LockedTargetListBufferOOR:Insert[${EntityIterator.Value}]
+					}
+				}
+				while ${EntityIterator:Next(exists)}
+			}
+		}
+		
+		Profiling:EndTrack
 	}
 	
 	member:bool PopulateList()

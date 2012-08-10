@@ -34,6 +34,7 @@ objectdef obj_Drones inherits obj_State
 		DroneTargets.MaxRange:Set[${Me.DroneControlDistance}]
 		DroneTargets.AutoLock:Set[TRUE]
 		DroneTargets.AutoRelock:Set[TRUE]
+		DroneTargets:AddIPCSet["DroneTargets"]
 		
 		variable index:activedrone ActiveDrones
 		Me:GetActiveDrones[ActiveDrones]
@@ -83,6 +84,13 @@ objectdef obj_Drones inherits obj_State
 		UI:Update["obj_Drone", "Deploying Drones", "g"]
 		MyShip:LaunchAllDrones
 		DronesOut:Set[TRUE]
+	}
+	
+	member:int DronesInSpace()
+	{
+		variable index:activedrone ActiveDrones
+		Me:GetActiveDrones[ActiveDrones]
+		return ${ActiveDrones.Used}
 	}
 	
 	member:bool DroneControl()

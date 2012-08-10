@@ -88,7 +88,7 @@ objectdef obj_ModuleList
 		{
 			do
 			{
-				if ${ModuleIterator.Value.IsActiveOn[${target}]}
+				if ${ModuleIterator.Value.IsActiveOn[${target}]} || ${target} == -1
 				{
 					ModuleIterator.Value:Deactivate
 					deactivatedCount:Inc

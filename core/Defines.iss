@@ -40,6 +40,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 #define GROUP_MINING_CRYSTAL 																					482
 #define GROUP_FREQUENCY_MINING_LASER 																			483
 #define GROUP_SHIELD_TRANSPORTER         																		41
+#define GROUP_ARMOR_PROJECTOR	         																		325
 #define GROUP_CLOAKING_DEVICE		 																			330
 #define GROUP_GANGLINK 																							316
 #define GROUP_ACCELERATIONGATEKEYS 																				474
@@ -296,6 +297,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 #define GROUP_SCANNERPROBE 																						479
 #define GROUP_SCORDITE 																							460
 #define GROUP_SECURECARGOCONTAINER 																				340
+#define GROUP_AUDITLOGSECURECONTAINER																			448
 #define GROUP_SENSORBOOSTER 																					212
 #define GROUP_SENSORDAMPENINGBATTERY 																			440
 #define GROUP_SENTRYGUN 																						99

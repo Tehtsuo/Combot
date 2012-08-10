@@ -28,6 +28,7 @@ objectdef obj_Ship
 	variable int RetryUpdateModuleList=1
 	
 	variable index:module ModuleList
+	variable obj_ModuleList ModuleList_ArmorProjectors
 	variable obj_ModuleList ModuleList_ShieldTransporters
 	variable obj_ModuleList ModuleList_MiningLaser
 	variable obj_ModuleList ModuleList_Weapon
@@ -119,6 +120,7 @@ objectdef obj_Ship
 		This.ModuleList_TrackingComputer:Clear
 		This.ModuleList_GangLinks:Clear
 		This.ModuleList_ShieldTransporters:Clear
+		This.ModuleList_ArmorProjectors:Clear
 
 		Me.Ship:GetModules[This.ModuleList]
 
@@ -167,6 +169,9 @@ objectdef obj_Ship
 			{
 				case GROUP_SHIELD_TRANSPORTER
 					This.ModuleList_ShieldTransporters:Insert[${ModuleIter.Value.ID}]
+					break
+				case GROUP_ARMOR_PROJECTOR
+					This.ModuleList_ArmorProjectors:Insert[${ModuleIter.Value.ID}]
 					break
 				case GROUP_DAMAGE_CONTROL
 				case GROUP_SHIELD_HARDENER
@@ -428,6 +433,17 @@ objectdef obj_Ship
 		if ${ModuleIter:First(exists)}
 		{
 			UI:Update["obj_Ship", "Shield Transporter Modules:", "g"]
+			do
+			{
+				UI:Update["obj_Ship", " Slot: ${ModuleIter.Value.ToItem.Slot}  ${ModuleIter.Value.ToItem.Name}", "-g"]
+			}
+			while ${ModuleIter:Next(exists)}
+		}
+		
+		This.ModuleList_ArmorProjectors:GetIterator[ModuleIter]
+		if ${ModuleIter:First(exists)}
+		{
+			UI:Update["obj_Ship", "Armor Projector Modules:", "g"]
 			do
 			{
 				UI:Update["obj_Ship", " Slot: ${ModuleIter.Value.ToItem.Slot}  ${ModuleIter.Value.ToItem.Name}", "-g"]

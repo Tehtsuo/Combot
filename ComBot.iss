@@ -62,6 +62,7 @@ function atexit()
 
 function main()
 {
+	module -require LSMIPC
 	echo "${Time} ComBot: Starting"
 
 	declarevariable UI obj_ComBotUI script
@@ -99,12 +100,12 @@ function main()
 	
 	if ${Config.Common.AutoStart}
 	{
-		ComBot.Paused:Set[FALSE]
-		${Config.Common.ComBot_Mode}:Start
+		ComBot:Resume
 	}
 	else
 	{
 		UI:Update["ComBot", "Paused", "r"]
+		Security:Start
 	}
 	
 

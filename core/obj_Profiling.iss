@@ -67,6 +67,8 @@ objectdef obj_Profiling inherits obj_State
 		variable iterator TimeSpentIterator
 		variable int count=0
 		variable int upperlimit
+		variable string InsertString
+		variable int conversion
 		
 		variable collection:string TimeSpentCopy
 		
@@ -76,12 +78,22 @@ objectdef obj_Profiling inherits obj_State
 		{
 			do
 			{
-				TimeSpentCopy:Set[${TimeSpentIterator.Value}, ${TimeSpentIterator.Key}]
+				InsertString:Set[${TimeSpentIterator.Value}]
+				if ${InsertString.Length} < 20
+				{
+					do
+					{
+						InsertString:Set[0${InsertString}]
+					}
+					while ${InsertString.Length} < 20
+				}
+				
+				TimeSpentCopy:Set[${InsertString}, ${TimeSpentIterator.Key}]
 			}
 			while ${TimeSpentIterator:Next(exists)}
 		}
 		
-		
+		count:Set[0]
 		TimeSpentCopy:GetIterator[TimeSpentIterator]
 		if ${TimeSpentIterator:Last(exists)}
 		{
@@ -93,9 +105,10 @@ objectdef obj_Profiling inherits obj_State
 				{
 					break
 				}
+				conversion:Set[${TimeSpentIterator.Key}]
 				UIElement[obj_ProfilingGauge${count}@Profiling@ComBotTab@ComBot]:SetRange[${upperlimit}]
 				UIElement[obj_ProfilingGauge${count}@Profiling@ComBotTab@ComBot]:SetValue[${TimeSpentIterator.Key}]
-				UIElement[obj_ProfilingGauge${count}_Text@Profiling@ComBotTab@ComBot]:SetText[${TimeSpentIterator.Value} - ${TimeSpentIterator.Key}ms in ${TimeCalled.Element[${TimeSpentIterator.Value}]} calls]
+				UIElement[obj_ProfilingGauge${count}_Text@Profiling@ComBotTab@ComBot]:SetText[${TimeSpentIterator.Value} - ${conversion}ms in ${TimeCalled.Element[${TimeSpentIterator.Value}]} calls]
 				
 			}
 			while ${TimeSpentIterator:Previous(exists)}

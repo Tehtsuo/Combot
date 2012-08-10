@@ -114,6 +114,7 @@ objectdef obj_Configuration_Common
 
 		This.CommonRef:AddSetting[ComBot_Mode,Salvager]
 		This.CommonRef:AddSetting[AlwaysShieldBoost, FALSE]
+		This.CommonRef:AddSetting[ActiveTab,Status]
 	}
 
 	Setting(string, ComBot_Mode, SetComBot_Mode)
@@ -122,6 +123,7 @@ objectdef obj_Configuration_Common
 	Setting(bool, Propulsion, SetPropulsion)
 	Setting(int, Propulsion_Threshold, SetPropulsion_Threshold)
 	Setting(bool, AlwaysShieldBoost, SetAlwaysShieldBoost)
+	Setting(string, ActiveTab, SetActiveTab)
 }
 
 objectdef obj_Configuration_Salvager
@@ -191,6 +193,8 @@ objectdef obj_Configuration_HangarSale
 	Setting(int, UndercutValue, SetUndercutValue)
 	Setting(bool, RePrice, SetRePrice)
 	Setting(bool, Sell, SetSell)
+	Setting(bool, MoveRefines, SetMoveRefines)
+	Setting(int64, MoveRefinesTarget, SetMoveRefinesTarget)
 }
 	
 objectdef obj_Configuration_Hauler
@@ -334,14 +338,14 @@ objectdef obj_Configuration_Miner
 		This.CommonRef:AddSetting[Miner_Dropoff_Type,Personal Hangar]
 		This.CommonRef:AddSetting[BeltPrefix,Belt:]
 		This.CommonRef:AddSetting[IceBeltPrefix,Ice Belt:]
-		This.CommonRef:AddSetting[Miner_OrcaName,""]
+		This.CommonRef:AddSetting[MaxLasers,3]
 		
 	}
 	
 	Setting(string, MiningSystem, SetMiningSystem)	
 	Setting(string, Dropoff, SetDropoff)	
 	Setting(string, Dropoff_Type, SetDropoff_Type)	
-	Setting(string, Dropoff_Type, SetDropoff_Type)	
+	Setting(string, Dropoff_SubType, SetDropoff_SubType)
 	Setting(string, Container_Name, SetContainer_Name)	
 	Setting(bool, IceMining, SetIceMining)	
 	Setting(bool, OrcaMode, SetOrcaMode)	
@@ -349,6 +353,8 @@ objectdef obj_Configuration_Miner
 	Setting(string, BeltPrefix, SetBeltPrefix)	
 	Setting(string, IceBeltPrefix, SetIceBeltPrefix)	
 	Setting(int, Threshold, SetThreshold)	
+	Setting(int, MaxLaserLocks, SetMaxLaserLocks)
+	Setting(string, JetcanPrefix, SetJetcanPrefix)
 
 }
 	
@@ -404,7 +410,9 @@ objectdef obj_Configuration_Security
 	Setting(bool, OverrideFleeBookmark_Enabled, SetOverrideFleeBookmark_Enabled)	
 	Setting(string, OverrideFleeBookmark, SetOverrideFleeBookmark)	
 	Setting(bool, TargetFlee, SetTargetFlee)	
-
+	Setting(bool, CorpFlee, SetCorpFlee)
+	Setting(bool, AllianceFlee, SetAllianceFlee)
+	Setting(bool, FleetFlee, SetFleetFlee)
 	
 }	
 	

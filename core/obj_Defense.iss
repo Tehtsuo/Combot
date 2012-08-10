@@ -30,7 +30,7 @@ objectdef obj_Defense inherits obj_State
 		This[parent]:Initialize
 		This.NonGameTiedPulse:Set[TRUE]
 
-		This:QueueState["Defend", 100]
+		This:QueueState["Defend", 50]
 	}
 	
 	member:bool Defend()
@@ -54,6 +54,21 @@ objectdef obj_Defense inherits obj_State
 		{
 			Ship.ModuleList_ActiveResists:ActivateCount[${Ship.ModuleList_ActiveResists.Count}]
 		}
+		if ${Ship.ModuleList_ActiveResists.Count}
+		{
+			Ship.ModuleList_ActiveResists:ActivateCount[${Ship.ModuleList_ActiveResists.Count}]
+		}
+
+		if ${Ship.ModuleList_Cloaks.Count}
+		{
+			Ship.ModuleList_Cloaks:Activate
+		}
+
+		if ${Ship.ModuleList_GangLinks.ActiveCount} < ${Ship.ModuleList_GangLinks.Count} && ${Me.ToEntity.Mode} != 3
+		{
+			Ship.ModuleList_GangLinks:ActivateCount[${Math.Calc[${Ship.ModuleList_GangLinks.Count} - ${Ship.ModuleList_GangLinks.ActiveCount}]}]
+		}
+		
 		Profiling:EndTrack
 		return FALSE	
 	}

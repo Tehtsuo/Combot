@@ -95,7 +95,9 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Width>30%</Width> 
 						<Height>3%</Height> 
 						<Items>
-							<Item Default="1">Service Fleet</Item>
+							<Item>Service Fleet</Item>
+							<Item>Service Corporate Bookmarks</Item>
+							<Item>Service On-Demand</Item>
 						</Items>
 						<OnLoad>
 							This.ItemByText[${Script[ComBot].VariableScope.Config.Hauler.JetCanMode}]:Select

@@ -29,10 +29,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 	</template>	
 
 	<template name='Button.Font'>	
-		<Name>Arial</Name>
+		<Name>Verdana</Name>
 		<Size>12</Size>
 		<Color>FF000000</Color>
-		<Bold>TRUE</Bold>
+		<Bold />
 	</template>	
 
 	<template name='Gauge.Font'>	
@@ -41,6 +41,14 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 		<Color>FFFF0000</Color>
 		<Bold />
 	</template>	
+	
+	<template name='TitleBar.Font'>	
+		<Name>Verdana</Name>
+		<Size>16</Size>
+		<Color>FFFFFFFF</Color>
+		<Bold />
+	</template>	
+	
 
 	<window name='ComBot'>
 		<Visible>1</Visible>
@@ -79,7 +87,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 				<button	Name='Hide'>
 					<Font template='Button.Font' />
 					<BackgroundColor>FF000000</BackgroundColor>
-					<X>r80</X>
+					<X>r120</X>
 					<Y>0</Y>
 					<Width>40</Width>
 					<Height>20</Height>
@@ -95,6 +103,18 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							UIElement[ComBotTab@ComBot]:Show
 							This:SetText[Hide]
 						}
+					</OnLeftClick>
+				</button>
+				<button	Name='Help'>
+					<Font template='Button.Font' />
+					<BackgroundColor>FF000000</BackgroundColor>
+					<X>r80</X>
+					<Y>0</Y>
+					<Width>40</Width>
+					<Height>20</Height>
+					<Text>Help</Text>
+					<OnLeftClick>
+						timedcommand 0 "OSExecute http://eve.isxgames.com/wiki/index.php?title=ComBot#Experimental_Installation"
 					</OnLeftClick>
 				</button>
 				<button	Name='Run'>
@@ -157,7 +177,6 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<Item Value='Hauler'>Hauler</Item>
 								<Item Value='Salvage'>Dedicated Salvager</Item>
 								<Item Value='HangerSale'>Hanger Sale</Item>
-								<Item Value='Combat'>Simple Clear Agro and Pocket</Item>
 							</Items>
 							<OnLoad>
 								This.ItemByValue[${Script[ComBot].VariableScope.Config.Common.ComBot_Mode}]:Select
@@ -329,99 +348,29 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							<X>00%</X>
 							<Y>10%</Y>
 							<Width>40%</Width>
-							<Height>80%</Height>
+							<Height>90%</Height>
 						</listbox>
+						<Text name='DebugGuage1_Text'>
+							<X>40%</X>
+							<Y>5%</Y>
+							<Height>3%</Height>
+							<Width>60%</Width>
+							<Alignment>Center</Alignment>
+							<Text>Cargo Hold</Text>
+						</Text>
+						<gauge name='DebugGuage1'>
+							<X>41%</X>
+							<Y>10%</Y>
+							<Height>10%</Height>
+							<Width>58%</Width>
+							<OnLoad>
+								This:SetLeftClickThru[TRUE]
+							</OnLoad>
+						</gauge>
 					</Tab>
 					
 
 					
-					<Tab Name='Hangar_Sale'>
-						<frame name='obj_Hangar_SaleFillerFrame'>
-							<BackgroundColor>FF000000</BackgroundColor>
-							<Border>1</Border>
-							<BorderColor>FFFFFFFF</BorderColor>
-							<X>0</X>
-							<Y>0</Y>
-							<Height>100%</Height>
-							<Width>100%</Width>
-							<OnLoad>
-								This:SetLeftClickThru[TRUE]
-							</OnLoad>
-						</frame>					
-						<Text name='obj_HangerSaleProcessingText'> 
-									<X>31%</X> 
-									<Y>10%</Y> 
-									<Width>60%</Width> 
-									<Height>5%</Height> 
-									<Text>Processing XXX items from EVE-Central</Text>
-						</Text>						 
-						<Text name='obj_HangerSaleTotalsText'> 
-									<X>31%</X> 
-									<Y>20%</Y> 
-									<Width>60%</Width> 
-									<Height>5%</Height> 
-									<Text>Estimated Totals</Text>
-						</Text>						 
-						<Text name='obj_HangerSaleToSellLowestText'> 
-									<X>31%</X> 
-									<Y>35%</Y> 
-									<Width>60%</Width> 
-									<Height>5%</Height> 
-									<Text>[Match Lowest]:    </Text>
-						</Text>						 
-						<Text name='obj_HangerSaleToSellAverageText'> 
-									<X>31%</X> 
-									<Y>40%</Y> 
-									<Width>60%</Width> 
-									<Height>5%</Height> 
-									<Text>[Match Average]:   </Text>
-						</Text>						 
-						<Text name='obj_HangerSaleToSellBuyoutText'> 
-									<X>31%</X> 
-									<Y>30%</Y> 
-									<Width>60%</Width> 
-									<Height>5%</Height> 
-									<Text>[Match Buyouts]:   </Text>
-						</Text>						 
-						<Text name='obj_HangerSaleToRefineText'> 
-									<X>31%</X> 
-									<Y>55%</Y> 
-									<Width>60%</Width> 
-									<Height>5%</Height> 
-									<Text>[Refine]:          </Text>
-						</Text>						 
-						
-						<Text name='obj_HangerSaleStateListTitle'> 
-									<X>0%</X> 
-									<Y>5%</Y> 
-									<Width>30%</Width> 
-									<Height>5%</Height> 
-									<Alignment>Center</Alignment>
-									<Text>Pending States</Text>
-						</Text>						 
-						<listbox Name="obj_HangerSaleStateList">
-							<Font template='Listbox.Font' />
-							<BackgroundColor>FF000000</BackgroundColor>
-							<Border>1</Border>
-							<BorderColor>FFFFFFFF</BorderColor>
-							<X>0%</X>
-							<Y>10%</Y>
-							<Width>30%</Width>
-							<Height>80%</Height>
-						</listbox>
-						<button	Name='Config'>
-							<Font template='Button.Font' />
-							<BackgroundColor>FF000000</BackgroundColor>
-							<X>0%</X>
-							<Y>90%</Y>
-							<Width>100%</Width>
-							<Height>10%</Height>
-							<Text>Settings</Text>
-							<OnLeftClick>
-								timedcommand 0 "ui -load \"&filepath;/ComBotGUI_HangerSale.xml\""
-							</OnLeftClick>
-						</button>						
-					</Tab>
 
 					<Tab Name='Security'>
 						<frame name='obj_SecurityFillerFrame'>
@@ -484,7 +433,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								timedcommand 0 "ui -load \"&filepath;/ComBotGUI_Security.xml\""
 							</OnLeftClick>
 						</button>						
-					</Tab>
+					</Tab>-->
 					<Tab Name='Profiling'>
 						<frame name='obj_ProfilingFillerFrame'>
 							<BackgroundColor>FF000000</BackgroundColor>
@@ -660,6 +609,9 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						</Text>
 					</Tab>					
 				</Tabs>
+				<OnSelect>
+					Script[ComBot].VariableScope.Config.Common:SetActiveTab[${This.SelectedTab.Name}]
+				</OnSelect>
 			</TabControl>
 		</Children>
 	</window>

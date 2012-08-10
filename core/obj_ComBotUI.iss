@@ -44,11 +44,6 @@ objectdef obj_ComBotUI
 		Event[ISXEVE_onFrame]:AttachAtom[This:Pulse]
 	}
 
-	method Reload()
-	{
-		ui -reload interface/ComBotGUI.xml
-	}
-
 	method Shutdown()
 	{
 		Event[ISXEVE_onFrame]:DetachAtom[This:Pulse]
@@ -87,6 +82,7 @@ objectdef obj_ComBotUI
 		ui -reload interface/ComBotGUI.xml
 		This:WriteQueueToLog
 		This.Reloaded:Set[TRUE]
+		UIElement[ComBotTab@ComBot].Tab[${Config.Common.ActiveTab}]:Select
 	}
 	
 	method WriteQueueToLog()

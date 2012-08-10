@@ -24,10 +24,22 @@ objectdef obj_Security inherits obj_State
 	method Initialize()
 	{
 		This[parent]:Initialize
-		This.NonGameTiedPulse:Set[TRUE]
+		This.NonGameTiedPulse:Set[FALSE]
 		This:AssignStateQueueDisplay[obj_SecurityStateList@Security@ComBotTab@ComBot]
 		
-		This:QueueState["CheckSafe", 500]
+	}
+	
+	method Start()
+	{
+		if ${This.IsIdle}
+		{
+			This:QueueState["CheckSafe", 500]
+		}
+	}
+	
+	method Stop()
+	{
+		This:Clear
 	}
 
 	
@@ -143,9 +155,15 @@ objectdef obj_Security inherits obj_State
 			if ${Threat:First(exists)}
 			do
 			{
-				if  ${MyCorpID} == ${Threat.Value.CorpID} || \
-					${MyAllianceID} == ${Threat.Value.AllianceID} || \
-					${Me.Fleet.IsMember[${Threat.Value.CharID}]}
+				if ${MyCorpID} == ${Threat.Value.CorpID} && !${Config.Security.CorpFlee}
+				{
+					continue
+				}
+				if ${MyAllianceID} == ${Threat.Value.AllianceID} && !${Config.Security.AllianceFlee}
+				{
+					continue
+				}
+				if ${Me.Fleet.IsMember[${Threat.Value.CharID}]} && !${Config.Security.FleetFlee}
 				{
 					continue
 				}
@@ -233,6 +251,11 @@ objectdef obj_Security inherits obj_State
 		variable int GroupID
 		variable int TypeID
 
+		if !${Client.Ready}
+		{
+			return FALSE
+		}
+		
 		if ${Client.InSpace}
 		{
 			GroupID:Set[${MyShip.ToEntity.GroupID}]

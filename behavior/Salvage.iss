@@ -1,6 +1,6 @@
 /*
 
-ComBot  Copyright � 2012  Tehtsuo and Vendan
+ComBot  Copyright ? 2012  Tehtsuo and Vendan
 
 This file is part of ComBot.
 
@@ -21,6 +21,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 objectdef obj_Salvage inherits obj_State
 {
+	variable obj_SalvageUI SalvageUI
 	variable obj_LootCans LootCans
 	variable bool ForceBookmarkCycle=FALSE
 	variable index:int64 HoldOffPlayer
@@ -54,7 +55,7 @@ objectdef obj_Salvage inherits obj_State
 	method Stop()
 	{
 		UI:Update["obj_Salvage", "Salvage stopped, setting destination to station", "g"]
-		This:Clear()
+		This:Clear
 		Move:Bookmark[${Config.Salvager.Salvager_Dropoff}]
 		This:QueueState["Traveling"]
 	}
@@ -101,6 +102,37 @@ objectdef obj_Salvage inherits obj_State
 		HoldOffPlayer:GetIterator[HoldOffIterator]
 		
 		if ${BookmarkIterator:First(exists)}
+		do
+		{	
+			if ${BookmarkIterator.Value.Label.Left[8].Upper.Equal[${Config.Salvager.Salvager_Prefix}]} && ${BookmarkIterator.Value.JumpsTo} <= 0
+			{
+				InHoldOff:Set[FALSE]
+				if ${HoldOffIterator:First(exists)}
+				do
+				{
+					if ${HoldOffIterator.Value.Equal[${BookmarkIterator.Value.CreatorID}]}
+					{
+						InHoldOff:Set[TRUE]
+					}
+				}
+				while ${HoldOffIterator:Next(exists)}
+				if !${InHoldOff}
+				{
+					if (${BookmarkIterator.Value.TimeCreated.Compare[${BookmarkTime}]} < 0 && ${BookmarkIterator.Value.DateCreated.Compare[${BookmarkDate}]} <= 0) || ${BookmarkIterator.Value.DateCreated.Compare[${BookmarkDate}]} < 0
+					{
+						echo Next bookmark set - ${BookmarkIterator.Value} - ${BookmarkIterator.Value.JumpsTo} Jumps
+						Target:Set[${BookmarkIterator.Value.Label}]
+						BookmarkTime:Set[${BookmarkIterator.Value.TimeCreated}]
+						BookmarkDate:Set[${BookmarkIterator.Value.DateCreated}]
+						BookmarkCreator:Set[${BookmarkIterator.Value.CreatorID}]
+						BookmarkFound:Set[TRUE]
+					}
+				}
+			}
+		}
+		while ${BookmarkIterator:Next(exists)}
+		
+		if ${BookmarkIterator:First(exists)} && !${BookmarkFound}
 		do
 		{	
 			if ${BookmarkIterator.Value.Label.Left[8].Upper.Equal[${Config.Salvager.Salvager_Prefix}]}
@@ -271,6 +303,7 @@ objectdef obj_Salvage inherits obj_State
 				Move:Bookmark[${Config.Salvager.Salvager_Dropoff}]
 				This:Clear
 				This:QueueState["Traveling"]
+				This:QueueState["PrepOffload"]
 				This:QueueState["Offload"]
 				This:QueueState["RefreshBookmarks", 3000]
 				This:QueueState["CheckBookmarks"]
@@ -283,7 +316,6 @@ objectdef obj_Salvage inherits obj_State
 		
 		Wrecks:RequestUpdate
 		
-		echo Inactive Tractor Beams - ${Ship.ModuleList_TractorBeams.InactiveCount}
 		
 		if ${Wrecks.TargetList.Used} > 0
 		{
@@ -299,12 +331,11 @@ objectdef obj_Salvage inherits obj_State
 			{
 				if ${TargetIterator.Value.ID(exists)}
 				{
-					if ${TargetIterator.Value.Distance} > ${Ship.ModuleList_TractorBeams.Range}
+					if ${TargetIterator.Value.Distance} > ${Ship.ModuleList_TractorBeams.Range} || ${TargetIterator.Value.Distance} > ${MyShip.MaxTargetRange}
 					{
 						Move:Approach[${TargetIterator.Value.ID}]
 						return FALSE
 					}
-					echo ${TargetIterator.Value.Name} - ${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]}
 					
 					if  !${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]} &&\
 						${TargetIterator.Value.Distance} < ${Ship.ModuleList_TractorBeams.Range} &&\
@@ -316,7 +347,6 @@ objectdef obj_Salvage inherits obj_State
 						Ship.ModuleList_TractorBeams:Activate[${TargetIterator.Value.ID}]
 						return FALSE
 					}
-					echo ${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]} - ${TargetIterator.Value.ID}
 					if  !${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]} &&\
 						${TargetIterator.Value.Distance} < ${Ship.ModuleList_TractorBeams.Range} &&\
 						${TargetIterator.Value.Distance} > LOOT_RANGE &&\
@@ -411,6 +441,21 @@ objectdef obj_Salvage inherits obj_State
 				}
 				while ${BookmarkIterator:Next(exists)}
 			}
+
+			if ${EVEWindow[ByName, modal].Text.Find["This gate is locked!"](exists)}
+			{
+				UI:Update["obj_Salvage", "Locked gate detected - Jumping clear", "g"]
+				EVEWindow[ByName,modal]:ClickButtonOK
+				HoldOffPlayer:Insert[${BookmarkCreator}]
+				HoldOffTimer:Insert[${Math.Calc[${LavishScript.RunningTime} + 600000]}]
+				This:Clear
+				This:QueueState["JumpToCelestial"]
+				This:QueueState["Traveling"]
+				This:QueueState["RefreshBookmarks", 3000]
+				This:QueueState["CheckBookmarks"]
+				return TRUE
+			}
+
 			
 			if ${UseJumpGate}
 			{
@@ -448,7 +493,6 @@ objectdef obj_Salvage inherits obj_State
 	
 	member:bool DeleteBookmark(int64 BookmarkCreator)
 	{
-		echo DeleteBookmark
 		variable index:bookmark Bookmarks
 		variable iterator BookmarkIterator
 		EVE:GetBookmarks[Bookmarks]
@@ -456,7 +500,6 @@ objectdef obj_Salvage inherits obj_State
 		if ${BookmarkIterator:First(exists)}
 		do
 		{
-			echo ${BookmarkIterator.Value.Label.Left[8].Upper.Equal[${Config.Salvager.Salvager_Prefix}]} && ${BookmarkIterator.Value.CreatorID.Equal[${BookmarkCreator}]}
 			if ${BookmarkIterator.Value.Label.Left[8].Upper.Equal[${Config.Salvager.Salvager_Prefix}]} && ${BookmarkIterator.Value.CreatorID.Equal[${BookmarkCreator}]}
 			{
 				if ${BookmarkIterator.Value.JumpsTo} == 0
@@ -662,6 +705,11 @@ objectdef obj_LootCans inherits obj_State
 		{
 			return FALSE
 		}
+		
+		if ${Me.ToEntity.Mode} == 3
+		{
+			return FALSE
+		}
 
 		if ${Entity[(GroupID==GROUP_CARGOCONTAINER) && IsAbandoned](exists)}
 		{
@@ -711,4 +759,70 @@ objectdef obj_LootCans inherits obj_State
 		}
 		return FALSE
 	}
+}
+
+objectdef obj_SalvageUI inherits obj_State
+{
+
+
+	method Initialize()
+	{
+		This[parent]:Initialize
+		This.NonGameTiedPulse:Set[TRUE]
+	}
+	
+	method Start()
+	{
+		This:QueueState["UpdateBookmarkLists", 5]
+	}
+	
+	method Stop()
+	{
+		This:Clear
+	}
+
+	member:bool UpdateBookmarkLists()
+	{
+		variable index:bookmark Bookmarks
+		variable iterator BookmarkIterator
+
+		EVE:GetBookmarks[Bookmarks]
+		Bookmarks:GetIterator[BookmarkIterator]
+
+		UIElement[DropoffList@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:ClearItems
+		if ${BookmarkIterator:First(exists)}
+			do
+			{	
+				if ${UIElement[Dropoff@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager].Text.Length}
+				{
+					if ${BookmarkIterator.Value.Label.Left[${Config.Salvager.Salvager_Dropoff.Length}].Equal[${Config.Salvager.Salvager_Dropoff}]}
+						UIElement[DropoffList@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[${BookmarkIterator.Value.Label}]
+				}
+				else
+				{
+					UIElement[DropoffList@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[${BookmarkIterator.Value.Label}]
+				}
+			}
+			while ${BookmarkIterator:Next(exists)}
+
+		UIElement[BeltPatrolBookmarkList@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:ClearItems
+		if ${BookmarkIterator:First(exists)}
+			do
+			{	
+				if ${UIElement[BeltPatrolBookmark@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager].Text.Length}
+				{
+					if ${BookmarkIterator.Value.Label.Left[${Config.Salvager.BeltPatrolBookmark.Length}].Equal[${Config.Salvager.BeltPatrolBookmark}]}
+						UIElement[BeltPatrolBookmarkList@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[${BookmarkIterator.Value.Label}]
+				}
+				else
+				{
+					UIElement[BeltPatrolBookmarkList@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[${BookmarkIterator.Value.Label}]
+				}
+			}
+			while ${BookmarkIterator:Next(exists)}
+
+			
+		return FALSE
+	}
+
 }

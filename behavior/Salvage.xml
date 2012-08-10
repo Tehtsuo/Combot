@@ -27,6 +27,24 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 		<Size>8</Size>
 		<Color>FFFFFFFF</Color>
 	</template>	
+	<template name='Text.Font'>	
+		<Name>Verdana</Name>
+		<Size>12</Size>
+		<Color>FFFFFFFF</Color>
+		<Bold />
+	</template>	
+	<template name='Checkbox.Font'>	
+		<Name>Verdana</Name>
+		<Size>12</Size>
+		<Color>FFFFFFFF</Color>
+		<Bold />
+	</template>	
+	<template name='Button.Font'>	
+		<Name>Verdana</Name>
+		<Size>12</Size>
+		<Color>FF000000</Color>
+		<Bold />
+	</template>	
 
 	<window name='ComBot_DedicatedSalvager'>
 		<Visible>1</Visible>
@@ -50,6 +68,18 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					<Alignment>Center</Alignment>
 					<Text>Dedicated Salvager Configuration</Text>
 				</Text>
+				<button	Name='Help'>
+					<Font template='Button.Font' />
+					<BackgroundColor>FF000000</BackgroundColor>
+					<X>r80</X>
+					<Y>0</Y>
+					<Width>40</Width>
+					<Height>20</Height>
+					<Text>Help</Text>
+					<OnLeftClick>
+						timedcommand 0 "OSExecute http://eve.isxgames.com/wiki/index.php?title=ComBot_Salvager"
+					</OnLeftClick>
+				</button>
 				<button	Name='Close'>
 					<X>r40</X>
 					<Y>0</Y>
@@ -57,6 +87,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					<Height>20</Height>
 					<Text>Close</Text>
 					<OnLeftClick>
+						Script[ComBot].VariableScope.Salvage.SalvageUI:Stop
 						ui -unload "&filepath;/Salvage"
 					</OnLeftClick>
 				</button>
@@ -72,26 +103,18 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 				<Border>1</Border>
 				<BorderColor>FFFFFFFF</BorderColor>
 				<Children name="ComBot_DedicatedSalvager_Frame_Children">
-					<Text name='obj_SalvageInformation'> 
-						<Font template='Information.Font' />
+					<Text name='PrefixTitle'> 
 						<X>1%</X> 
 						<Y>1%</Y> 
-						<Width>98%</Width> 
-						<Height>18%</Height> 
-						<Wrap />
-						<Text>The dedicated salvager mode will automatically salvage from bookmarks found in your address book with a prefix matching what you set below.  It will follow gates only when there are newer bookmarks available from the creator of the bookmark to the gate.  This means it will not gate to a room which has not been cleared, with the exception of non-linear missions like Worlds Collide.  Note - if NPCs are present when the Salvager warps in, it will immediately panic warp to a star and block the bookmark creator's bookmarks for an interval of time.</Text>
-					</Text>						 
-					<Text name='obj_SalvagePrefixTitle'> 
-						<X>1%</X> 
-						<Y>20%</Y> 
-						<Width>30%</Width> 
+						<Width>32%</Width> 
 						<Height>2%</Height> 
+						<Alignment>Center</Alignment>
 						<Text>Salvage Prefix</Text>
 					</Text>						 
-					<Textentry name='obj_SalvagePrefix'> 
+					<Textentry name='Prefix'> 
 						<X>1%</X> 
-						<Y>22%</Y> 
-						<Width>30%</Width> 
+						<Y>3%</Y> 
+						<Width>32%</Width> 
 						<Height>3%</Height> 
 						<OnLoad>
 							This:SetText[${Script[ComBot].VariableScope.Config.Salvager.Salvager_Prefix}]
@@ -100,57 +123,72 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							Script[ComBot].VariableScope.Config.Salvager:SetSalvager_Prefix[${This.Text}]
 						</OnChange>
 					</Textentry>						 
-					<Text name='obj_SalvageDropoffBookmarkListTitle'> 
+					<Text name='DropoffTitle'> 
 						<X>1%</X> 
-						<Y>28%</Y> 
-						<Width>30%</Width> 
+						<Y>8%</Y> 
+						<Width>32%</Width> 
 						<Height>2%</Height> 
 						<Alignment>Center</Alignment>
 						<Text>Dropoff Bookmark</Text>
 					</Text>						 
-					<listbox Name="obj_SalvageDropoffBookmarkList">
+					<Textentry Name="Dropoff">
 						<BackgroundColor>FF000000</BackgroundColor>
 						<Border>1</Border>
 						<BorderColor>FFFFFFFF</BorderColor>
 						<X>1%</X>
-						<Y>30%</Y>
-						<Width>30%</Width>
-						<Height>40%</Height>
+						<Y>10%</Y>
+						<Width>32%</Width>
+						<Height>3%</Height>
 						<OnLoad>
-							variable index:bookmark Bookmarks
-							variable iterator BookmarkIterator
-
-							EVE:GetBookmarks[Bookmarks]
-							Bookmarks:GetIterator[BookmarkIterator]
-
-							if ${BookmarkIterator:First(exists)}
-								do
-								{	
-									This:AddItem[${BookmarkIterator.Value.Label}]
-								}
-								while ${BookmarkIterator:Next(exists)}
-							This.ItemByText[${Script[ComBot].VariableScope.Config.Salvager.Salvager_Dropoff}]:Select
+							This:SetText[${Script[ComBot].VariableScope.Config.Salvager.Salvager_Dropoff}]
+						</OnLoad>
+						<OnChange>
+							if ${This.Text.Length}
+							{
+								Script[ComBot].VariableScope.Config.Salvager:SetSalvager_Dropoff[${This.Text}]
+							}
+							else
+							{
+								Script[ComBot].VariableScope.Config.Salvager:SetSalvager_Dropoff[\"\"]
+							}
+							UIElement[DropoffList@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Show
+							Script[ComBot].VariableScope.Salvage.SalvageUI:Start
+						</OnChange>
+					</Textentry>
+					<listbox Name="DropoffList">
+						<BackgroundColor>FF000000</BackgroundColor>
+						<Border>1</Border>
+						<BorderColor>FFFFFFFF</BorderColor>
+						<X>1%</X>
+						<Y>13%</Y>
+						<Width>32%</Width>
+						<Height>30%</Height>
+						<OnLoad>
+							This:Hide
 						</OnLoad>
 						<OnSelect>
+							UIElement[Dropoff@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText[${This.SelectedItem.Text}]
 							Script[ComBot].VariableScope.Config.Salvager:SetSalvager_Dropoff[${This.SelectedItem.Text}]
+							Script[ComBot].VariableScope.Salvage.SalvageUI:Stop
+							This:Hide
 						</OnSelect>
 					</listbox>
-					<Text name='obj_SalvageDropoffBookmarkTypeTitle'> 
-						<X>31%</X> 
-						<Y>28%</Y> 
-						<Width>30%</Width> 
+					<Text name='DropoffTypeTitle'> 
+						<X>1%</X> 
+						<Y>15%</Y> 
+						<Width>32%</Width> 
 						<Height>2%</Height> 
 						<Alignment>Center</Alignment>
 						<Text>Dropoff Location Type</Text>
 					</Text>
-					<listbox Name="obj_SalvageDropoffBookmarkType">
+					<listbox Name="DropoffType">
 						<BackgroundColor>FF000000</BackgroundColor>
 						<Border>1</Border>
 						<BorderColor>FFFFFFFF</BorderColor>
-						<X>31%</X>
-						<Y>30%</Y>
-						<Width>30%</Width>
-						<Height>40%</Height>
+						<X>1%</X>
+						<Y>17%</Y>
+						<Width>32%</Width>
+						<Height>20%</Height>
 						<Items>
 							<Item>Personal Hangar</Item>
 							<Item>Corporation Folder 1</Item>
@@ -168,10 +206,54 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							Script[ComBot].VariableScope.Config.Salvager:SetSalvager_Dropoff_Type[${This.SelectedItem.Text}]
 						</OnSelect>
 					</listbox>
-					<Checkbox name='obj_SalvageBeltPatrol'> 
-						<X>61%</X> 
-						<Y>27%</Y> 
-						<Width>30%</Width> 
+
+					<Textentry Name="BeltPatrolBookmark">
+						<BackgroundColor>FF000000</BackgroundColor>
+						<Border>1</Border>
+						<BorderColor>FFFFFFFF</BorderColor>
+						<X>34%</X>
+						<Y>5%</Y>
+						<Width>32%</Width>
+						<Height>3%</Height>
+						<OnLoad>
+							This:SetText[${Script[ComBot].VariableScope.Config.Salvager.BeltPatrolBookmark}]
+						</OnLoad>
+						<OnChange>
+							if ${This.Text.Length}
+							{
+								Script[ComBot].VariableScope.Config.Salvager:SetBeltPatrolBookmark[${This.Text}]
+							}
+							else
+							{
+								Script[ComBot].VariableScope.Config.Salvager:SetBeltPatrolBookmark[\"\"]
+							}
+							UIElement[BeltPatrolBookmarkList@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Show
+							Script[ComBot].VariableScope.Salvage.SalvageUI:Start
+						</OnChange>
+					</Textentry>
+					<listbox Name="BeltPatrolBookmarkList">
+						<BackgroundColor>FF000000</BackgroundColor>
+						<Border>1</Border>
+						<BorderColor>FFFFFFFF</BorderColor>
+						<X>34%</X>
+						<Y>8%</Y>
+						<Width>32%</Width>
+						<Height>37%</Height>
+						<OnLoad>
+							This:Hide
+						</OnLoad>
+						<OnSelect>
+							UIElement[BeltPatrolBookmark@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText[${This.SelectedItem.Text}]
+							Script[ComBot].VariableScope.Config.Salvager:SetBeltPatrolBookmark[${This.SelectedItem.Text}]
+							Script[ComBot].VariableScope.Salvage.SalvageUI:Stop
+							This:Hide
+						</OnSelect>
+					</listbox>
+
+					<Checkbox name='BeltPatrol'> 
+						<X>34%</X> 
+						<Y>1%</Y> 
+						<Width>32%</Width> 
 						<Height>3%</Height> 
 						<Alignment>Center</Alignment>
 						<Text>Patrol asteroid belts by default</Text>
@@ -180,38 +262,24 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							{
 								This:SetChecked
 							}
+							else
+							{
+								UIElement[BeltPatrolBookmark@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Hide
+							}
 						</OnLoad>
 						<OnLeftClick>
 							Script[ComBot].VariableScope.Config.Salvager:SetBeltPatrol[${This.Checked}]
+							if ${This.Checked}
+							{
+								UIElement[BeltPatrolBookmark@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Show
+							}
+							else
+							{
+								UIElement[BeltPatrolBookmark@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Hide
+								UIElement[BeltPatrolBookmarkList@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Hide
+							}
 						</OnLeftClick>
 					</Checkbox>
-					<listbox Name="obj_SalvageBeltPatrolBookmark">
-						<BackgroundColor>FF000000</BackgroundColor>
-						<Border>1</Border>
-						<BorderColor>FFFFFFFF</BorderColor>
-						<X>61%</X>
-						<Y>30%</Y>
-						<Width>30%</Width>
-						<Height>40%</Height>
-						<OnLoad>
-							variable index:bookmark Bookmarks
-							variable iterator BookmarkIterator
-
-							EVE:GetBookmarks[Bookmarks]
-							Bookmarks:GetIterator[BookmarkIterator]
-
-							if ${BookmarkIterator:First(exists)}
-								do
-								{	
-									This:AddItem[${BookmarkIterator.Value.Label}]
-								}
-								while ${BookmarkIterator:Next(exists)}
-							This.ItemByText[${Script[ComBot].VariableScope.Config.Salvager.BeltPatrolBookmark}]:Select
-						</OnLoad>
-						<OnSelect>
-							Script[ComBot].VariableScope.Config.Salvager:SetBeltPatrolBookmark[${This.SelectedItem.Text}]
-						</OnSelect>
-					</listbox>
 				</Children>
 			</Frame>
 		</Children>
