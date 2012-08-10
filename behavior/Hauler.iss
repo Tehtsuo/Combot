@@ -316,7 +316,7 @@ objectdef obj_Hauler inherits obj_State
 			return TRUE
 		}
 		
-		if !${Entity[${CurrentCan}].IsLockedTarget}
+		if !${Entity[${CurrentCan}].IsLockedTarget} && ${PopCan}
 		{
 			if !${Entity[${CurrentCan}].BeingTargeted}
 			{
@@ -328,7 +328,7 @@ objectdef obj_Hauler inherits obj_State
 		
 		if ${Entity[${CurrentCan}].Distance} > LOOT_RANGE
 		{
-			if ${Ship.ModuleList_TractorBeams.Count} > 0 && ${PopCan}
+			if ${Ship.ModuleList_TractorBeams.Count} > 0 && ${PopCan} && ${Entity[${CurrentCan}].Distance} < ${Ship.ModuleList_TractorBeams.Range}
 			{
 				if !${Ship.ModuleList_TractorBeams.IsActiveOn[${CurrentCan}]}
 				{
@@ -347,7 +347,7 @@ objectdef obj_Hauler inherits obj_State
 			if !${EVEWindow[ByName, Inventory].ChildWindowExists[${CurrentCan}]}
 			{
 				UI:Update["obj_Hauler", "Opening - ${Entity[${CurrentCan}].Name}", "g"]
-				IR_Cans.TargetList.Get[1]:OpenCargo
+				Entity[${CurrentCan}]:OpenCargo
 				return FALSE
 			}
 			if !${EVEWindow[ByItemID, ${CurrentCan}](exists)}
@@ -369,6 +369,7 @@ objectdef obj_Hauler inherits obj_State
 					Cargo:DontPopCan
 				}
 				Ship.ModuleList_TractorBeams:Deactivate[${CurrentCan}]
+				Entity[${CurrentCan}]:UnlockTarget
 				return TRUE
 			}
 			else
@@ -380,6 +381,7 @@ objectdef obj_Hauler inherits obj_State
 				else
 				{
 					Cargo:DontPopCan
+					Entity[${CurrentCan}]:UnlockTarget
 					return TRUE
 				}
 			}
@@ -538,7 +540,7 @@ objectdef obj_Hauler inherits obj_State
 				echo Entity exists - ${Entity[Name = "${FleetMembers.Get[1].ToPilot.Name}"](exists)}
 				if ${Entity[Name = "${FleetMembers.Get[1].ToPilot.Name}"](exists)}
 				{
-					UI:Update["obj_Miner", "Looting cans for ${FleetMembers.Get[1].ToPilot.Name}", "g"]
+					UI:Update["obj_Hauler", "Looting cans for ${FleetMembers.Get[1].ToPilot.Name}", "g"]
 					This:Clear
 					This:QueueState["PopulateTargetList", 2000, ${Entity[Name = "${FleetMembers.Get[1].ToPilot.Name}"].ID}]
 					This:QueueState["CheckTargetList", 50]
@@ -551,7 +553,7 @@ objectdef obj_Hauler inherits obj_State
 				}
 				else
 				{
-					UI:Update["obj_Miner", "Warping to ${FleetMembers.Get[1].ToPilot.Name}", "g"]
+					UI:Update["obj_Hauler", "Warping to ${FleetMembers.Get[1].ToPilot.Name}", "g"]
 					FleetMembers.Get[1]:WarpTo[]
 					Client:Wait[5000]
 					This:Clear
@@ -584,7 +586,7 @@ objectdef obj_Hauler inherits obj_State
 					{
 						if !${EVEWindow[ByName, Inventory].ChildWindowExists[${Container}]}
 						{
-							UI:Update["obj_Miner", "Opening ${Config.Hauler.Dropoff_ContainerName}", "g"]
+							UI:Update["obj_Hauler", "Opening ${Config.Hauler.Dropoff_ContainerName}", "g"]
 							Entity[${Container}]:Open
 							return FALSE
 						}
@@ -593,7 +595,7 @@ objectdef obj_Hauler inherits obj_State
 							EVEWindow[ByName, Inventory]:MakeChildActive[${Container}]
 							return FALSE
 						}
-						;UI:Update["obj_Miner", "Unloading to ${Config.Hauler.Dropoff_ContainerName}", "g"]
+						;UI:Update["obj_Hauler", "Unloading to ${Config.Hauler.Dropoff_ContainerName}", "g"]
 						Cargo:PopulateCargoList[SHIP]
 						Cargo:MoveCargoList[SHIPCORPORATEHANGAR, "", ${Container}]
 						This:QueueState["Idle", 1000]

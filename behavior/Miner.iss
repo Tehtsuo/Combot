@@ -530,9 +530,9 @@ objectdef obj_Miner inherits obj_State
 		}
 		else
 		{
-			if ${Entity[CategoryID==CATEGORYID_ORE].Distance} > ${Math.Calc[${Ship.ModuleList_MiningLaser.Range} * (2/3)]}
+			if ${Entity[CategoryID==CATEGORYID_ORE].Distance} > ${Math.Calc[${Ship.ModuleList_MiningLaser.Range} * (1/2)]}
 			{
-				Move:Approach[${Entity[CategoryID==CATEGORYID_ORE]}, ${Math.Calc[${Ship.ModuleList_MiningLaser.Range} * (1/2)]}]
+				Move:Approach[${Entity[CategoryID==CATEGORYID_ORE].ID}, ${Math.Calc[${Ship.ModuleList_MiningLaser.Range} * (1/3)]}]
 			}
 		}
 		
