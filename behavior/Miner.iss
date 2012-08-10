@@ -136,9 +136,9 @@ objectdef obj_Miner inherits obj_State
 				break
 			case Container
 				if  (${UseOreHold} &&\
-					(${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]}) >= ${Config.Miner.Threshold} * .01)) ||\
+					${Math.Calc[(${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]})]} >= ${Math.Calc[${Config.Miner.Threshold} * .01]})) ||\
 					(!${UseOreHold} &&\
-					(${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) >= ${Config.Miner.Threshold} * .01)
+					${Math.Calc[(${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity})]} >= ${Math.Calc[${Config.Miner.Threshold} * .01]})
 				{
 					if ${Drones.DronesInSpace}
 					{
@@ -165,9 +165,9 @@ objectdef obj_Miner inherits obj_State
 				break		
 			default
 				if  (${UseOreHold} &&\
-					(${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]}) >= ${Config.Miner.Threshold} * .01)) ||\
+					${Math.Calc[(${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]})]} >= ${Math.Calc[${Config.Miner.Threshold} * .01]})) ||\
 					(!${UseOreHold} &&\
-					(${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) >= ${Config.Miner.Threshold} * .01)
+					${Math.Calc[(${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity})]} >= ${Math.Calc[${Config.Miner.Threshold} * .01]})
 				{
 					if ${Drones.DronesInSpace}
 					{
@@ -493,9 +493,9 @@ objectdef obj_Miner inherits obj_State
 				{
 					echo UseOreHold: ${UseOreHold}
 					if  (${UseOreHold} &&\
-						(${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]}) >= ${Config.Miner.Threshold} * .01)) ||\
+						${Math.Calc[(${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]})]} >= ${Math.Calc[${Config.Miner.Threshold} * .01]})) ||\
 						(!${UseOreHold} &&\
-						(${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) >= ${Config.Miner.Threshold} * .01)
+						${Math.Calc[(${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity})]} >= ${Math.Calc[${Config.Miner.Threshold} * .01]})
 					{
 						if !${EVEWindow[ByName, Inventory].ChildWindowExists[${Orca}]}
 						{

@@ -51,9 +51,9 @@ objectdef obj_Jetcan inherits obj_State
 			return FALSE
 		}
 		if  (${Miner.UseOreHold} &&\
-			(${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]}) < ${Config.Miner.Threshold} * .01)) ||\
+			${Math.Calc[(${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]})]} < ${Math.Calc[${Config.Miner.Threshold} * .01]})) ||\
 			(!${Miner.UseOreHold} &&\
-			(${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) < ${Config.Miner.Threshold} * .01)
+			${Math.Calc[(${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity})]} < ${Math.Calc[${Config.Miner.Threshold} * .01]})
 		{
 			return FALSE
 		}
@@ -136,9 +136,9 @@ objectdef obj_Jetcan inherits obj_State
 		}
 
 		if  (${Miner.UseOreHold} &&\
-			(${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]}) >= ${Config.Miner.Threshold} * .01)) ||\
+			${Math.Calc[(${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]})]} >= ${Math.Calc[${Config.Miner.Threshold} * .01]})) ||\
 			(!${Miner.UseOreHold} &&\
-			(${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) >= ${Config.Miner.Threshold} * .01)
+			${Math.Calc[(${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity})]} >= ${Math.Calc[${Config.Miner.Threshold} * .01]})
 		{
 			if ${Miner.UseOreHold}
 			{
