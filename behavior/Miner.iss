@@ -215,7 +215,6 @@ objectdef obj_Miner inherits obj_State
 				This:QueueState["Traveling", 1000]
 				This:QueueState["Mine"]
 				}
-				break
 		}
 		Profiling:EndTrack
 		return TRUE;
