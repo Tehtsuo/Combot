@@ -30,51 +30,47 @@ objectdef obj_Ship
 	variable index:string ModuleLists
 	variable index:module ModuleList
 	variable obj_ModuleList ModuleList_ArmorProjectors
-	ModuleLists:Insert[ArmorProjectors]
 	variable obj_ModuleList ModuleList_ShieldTransporters
-	ModuleLists:Insert[ShieldTransporters]
 	variable obj_ModuleList ModuleList_MiningLaser
-	ModuleLists:Insert[MiningLaser]
 	variable obj_ModuleList ModuleList_Weapon
-	ModuleLists:Insert[Weapon]
 	variable obj_ModuleList ModuleList_ECCM
-	ModuleLists:Insert[ECCM]
 	variable obj_ModuleList ModuleList_ActiveResists
-	ModuleLists:Insert[ActiveResists]
 	variable obj_ModuleList ModuleList_Regen_Shield
-	ModuleLists:Insert[Regen_Shield]
 	variable obj_ModuleList ModuleList_Repair_Armor
-	ModuleLists:Insert[Repair_Armor]
 	variable obj_ModuleList ModuleList_Repair_Hull
-	ModuleLists:Insert[Repair_Hull]
 	variable obj_ModuleList ModuleList_AB_MWD
-	ModuleLists:Insert[AB_MWD]
 	variable obj_ModuleList ModuleList_Passive
-	ModuleLists:Insert[Passive]
 	variable obj_ModuleList ModuleList_Salvagers
-	ModuleLists:Insert[Salvagers]
 	variable obj_ModuleList ModuleList_TractorBeams
-	ModuleLists:Insert[TractorBeams]
 	variable obj_ModuleList ModuleList_Cloaks
-	ModuleLists:Insert[Cloaks]
 	variable obj_ModuleList ModuleList_StasisWeb
-	ModuleLists:Insert[StasisWeb]
 	variable obj_ModuleList ModuleList_SensorBoost
-	ModuleLists:Insert[SensorBoost]
 	variable obj_ModuleList ModuleList_TargetPainter
-	ModuleLists:Insert[TargetPainter]
 	variable obj_ModuleList ModuleList_TrackingComputer
-	ModuleLists:Insert[TrackingComputer]
 	variable obj_ModuleList ModuleList_GangLinks
-	ModuleLists:Insert[GangLinks]
-
-
-	
-	
 
 	method Initialize()
 	{
 		Event[ISXEVE_onFrame]:AttachAtom[This:Pulse]
+		ModuleLists:Insert[ArmorProjectors]
+		ModuleLists:Insert[ShieldTransporters]
+		ModuleLists:Insert[MiningLaser]
+		ModuleLists:Insert[Weapon]
+		ModuleLists:Insert[ECCM]
+		ModuleLists:Insert[ActiveResists]
+		ModuleLists:Insert[Regen_Shield]
+		ModuleLists:Insert[Repair_Armor]
+		ModuleLists:Insert[Repair_Hull]
+		ModuleLists:Insert[AB_MWD]
+		ModuleLists:Insert[Passive]
+		ModuleLists:Insert[Salvagers]
+		ModuleLists:Insert[TractorBeams]
+		ModuleLists:Insert[Cloaks]
+		ModuleLists:Insert[StasisWeb]
+		ModuleLists:Insert[SensorBoost]
+		ModuleLists:Insert[TargetPainter]
+		ModuleLists:Insert[TrackingComputer]
+		ModuleLists:Insert[GangLinks]
 	}
 
 	method Shutdown()
