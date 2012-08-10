@@ -24,6 +24,7 @@ objectdef obj_Miner inherits obj_State
 	variable obj_MinerUI MinerUI
 	variable obj_TargetList Asteroids
 	variable bool WarpToOrca=FALSE
+	variable bool UseOreHold=FALSE
 
 	method Initialize()
 	{
@@ -95,6 +96,7 @@ objectdef obj_Miner inherits obj_State
 			MyShip:OpenCargo[]
 			return FALSE
 		}
+		UseOreHold:Set[${EVEWindow[ByName, Inventory].ChildWindowExists[ShipOreHold]}]
 		return TRUE
 	}
 	
@@ -132,7 +134,10 @@ objectdef obj_Miner inherits obj_State
 				}
 				break
 			case Container
-				if (${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]}) >= ${Config.Miner.Threshold} * .01
+				if  (${UseOreHold} &&\
+					(${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]}) >= ${Config.Miner.Threshold} * .01)) ||\
+					(!${UseOreHold} &&\
+					(${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) >= ${Config.Miner.Threshold} * .01)
 				{
 					if ${Drones.DronesInSpace}
 					{
@@ -158,7 +163,10 @@ objectdef obj_Miner inherits obj_State
 			case Jetcan
 				break		
 			default
-				if (${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]}) >= ${Config.Miner.Threshold} * .01
+				if  (${UseOreHold} &&\
+					(${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]}) >= ${Config.Miner.Threshold} * .01)) ||\
+					(!${UseOreHold} &&\
+					(${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) >= ${Config.Miner.Threshold} * .01)
 				{
 					if ${Drones.DronesInSpace}
 					{
@@ -232,7 +240,15 @@ objectdef obj_Miner inherits obj_State
 	{
 		Profiling:StartTrack["Miner_Offload"]
 		UI:Update["obj_Miner", "Unloading cargo", "g"]
-		Cargo:PopulateCargoList[SHIPOREHOLD]
+		if ${UseOreHold}
+		{
+			Cargo:PopulateCargoList[SHIPOREHOLD]
+		}
+		else
+		{
+			Cargo:PopulateCargoList[SHIP]
+			Cargo:Filter["CategoryID == CATEGORYID_ORE", FALSE]
+		}
 		switch ${Config.Miner.Dropoff_Type}
 		{
 			case Personal Hangar
@@ -474,7 +490,10 @@ objectdef obj_Miner inherits obj_State
 				}
 				else
 				{
-					if (${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]}) > 0.10
+					if  (${UseOreHold} &&\
+						(${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]}) >= ${Config.Miner.Threshold} * .01)) ||\
+						(!${UseOreHold} &&\
+						(${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) >= ${Config.Miner.Threshold} * .01)
 					{
 						if !${EVEWindow[ByName, Inventory].ChildWindowExists[${Orca}]}
 						{
@@ -490,8 +509,15 @@ objectdef obj_Miner inherits obj_State
 							return FALSE
 						}
 						;UI:Update["obj_Miner", "Unloading to ${Config.Miner.Container_Name}", "g"]
-						Cargo:PopulateCargoList[SHIPOREHOLD]
-						Cargo:Filter["CategoryID == CATEGORYID_ORE", FALSE]
+						if ${UseOreHold}
+						{
+							Cargo:PopulateCargoList[SHIPOREHOLD]
+						}
+						else
+						{
+							Cargo:PopulateCargoList[SHIP]
+							Cargo:Filter["CategoryID == CATEGORYID_ORE", FALSE]
+						}
 						Cargo:MoveCargoList[SHIPCORPORATEHANGAR, "", ${Orca}]
 						This:QueueState["Idle", 1000]
 						This:QueueState["StackItemHangar"]
