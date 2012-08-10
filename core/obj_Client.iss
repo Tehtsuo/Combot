@@ -62,6 +62,13 @@ objectdef obj_Client
 	
 	member:bool InSpace()
 	{
+		if ${Me.InStation}
+		{
+			if ${Ship.RetryUpdateModuleList} == 0
+			{
+				Ship.RetryUpdateModuleList:Set[1]
+			}
+		}
 		if ${Me.InSpace(type).Name.Equal[bool]} && ${EVE.EntitiesCount} > 0
 		{
 			return ${Me.InSpace}
