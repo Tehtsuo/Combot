@@ -62,7 +62,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 			<Width>100%</Width>
 			<Height>20</Height>
 			<Border>0</Border>
-			<BackgroundColor>FF000000</BackgroundColor>
+			<BackgroundColor>FF888888</BackgroundColor>
 			<Children>
 				<Text name='ComBot_TitleBar_Title'>
 					<Alignment>Center</Alignment>
