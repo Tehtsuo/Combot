@@ -508,6 +508,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								UIElement[IcePrefixTitle@Miner_Frame@ComBot_Miner]:Hide
 								UIElement[IcePrefix@Miner_Frame@ComBot_Miner]:Hide
 							}
+							This:SetZOrder[movetop]
 						</OnLoad>
 						<OnLeftClick>
 							Script[ComBot].VariableScope.Config.Miner:SetUseBookmarks[${This.Checked}]
@@ -525,6 +526,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								UIElement[IcePrefixTitle@Miner_Frame@ComBot_Miner]:Hide
 								UIElement[IcePrefix@Miner_Frame@ComBot_Miner]:Hide
 							}
+							This:SetZOrder[movetop]
 						</OnLeftClick>
 					</Checkbox>
 					
@@ -550,6 +552,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									UIElement[MaxLock@Miner_Frame@ComBot_Miner]:Show
 								}
 							}
+							This:SetZOrder[movetop]
 						</OnLoad>
 						<OnLeftClick>
 							Script[ComBot].VariableScope.Config.Miner:SetOrcaMode[${This.Checked}]
@@ -563,6 +566,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								UIElement[MaxLockTitle@Miner_Frame@ComBot_Miner]:Show
 								UIElement[MaxLock@Miner_Frame@ComBot_Miner]:Show
 							}
+							This:SetZOrder[movetop]
 						</OnLeftClick>
 					</Checkbox>
 					
@@ -920,6 +924,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 										}
 									}
 								}								
+								This:SetZOrder[movetop]
 							</OnLoad>
 							<OnLeftClick>
 								Script[ComBot].VariableScope.Config.Miner:SetIceMining[${This.Checked}]
@@ -1101,7 +1106,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 										}
 									}
 								}
-							Script[ComBot].VariableScope.Miner:PopulateTargetList
+								Script[ComBot].VariableScope.Miner:PopulateTargetList
+								This:SetZOrder[movetop]
 							</OnLeftClick>
 					</Checkbox>
 					
