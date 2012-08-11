@@ -181,13 +181,13 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Height>2%</Height> 
 						<Alignment>Center</Alignment>
 						<OnLoad>
-							if ${Script[ComBot].VariableScope.Miner.UseOreHold}
+							if ${Script[ComBot].VariableScope.Ship.HasOreHold}
 							{
 								This:SetText[OreHold Threshold: ${Script[ComBot].VariableScope.Config.Miner.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Config.Miner.Threshold} * .01 * ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]}].Round} m3]
 							}
 							else
 							{
-								This:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Config.Miner.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Config.Miner.Threshold} * .01 * ${MyShip.CargoCapacity.Round} m3]
+								This:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Config.Miner.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Config.Miner.Threshold} * .01 * ${MyShip.CargoCapacity}].Round} m3]
 							}
 						</OnLoad>
 					</Text>						 
@@ -203,13 +203,13 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						</OnLoad>
 						<OnChange>
 							Script[ComBot].VariableScope.Config.Miner:SetThreshold[${This.Value}]
-							if ${Script[ComBot].VariableScope.Miner.UseOreHold}
+							if ${Script[ComBot].VariableScope.Ship.HasOreHold}
 							{
 								UIElement[ThresholdTitle@Miner_Frame@ComBot_Miner]:SetText[OreHold Threshold: ${Script[ComBot].VariableScope.Config.Miner.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Config.Miner.Threshold} * .01 * ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]}].Round} m3]
 							}
 							else
 							{
-								UIElement[ThresholdTitle@Miner_Frame@ComBot_Miner]:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Config.Miner.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Config.Miner.Threshold} * .01 * ${MyShip.CargoCapacity.Round} m3]
+								UIElement[ThresholdTitle@Miner_Frame@ComBot_Miner]:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Config.Miner.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Config.Miner.Threshold} * .01 * ${MyShip.CargoCapacity}].Round} m3]
 							}
 						</OnChange>
 					</Slider>						 

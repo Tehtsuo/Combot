@@ -24,7 +24,6 @@ objectdef obj_Miner inherits obj_State
 	variable obj_MinerUI MinerUI
 	variable obj_TargetList Asteroids
 	variable bool WarpToOrca=FALSE
-	variable bool UseOreHold=FALSE
 
 	method Initialize()
 	{
@@ -97,7 +96,6 @@ objectdef obj_Miner inherits obj_State
 			MyShip:OpenCargo[]
 			return FALSE
 		}
-		UseOreHold:Set[${EVEWindow[ByName, Inventory].ChildWindowExists[ShipOreHold]}]
 		return TRUE
 	}
 	
@@ -135,7 +133,7 @@ objectdef obj_Miner inherits obj_State
 				}
 				break
 			case Container
-				if  ${UseOreHold}
+				if  ${Ship.HasOreHold}
 				{
 					if ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]} < ${Config.Miner.Threshold} * .01
 					{
@@ -174,7 +172,7 @@ objectdef obj_Miner inherits obj_State
 			case Jetcan
 				break		
 			default
-				if  ${UseOreHold}
+				if  ${Ship.HasOreHold}
 				{
 					if ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]} < ${Config.Miner.Threshold} * .01
 					{
@@ -259,7 +257,7 @@ objectdef obj_Miner inherits obj_State
 	{
 		Profiling:StartTrack["Miner_Offload"]
 		UI:Update["obj_Miner", "Unloading cargo", "g"]
-		if ${UseOreHold}
+		if ${Ship.HasOreHold}
 		{
 			Cargo:PopulateCargoList[SHIPOREHOLD]
 		}
@@ -509,7 +507,7 @@ objectdef obj_Miner inherits obj_State
 				}
 				else
 				{
-					if  ${UseOreHold}
+					if  ${Ship.HasOreHold}
 					{
 						if ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]} >= ${Config.Miner.Threshold} * .01
 						{

@@ -27,6 +27,8 @@ objectdef obj_Ship
 
 	variable int RetryUpdateModuleList=1
 	
+	variable bool HasOreHold=FALSE
+	
 	variable index:string ModuleLists
 	variable index:module ModuleList
 	variable obj_ModuleList ModuleList_ArmorProjectors
@@ -97,6 +99,8 @@ objectdef obj_Ship
 					This:UpdateModuleList
 				}
 			}
+			
+			This:DetectOreHold
 				
     		This.NextPulse:Set[${Math.Calc[${LavishScript.RunningTime} + ${PulseIntervalInMilliseconds} + ${Math.Rand[500]}]}]
 		}
@@ -272,5 +276,13 @@ objectdef obj_Ship
 		{
 			UI:Update["obj_Ship", "Warning: More than 1 Afterburner or MWD was detected, I will only use the first one.", "o"]
 		}
+	}
+	
+	method DetectOreHold()
+	{
+		if !${EVEWindow[ByName, "Inventory"](exists)}
+			return
+		
+		HasOreHold:Set[${EVEWindow[ByName, Inventory].ChildWindowExists[ShipOreHold]}]
 	}
 }
