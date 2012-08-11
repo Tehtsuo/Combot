@@ -222,13 +222,15 @@ objectdef obj_Configuration_Hauler
 
 		This.CommonRef:AddSetting[Dropoff_ContainerName,""]
 		This.CommonRef:AddSetting[Pickup_ContainerName,""]
+		This.CommonRef:AddSetting[Dropoff,""]
+		This.CommonRef:AddSetting[Pickup,""]
 		
 	}
 	
 	Setting(string, MiningSystem, SetMiningSystem)	
-	Setting(string, JetCanMode, SetJetCanMode)
-	Setting(string, Dropoff_Bookmark, SetDropoff_Bookmark)
-	Setting(string, Pickup_Bookmark, SetPickup_Bookmark)
+	Setting(string, Pickup_SubType, SetPickup_SubType)
+	Setting(string, Dropoff, SetDropoff)
+	Setting(string, Pickup, SetPickup)
 	Setting(string, Dropoff_Type, SetDropoff_Type)
 	Setting(string, Pickup_Type, SetPickup_Type)
 	Setting(string, Dropoff_ContainerName, SetDropoff_ContainerName)
@@ -339,6 +341,8 @@ objectdef obj_Configuration_Miner
 		This.CommonRef:AddSetting[BeltPrefix,Belt:]
 		This.CommonRef:AddSetting[IceBeltPrefix,Ice Belt:]
 		This.CommonRef:AddSetting[MaxLasers,3]
+		This.CommonRef:AddSetting[MiningSystem,""]
+		This.CommonRef:AddSetting[Dropoff,""]
 		
 	}
 	
