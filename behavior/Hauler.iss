@@ -49,6 +49,8 @@ objectdef obj_Hauler inherits obj_State
 	method Start()
 	{
 		UI:Update["obj_Hauler", "Started", "g"]
+		Drones:RemainDocked
+		Drones:Defensive
 		This:AssignStateQueueDisplay[DebugStateList@Debug@ComBotTab@ComBot]
 		if ${This.IsIdle}
 		{
@@ -372,7 +374,7 @@ objectdef obj_Hauler inherits obj_State
 				EVEWindow[ByName, Inventory]:MakeChildActive[${CurrentCan}]
 				return FALSE
 			}
-			;UI:Update["obj_Hauler", "Looting - ${Entity[${CurrentCan}].Name}", "g"]
+			UI:Update["obj_Hauler", "Looting - ${Entity[${CurrentCan}].Name}", "g"]
 			Cargo:PopulateCargoList[CONTAINER, ${CurrentCan}]
 			if ${EVEWindow[ByItemID, ${CurrentCan}].UsedCapacity} > ${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}]}
 			{

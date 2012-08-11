@@ -43,7 +43,8 @@ objectdef obj_Miner inherits obj_State
 	method Start()
 	{
 		This:PopulateTargetList
-
+		Drones:RemainDocked
+		Drones:Defensive
 		UI:Update["obj_Miner", "Started", "g"]
 		This:AssignStateQueueDisplay[DebugStateList@Debug@ComBotTab@ComBot]
 		if ${This.IsIdle}
@@ -633,10 +634,6 @@ objectdef obj_Miner inherits obj_State
 				Move:Approach[${Entity[CategoryID==CATEGORYID_ORE].ID}, ${Math.Calc[${Ship.ModuleList_MiningLaser.Range} * (1/3)]}]
 			}
 		}
-		
-		Drones:RemainDocked
-		Drones:Defensive
-		
 		
 		if ${Ship.ModuleList_MiningLaser.ActiveCount} < ${Ship.ModuleList_MiningLaser.Count}
 		{

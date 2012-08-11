@@ -327,7 +327,7 @@ objectdef obj_TargetList inherits obj_State
 			{
 				do
 				{
-					if ${Entity[${EntityIterator.Value}].IsLockedTarget} || ${Entity[${EntityIterator.Value}].Value.BeingTargeted}
+					if ${Entity[${EntityIterator.Value}].IsLockedTarget} || ${Entity[${EntityIterator.Value}].BeingTargeted}
 					{
 						TargetList_DeadDelay:Set[${EntityIterator.Value}, ${Math.Calc[${LavishScript.RunningTime} + 5000]}]
 					}
@@ -366,6 +366,7 @@ objectdef obj_TargetList inherits obj_State
 		}
 		
 		Profiling:EndTrack
+		return TRUE
 	}
 	
 	member:bool PopulateList()
