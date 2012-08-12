@@ -32,6 +32,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 	}
 #endmac
 
+
 objectdef obj_Configuration_BaseConfig
 {
 	variable filepath CONFIG_PATH = "${Script.CurrentDirectory}/config"
@@ -425,35 +426,16 @@ objectdef obj_Configuration_Security
 	
 
 
-objectdef obj_FleetMember
-{
-	variable string FleetMemberName
-	variable bool FleetCommander
-	variable int Wing
-	variable bool WingCommander
-	variable int Squad
-	variable bool SquadCommander
 
-	method Initialize(string arg_FleetMemberName, bool arg_FleetCommander, int arg_Wing, bool arg_WingCommander, int arg_Squad, bool arg_SquadCommander)
-	{
-		FleetMemberName:Set[${arg_FleetMemberName}]
-		FleetCommander:Set[${arg_FleetCommander}]
-		Wing:Set[${arg_Wing}]
-		WingCommander:Set[${arg_WingCommander}]
-		Squad:Set[${arg_Squad}]
-		SquadCommander:Set[${arg_SquadCommander}]
-	}
-}
 
 
 objectdef obj_Configuration_Fleet
 {
 	variable string SetName = "Fleet"
-	variable index:obj_FleetMember FleetMembers
 
 	method Initialize()
 	{
-		if !${BaseConfig.BaseRef.FindSet[${This.SetName}](exists)} || !${BaseConfig.BaseRef.FindSet[${This.SetName}].FindSet[FleetMembers](exists)}
+		if !${BaseConfig.BaseRef.FindSet[${This.SetName}](exists)}
 		{
 			UI:Update["obj_Configuration", " ${This.SetName} settings missing - initializing", "o"]
 			This:Set_Default_Values[]
@@ -461,43 +443,28 @@ objectdef obj_Configuration_Fleet
 		UI:Update["obj_Configuration", " ${This.SetName}: Initialized", "-g"]
 	}
 
-	member:settingsetref FleetRef()
+	member:settingsetref CommonRef()
 	{
 		return ${BaseConfig.BaseRef.FindSet[${This.SetName}]}
 	}
-	member:settingsetref FleetMembersRef()
-	{
-		return ${This.FleetRef.FindSet[FleetMembers]}
-	}
+
 	method Set_Default_Values()
 	{
 		BaseConfig.BaseRef:AddSet[${This.SetName}]
-		This.FleetRef:AddSet[FleetMembers]
 	}
 
-	member:bool ManageFleet()
+	method Set_Default_Values()
 	{
-		return ${This.FleetRef.FindSetting[Manage Fleet, FALSE]}
+		BaseConfig.BaseRef:AddSet[${This.SetName}]
+		
+		This.CommonRef:AddSet[DefaultFleet]
+		This.CommonRef.FindSet[DefaultFleet]:AddSet[Wings]
+		This.CommonRef.FindSet[DefaultFleet].FindSet[Wings]:AddSet[Squads]
+		This.CommonRef.FindSet[DefaultFleet].FindSet[Wings].FindSet[Squads]:AddSet[Players]
+		This.CommonRef.FindSet[DefaultFleet].FindSet[Wings].FindSet[Squads].FindSet[Players]:AddSetting[]
 	}
-
-	method SetManageFleet(bool value)
-	{
-		This.FleetRef:AddSetting[Manage Fleet, ${value}]
-	}
-
-	member:string FleetLeader()
-	{
-		return ${This.FleetRef.FindSetting[Fleet Leader, ""]}
-	}
-
-	method SetFleetLeader(string value)
-	{
-		This.FleetRef:AddSetting[Fleet Leader, ${value}]
-	}
-
 	
 	
-
 }	
 	
 	
