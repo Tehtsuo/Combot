@@ -21,12 +21,19 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 objectdef obj_Security inherits obj_State
 {
+	variable obj_SecurityUI SecurityUI
+
 	method Initialize()
 	{
 		This[parent]:Initialize
 		This.NonGameTiedPulse:Set[FALSE]
 		This:AssignStateQueueDisplay[obj_SecurityStateList@Security@ComBotTab@ComBot]
-		
+
+		if !${Config.Security.FleeTo(exists)} || ${Config.Security.FleeTo.Equal[NULL]} || ${Config.Security.FleeTo.Equal[]}
+		{
+			UI:Update["obj_Security", "No flee bookmark set.  This is DANGEROUS!", "r"]
+			UI:Update["obj_Security", "Specify a flee bookmark in the Security settings!", "r"]
+		}
 	}
 	
 	method Start()
@@ -195,29 +202,8 @@ objectdef obj_Security inherits obj_State
 		UI:Update["obj_Security", "${Message}", "r"]
 		Event[ComBot_Flee]:Execute[]
 
-		if ${Config.Security.OverrideFleeBookmark_Enabled}
-		{
-			Move:Bookmark[${Config.Security.OverrideFleeBookmark}]
-			This:QueueState["Traveling"]
-		}
-		else
-		{
-			switch ${Config.Common.ComBot_Mode}
-			{
-				case Dedicated Salvager
-					Move:Bookmark[${Config.Salvager.Salvager_Dropoff}]
-					This:QueueState["Traveling"]
-					break
-				case Miner
-					Move:Bookmark[${Config.Miner.Miner_Dropoff}]
-					This:QueueState["Traveling"]
-					break
-				case Hauler
-					Move:Bookmark[${Config.Hauler.Dropoff}]
-					This:QueueState["Traveling"]
-					break
-			}
-		}
+		Move:Bookmark[${Config.Security.OverrideFleeBookmark}]
+		This:QueueState["Traveling"]
 
 		if ${Config.Security.FleeWaitTime_Enabled}
 		{
@@ -273,4 +259,53 @@ objectdef obj_Security inherits obj_State
 		}
 		return FALSE
 	}	
+}
+
+objectdef obj_SecurityUI inherits obj_State
+{
+
+
+	method Initialize()
+	{
+		This[parent]:Initialize
+		This.NonGameTiedPulse:Set[TRUE]
+	}
+	
+	method Start()
+	{
+		This:QueueState["UpdateBookmarkLists", 5]
+	}
+	
+	method Stop()
+	{
+		This:Clear
+	}
+
+	member:bool UpdateBookmarkLists()
+	{
+		variable index:bookmark Bookmarks
+		variable iterator BookmarkIterator
+
+		EVE:GetBookmarks[Bookmarks]
+		Bookmarks:GetIterator[BookmarkIterator]
+		
+		UIElement[FleeToList@ComBot_Security_Frame@ComBot_Security]:ClearItems
+		if ${BookmarkIterator:First(exists)}
+			do
+			{	
+				if ${UIElement[FleeTo@ComBot_Security_Frame@ComBot_Security].Text.Length}
+				{
+					if ${BookmarkIterator.Value.Label.Left[${Config.Security.FleeTo.Length}].Equal[${Config.Security.FleeTo}]} && ${BookmarkIterator.Value.Label.NotEqual[${Config.Security.FleeTo}]}
+						UIElement[FleeToList@ComBot_Security_Frame@ComBot_Security]:AddItem[${BookmarkIterator.Value.Label.Escape}]
+				}
+				else
+				{
+					UIElement[FleeToList@ComBot_Security_Frame@ComBot_Security]:AddItem[${BookmarkIterator.Value.Label.Escape}]
+				}
+			}
+			while ${BookmarkIterator:Next(exists)}
+			
+		return FALSE
+	}
+
 }

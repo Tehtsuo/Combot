@@ -154,6 +154,7 @@ objectdef obj_Configuration_Salvager
 
 		This.CommonRef:AddSetting[Salvager_Dropoff_Type,Personal Hangar]
 		This.CommonRef:AddSetting[Salvager_Prefix,Salvage:]
+		This.CommonRef:AddSetting[Salvager_Dropoff,""]
 	}
 
 	Setting(string, Salvager_Prefix, SetSalvager_Prefix)
@@ -387,8 +388,8 @@ objectdef obj_Configuration_Security
 	method Set_Default_Values()
 	{
 		BaseConfig.BaseRef:AddSet[${This.SetName}]
-
 		
+		This.CommonRef:AddSetting[FleeTo,""]
 	}
 
 	Setting(bool, MeToPilot, SetMeToPilot)	
@@ -414,8 +415,7 @@ objectdef obj_Configuration_Security
 	Setting(bool, Break_Enabled, SetBreak_Enabled)	
 	Setting(int, Break_Duration, SetBreak_Duration)	
 	Setting(int, Break_Interval, SetBreak_Interval)	
-	Setting(bool, OverrideFleeBookmark_Enabled, SetOverrideFleeBookmark_Enabled)	
-	Setting(string, OverrideFleeBookmark, SetOverrideFleeBookmark)	
+	Setting(string, FleeTo, SetFleeTo)	
 	Setting(bool, TargetFlee, SetTargetFlee)	
 	Setting(bool, CorpFlee, SetCorpFlee)
 	Setting(bool, AllianceFlee, SetAllianceFlee)
