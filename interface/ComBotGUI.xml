@@ -305,6 +305,54 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								Script[ComBot].VariableScope.Config.Common:SetAlwaysShieldBoost[${This.Checked}]
 							</OnLeftClick>
 						</Checkbox>
+						<Checkbox name='Disable3D'>
+							<X>1%</X>
+							<Y>26%</Y>
+							<Width>48%</Width> 
+							<Height>6%</Height> 
+							<Text>Disable 3D Rendering</Text>
+							<OnLoad>
+								if ${Script[ComBot].VariableScope.Config.Common.Disable3D}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[ComBot].VariableScope.Config.Common:SetDisable3D[${This.Checked}]
+							</OnLeftClick>
+						</Checkbox>
+						<Checkbox name='DisableUI'>
+							<X>1%</X>
+							<Y>33%</Y>
+							<Width>48%</Width> 
+							<Height>6%</Height> 
+							<Text>Disable User Interface</Text>
+							<OnLoad>
+								if ${Script[ComBot].VariableScope.Config.Common.DisableUI}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[ComBot].VariableScope.Config.Common:SetDisableUI[${This.Checked}]
+							</OnLeftClick>
+						</Checkbox>
+						<Checkbox name='DisableTexture'>
+							<X>1%</X>
+							<Y>40%</Y>
+							<Width>48%</Width> 
+							<Height>6%</Height> 
+							<Text>Disable Texture Loading</Text>
+							<OnLoad>
+								if ${Script[ComBot].VariableScope.Config.Common.DisableTexture}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[ComBot].VariableScope.Config.Common:SetDisableTexture[${This.Checked}]
+							</OnLeftClick>
+						</Checkbox>
 						<button	Name='ModuleSettings'>
 							<Font template='Button.Font' />
 							<BackgroundColor>FF000000</BackgroundColor>

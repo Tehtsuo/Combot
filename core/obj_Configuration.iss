@@ -123,6 +123,9 @@ objectdef obj_Configuration_Common
 	Setting(bool, Propulsion, SetPropulsion)
 	Setting(int, Propulsion_Threshold, SetPropulsion_Threshold)
 	Setting(bool, AlwaysShieldBoost, SetAlwaysShieldBoost)
+	Setting(bool, Disable3D, SetDisable3D)
+	Setting(bool, DisableUI, SetDisableUI)
+	Setting(bool, DisableTexture, SetDisableTexture)
 	Setting(string, ActiveTab, SetActiveTab)
 }
 
