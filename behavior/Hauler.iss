@@ -25,6 +25,7 @@ objectdef obj_Hauler inherits obj_State
 	variable index:fleetmember FleetMembers
 	variable int64 CurrentCan
 	variable bool PopCan
+	variable IPCQueue:obj_HaulLocation OnDemandHaulQueue = "HaulerOnDemandQueue"
 	
 	variable obj_TargetList IR_Cans
 	variable obj_TargetList OOR_Cans
@@ -400,6 +401,35 @@ objectdef obj_Hauler inherits obj_State
 				{
 					Cargo:DontPopCan
 					Entity[${CurrentCan}]:UnlockTarget
+					if ${Config.Hauler.JetCanMode.Equal["Service Corporate Bookmarks"]}
+					{
+						variable index:bookmark Bookmarks
+						variable iterator BookmarkIterator
+						EVE:GetBookmarks[Bookmarks]
+						Bookmarks:GetIterator[BookmarkIterator]
+						if ${BookmarkIterator:First(exists)}
+						do
+						{
+							if ${BookmarkIterator.Value.Label.Left[5].Upper.Equal["Haul:"]} && ${BookmarkIterator.Value.CreatorID.Equal[${BookmarkCreator}]}
+							{
+								if ${BookmarkIterator.Value.JumpsTo} == 0
+								{
+									if ${BookmarkIterator.Value.Distance} < 500000
+									{
+										UI:Update["obj_Hauler", "Finished Salvaging ${BookmarkIterator.Value.Label} - Deleting", "g"]
+										BookmarkIterator.Value:Remove
+										return TRUE
+									}
+								}
+							}
+						}
+						while ${BookmarkIterator:Next(exists)}
+					}
+					
+					if ${Config.Hauler.JetCanMode.Equal["Service On-Demand"]}
+					{
+						OnDemandHaulQueue:Dequeue
+					}
 					return TRUE
 				}
 			}
@@ -546,38 +576,118 @@ objectdef obj_Hauler inherits obj_State
 				}
 				break
 			case Jetcan
-				if ${MyShip.UsedCargoCapacity} > (${Config.Hauler.Threshold} * .01 * ${MyShip.CargoCapacity}) || ${EVE.Bookmark[${Config.Hauler.Pickup_Bookmark}].SolarSystemID} != ${Me.SolarSystemID}
+				Switch ${Config.Hauler.JetCanMode}
 				{
-					break
-				}
-				if !${FleetMembers.Used}
-				{
-					Me.Fleet:GetMembers[FleetMembers]
-					FleetMembers:RemoveByQuery[${LavishScript.CreateQuery[ID == ${Me.CharID}]}]
-					FleetMembers:Collapse
-				}
+					case "Service Fleet"
+						if ${MyShip.UsedCargoCapacity} > (${Config.Hauler.Threshold} * .01 * ${MyShip.CargoCapacity}) || ${EVE.Bookmark[${Config.Hauler.Pickup_Bookmark}].SolarSystemID} != ${Me.SolarSystemID}
+						{
+							break
+						}
+						if !${FleetMembers.Used}
+						{
+							Me.Fleet:GetMembers[FleetMembers]
+							FleetMembers:RemoveByQuery[${LavishScript.CreateQuery[ID == ${Me.CharID}]}]
+							FleetMembers:Collapse
+						}
 
-				if ${FleetMembers.Get[1].ToEntity(exists)}
-				{
-					;UI:Update["obj_Miner", "Looting cans for ${FleetMembers.Get[1].ToPilot.Name}", "g"]
-					This:Clear
-					This:QueueState["PopulateTargetList", 2000, ${FleetMembers.Get[1].ToEntity.ID}]
-					This:QueueState["CheckTargetList", 50]
-					This:QueueState["LootCans", 1000, ${FleetMembers.Get[1].ToEntity.ID}]
-					This:QueueState["DepopulateTargetList", 2000]
-					This:QueueState["Haul"]
-					FleetMembers:Remove[1]
-					FleetMembers:Collapse
-					return TRUE
-				}
-				else
-				{
-					echo Warping to ${FleetMembers.Get[1].ToPilot.Name} - ${FleetMembers.Get[1].ID}
-					Move:Fleetmember[${FleetMembers.Get[1].ID}, TRUE]
-					This:Clear
-					This:QueueState["Traveling", 1000]
-					This:QueueState["Haul"]
-					return TRUE
+						if ${FleetMembers.Get[1].ToEntity(exists)}
+						{
+							;UI:Update["obj_Miner", "Looting cans for ${FleetMembers.Get[1].ToPilot.Name}", "g"]
+							This:Clear
+							This:QueueState["PopulateTargetList", 2000, ${FleetMembers.Get[1].ToEntity.ID}]
+							This:QueueState["CheckTargetList", 50]
+							This:QueueState["LootCans", 1000, ${FleetMembers.Get[1].ToEntity.ID}]
+							This:QueueState["DepopulateTargetList", 2000]
+							This:QueueState["Haul"]
+							FleetMembers:Remove[1]
+							FleetMembers:Collapse
+							return TRUE
+						}
+						else
+						{
+							echo Warping to ${FleetMembers.Get[1].ToPilot.Name} - ${FleetMembers.Get[1].ID}
+							Move:Fleetmember[${FleetMembers.Get[1].ID}, TRUE]
+							This:Clear
+							This:QueueState["Traveling", 1000]
+							This:QueueState["Haul"]
+							return TRUE
+						}
+						break
+					case "Service Corporate Bookmarks"
+						variable string Target
+						variable string BookmarkTime="24:00"
+						variable bool BookmarkFound
+						variable string BookmarkDate="9999.99.99"
+						variable int64 BookmarkCreator
+						variable index:bookmark Bookmarks
+						variable iterator BookmarkIterator
+						EVE:GetBookmarks[Bookmarks]
+						Bookmarks:GetIterator[BookmarkIterator]
+						if ${BookmarkIterator:First(exists)}
+						do
+						{	
+							if ${BookmarkIterator.Value.Label.Left[5].Upper.Equal["Haul:"]} && ${BookmarkIterator.Value.JumpsTo} <= 0
+							{
+								if (${BookmarkIterator.Value.TimeCreated.Compare[${BookmarkTime}]} < 0 && ${BookmarkIterator.Value.DateCreated.Compare[${BookmarkDate}]} <= 0) || ${BookmarkIterator.Value.DateCreated.Compare[${BookmarkDate}]} < 0
+								{
+									echo Next bookmark set - ${BookmarkIterator.Value} - ${BookmarkIterator.Value.JumpsTo} Jumps
+									Target:Set[${BookmarkIterator.Value.Label}]
+									BookmarkTime:Set[${BookmarkIterator.Value.TimeCreated}]
+									BookmarkDate:Set[${BookmarkIterator.Value.DateCreated}]
+									BookmarkCreator:Set[${BookmarkIterator.Value.CreatorID}]
+									BookmarkFound:Set[TRUE]
+								}
+							}
+						}
+						while ${BookmarkIterator:Next(exists)}
+						
+						if ${BookmarkIterator:First(exists)} && !${BookmarkFound}
+						do
+						{	
+							if ${BookmarkIterator.Value.Label.Left[8].Upper.Equal[${Config.Salvager.Salvager_Prefix}]}
+							{
+								if (${BookmarkIterator.Value.TimeCreated.Compare[${BookmarkTime}]} < 0 && ${BookmarkIterator.Value.DateCreated.Compare[${BookmarkDate}]} <= 0) || ${BookmarkIterator.Value.DateCreated.Compare[${BookmarkDate}]} < 0
+								{
+									Target:Set[${BookmarkIterator.Value.Label}]
+									BookmarkTime:Set[${BookmarkIterator.Value.TimeCreated}]
+									BookmarkDate:Set[${BookmarkIterator.Value.DateCreated}]
+									BookmarkCreator:Set[${BookmarkIterator.Value.CreatorID}]
+									BookmarkFound:Set[TRUE]
+								}
+							}
+						}
+						while ${BookmarkIterator:Next(exists)}
+						
+						if ${BookmarkFound}
+						{
+							;UI:Update["obj_Miner", "Looting cans for ${FleetMembers.Get[1].ToPilot.Name}", "g"]
+							This:Clear
+							Move:Bookmark[${Target}, TRUE]
+							This:QueueState["Traveling", 1000]
+							This:QueueState["PopulateTargetList", 2000, ${BookmarkCreator}]
+							This:QueueState["CheckTargetList", 50]
+							This:QueueState["LootCans", 1000, ${BookmarkCreator}]
+							This:QueueState["DepopulateTargetList", 2000]
+							This:QueueState["Haul"]
+							return TRUE
+						}
+						
+						break
+						
+					case "Service On-Demand"
+						if ${Entity[${OnDemandHaulQueue.Peek.BeltID}](exists)}
+						{
+							Move:Object[${OnDemandHaulQueue.Peek.BeltID}]
+							This:QueueState["Traveling", 1000]
+							This:QueueState["PopulateTargetList", 2000, ${OnDemandHaulQueue.Peek.CharID}]
+							This:QueueState["CheckTargetList", 50]
+							This:QueueState["LootCans", 1000, ${OnDemandHaulQueue.Peek.CharID}]
+							This:QueueState["DepopulateTargetList", 2000]
+							This:QueueState["Haul"]
+							return TRUE
+						}
+						
+						break
 				}
 			
 				break

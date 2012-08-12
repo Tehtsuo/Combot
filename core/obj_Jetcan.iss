@@ -22,6 +22,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 objectdef obj_Jetcan inherits obj_State
 {
 	variable collection:int CanAges
+	variable IPCQueue:obj_HaulLocation OnDemandHaulQueue = "HaulerOnDemandQueue"
 	
 	method Initialize()
 	{
@@ -154,6 +155,7 @@ objectdef obj_Jetcan inherits obj_State
 					TargetIterator.Value:Jettison
 					This:QueueState["Idle", 5000]
 					This:QueueState["Rename", 2000]
+					This:QueueState["FillCan", 1500]
 					This:QueueState["Fill", 1500]
 					return TRUE
 				}
@@ -171,6 +173,7 @@ objectdef obj_Jetcan inherits obj_State
 					TargetIterator.Value:Jettison
 					This:QueueState["Idle", 5000]
 					This:QueueState["Rename", 2000]
+					This:QueueState["FillCan", 1500]
 					This:QueueState["Fill", 1500]
 					return TRUE
 				}
@@ -195,6 +198,14 @@ objectdef obj_Jetcan inherits obj_State
 					UI:Update["obj_Jetcan", "Renaming ${TargetIterator.Value.Name}", "g"]
 					TargetIterator.Value:SetName[${Me.Corp.Ticker} ${EVE.Time[short]}]
 					CanAges:Set[${TargetIterator.Value.ID}, ${LavishScript.RunningTime}]
+					if ${Config.Miner.Dropoff_SubType.Equal["Corporate Bookmark Jetcan"]}
+					{
+						TargetIterator.Value:CreateBookmark["Haul: ${Me.Name} ${EVETime.Time}", "Miner Haul", "Corporation Locations"]
+					}
+					if ${Config.Miner.Dropoff_SubType.Equal["On-Demand Jetcan"]} && ${Entity[GroupID == GROUP_ASTEROIDBELT && Distance < 500000](exists)}
+					{
+						OnDemandHaulQueue:Insert[${Entity[GroupID == GROUP_ASTEROIDBELT && Distance < 500000].ID}, ${Me.ID}]
+					}
 					return TRUE
 				}
 			}
@@ -306,6 +317,46 @@ objectdef obj_Jetcan inherits obj_State
 				Cargo:MoveCargoList[CONTAINER, "", ${CanIterator.Value.ID}]
 				return TRUE
 			}
+		}
+		return TRUE
+	}
+	
+	member:bool FillCan()
+	{
+		variable index:entity Targets
+		variable iterator TargetIterator
+		
+		EVE:QueryEntities[Targets, "GroupID==GROUP_CARGOCONTAINER && HaveLootRights && Distance<LOOT_RANGE && !IsAbandoned"]
+		Targets:GetIterator[TargetIterator]
+		if ${TargetIterator:First(exists)} && ${EVEWindow[ByName, Inventory](exists)}
+		{
+			do
+			{
+				if !${EVEWindow[ByName, Inventory].ChildWindowExists[${TargetIterator.Value}]}
+				{
+					UI:Update["obj_Jetcan", "Opening - ${TargetIterator.Value.Name}", "g"]
+					TargetIterator.Value:OpenCargo
+					return FALSE
+				}
+				if !${EVEWindow[ByItemID, ${TargetIterator.Value}](exists)}
+				{
+					EVEWindow[ByName, Inventory]:MakeChildActive[${TargetIterator.Value}]
+					return FALSE
+				}
+				if ${Miner.UseOreHold}
+				{
+					Cargo:PopulateCargoList[SHIPOREHOLD]
+				}
+				else
+				{
+					Cargo:PopulateCargoList[SHIP]
+					Cargo:Filter["CategoryID == CATEGORYID_ORE", FALSE]
+				}
+				Cargo:MoveCargoList[CONTAINER, "", ${TargetIterator.Value}]
+				This:QueueState["Stack", 1000, ${TargetIterator.Value}]
+				return TRUE
+			}
+			while ${TargetIterator:Next(exists)}
 		}
 		return TRUE
 	}
