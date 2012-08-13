@@ -134,7 +134,7 @@ objectdef obj_Miner inherits obj_State
 				}
 				break
 			case Container
-				if  ${MyShip.HasOreHold}
+				if  ${Ship.HasOreHold}
 				{
 					if ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]} < ${Config.Miner.Threshold} * .01
 					{
@@ -173,7 +173,7 @@ objectdef obj_Miner inherits obj_State
 			case Jetcan
 				break		
 			default
-				if  ${MyShip.HasOreHold}
+				if  ${Ship.HasOreHold}
 				{
 					if ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]} < ${Config.Miner.Threshold} * .01
 					{
@@ -258,7 +258,7 @@ objectdef obj_Miner inherits obj_State
 	{
 		Profiling:StartTrack["Miner_Offload"]
 		UI:Update["obj_Miner", "Unloading cargo", "g"]
-		if ${MyShip.HasOreHold}
+		if ${Ship.HasOreHold}
 		{
 			Cargo:PopulateCargoList[SHIPOREHOLD]
 		}
@@ -508,7 +508,7 @@ objectdef obj_Miner inherits obj_State
 				}
 				else
 				{
-					if  ${MyShip.HasOreHold}
+					if  ${Ship.HasOreHold}
 					{
 						if ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]} >= ${Config.Miner.Threshold} * .01
 						{

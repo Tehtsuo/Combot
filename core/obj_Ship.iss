@@ -27,6 +27,7 @@ objectdef obj_Ship
 
 	variable int RetryUpdateModuleList=1
 	
+	variable bool HasOreHold=FALSE
 	
 	variable index:string ModuleLists
 	variable index:module ModuleList
@@ -99,6 +100,7 @@ objectdef obj_Ship
 				}
 			}
 			
+			This:DetectOreHold
 				
     		This.NextPulse:Set[${Math.Calc[${LavishScript.RunningTime} + ${PulseIntervalInMilliseconds} + ${Math.Rand[500]}]}]
 		}
@@ -276,4 +278,11 @@ objectdef obj_Ship
 		}
 	}
 	
+	method DetectOreHold()
+	{
+		if !${EVEWindow[ByName, "Inventory"](exists)}
+			return
+		
+		HasOreHold:Set[${EVEWindow[ByName, Inventory].ChildWindowExists[ShipOreHold]}]
+	}
 }

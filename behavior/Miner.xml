@@ -181,7 +181,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Height>2%</Height> 
 						<Alignment>Center</Alignment>
 						<OnLoad>
-							if ${MyShip.HasOreHold}
+							if ${Script[ComBot].VariableScope.Ship.HasOreHold}
 							{
 								This:SetText[OreHold Threshold: ${Script[ComBot].VariableScope.Config.Miner.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Config.Miner.Threshold} * .01 * ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]}].Round} m3]
 							}
@@ -203,7 +203,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						</OnLoad>
 						<OnChange>
 							Script[ComBot].VariableScope.Config.Miner:SetThreshold[${This.Value}]
-							if ${MyShip.HasOreHold}
+							if ${Script[ComBot].VariableScope.Ship.HasOreHold}
 							{
 								UIElement[ThresholdTitle@Miner_Frame@ComBot_Miner]:SetText[OreHold Threshold: ${Script[ComBot].VariableScope.Config.Miner.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Config.Miner.Threshold} * .01 * ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]}].Round} m3]
 							}
