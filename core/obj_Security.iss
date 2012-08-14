@@ -202,7 +202,7 @@ objectdef obj_Security inherits obj_State
 		UI:Update["obj_Security", "${Message}", "r"]
 		Event[ComBot_Flee]:Execute[]
 
-		Move:Bookmark[${Config.Security.OverrideFleeBookmark}]
+		Move:Bookmark[${Config.Security.FleeTo}]
 		This:QueueState["Traveling"]
 
 		if ${Config.Security.FleeWaitTime_Enabled}
