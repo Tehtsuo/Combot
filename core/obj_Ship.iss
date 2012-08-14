@@ -182,6 +182,7 @@ objectdef obj_Ship
 				case GROUP_DAMAGE_CONTROL
 				case GROUP_SHIELD_HARDENER
 				case GROUP_ARMOR_HARDENERS
+				case GROUP_ARMOR_RESISTANCE_SHIFT_HARDENER
 					This.ModuleList_ActiveResists:Insert[${ModuleIter.Value.ID}]
 					break
 				case GROUP_ENERGYWEAPON

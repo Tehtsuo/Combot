@@ -37,6 +37,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 #define GROUP_SHIELD_HARDENER 																					77
 #define GROUP_ARMOR_REPAIRERS 																					62
 #define GROUP_ARMOR_HARDENERS 																					328
+#define GROUP_ARMOR_RESISTANCE_SHIFT_HARDENER																	1150
 #define GROUP_MINING_CRYSTAL 																					482
 #define GROUP_FREQUENCY_MINING_LASER 																			483
 #define GROUP_SHIELD_TRANSPORTER         																		41
