@@ -93,6 +93,13 @@ objectdef obj_Drones inherits obj_State
 		return ${ActiveDrones.Used}
 	}
 	
+	member:int DronesInBay()
+	{
+		variable index:item Drones
+		MyShip:GetDrones[Drones]
+		return ${Drones.Used}
+	}
+	
 	member:bool DroneControl()
 	{
 		Profiling:StartTrack["Drones_DroneControl"]
@@ -116,6 +123,10 @@ objectdef obj_Drones inherits obj_State
 			return FALSE
 		}
 		DroneTargets:RequestUpdate
+		if ${This.DronesInBay.Equal[0]} && ${This.DronesInSpace.Equal[0]}
+		{
+			return FALSE
+		}
 		
 		Me:GetActiveDrones[drones]
 		
