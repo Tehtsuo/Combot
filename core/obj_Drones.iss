@@ -129,7 +129,7 @@ objectdef obj_Drones inherits obj_State
 		
 		if ${TargetIterator:First(exists)}
 		{
-			if !${DronesOut}
+			if ${This.DronesInSpace.Equal[0]}
 			{
 				This:Deploy
 				Profiling:EndTrack
