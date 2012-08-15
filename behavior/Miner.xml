@@ -87,6 +87,14 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					<Height>20</Height>
 					<Text>Close</Text>
 					<OnLeftClick>
+						if !${EVE.Bookmark[${Script[ComBot].VariableScope.Config.Miner.Dropoff}](exists)}
+						{
+							Script[ComBot].VariableScope.UI:Update["obj_Miner", "Unable to verify Dropoff bookmark", "r"]
+						}
+						if !${EVE.Bookmark[${Script[ComBot].VariableScope.Config.Miner.MiningSystem}](exists)}
+						{
+							Script[ComBot].VariableScope.UI:Update["obj_Miner", "Unable to verify Mining System bookmark", "r"]
+						}
 						Script[ComBot].VariableScope.Miner.MinerUI:Stop
 						ui -unload "&filepath;/Miner"
 					</OnLeftClick>
