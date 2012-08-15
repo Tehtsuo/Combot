@@ -277,6 +277,11 @@ objectdef obj_TargetList inherits obj_State
 			{
 				if !${This.IPCTargets.Element[${EntityIterator.Value.ID}](exists)}
 				{
+					This.IPCTargets:Set[${EntityIterator.Value.ID}, ${Math.Calc[${LavishScript.RunningTime} + 40000]}]
+					echo "Adding ${EntityIterator.Value.Name}"
+				}
+				else
+				{
 					if ${This.IPCTargets.Element[${EntityIterator.Value.ID}]} < ${Math.Calc[${LavishScript.RunningTime} - 20000]}
 					{
 						This.IPCTargets:Set[${EntityIterator.Value.ID}, ${Math.Calc[${LavishScript.RunningTime} + 40000]}]
@@ -292,6 +297,11 @@ objectdef obj_TargetList inherits obj_State
 			do
 			{
 				if !${This.IPCTargets.Element[${EntityIterator.Value.ID}](exists)}
+				{
+					This.IPCTargets:Set[${EntityIterator.Value.ID}, ${Math.Calc[${LavishScript.RunningTime} + 40000]}]
+					echo "Adding ${EntityIterator.Value.Name}"
+				}
+				else
 				{
 					if ${This.IPCTargets.Element[${EntityIterator.Value.ID}]} < ${Math.Calc[${LavishScript.RunningTime} - 20000]}
 					{
@@ -319,7 +329,7 @@ objectdef obj_TargetList inherits obj_State
 					{
 						TargetList_DeadDelay:Set[${EntityIterator.Key}, ${Math.Calc[${LavishScript.RunningTime} + 5000]}]
 					}
-					if ${Entity[${EntityIterator.Key}].DistanceTo[${DistanceTarget}]} >= ${MinRange}
+					if ${Entity[${EntityIterator.Key}].DistanceTo[${DistanceTarget}]} <= ${MinRange}
 					{
 					}
 					elseif ${Entity[${EntityIterator.Key}].DistanceTo[${DistanceTarget}]} <= ${MaxRange}

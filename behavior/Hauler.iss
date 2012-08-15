@@ -675,8 +675,10 @@ objectdef obj_Hauler inherits obj_State
 						break
 						
 					case "Service On-Demand"
+						
 						if ${Entity[${OnDemandHaulQueue.Peek.BeltID}](exists)}
 						{
+							
 							Move:Object[${OnDemandHaulQueue.Peek.BeltID}]
 							This:QueueState["Traveling", 1000]
 							This:QueueState["PopulateTargetList", 2000, ${OnDemandHaulQueue.Peek.CharID}]
