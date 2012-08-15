@@ -783,11 +783,11 @@ objectdef obj_MinerUI inherits obj_State
 				if ${UIElement[MiningSystem@Miner_Frame@ComBot_Miner].Text.Length}
 				{
 					if ${BookmarkIterator.Value.Label.Left[${Config.Miner.MiningSystem.Length}].Equal[${Config.Miner.MiningSystem}]} && ${BookmarkIterator.Value.Label.NotEqual[${Config.Miner.MiningSystem}]}
-						UIElement[MiningSystemList@Miner_Frame@ComBot_Miner]:AddItem[${BookmarkIterator.Value.Label}]
+						UIElement[MiningSystemList@Miner_Frame@ComBot_Miner]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 				else
 				{
-					UIElement[MiningSystemList@Miner_Frame@ComBot_Miner]:AddItem[${BookmarkIterator.Value.Label}]
+					UIElement[MiningSystemList@Miner_Frame@ComBot_Miner]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 			}
 			while ${BookmarkIterator:Next(exists)}

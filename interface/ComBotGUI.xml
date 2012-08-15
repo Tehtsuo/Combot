@@ -48,7 +48,27 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 		<Color>FFFFFFFF</Color>
 		<Bold />
 	</template>	
+
+	<template name='Checkbox.Font'>	
+		<Name>Verdana</Name>
+		<Size>12</Size>
+		<Color>FFFFFFFF</Color>
+		<Bold />
+	</template>	
+
+	<template name='Text.Font'>	
+		<Name>Verdana</Name>
+		<Size>12</Size>
+		<Color>FFFFFFFF</Color>
+		<Bold />
+	</template>	
 	
+	<template name='Tabcontrol.Font'>	
+		<Name>Verdana</Name>
+		<Size>12</Size>
+		<Color>FFFFFFFF</Color>
+		<Bold />
+	</template>	
 
 	<window name='ComBot'>
 		<Visible>1</Visible>
@@ -281,8 +301,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							</OnChange>
 						</Slider>		
 						<Text name='Propulsion_Text'>
-							<X>70%</X>
-							<Y>12%</Y>
+							<X>72%</X>
+							<Y>13%</Y>
 							<Width>48%</Width> 
 							<Height>6%</Height> 
 							<OnLoad>
