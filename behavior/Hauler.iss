@@ -578,7 +578,7 @@ objectdef obj_Hauler inherits obj_State
 			case Jetcan
 				Switch ${Config.Hauler.JetCanMode}
 				{
-					case "Service Fleet"
+					case Service Fleet
 						if ${MyShip.UsedCargoCapacity} > (${Config.Hauler.Threshold} * .01 * ${MyShip.CargoCapacity}) || ${EVE.Bookmark[${Config.Hauler.Pickup_Bookmark}].SolarSystemID} != ${Me.SolarSystemID}
 						{
 							break
@@ -613,7 +613,7 @@ objectdef obj_Hauler inherits obj_State
 							return TRUE
 						}
 						break
-					case "Service Corporate Bookmarks"
+					case Service Corporate Bookmarks
 						variable string Target
 						variable string BookmarkTime="24:00"
 						variable bool BookmarkFound
@@ -674,7 +674,7 @@ objectdef obj_Hauler inherits obj_State
 						
 						break
 						
-					case "Service On-Demand"
+					case Service On-Demand
 						
 						if ${Entity[${OnDemandHaulQueue.Peek.BeltID}](exists)}
 						{
