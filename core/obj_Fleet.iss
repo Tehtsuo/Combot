@@ -27,141 +27,135 @@ objectdef obj_Fleet inherits obj_State
 	{
 		This[parent]:Initialize
 		This.NonGameTiedPulse:Set[TRUE]
+		
+		;This:QueueState["Start"]
 	}
 
-	
-	
-	method Process()
+	member:bool Start()
 	{
-		;	Step 1 - Accept fleet invites from my leader
-		if ${Me.Fleet.Invited}
+		if ${Me.Fleet.IsMember[${Me.CharID}]}
 		{
-			if ${Me.Fleet.InvitationText.Find[${Config.Fleet.FleetLeader}]}
-			{
-				Me.Fleet:AcceptInvite
-			}
-		}
-
-		;	Step 2 - Send fleet invites if I'm leader
-		if ${Config.Fleet.IsLeader}
-		{
-			Config.Fleet:RefreshFleetMembers
-			variable iterator InfoFromSettings
-			Config.Fleet.FleetMembers:GetIterator[InfoFromSettings]
-			
-			if ${InfoFromSettings:First(exists)}
-				do
-				{
-					if !${Me.Fleet.IsMember[${This.ResolveCharID[${InfoFromSettings.Value.FleetMemberName}]}]}
-					{
-						This:InviteToFleet[${This.ResolveCharID[${InfoFromSettings.Value.FleetMemberName}]}]
-					}
-					else
-					{
-						variable index:int64 Wings
-						variable index:int64 Squads
-						variable int64 OtherWing
-						variable int64 OtherSquad
-						variable iterator Wing
-						Me.Fleet:GetWings[Wings]
-						if ${Wings.Used} == 1
-						{
-							Me.Fleet:CreateWing
-							return
-						}
-						Me.Fleet:GetWings[Wings]
-						Wings:GetIterator[Wing]
-						if ${Wing:First(exists)}
-							do
-							{
-								if ${Wing.Value} != ${Me.Fleet.Member[${Me.CharID}].WingID}
-								{
-									OtherWing:Set[${Wing.Value}]
-									Me.Fleet:GetSquads[Squads, ${Wing.Value}]
-									OtherSquad:Set[${Squads[1]}]
-								}
-							}
-							while ${Wing:Next(exists)}
-
-						if ${Config.Fleet.IsWing[${InfoFromSettings.Value.FleetMemberName}]}
-						{
-							if ${Me.Fleet.Member[${Me.CharID}].WingID} == ${Me.Fleet.Member[${This.ResolveCharID[${InfoFromSettings.Value.FleetMemberName}]}].WingID}
-							{
-								Me.Fleet.Member[${This.ResolveCharID[${InfoFromSettings.Value.FleetMemberName}]}]:Move[${OtherWing}, ${OtherSquad}]
-							}
-							
-						}
-						else
-						{
-							if ${Me.Fleet.Member[${Me.CharID}].WingID} != ${Me.Fleet.Member[${This.ResolveCharID[${InfoFromSettings.Value.FleetMemberName}]}].WingID}
-							{
-								Me.Fleet.Member[${This.ResolveCharID[${InfoFromSettings.Value.FleetMemberName}]}]:Move[${Me.Fleet.Member[${Me.CharID}].WingID}, ${Me.Fleet.Member[${Me.CharID}].SquadID}]
-							}
-						}
-					}
-				}
-				while ${InfoFromSettings:Next(exists)}
+			This:QueueState["InFleet"]
 		}
 		else
 		{
-			if ${Me.Fleet.IsMember[${Me.CharID}]}
+			This:QueueState["OutFleet"]
+		}
+		return TRUE
+	}
+	
+	member:bool InFleet()
+	{
+		if ${Config.Fleets.Active.Equal[No Fleet]}
+		{
+			return FALSE
+		}
+
+		if !${Me.Fleet.IsMember[${Me.CharID}]}
+		{
+			This:QueueState["OutFleet"]
+			return TRUE
+		}
+		
+		if ${ActiveCommander} && !${Me.Fleet.Member[${ActiveCommander}](exists)}
+		{
+			Me.Fleet:LeaveFleet
+		}
+		
+		
+		
+		if ${Me.ID} == ${ActiveCommander}
+		{
+			if ${InviteFleetMembers}
 			{
-				if !${Me.Fleet.IsMember[${This.ResolveCharID[${Config.Fleet.FleetLeader}]}]}
-					{
-					Me.Fleet:LeaveFleet
-					}
+				return FALSE
 			}
 		}
 		
-				
+		return FALSE
 	}
 	
-	member:int64 ResolveCharID(string value)
+	member:bool OutFleet()
 	{
-		variable index:pilot CorpMembers
-		variable iterator CorpMember
+		if ${Config.Fleets.Active.Equal[No Fleet]}
+		{
+			return FALSE
+		}
 
-		EVE:GetOnlineCorpMembers[CorpMembers]
-		CorpMembers:GetIterator[CorpMember]
-		if ${CorpMember:First(exists)}
+		if !${Me.Fleet.IsMember[${Me.CharID}]}
+		{
+			This:QueueState["InFleet"]
+			return TRUE
+		}
+		
+		if ${Me.ID} == ${ActiveCommander}
+		{
+			if ${InviteFleetMembers}
+			{
+				return FALSE
+			}
+		}
+
+		if ${Me.Fleet.Invited}
+		{
+			if ${Me.Fleet.InvitationText.Find[${ResolveName[${ActiveCommander}]}]}
+			{
+				Me.Fleet:AcceptInvite
+				return FALSE
+			}
+		}
+		
+		return FALSE
+	}
+
+	method SaveFleet(string name)
+	{
+		variable index:fleetmember Members
+		variable iterator Member
+		
+		
+		Me.Fleet:GetMembers[Members]
+		Members:GetIterator[Member]
+		if ${Member:First(exists)}
 			do
 			{
-				if ${CorpMember.Value.Name.Equal[${value}]} && ${CorpMember.Value.IsOnline}
-					return ${CorpMember.Value.CharID}
+				Config.Fleet.GetFleet[${name}].GetWing[${Me.Fleet.WingName[${Member.Value.WingID}]}].GetSquad[${Me.Fleet.SquadName[${Member.Value.SquadID}]}].GetMember[${Member.Value.ToPilot.Name}]:SetID[${Member.Value.ID}]
 			}
-			while ${CorpMember:Next(exists)}
-
-		variable index:being Buddies
-		variable iterator Buddy
-
-		EVE:GetBuddies[Buddies]
-		Buddies:GetIterator[Buddy]
-		if ${Buddy:First(exists)}
-			do
-			{
-				if ${Buddy.Value.Name.Equal[${value}]} && ${Buddy.Value.IsOnline}
-					return ${Buddy.Value.CharID}
-			}
-			while ${Buddy:Next(exists)}
-
-		variable index:pilot LocalPilots
-		variable iterator LocalPilot
-
-		EVE:GetLocalPilots[LocalPilots]
-		LocalPilots:GetIterator[LocalPilot]
-		if ${LocalPilot:First(exists)}
-			do
-			{
-				if ${LocalPilot.Value.Name.Equal[${value}]}
-					return ${LocalPilot.Value.CharID}
-			}
-			while ${LocalPilot:Next(exists)}
-			
-
-		return 0
+			while ${Member:Next(exists)}
+		
 	}
 	
-	method InviteToFleet(int64 value)
+
+
+
+	
+	member:int64 ActiveCommander()
+	{
+		if ${Config.Fleets.GetFleet[${Config.Fleets.Active}].Commander} > 0
+		{
+			return ${Config.Fleets.GetFleet[${Config.Fleets.Active}].Commander}
+		}
+		variable iterator Wing
+		Config.Fleets.GetFleet[${Config.Fleets.Active}].Wings:GetIterator[Wing]
+		if ${Wing:First(exists)}
+		{
+			if ${Wing.Value.Commander} > 0
+			{
+				return ${Wing.Value.Commander}
+			}
+			variable iterator Squad
+			Wing.Value.Squads:GetIterator[Squad]
+			if ${Squad:First(exists)}
+			{
+				if ${Squad.Value.Commander} > 0
+				{
+					return ${Squad.Value.Commander}
+				}
+			}
+		}
+	}
+	
+	member:string ResolveName(int64 value)
 	{
 		variable index:pilot CorpMembers
 		variable iterator CorpMember
@@ -173,8 +167,168 @@ objectdef obj_Fleet inherits obj_State
 			{
 				if ${CorpMember.Value.CharID} == ${value}
 				{
+					return ${CorpMember.Value.Name}
+				}
+			}
+			while ${CorpMember:Next(exists)}
+
+		variable index:being Buddies
+		variable iterator Buddy
+
+		EVE:GetBuddies[Buddies]
+		Buddies:GetIterator[Buddy]
+		if ${Buddy:First(exists)}
+			do
+			{
+				if ${Buddy.Value.CharID} == ${value}
+				{
+					return ${Buddy.Value.Name}
+				}
+			}
+			while ${Buddy:Next(exists)}
+
+		variable index:pilot LocalPilots
+		variable iterator LocalPilot
+
+		EVE:GetLocalPilots[LocalPilots]
+		LocalPilots:GetIterator[LocalPilot]
+		if ${LocalPilot:First(exists)}
+			do
+			{
+				if ${LocalPilot.Value.CharID} == ${value}
+				{
+					return ${LocalPilot.Value.Name}
+				}
+			}
+			while ${LocalPilot:Next(exists)}
+			
+		return "FALSE"
+	}
+	
+	member:bool ArrangeFleet()
+	{
+		variable set:string WingNames
+		variable set:string SquadNames
+	
+		variable iterator ConfigWing
+		variable iterator ConfigSquad
+
+		
+		Config.Fleets.GetFleet[${Config.Fleets.Active}].Wings:GetIterator[ConfigWing]
+		if ${ConfigWing:First(exists)}
+			do
+			{
+				if ${FindWing[${ConfigWing.Value.Name}]}
+				{
+				}
+			
+				ConfigWing.Value.Squads:GetIterator[ConfigSquad]
+				if ${ConfigSquad:First(exists)}
+					do
+					{
+
+					}
+					while ${ConfigSquad:Next(exists)}
+			}
+			while ${ConfigWing:Next(exists)}
+		
+	
+			
+		return FALSE
+	}
+	
+	member:int64 FindWing(string name)
+	{
+		variable index:int64 Wings
+		variable iterator Wing
+		Me.Fleet:GetWings[Wings]
+		Wings:GetIterator[Wing]
+		if ${Wing:First(exists)}
+			do
+			{
+				if ${Me.Fleet.WingName[${Wing.Value.ID}].Equal[${name}]}
+				{
+					return ${Wing.Value.ID}
+				}
+			
+			}
+			while ${Wing:Next(exists)}
+		return 0
+	}
+	member:int64 FindSquad(string name, int64 WingID)
+	{
+		variable index:int64 Squads
+		variable iterator Squad
+		Me.Fleet:GetSquads[Squads]
+		Squads:GetIterator[Squad]
+		if ${Squad:First(exists)}
+			do
+			{
+				if ${Me.Fleet.SquadName[${Squad.Value.ID}].Equal[${name}]}
+				{
+					return ${Squad.Value.ID}
+				}
+			
+			}
+			while ${Squad:Next(exists)}
+		return 0
+	}
+	
+	member:bool InviteFleetMembers()
+	{
+		variable iterator Wing
+		Config.Fleets.GetFleet[${Config.Fleets.Active}].Wings:GetIterator[Wing]
+		if ${Wing:First(exists)}
+			do
+			{
+				if ${InviteToFleet[${Wing.Value.Commander}]}
+					return TRUE
+					
+				variable iterator Squad
+				Wing.Value.Squads:GetIterator[Squad]
+				if ${Squad:First(exists)}
+					do
+					{
+						if ${InviteToFleet[${Squad.Value.Commander}]}
+							return TRUE
+						
+						variable iterator Member
+						Squad.Value.Members:GetIterator[Member]
+						if ${Member:First(exists)}
+							do
+							{
+								if ${InviteToFleet[${Member.Value.ID}]}
+									return TRUE
+							}
+							while ${Squad:Next(exists)}
+					}
+					while ${Squad:Next(exists)}
+			}
+			while ${Wing:Next(exists)}
+			
+		return FALSE
+	}	
+
+	
+	member:bool InviteToFleet(int64 value)
+	{
+		if ${Me.Fleet.Member[${value}](exists)} || ${value} == 0
+		{
+			return FALSE
+		}
+	
+		variable index:pilot CorpMembers
+		variable iterator CorpMember
+
+		EVE:GetOnlineCorpMembers[CorpMembers]
+		CorpMembers:GetIterator[CorpMember]
+		if ${CorpMember:First(exists)}
+			do
+			{
+				if ${CorpMember.Value.CharID} == ${value}
+				{
 					CorpMember.Value:InviteToFleet
-					return
+					return TRUE
 				}
 			}
 			while ${CorpMember:Next(exists)}
@@ -190,7 +344,7 @@ objectdef obj_Fleet inherits obj_State
 				if ${Buddy.Value.CharID} == ${value}
 				{
 					Buddy.Value:InviteToFleet
-					return
+					return TRUE
 				}
 			}
 			while ${Buddy:Next(exists)}
@@ -206,11 +360,12 @@ objectdef obj_Fleet inherits obj_State
 				if ${LocalPilot.Value.CharID} == ${value}
 				{
 					LocalPilot.Value:InviteToFleet
-					return
+					return TRUE
 				}
 			}
 			while ${LocalPilot:Next(exists)}
 		
+		return FALSE
 	}
 	
 }

@@ -196,7 +196,7 @@ objectdef obj_Configuration_Fleets
 		return ${BaseConfig.BaseRef.FindSet[${This.SetName}]}
 	}
 	
-	member:obj_Configuration_Wing GetFleet(string FleetID)
+	member:obj_Configuration_Fleet GetFleet(string FleetID)
 	{
 		if !${This.CommonRef.FindSet[Fleets].FindSet[${FleetID}](exists)}
 		{
@@ -214,8 +214,10 @@ objectdef obj_Configuration_Fleets
 	{
 		BaseConfig.BaseRef:AddSet[${This.SetName}]
 		This.CommonRef:AddSet[Fleets]
+		This.CommonRef:AddSetting[Active,"No Fleet"]
 	}
 	
+	Setting(string, Active, SetActive)
 }
 
 objectdef obj_Configuration_Fleet
@@ -231,7 +233,7 @@ objectdef obj_Configuration_Fleet
 		}
 	}
 	
-	member:obj_Configuration_Squad GetWing(string WingID)
+	member:obj_Configuration_Wing GetWing(string WingID)
 	{
 		if !${CurrentRef.FindSet[Wings].FindSet[${WingID}](exists)}
 		{
@@ -248,10 +250,13 @@ objectdef obj_Configuration_Fleet
 	method Set_Default_Values()
 	{
 		CurrentRef:AddSet[Squads]
+		This.CommonRef:AddSetting[Commander,0]
+		This.CommonRef:AddSetting[Booster,0]
 	}
 	
-	Setting(string, Commander, SetCommander)	
-	Setting(string, Booster, SetBooster)	
+	Setting(string, Name, SetName)
+	Setting(int64, Commander, SetCommander)	
+	Setting(int64, Booster, SetBooster)
 }
 
 objectdef obj_Configuration_Wing
@@ -284,10 +289,13 @@ objectdef obj_Configuration_Wing
 	method Set_Default_Values()
 	{
 		CurrentRef:AddSet[Squads]
+		This.CommonRef:AddSetting[Commander,0]
+		This.CommonRef:AddSetting[Booster,0]
 	}
 	
-	Setting(string, Commander, SetCommander)	
-	Setting(string, Booster, SetBooster)	
+	Setting(string, Name, SetName)
+	Setting(int64, Commander, SetCommander)	
+	Setting(int64, Booster, SetBooster)	
 }
 
 objectdef obj_Configuration_Squad
@@ -320,10 +328,13 @@ objectdef obj_Configuration_Squad
 	method Set_Default_Values()
 	{
 		CurrentRef:AddSet[Members]
+		This.CommonRef:AddSetting[Commander,0]
+		This.CommonRef:AddSetting[Booster,0]
 	}
 	
-	Setting(string, Commander, SetCommander)	
-	Setting(string, Booster, SetBooster)	
+	Setting(string, Name, SetName)
+	Setting(int64, Commander, SetCommander)	
+	Setting(int64, Booster, SetBooster)	
 }
 
 objectdef obj_Configuration_Member
@@ -344,7 +355,7 @@ objectdef obj_Configuration_Member
 		CurrentRef:AddSetting[Created, TRUE]
 	}
 
-	Setting(string, Name, SetName)	
+	Setting(int64, ID, SetID)	
 }
 
 objectdef obj_Configuration_RefineData

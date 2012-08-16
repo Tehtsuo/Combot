@@ -373,6 +373,28 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								Script[ComBot].VariableScope.Config.Common:SetDisableTexture[${This.Checked}]
 							</OnLeftClick>
 						</Checkbox>
+						<combobox Name="FleetSelection">
+							<BackgroundColor>FF000000</BackgroundColor>
+							<X>1%</X>
+							<Y>80%</Y>
+							<Width>48%</Width>
+							<Height>6%</Height>
+							<OnLoad>
+								This:AddItem[No Fleet]
+								variable iterator fleet
+								Script[ComBot].VariableScope.Config.Fleets.Fleets:GetIterator[fleet]
+								if ${fleet:First(exists)}
+									do
+									{
+										This:AddItem[${fleet.Value.Name}]
+									}
+									while ${fleet:Next(exists)}
+								This.ItemByValue[${Script[ComBot].VariableScope.Config.Fleets.Active}]:Select
+							</OnLoad>
+							<OnSelect>
+								Script[ComBot].VariableScope.Config.Fleets:SetActive[${This.SelectedItem.Value}]
+							</OnSelect>
+						</combobox>
 						<button	Name='ModuleSettings'>
 							<Font template='Button.Font' />
 							<BackgroundColor>FF000000</BackgroundColor>
