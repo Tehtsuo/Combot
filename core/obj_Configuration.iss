@@ -249,7 +249,7 @@ objectdef obj_Configuration_Fleet
 	
 	method Set_Default_Values()
 	{
-		CurrentRef:AddSet[Squads]
+		CurrentRef:AddSet[Wings]
 		This.CommonRef:AddSetting[Commander,0]
 		This.CommonRef:AddSetting[Booster,0]
 	}
