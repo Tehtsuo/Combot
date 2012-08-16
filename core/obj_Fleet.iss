@@ -119,7 +119,22 @@ objectdef obj_Fleet inherits obj_State
 		if ${Member:First(exists)}
 			do
 			{
-				Config.Fleets.GetFleet[${name}].GetWing[${Me.Fleet.WingName[${Member.Value.WingID}]}].GetSquad[${Me.Fleet.SquadName[${Member.Value.SquadID}]}].GetMember[${Member.Value.ToPilot.Name}]:SetID[${Member.Value.ID}]
+				if !${Member.Value.IsFleetCommander} && !${Member.Value.IsWingCommander} && !${Member.Value.IsSquadCommander}
+				{
+					Config.Fleets.GetFleet[${name}].GetWing[${Me.Fleet.WingName[${Member.Value.WingID}]}].GetSquad[${Me.Fleet.SquadName[${Member.Value.SquadID}]}].GetMember[${Member.Value.ToPilot.Name}]:SetID[${Member.Value.ID}]
+				}
+				if ${Member.Value.IsFleetCommander}
+				{
+					Config.Fleets.GetFleet[${name}]:SetCommander[${Member.Value.ID}]
+				}
+				if ${Member.Value.IsWingCommander}
+				{
+					Config.Fleets.GetFleet[${name}].GetWing[${Me.Fleet.WingName[${Member.Value.WingID}]}]:SetCommander[${Member.Value.ID}]
+				}
+				if ${Member.Value.IsSquadCommander}
+				{
+					Config.Fleets.GetFleet[${name}].GetWing[${Me.Fleet.WingName[${Member.Value.WingID}]}].GetSquad[${Me.Fleet.SquadName[${Member.Value.SquadID}]}]:SetCommander[${Member.Value.ID}]
+				}
 			}
 			while ${Member:Next(exists)}
 		
