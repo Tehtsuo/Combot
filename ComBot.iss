@@ -25,6 +25,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 #endif
 
 #include core/Defines.iss
+#include core/Macros.iss
 #include core/obj_ComBot.iss
 #include core/obj_Configuration.iss
 

@@ -19,19 +19,6 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-#macro Setting(type, name, setname)
-	member:type name()
-	{
-		return ${This.CommonRef.FindSetting[name]}
-	}
-
-	method setname(type value)
-	{
-		This.CommonRef:AddSetting[name,${value}]
-		Config:Save
-	}
-#endmac
-
 
 objectdef obj_Configuration_BaseConfig
 {
