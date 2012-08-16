@@ -453,6 +453,11 @@ objectdef obj_Configuration_Fleet
 		return ${This.CommonRef.FindSet[DefaultFleet].FindSet[Wings].FindSet[${WingID}]}
 	}
 	
+	member:settingsetref Wings()
+	{
+		return ${This.CommonRef.FindSet[DefaultFleet].FindSet[Wings]}
+	}
+	
 	method Set_Default_Values()
 	{
 		BaseConfig.BaseRef:AddSet[${This.SetName}]
@@ -479,6 +484,11 @@ objectdef obj_Configuration_Wing
 		return ${CurrentRef.FindSet[Squads].FindSet[${SquadID}]}
 	}
 	
+	member:settingsetref Squads()
+	{
+		return ${CurrentRef.FindSet[Squads]}
+	}
+	
 	method Set_Default_Values()
 	{
 		CurrentRef:AddSet[Squads]
@@ -501,6 +511,11 @@ objectdef obj_Configuration_Squad
 	member:obj_Configuration_Member GetMember(int MemberID)
 	{
 		return ${CurrentRef.FindSet[Members].FindSet[${MemberID}]}
+	}
+	
+	member:settingsetref Members()
+	{
+		return ${CurrentRef.FindSet[Members]}
 	}
 	
 	method Set_Default_Values()
