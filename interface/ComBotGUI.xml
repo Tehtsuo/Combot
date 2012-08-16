@@ -381,14 +381,14 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							<Height>6%</Height>
 							<OnLoad>
 								This:AddItem[No Fleet]
-								variable iterator fleet
-								Script[ComBot].VariableScope.Config.Fleets.Fleets:GetIterator[fleet]
-								if ${fleet:First(exists)}
+								variable iterator FleetIterator
+								Script[ComBot].VariableScope.Config.Fleets.Fleets:GetIterator[FleetIterator]
+								if ${FleetIterator:First(exists)}
 									do
 									{
-										This:AddItem[${fleet.Value.Name}]
+										This:AddItem[${FleetIterator.Value.Name}]
 									}
-									while ${fleet:Next(exists)}
+									while ${FleetIterator:Next(exists)}
 								This.ItemByValue[${Script[ComBot].VariableScope.Config.Fleets.Active}]:Select
 							</OnLoad>
 							<OnSelect>
