@@ -119,7 +119,7 @@ objectdef obj_Fleet inherits obj_State
 		if ${Member:First(exists)}
 			do
 			{
-				Config.Fleet.GetFleet[${name}].GetWing[${Me.Fleet.WingName[${Member.Value.WingID}]}].GetSquad[${Me.Fleet.SquadName[${Member.Value.SquadID}]}].GetMember[${Member.Value.ToPilot.Name}]:SetID[${Member.Value.ID}]
+				Config.Fleets.GetFleet[${name}].GetWing[${Me.Fleet.WingName[${Member.Value.WingID}]}].GetSquad[${Me.Fleet.SquadName[${Member.Value.SquadID}]}].GetMember[${Member.Value.ToPilot.Name}]:SetID[${Member.Value.ID}]
 			}
 			while ${Member:Next(exists)}
 		
