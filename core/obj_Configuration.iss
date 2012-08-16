@@ -447,29 +447,87 @@ objectdef obj_Configuration_Fleet
 	{
 		return ${BaseConfig.BaseRef.FindSet[${This.SetName}]}
 	}
-
-	method Set_Default_Values()
+	
+	member:obj_Configuration_Wing GetWing(int WingID)
 	{
-		BaseConfig.BaseRef:AddSet[${This.SetName}]
+		return ${This.CommonRef.FindSet[DefaultFleet].FindSet[Wings].FindSet[${WingID}]}
 	}
-
+	
 	method Set_Default_Values()
 	{
 		BaseConfig.BaseRef:AddSet[${This.SetName}]
-		
 		This.CommonRef:AddSet[DefaultFleet]
 		This.CommonRef.FindSet[DefaultFleet]:AddSet[Wings]
-		This.CommonRef.FindSet[DefaultFleet].FindSet[Wings]:AddSet[Squads]
-		This.CommonRef.FindSet[DefaultFleet].FindSet[Wings].FindSet[Squads]:AddSet[Players]
-		This.CommonRef.FindSet[DefaultFleet].FindSet[Wings].FindSet[Squads].FindSet[Players]:AddSetting[]
+	}
+}
+
+objectdef obj_Configuration_Wing
+{
+	variable settingsefref CurrentRef
+
+	method Initialize(settingsetref BaseRef)
+	{
+		CurrentRef:Set[${BaseRef}]
+		if !${CurrentRef.FindSet[Squads](exists)}
+		{
+			This:Set_Default_Values[]
+		}
 	}
 	
+	member:obj_Configuration_Squad GetSquad(int SquadID)
+	{
+		return ${CurrentRef.FindSet[Squads].FindSet[${SquadID}]}
+	}
 	
-}	
+	method Set_Default_Values()
+	{
+		CurrentRef:AddSet[Squads]
+	}
+}
+
+objectdef obj_Configuration_Squad
+{
+	variable settingsefref CurrentRef
+
+	method Initialize(settingsetref BaseRef)
+	{
+		CurrentRef:Set[${BaseRef}]
+		if !${CurrentRef.FindSet[Members](exists)}
+		{
+			This:Set_Default_Values[]
+		}
+	}
 	
+	member:obj_Configuration_Member GetMember(int MemberID)
+	{
+		return ${CurrentRef.FindSet[Members].FindSet[${MemberID}]}
+	}
 	
+	method Set_Default_Values()
+	{
+		CurrentRef:AddSet[Members]
+	}
+}
+
+objectdef obj_Configuration_Member
+{
+	variable settingsefref CurrentRef
+
+	method Initialize(settingsetref BaseRef)
+	{
+		CurrentRef:Set[${BaseRef}]
+		if !${CurrentRef.FindSetting[Created](exists)}
+		{
+			This:Set_Default_Values[]
+		}
+	}
 	
-	
+	method Set_Default_Values()
+	{
+		CurrentRef:AddSetting[Created, TRUE]
+	}
+}
+
 objectdef obj_Configuration_RefineData
 {
 	variable string SetName = "Refine Amounts"
