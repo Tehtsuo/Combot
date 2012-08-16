@@ -19,9 +19,59 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
+#macro Setting(type, name, setname)
+	member:type name()
+	{
+		return ${This.CommonRef.FindSetting[name]}
+	}
+
+	method setname(type value)
+	{
+		This.CommonRef:AddSetting[name,${value}]
+		Config:Save
+	}
+#endmac
+
+objectdef obj_Configuration_Salvager
+{
+	variable string SetName = "Salvager"
+
+	method Initialize()
+	{
+		if !${BaseConfig.BaseRef.FindSet[${This.SetName}](exists)}
+		{
+			UI:Update["obj_Configuration", " ${This.SetName} settings missing - initializing", "o"]
+			This:Set_Default_Values[]
+		}
+		UI:Update["obj_Configuration", " ${This.SetName}: Initialized", "-g"]
+	}
+
+	member:settingsetref CommonRef()
+	{
+		return ${BaseConfig.BaseRef.FindSet[${This.SetName}]}
+	}
+
+	method Set_Default_Values()
+	{
+		BaseConfig.BaseRef:AddSet[${This.SetName}]
+
+		This.CommonRef:AddSetting[Dropoff_Type,Personal Hangar]
+		This.CommonRef:AddSetting[Prefix,Salvage:]
+		This.CommonRef:AddSetting[Dropoff,""]
+	}
+
+	Setting(string, Prefix, SetPrefix)
+	Setting(string, Dropoff, SetDropoff)
+	Setting(string, Dropoff_Type, SetDropoff_Type)
+	Setting(bool, BeltPatrolEnabled, SetBeltPatrolEnabled)
+	Setting(string, BeltPatrol, SetBeltPatrol)
+}
+
 objectdef obj_Salvage inherits obj_State
 {
-	variable obj_SalvageUI SalvageUI
+	variable obj_Configuration_Salvager Config
+	variable obj_SalvageUI UI
+	
 	variable obj_LootCans LootCans
 	variable bool ForceBookmarkCycle=FALSE
 	variable index:int64 HoldOffPlayer
@@ -56,7 +106,7 @@ objectdef obj_Salvage inherits obj_State
 	{
 		UI:Update["obj_Salvage", "Salvage stopped, setting destination to station", "g"]
 		This:Clear
-		Move:Bookmark[${Config.Salvager.Salvager_Dropoff}]
+		Move:Bookmark[${Config.Dropoff}]
 		This:QueueState["Traveling"]
 	}
 
@@ -104,7 +154,7 @@ objectdef obj_Salvage inherits obj_State
 		if ${BookmarkIterator:First(exists)}
 		do
 		{	
-			if ${BookmarkIterator.Value.Label.Left[8].Upper.Equal[${Config.Salvager.Salvager_Prefix}]} && ${BookmarkIterator.Value.JumpsTo} <= 0
+			if ${BookmarkIterator.Value.Label.Left[8].Upper.Equal[${Config.Prefix}]} && ${BookmarkIterator.Value.JumpsTo} <= 0
 			{
 				InHoldOff:Set[FALSE]
 				if ${HoldOffIterator:First(exists)}
@@ -135,7 +185,7 @@ objectdef obj_Salvage inherits obj_State
 		if ${BookmarkIterator:First(exists)} && !${BookmarkFound}
 		do
 		{	
-			if ${BookmarkIterator.Value.Label.Left[8].Upper.Equal[${Config.Salvager.Salvager_Prefix}]}
+			if ${BookmarkIterator.Value.Label.Left[8].Upper.Equal[${Config.Prefix}]}
 			{
 				InHoldOff:Set[FALSE]
 				if ${HoldOffIterator:First(exists)}
@@ -178,10 +228,10 @@ objectdef obj_Salvage inherits obj_State
 			return TRUE
 		}
 
-		if ${Config.Salvager.BeltPatrol}
+		if ${Config.BeltPatrolEnabled}
 		{
 			UI:Update["obj_Salvage", "No salvage bookmark found - beginning belt patrol", "g"]
-			Move:System[${EVE.Bookmark[${Config.Salvager.BeltPatrolBookmark}].SolarSystemID}]
+			Move:System[${EVE.Bookmark[${Config.BeltPatrol}].SolarSystemID}]
 			This:QueueState["Traveling"]
 			This:QueueState["MoveToBelt"]
 			This:QueueState["Traveling"]
@@ -198,7 +248,7 @@ objectdef obj_Salvage inherits obj_State
 		else
 		{
 			UI:Update["obj_Salvage", "No salvage bookmark found - returning to station", "g"]
-			Move:Bookmark[${Config.Salvager.Salvager_Dropoff}, TRUE]
+			Move:Bookmark[${Config.Dropoff}, TRUE]
 			This:QueueState["Traveling"]
 			This:QueueState["PrepOffload"]
 			This:QueueState["Offload"]
@@ -300,7 +350,7 @@ objectdef obj_Salvage inherits obj_State
 			LootCans:Disable
 			if ${Dedicated}
 			{
-				Move:Bookmark[${Config.Salvager.Salvager_Dropoff}]
+				Move:Bookmark[${Config.Dropoff}]
 				This:Clear
 				This:QueueState["Traveling"]
 				This:QueueState["PrepOffload"]
@@ -434,7 +484,7 @@ objectdef obj_Salvage inherits obj_State
 			{
 				do
 				{
-					if ${BookmarkIterator.Value.Label.Left[8].Upper.Equal[${Config.Salvager.Salvager_Prefix}]} && ${BookmarkIterator.Value.CreatorID.Equal[${BookmarkCreator}]}
+					if ${BookmarkIterator.Value.Label.Left[8].Upper.Equal[${Config.Prefix}]} && ${BookmarkIterator.Value.CreatorID.Equal[${BookmarkCreator}]}
 					{
 						UseJumpGate:Set[TRUE]
 					}
@@ -500,7 +550,7 @@ objectdef obj_Salvage inherits obj_State
 		if ${BookmarkIterator:First(exists)}
 		do
 		{
-			if ${BookmarkIterator.Value.Label.Left[8].Upper.Equal[${Config.Salvager.Salvager_Prefix}]} && ${BookmarkIterator.Value.CreatorID.Equal[${BookmarkCreator}]}
+			if ${BookmarkIterator.Value.Label.Left[8].Upper.Equal[${Config.Prefix}]} && ${BookmarkIterator.Value.CreatorID.Equal[${BookmarkCreator}]}
 			{
 				if ${BookmarkIterator.Value.JumpsTo} == 0
 				{
@@ -543,7 +593,7 @@ objectdef obj_Salvage inherits obj_State
 		if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) > 0.75
 		{
 			UI:Update["obj_Salvage", "Unload trip required", "g"]
-			Move:Bookmark[${Config.Salvager.Salvager_Dropoff}]
+			Move:Bookmark[${Config.Dropoff}]
 			This:QueueState["Traveling"]
 			This:QueueState["PrepOffload"]
 			This:QueueState["Offload"]
@@ -569,7 +619,7 @@ objectdef obj_Salvage inherits obj_State
 			MyShip:OpenCargo[]
 			return FALSE
 		}
-		switch ${Config.Salvager.Salvager_Dropoff_Type}
+		switch ${Config.Dropoff_Type}
 		{
 			case Personal Hangar
 				break
@@ -591,13 +641,13 @@ objectdef obj_Salvage inherits obj_State
 	{
 		UI:Update["obj_Salvage", "Unloading cargo", "g"]
 		Cargo:PopulateCargoList[SHIP]
-		switch ${Config.Salvager.Salvager_Dropoff_Type}
+		switch ${Config.Dropoff_Type}
 		{
 			case Personal Hangar
 				Cargo:MoveCargoList[HANGAR]
 				break
 			default
-				Cargo:MoveCargoList[CORPORATEHANGAR, ${Config.Salvager.Salvager_Dropoff_Type}]
+				Cargo:MoveCargoList[CORPORATEHANGAR, ${Config.Dropoff_Type}]
 				break
 		}
 		This:Clear
@@ -619,13 +669,13 @@ objectdef obj_Salvage inherits obj_State
 		}
 
 		UI:Update["obj_Salvage", "Stacking dropoff container", "g"]
-		switch ${Config.Salvager.Salvager_Dropoff_Type}
+		switch ${Config.Dropoff_Type}
 		{
 			case Personal Hangar
 				EVE:StackItems[MyStationHangar, Hangar]
 				break
 			default
-				EVE:StackItems[MyStationCorporateHangar, StationCorporateHangar, "${Config.Salvager.Salvager_Dropoff_Type.Escape}"]
+				EVE:StackItems[MyStationCorporateHangar, StationCorporateHangar, "${Config.Dropoff_Type.Escape}"]
 				break
 		}
 		
@@ -788,6 +838,7 @@ objectdef obj_SalvageUI inherits obj_State
 
 		EVE:GetBookmarks[Bookmarks]
 		Bookmarks:GetIterator[BookmarkIterator]
+		
 
 		UIElement[DropoffList@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:ClearItems
 		if ${BookmarkIterator:First(exists)}
@@ -795,7 +846,7 @@ objectdef obj_SalvageUI inherits obj_State
 			{	
 				if ${UIElement[Dropoff@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager].Text.Length}
 				{
-					if ${BookmarkIterator.Value.Label.Escape.Left[${Config.Salvager.Salvager_Dropoff.Length}].Equal[${Config.Salvager.Salvager_Dropoff}]}
+					if ${BookmarkIterator.Value.Label.Left[${Salvage.Config.Dropoff.Length}].Equal[${Salvage.Config.Dropoff}]}
 						UIElement[DropoffList@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 				else
@@ -811,7 +862,7 @@ objectdef obj_SalvageUI inherits obj_State
 			{	
 				if ${UIElement[BeltPatrolBookmark@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager].Text.Length}
 				{
-					if ${BookmarkIterator.Value.Label.Escape.Left[${Config.Salvager.BeltPatrolBookmark.Length}].Equal[${Config.Salvager.BeltPatrolBookmark}]}
+					if ${BookmarkIterator.Value.Label.Left[${Salvage.Config.BeltPatrol.Length}].Equal[${Salvage.Config.BeltPatrol}]}
 						UIElement[BeltPatrolBookmarkList@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 				else

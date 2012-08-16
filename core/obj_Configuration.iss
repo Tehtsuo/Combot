@@ -73,7 +73,6 @@ objectdef obj_Configuration_BaseConfig
 objectdef obj_Configuration
 {
 	variable obj_Configuration_Common Common
-	variable obj_Configuration_Salvager Salvager
 	variable obj_Configuration_Miner Miner
 	variable obj_Configuration_Security Security
 	variable obj_Configuration_HangarSale HangarSale
@@ -130,40 +129,7 @@ objectdef obj_Configuration_Common
 	Setting(string, ActiveTab, SetActiveTab)
 }
 
-objectdef obj_Configuration_Salvager
-{
-	variable string SetName = "Salvager"
 
-	method Initialize()
-	{
-		if !${BaseConfig.BaseRef.FindSet[${This.SetName}](exists)}
-		{
-			UI:Update["obj_Configuration", " ${This.SetName} settings missing - initializing", "o"]
-			This:Set_Default_Values[]
-		}
-		UI:Update["obj_Configuration", " ${This.SetName}: Initialized", "-g"]
-	}
-
-	member:settingsetref CommonRef()
-	{
-		return ${BaseConfig.BaseRef.FindSet[${This.SetName}]}
-	}
-
-	method Set_Default_Values()
-	{
-		BaseConfig.BaseRef:AddSet[${This.SetName}]
-
-		This.CommonRef:AddSetting[Salvager_Dropoff_Type,Personal Hangar]
-		This.CommonRef:AddSetting[Salvager_Prefix,Salvage:]
-		This.CommonRef:AddSetting[Salvager_Dropoff,""]
-	}
-
-	Setting(string, Salvager_Prefix, SetSalvager_Prefix)
-	Setting(string, Salvager_Dropoff, SetSalvager_Dropoff)
-	Setting(string, Salvager_Dropoff_Type, SetSalvager_DropoffType)
-	Setting(bool, BeltPatrol, SetBeltPatrol)
-	Setting(string, BeltPatrolBookmark, SetBeltPatrolBookmark)
-}
 
 objectdef obj_Configuration_HangarSale
 {

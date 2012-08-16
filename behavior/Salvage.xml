@@ -87,16 +87,16 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					<Height>20</Height>
 					<Text>Close</Text>
 					<OnLeftClick>
-						if !${EVE.Bookmark[${Script[ComBot].VariableScope.Config.Salvager_Dropoff.Dropoff}](exists)}
+						if !${EVE.Bookmark[${Script[ComBot].VariableScope.Config.Dropoff.Dropoff}](exists)}
 						{
 							Script[ComBot].VariableScope.UI:Update["obj_Salvage", "Unable to verify Dropoff bookmark", "r"]
 						}
-						if !${EVE.Bookmark[${Script[ComBot].VariableScope.Config.Salvager.BeltPatrolBookmark}](exists)}
+						if !${EVE.Bookmark[${Script[ComBot].VariableScope.Salvage.Config.BeltPatrol}](exists)}
 						{
 							Script[ComBot].VariableScope.UI:Update["obj_Salvage", "Unable to verify Belt Patrol bookmark", "r"]
 						}
 
-						Script[ComBot].VariableScope.Salvage.SalvageUI:Stop
+						Script[ComBot].VariableScope.Salvage.UI:Stop
 						ui -unload "&filepath;/Salvage"
 					</OnLeftClick>
 				</button>
@@ -126,10 +126,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Width>32%</Width> 
 						<Height>3%</Height> 
 						<OnLoad>
-							This:SetText[${Script[ComBot].VariableScope.Config.Salvager.Salvager_Prefix}]
+							This:SetText[${Script[ComBot].VariableScope.Salvage.Config.Prefix}]
 						</OnLoad>
 						<OnChange>
-							Script[ComBot].VariableScope.Config.Salvager:SetSalvager_Prefix[${This.Text}]
+							Script[ComBot].VariableScope.Salvage.Config:SetPrefix[${This.Text}]
 						</OnChange>
 					</Textentry>						 
 					<Text name='DropoffTitle'> 
@@ -149,19 +149,19 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Width>32%</Width>
 						<Height>3%</Height>
 						<OnLoad>
-							This:SetText[${Script[ComBot].VariableScope.Config.Salvager.Salvager_Dropoff}]
+							This:SetText[${Script[ComBot].VariableScope.Salvage.Config.Dropoff}]
 						</OnLoad>
 						<OnChange>
 							if ${This.Text.Length}
 							{
-								Script[ComBot].VariableScope.Config.Salvager:SetSalvager_Dropoff[${This.Text}]
+								Script[ComBot].VariableScope.Salvage.Config:SetDropoff[${This.Text}]
 							}
 							else
 							{
-								Script[ComBot].VariableScope.Config.Salvager:SetSalvager_Dropoff[\"\"]
+								Script[ComBot].VariableScope.Salvage.Config:SetDropoff[\"\"]
 							}
 							UIElement[DropoffList@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Show
-							Script[ComBot].VariableScope.Salvage.SalvageUI:Start
+							Script[ComBot].VariableScope.Salvage.UI:Start
 						</OnChange>
 					</Textentry>
 					<listbox Name="DropoffList">
@@ -173,12 +173,13 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Width>32%</Width>
 						<Height>30%</Height>
 						<OnLoad>
+							This:SetZOrder[alwaysontop]
 							This:Hide
 						</OnLoad>
 						<OnSelect>
 							UIElement[Dropoff@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText[${This.SelectedItem.Text}]
-							Script[ComBot].VariableScope.Config.Salvager:SetSalvager_Dropoff[${This.SelectedItem.Text}]
-							Script[ComBot].VariableScope.Salvage.SalvageUI:Stop
+							Script[ComBot].VariableScope.Salvage.Config:SetDropoff[${This.SelectedItem.Text}]
+							Script[ComBot].VariableScope.Salvage.UI:Stop
 							This:Hide
 						</OnSelect>
 					</listbox>
@@ -209,10 +210,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							<Item>Corporation Folder 7</Item>
 						</Items>
 						<OnLoad>
-							This.ItemByText[${Script[ComBot].VariableScope.Config.Salvager.Salvager_Dropoff_Type}]:Select
+							This.ItemByText[${Script[ComBot].VariableScope.Salvage.Config.Dropoff_Type}]:Select
 						</OnLoad>
 						<OnSelect>
-							Script[ComBot].VariableScope.Config.Salvager:SetSalvager_Dropoff_Type[${This.SelectedItem.Text}]
+							Script[ComBot].VariableScope.Salvage.Config:SetDropoff_Type[${This.SelectedItem.Text}]
 						</OnSelect>
 					</listbox>
 
@@ -225,19 +226,19 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Width>32%</Width>
 						<Height>3%</Height>
 						<OnLoad>
-							This:SetText[${Script[ComBot].VariableScope.Config.Salvager.BeltPatrolBookmark}]
+							This:SetText[${Script[ComBot].VariableScope.Salvage.Config.BeltPatrol}]
 						</OnLoad>
 						<OnChange>
 							if ${This.Text.Length}
 							{
-								Script[ComBot].VariableScope.Config.Salvager:SetBeltPatrolBookmark[${This.Text}]
+								Script[ComBot].VariableScope.Salvage.Config:SetBeltPatrol[${This.Text}]
 							}
 							else
 							{
-								Script[ComBot].VariableScope.Config.Salvager:SetBeltPatrolBookmark[\"\"]
+								Script[ComBot].VariableScope.Salvage.Config:SetBeltPatrol[\"\"]
 							}
 							UIElement[BeltPatrolBookmarkList@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Show
-							Script[ComBot].VariableScope.Salvage.SalvageUI:Start
+							Script[ComBot].VariableScope.Salvage.UI:Start
 						</OnChange>
 					</Textentry>
 					<listbox Name="BeltPatrolBookmarkList">
@@ -253,8 +254,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						</OnLoad>
 						<OnSelect>
 							UIElement[BeltPatrolBookmark@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText[${This.SelectedItem.Text}]
-							Script[ComBot].VariableScope.Config.Salvager:SetBeltPatrolBookmark[${This.SelectedItem.Text}]
-							Script[ComBot].VariableScope.Salvage.SalvageUI:Stop
+							Script[ComBot].VariableScope.Salvage.Config:SetBeltPatrol[${This.SelectedItem.Text}]
+							Script[ComBot].VariableScope.Salvage.UI:Stop
 							This:Hide
 						</OnSelect>
 					</listbox>
@@ -267,7 +268,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Alignment>Center</Alignment>
 						<Text>Patrol asteroid belts by default</Text>
 						<OnLoad>
-							if ${Script[ComBot].VariableScope.Config.Salvager.BeltPatrol}
+							if ${Script[ComBot].VariableScope.Salvage.Config.BeltPatrolEnabled}
 							{
 								This:SetChecked
 							}
@@ -277,7 +278,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							}
 						</OnLoad>
 						<OnLeftClick>
-							Script[ComBot].VariableScope.Config.Salvager:SetBeltPatrol[${This.Checked}]
+							Script[ComBot].VariableScope.Salvage.Config:SetBeltPatrolEnabled[${This.Checked}]
 							if ${This.Checked}
 							{
 								UIElement[BeltPatrolBookmark@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Show
