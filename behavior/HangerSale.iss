@@ -19,6 +19,43 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
+objectdef obj_Configuration_HangarSale
+{
+	variable string SetName = "HangarSale"
+
+	method Initialize()
+	{
+		if !${BaseConfig.BaseRef.FindSet[${This.SetName}](exists)}
+		{
+			UI:Update["obj_Configuration", " ${This.SetName} settings missing - initializing", "o"]
+			This:Set_Default_Values[]
+		}
+		UI:Update["obj_Configuration", " ${This.SetName}: Initialized", "-g"]
+	}
+
+	member:settingsetref CommonRef()
+	{
+		return ${BaseConfig.BaseRef.FindSet[${This.SetName}]}
+	}
+
+	method Set_Default_Values()
+	{
+		BaseConfig.BaseRef:AddSet[${This.SetName}]
+
+		This.CommonRef:AddSetting[PriceMode,Undercut Lowest]
+		This.CommonRef:AddSetting[UndercutPercent,1]
+		This.CommonRef:AddSetting[UndercutValue,1000]
+	}
+	
+	Setting(string, PriceMode, SetPriceMode)
+	Setting(int, UndercutPercent, SetUndercutPercent)
+	Setting(int, UndercutValue, SetUndercutValue)
+	Setting(bool, RePrice, SetRePrice)
+	Setting(bool, Sell, SetSell)
+	Setting(bool, MoveRefines, SetMoveRefines)
+	Setting(int64, MoveRefinesTarget, SetMoveRefinesTarget)
+}
+
 objectdef obj_ItemInformation
 {
 	variable float Average
@@ -52,6 +89,8 @@ objectdef obj_ItemInformation
 
 objectdef obj_HangerSale inherits obj_State
 {
+	variable obj_Configuration_HangarSale Config
+
 	variable index:item HangerItems
 	variable iterator HangerIterator
 	variable collection:string MineralNames
@@ -217,7 +256,7 @@ objectdef obj_HangerSale inherits obj_State
 	
 	member:bool MoveRefinesToContainer()
 	{
-		if ${Config.HangarSale.MoveRefines}
+		if ${Config.MoveRefines}
 		{
 			if ${MoveRefines.Used} > 0
 			{
@@ -234,14 +273,14 @@ objectdef obj_HangerSale inherits obj_State
 							MoveCargo:Insert[${RefineIterator.Value.ID}]
 					}
 					while ${RefineIterator:Next(exists)}
-				EVE:MoveItemsTo[MoveCargo, ${Config.HangarSale.MoveRefinesTarget}, CargoHold]
+				EVE:MoveItemsTo[MoveCargo, ${Config.MoveRefinesTarget}, CargoHold]
 				MoveRefines:Clear
 				return FALSE
 			}
 			else
 			{
 				UI:Update["obj_HangerSale", "Stacking Container", "g"]
-				EVE:StackItems[${Config.HangarSale.MoveRefinesTarget}, CargoHold]
+				EVE:StackItems[${Config.MoveRefinesTarget}, CargoHold]
 			}
 		}
 		return TRUE
@@ -278,7 +317,7 @@ objectdef obj_HangerSale inherits obj_State
 		{
 			RandomDelta:Set[1000]
 			This:QueueState["UpdateCurrentOrderCount"]
-			if ${Config.HangarSale.Sell}
+			if ${Config.Sell}
 			{
 				This:QueueState["ProcessSells", 10000]
 			}
@@ -303,15 +342,15 @@ objectdef obj_HangerSale inherits obj_State
 		
 		variable bool SendToRefine=TRUE
 		
-		discount:Set[${Math.Calc[${SellPrices[${TypeID}].Min}*(${Config.HangarSale.UndercutPercent} * .01)]}]
-		if ${discount} > ${Config.HangarSale.UndercutValue}
+		discount:Set[${Math.Calc[${SellPrices[${TypeID}].Min}*(${Config.UndercutPercent} * .01)]}]
+		if ${discount} > ${Config.UndercutValue}
 		{
-			discount:Set[${Config.HangarSale.UndercutValue}]
+			discount:Set[${Config.UndercutValue}]
 		}
 		sellLowestPrice:Set[${Math.Calc[${SellPrices[${TypeID}].Min} - ${discount}]}]
 		if ${This.GetItemValue[${TypeID}, ${PortionSize}]} < ${sellLowestPrice}
 		{
-			if ${Config.HangarSale.PriceMode.Equal["Undercut Lowest"]} 
+			if ${Config.PriceMode.Equal["Undercut Lowest"]} 
 			{
 				SellItems:Set[${TypeID}, ${sellLowestPrice}]
 				SendToRefine:Set[FALSE]
@@ -322,7 +361,7 @@ objectdef obj_HangerSale inherits obj_State
 		sellBuyoutPrice:Set[${BuyPrices[${TypeID}].Max}]
 		if ${This.GetItemValue[${TypeID}, ${PortionSize}]} < ${sellBuyoutPrice}
 		{
-			if ${Config.HangarSale.PriceMode.Equal["Match Highest Buyout"]} 
+			if ${Config.PriceMode.Equal["Match Highest Buyout"]} 
 			{
 				SellItems:Set[${TypeID}, ${sellBuyoutPrice}]
 				SendToRefine:Set[FALSE]
@@ -330,15 +369,15 @@ objectdef obj_HangerSale inherits obj_State
 			ToSellBuyoutTotal:Inc[${Math.Calc[${sellBuyoutPrice} * ${Quantity}]}]
 		}
 
-		discount:Set[${Math.Calc[${SellPrices[${TypeID}].Average}*(${Config.HangarSale.UndercutPercent} * .01)]}]
-		if ${discount} > ${Config.HangarSale.UndercutValue}
+		discount:Set[${Math.Calc[${SellPrices[${TypeID}].Average}*(${Config.UndercutPercent} * .01)]}]
+		if ${discount} > ${Config.UndercutValue}
 		{
-			discount:Set[${Config.HangarSale.UndercutValue}]
+			discount:Set[${Config.UndercutValue}]
 		}
 		sellAveragePrice:Set[${Math.Calc[${SellPrices[${TypeID}].Average} - ${discount}]}]
 		if ${This.GetItemValue[${TypeID}, ${PortionSize}]} < ${sellAveragePrice}
 		{
-			if ${Config.HangarSale.PriceMode.Equal["Undercut Average"]} 
+			if ${Config.PriceMode.Equal["Undercut Average"]} 
 			{
 				SellItems:Set[${TypeID}, ${sellAveragePrice}]
 				SendToRefine:Set[FALSE]
@@ -346,7 +385,7 @@ objectdef obj_HangerSale inherits obj_State
 			ToSellAverageTotal:Inc[${Math.Calc[${sellAveragePrice} * ${Quantity}]}]
 		}
 		
-		if ${Config.HangarSale.MoveRefines}
+		if ${Config.MoveRefines}
 		{
 			MoveRefines:Add[${TypeID}]
 		}
@@ -526,7 +565,7 @@ objectdef obj_HangerSale inherits obj_State
 			CurrentSellOrders:Set[${MyOrderIndex.Used}]
 			UI:Update["obj_HangerSale", "${CurrentSellOrders} current sell orders out of ${This.MaxOrders}", "g"]
 			MyOrderIndex:GetIterator[MyOrderIterator]
-			if ${MyOrderIterator:First(exists)} && ${Config.HangarSale.RePrice}
+			if ${MyOrderIterator:First(exists)} && ${Config.RePrice}
 			{
 				This:InsertState["UpdateOrders", 100]
 				This:InsertState["FetchPrice", 100, "${MyOrderIterator.Value.TypeID}"]
@@ -542,12 +581,12 @@ objectdef obj_HangerSale inherits obj_State
 		variable float discount
 		variable float sellPrice
 		
-		if ${Config.HangarSale.PriceMode.Equal["Undercut Lowest"]} 
+		if ${Config.PriceMode.Equal["Undercut Lowest"]} 
 		{
-			discount:Set[${Math.Calc[${SellPrices[${MyOrderIterator.Value.TypeID}].Min}*(${Config.HangarSale.UndercutPercent} * .01)]}]
-			if ${discount} > ${Config.HangarSale.UndercutValue}
+			discount:Set[${Math.Calc[${SellPrices[${MyOrderIterator.Value.TypeID}].Min}*(${Config.UndercutPercent} * .01)]}]
+			if ${discount} > ${Config.UndercutValue}
 			{
-				discount:Set[${Config.HangarSale.UndercutValue}]
+				discount:Set[${Config.UndercutValue}]
 			}
 			sellPrice:Set[${Math.Calc[${SellPrices[${MyOrderIterator.Value.TypeID}].Min} - ${discount}]}]
 			UI:Update["obj_HangerSale", "${MyOrderIterator.Value.Name}", "y"]
@@ -562,7 +601,7 @@ objectdef obj_HangerSale inherits obj_State
 				UI:Update["obj_HangerSale", "Repricing unneccessary", "y"]
 			}
 		}
-		if ${Config.HangarSale.PriceMode.Equal["Match Highest Buyout"]} 
+		if ${Config.PriceMode.Equal["Match Highest Buyout"]} 
 		{
 			sellPrice:Set[${BuyPrices[${MyOrderIterator.Value.TypeID}].Max}]
 			UI:Update["obj_HangerSale", "${MyOrderIterator.Value.Name}", "y"]
@@ -577,12 +616,12 @@ objectdef obj_HangerSale inherits obj_State
 				UI:Update["obj_HangerSale", "Repricing unneccessary", "y"]
 			}
 		}
-		if ${Config.HangarSale.PriceMode.Equal["Undercut Average"]} 
+		if ${Config.PriceMode.Equal["Undercut Average"]} 
 		{
-			discount:Set[${Math.Calc[${SellPrices[${MyOrderIterator.Value.TypeID}].avg}*(${Config.HangarSale.UndercutPercent} * .01)]}]
-			if ${discount} > ${Config.HangarSale.UndercutValue}
+			discount:Set[${Math.Calc[${SellPrices[${MyOrderIterator.Value.TypeID}].avg}*(${Config.UndercutPercent} * .01)]}]
+			if ${discount} > ${Config.UndercutValue}
 			{
-				discount:Set[${Config.HangarSale.UndercutValue}]
+				discount:Set[${Config.UndercutValue}]
 			}
 			sellPrice:Set[${Math.Calc[${SellPrices[${MyOrderIterator.Value.TypeID}].avg} - ${discount}]}]
 			UI:Update["obj_HangerSale", "${MyOrderIterator.Value.Name}", "y"]
