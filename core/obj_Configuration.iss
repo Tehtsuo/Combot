@@ -32,6 +32,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 	}
 #endmac
 
+
 objectdef obj_Configuration_BaseConfig
 {
 	variable filepath CONFIG_PATH = "${Script.CurrentDirectory}/config"
@@ -123,6 +124,9 @@ objectdef obj_Configuration_Common
 	Setting(bool, Propulsion, SetPropulsion)
 	Setting(int, Propulsion_Threshold, SetPropulsion_Threshold)
 	Setting(bool, AlwaysShieldBoost, SetAlwaysShieldBoost)
+	Setting(bool, Disable3D, SetDisable3D)
+	Setting(bool, DisableUI, SetDisableUI)
+	Setting(bool, DisableTexture, SetDisableTexture)
 	Setting(string, ActiveTab, SetActiveTab)
 }
 
@@ -151,6 +155,7 @@ objectdef obj_Configuration_Salvager
 
 		This.CommonRef:AddSetting[Salvager_Dropoff_Type,Personal Hangar]
 		This.CommonRef:AddSetting[Salvager_Prefix,Salvage:]
+		This.CommonRef:AddSetting[Salvager_Dropoff,""]
 	}
 
 	Setting(string, Salvager_Prefix, SetSalvager_Prefix)
@@ -222,13 +227,15 @@ objectdef obj_Configuration_Hauler
 
 		This.CommonRef:AddSetting[Dropoff_ContainerName,""]
 		This.CommonRef:AddSetting[Pickup_ContainerName,""]
+		This.CommonRef:AddSetting[Dropoff,""]
+		This.CommonRef:AddSetting[Pickup,""]
 		
 	}
 	
 	Setting(string, MiningSystem, SetMiningSystem)	
-	Setting(string, JetCanMode, SetJetCanMode)
-	Setting(string, Dropoff_Bookmark, SetDropoff_Bookmark)
-	Setting(string, Pickup_Bookmark, SetPickup_Bookmark)
+	Setting(string, Pickup_SubType, SetPickup_SubType)
+	Setting(string, Dropoff, SetDropoff)
+	Setting(string, Pickup, SetPickup)
 	Setting(string, Dropoff_Type, SetDropoff_Type)
 	Setting(string, Pickup_Type, SetPickup_Type)
 	Setting(string, Dropoff_ContainerName, SetDropoff_ContainerName)
@@ -339,6 +346,8 @@ objectdef obj_Configuration_Miner
 		This.CommonRef:AddSetting[BeltPrefix,Belt:]
 		This.CommonRef:AddSetting[IceBeltPrefix,Ice Belt:]
 		This.CommonRef:AddSetting[MaxLasers,3]
+		This.CommonRef:AddSetting[MiningSystem,""]
+		This.CommonRef:AddSetting[Dropoff,""]
 		
 	}
 	
@@ -380,8 +389,8 @@ objectdef obj_Configuration_Security
 	method Set_Default_Values()
 	{
 		BaseConfig.BaseRef:AddSet[${This.SetName}]
-
 		
+		This.CommonRef:AddSetting[FleeTo,""]
 	}
 
 	Setting(bool, MeToPilot, SetMeToPilot)	
@@ -407,8 +416,7 @@ objectdef obj_Configuration_Security
 	Setting(bool, Break_Enabled, SetBreak_Enabled)	
 	Setting(int, Break_Duration, SetBreak_Duration)	
 	Setting(int, Break_Interval, SetBreak_Interval)	
-	Setting(bool, OverrideFleeBookmark_Enabled, SetOverrideFleeBookmark_Enabled)	
-	Setting(string, OverrideFleeBookmark, SetOverrideFleeBookmark)	
+	Setting(string, FleeTo, SetFleeTo)	
 	Setting(bool, TargetFlee, SetTargetFlee)	
 	Setting(bool, CorpFlee, SetCorpFlee)
 	Setting(bool, AllianceFlee, SetAllianceFlee)
@@ -418,35 +426,16 @@ objectdef obj_Configuration_Security
 	
 
 
-objectdef obj_FleetMember
-{
-	variable string FleetMemberName
-	variable bool FleetCommander
-	variable int Wing
-	variable bool WingCommander
-	variable int Squad
-	variable bool SquadCommander
 
-	method Initialize(string arg_FleetMemberName, bool arg_FleetCommander, int arg_Wing, bool arg_WingCommander, int arg_Squad, bool arg_SquadCommander)
-	{
-		FleetMemberName:Set[${arg_FleetMemberName}]
-		FleetCommander:Set[${arg_FleetCommander}]
-		Wing:Set[${arg_Wing}]
-		WingCommander:Set[${arg_WingCommander}]
-		Squad:Set[${arg_Squad}]
-		SquadCommander:Set[${arg_SquadCommander}]
-	}
-}
 
 
 objectdef obj_Configuration_Fleet
 {
 	variable string SetName = "Fleet"
-	variable index:obj_FleetMember FleetMembers
 
 	method Initialize()
 	{
-		if !${BaseConfig.BaseRef.FindSet[${This.SetName}](exists)} || !${BaseConfig.BaseRef.FindSet[${This.SetName}].FindSet[FleetMembers](exists)}
+		if !${BaseConfig.BaseRef.FindSet[${This.SetName}](exists)}
 		{
 			UI:Update["obj_Configuration", " ${This.SetName} settings missing - initializing", "o"]
 			This:Set_Default_Values[]
@@ -454,43 +443,28 @@ objectdef obj_Configuration_Fleet
 		UI:Update["obj_Configuration", " ${This.SetName}: Initialized", "-g"]
 	}
 
-	member:settingsetref FleetRef()
+	member:settingsetref CommonRef()
 	{
 		return ${BaseConfig.BaseRef.FindSet[${This.SetName}]}
 	}
-	member:settingsetref FleetMembersRef()
-	{
-		return ${This.FleetRef.FindSet[FleetMembers]}
-	}
+
 	method Set_Default_Values()
 	{
 		BaseConfig.BaseRef:AddSet[${This.SetName}]
-		This.FleetRef:AddSet[FleetMembers]
 	}
 
-	member:bool ManageFleet()
+	method Set_Default_Values()
 	{
-		return ${This.FleetRef.FindSetting[Manage Fleet, FALSE]}
+		BaseConfig.BaseRef:AddSet[${This.SetName}]
+		
+		This.CommonRef:AddSet[DefaultFleet]
+		This.CommonRef.FindSet[DefaultFleet]:AddSet[Wings]
+		This.CommonRef.FindSet[DefaultFleet].FindSet[Wings]:AddSet[Squads]
+		This.CommonRef.FindSet[DefaultFleet].FindSet[Wings].FindSet[Squads]:AddSet[Players]
+		This.CommonRef.FindSet[DefaultFleet].FindSet[Wings].FindSet[Squads].FindSet[Players]:AddSetting[]
 	}
-
-	method SetManageFleet(bool value)
-	{
-		This.FleetRef:AddSetting[Manage Fleet, ${value}]
-	}
-
-	member:string FleetLeader()
-	{
-		return ${This.FleetRef.FindSetting[Fleet Leader, ""]}
-	}
-
-	method SetFleetLeader(string value)
-	{
-		This.FleetRef:AddSetting[Fleet Leader, ${value}]
-	}
-
 	
 	
-
 }	
 	
 	

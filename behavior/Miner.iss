@@ -22,9 +22,9 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 objectdef obj_Miner inherits obj_State
 {
 	variable obj_MinerUI MinerUI
+	
 	variable obj_TargetList Asteroids
 	variable bool WarpToOrca=FALSE
-	variable bool UseOreHold=FALSE
 
 	method Initialize()
 	{
@@ -98,7 +98,6 @@ objectdef obj_Miner inherits obj_State
 			MyShip:OpenCargo[]
 			return FALSE
 		}
-		UseOreHold:Set[${EVEWindow[ByName, Inventory].ChildWindowExists[ShipOreHold]}]
 		return TRUE
 	}
 	
@@ -136,7 +135,7 @@ objectdef obj_Miner inherits obj_State
 				}
 				break
 			case Container
-				if  ${UseOreHold}
+				if  ${MyShip.HasOreHold}
 				{
 					if ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]} < ${Config.Miner.Threshold} * .01
 					{
@@ -175,7 +174,7 @@ objectdef obj_Miner inherits obj_State
 			case Jetcan
 				break		
 			default
-				if  ${UseOreHold}
+				if  ${MyShip.HasOreHold}
 				{
 					if ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]} < ${Config.Miner.Threshold} * .01
 					{
@@ -260,7 +259,7 @@ objectdef obj_Miner inherits obj_State
 	{
 		Profiling:StartTrack["Miner_Offload"]
 		UI:Update["obj_Miner", "Unloading cargo", "g"]
-		if ${UseOreHold}
+		if ${MyShip.HasOreHold}
 		{
 			Cargo:PopulateCargoList[SHIPOREHOLD]
 		}
@@ -510,7 +509,7 @@ objectdef obj_Miner inherits obj_State
 				}
 				else
 				{
-					if  ${UseOreHold}
+					if  ${MyShip.HasOreHold}
 					{
 						if ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]} >= ${Config.Miner.Threshold} * .01
 						{
@@ -780,12 +779,12 @@ objectdef obj_MinerUI inherits obj_State
 			{	
 				if ${UIElement[MiningSystem@Miner_Frame@ComBot_Miner].Text.Length}
 				{
-					if ${BookmarkIterator.Value.Label.Left[${Config.Miner.MiningSystem.Length}].Equal[${Config.Miner.MiningSystem}]} && ${BookmarkIterator.Value.Label.NotEqual[${Config.Miner.MiningSystem}]}
-						UIElement[MiningSystemList@Miner_Frame@ComBot_Miner]:AddItem[${BookmarkIterator.Value.Label}]
+					if ${BookmarkIterator.Value.Label.Escape.Left[${Config.Miner.MiningSystem.Length}].Equal[${Config.Miner.MiningSystem}]} && ${BookmarkIterator.Value.Label.NotEqual[${Config.Miner.MiningSystem}]}
+						UIElement[MiningSystemList@Miner_Frame@ComBot_Miner]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 				else
 				{
-					UIElement[MiningSystemList@Miner_Frame@ComBot_Miner]:AddItem[${BookmarkIterator.Value.Label}]
+					UIElement[MiningSystemList@Miner_Frame@ComBot_Miner]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 			}
 			while ${BookmarkIterator:Next(exists)}
@@ -796,12 +795,12 @@ objectdef obj_MinerUI inherits obj_State
 			{	
 				if ${UIElement[Dropoff@Miner_Frame@ComBot_Miner].Text.Length}
 				{
-					if ${BookmarkIterator.Value.Label.Left[${Config.Miner.Dropoff.Length}].Equal[${Config.Miner.Dropoff}]}
-						UIElement[DropoffList@Miner_Frame@ComBot_Miner]:AddItem[${BookmarkIterator.Value.Label}]
+					if ${BookmarkIterator.Value.Label.Escape.Left[${Config.Miner.Dropoff.Length}].Equal[${Config.Miner.Dropoff}]}
+						UIElement[DropoffList@Miner_Frame@ComBot_Miner]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 				else
 				{
-					UIElement[DropoffList@Miner_Frame@ComBot_Miner]:AddItem[${BookmarkIterator.Value.Label}]
+					UIElement[DropoffList@Miner_Frame@ComBot_Miner]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 			}
 			while ${BookmarkIterator:Next(exists)}

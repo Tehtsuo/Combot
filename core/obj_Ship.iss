@@ -27,6 +27,7 @@ objectdef obj_Ship
 
 	variable int RetryUpdateModuleList=1
 	
+	
 	variable index:string ModuleLists
 	variable index:module ModuleList
 	variable obj_ModuleList ModuleList_ArmorProjectors
@@ -97,6 +98,7 @@ objectdef obj_Ship
 					This:UpdateModuleList
 				}
 			}
+			
 				
     		This.NextPulse:Set[${Math.Calc[${LavishScript.RunningTime} + ${PulseIntervalInMilliseconds} + ${Math.Rand[500]}]}]
 		}
@@ -178,6 +180,7 @@ objectdef obj_Ship
 				case GROUP_DAMAGE_CONTROL
 				case GROUP_SHIELD_HARDENER
 				case GROUP_ARMOR_HARDENERS
+				case GROUP_ARMOR_RESISTANCE_SHIFT_HARDENER
 					This.ModuleList_ActiveResists:Insert[${ModuleIter.Value.ID}]
 					break
 				case GROUP_ENERGYWEAPON
@@ -273,4 +276,5 @@ objectdef obj_Ship
 			UI:Update["obj_Ship", "Warning: More than 1 Afterburner or MWD was detected, I will only use the first one.", "o"]
 		}
 	}
+	
 }

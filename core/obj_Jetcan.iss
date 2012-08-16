@@ -52,7 +52,7 @@ objectdef obj_Jetcan inherits obj_State
 			return FALSE
 		}
 
-		if  ${Miner.UseOreHold}
+		if  ${MyMyShip.HasOreHold}
 		{
 			if ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]} < ${Config.Miner.Threshold} * .01
 			{
@@ -126,7 +126,7 @@ objectdef obj_Jetcan inherits obj_State
 						EVEWindow[ByName, Inventory]:MakeChildActive[${TargetIterator.Value}]
 						return FALSE
 					}
-					if ${Miner.UseOreHold}
+					if ${MyShip.HasOreHold}
 					{
 						Cargo:PopulateCargoList[SHIPOREHOLD]
 					}
@@ -144,7 +144,7 @@ objectdef obj_Jetcan inherits obj_State
 			while ${TargetIterator:Next(exists)}
 		}
 
-		if  ${Miner.UseOreHold}
+		if  ${MyShip.HasOreHold}
 		{
 			if ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]} >= ${Config.Miner.Threshold} * .01
 			{
@@ -256,7 +256,7 @@ objectdef obj_Jetcan inherits obj_State
 			return FALSE
 		}
 		Entity[${ID}]:GetCargo[CargoList]
-		if ${Miner.UseOreHold}
+		if ${MyShip.HasOreHold}
 		{
 			CargoList.Get[1]:MoveTo[MyShip, OreHold, 1]
 		}
@@ -274,7 +274,7 @@ objectdef obj_Jetcan inherits obj_State
 			MyShip:Open
 			return FALSE
 		}
-		if ${Miner.UseOreHold}
+		if ${MyShip.HasOreHold}
 		{
 			Cargo:PopulateCargoList[SHIPOREHOLD]
 		}

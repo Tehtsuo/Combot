@@ -21,6 +21,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 objectdef obj_Hauler inherits obj_State
 {
+	variable obj_HaulerUI HaulerUI
+
 	variable float OrcaCargo
 	variable index:fleetmember FleetMembers
 	variable int64 CurrentCan
@@ -98,7 +100,7 @@ objectdef obj_Hauler inherits obj_State
 				{
 					UI:Update["obj_Hauler", "Unload trip required", "g"]
 					This:Clear
-					Move:Bookmark[${Config.Hauler.Dropoff_Bookmark}]
+					Move:Bookmark[${Config.Hauler.Dropoff}]
 					This:QueueState["Traveling", 1000]
 					This:QueueState["Haul"]
 				}
@@ -109,7 +111,7 @@ objectdef obj_Hauler inherits obj_State
 				{
 					UI:Update["obj_Hauler", "Unload trip required", "g"]
 					This:Clear
-					Move:Bookmark[${Config.Hauler.Dropoff_Bookmark}]
+					Move:Bookmark[${Config.Hauler.Dropoff}]
 					This:QueueState["Traveling", 1000]
 					This:QueueState["PrepOffload", 1000]
 					This:QueueState["Offload", 1000]
@@ -237,13 +239,13 @@ objectdef obj_Hauler inherits obj_State
 	
 	member:bool GoToPickup()
 	{
-		if !${EVE.Bookmark[${Config.Hauler.Pickup_Bookmark}](exists)}
+		if !${EVE.Bookmark[${Config.Hauler.Pickup}](exists)}
 		{
 			UI:Update["obj_Hauler", "No Pickup Bookmark defined!  Check your settings", "r"]
 		}
-		if ${EVE.Bookmark[${Config.Hauler.Pickup_Bookmark}].SolarSystemID} != ${Me.SolarSystemID}
+		if ${EVE.Bookmark[${Config.Hauler.Pickup}].SolarSystemID} != ${Me.SolarSystemID}
 		{
-			Move:System[${EVE.Bookmark[${Config.Hauler.Pickup_Bookmark}].SolarSystemID}]
+			Move:System[${EVE.Bookmark[${Config.Hauler.Pickup}].SolarSystemID}]
 		}
 		return TRUE
 	}
@@ -568,7 +570,7 @@ objectdef obj_Hauler inherits obj_State
 				}
 				else
 				{
-					Move:Bookmark[${Config.Hauler.Pickup_Bookmark}]
+					Move:Bookmark[${Config.Hauler.Pickup}]
 					This:Clear
 					This:QueueState["Traveling", 1000]
 					This:QueueState["Haul"]
@@ -579,7 +581,7 @@ objectdef obj_Hauler inherits obj_State
 				Switch ${Config.Hauler.JetCanMode}
 				{
 					case Service Fleet
-						if ${MyShip.UsedCargoCapacity} > (${Config.Hauler.Threshold} * .01 * ${MyShip.CargoCapacity}) || ${EVE.Bookmark[${Config.Hauler.Pickup_Bookmark}].SolarSystemID} != ${Me.SolarSystemID}
+						if ${MyShip.UsedCargoCapacity} > (${Config.Hauler.Threshold} * .01 * ${MyShip.CargoCapacity}) || ${EVE.Bookmark[${Config.Hauler.Pickup}].SolarSystemID} != ${Me.SolarSystemID}
 						{
 							break
 						}
@@ -696,7 +698,7 @@ objectdef obj_Hauler inherits obj_State
 				
 			default
 			
-			Move:Bookmark[${Config.Hauler.Pickup_Bookmark}]
+			Move:Bookmark[${Config.Hauler.Pickup}]
 			
 		}
 		
@@ -753,3 +755,69 @@ objectdef obj_Hauler inherits obj_State
 	}
 	
 }	
+
+
+objectdef obj_HaulerUI inherits obj_State
+{
+
+
+	method Initialize()
+	{
+		This[parent]:Initialize
+		This.NonGameTiedPulse:Set[TRUE]
+	}
+	
+	method Start()
+	{
+		This:QueueState["UpdateBookmarkLists", 5]
+	}
+	
+	method Stop()
+	{
+		This:Clear
+	}
+
+	member:bool UpdateBookmarkLists()
+	{
+		variable index:bookmark Bookmarks
+		variable iterator BookmarkIterator
+
+		EVE:GetBookmarks[Bookmarks]
+		Bookmarks:GetIterator[BookmarkIterator]
+		
+		UIElement[DropoffList@Hauler_Frame@ComBot_Hauler]:ClearItems
+		if ${BookmarkIterator:First(exists)}
+			do
+			{	
+				if ${UIElement[Dropoff@Hauler_Frame@ComBot_Hauler].Text.Length}
+				{
+					if ${BookmarkIterator.Value.Label.Left[${Config.Hauler.Dropoff.Length}].Equal[${Config.Hauler.Dropoff}]} && ${BookmarkIterator.Value.Label.NotEqual[${Config.Hauler.Dropoff}]}
+						UIElement[DropoffList@Hauler_Frame@ComBot_Hauler]:AddItem[${BookmarkIterator.Value.Label.Escape}]
+				}
+				else
+				{
+					UIElement[DropoffList@Hauler_Frame@ComBot_Hauler]:AddItem[${BookmarkIterator.Value.Label.Escape}]
+				}
+			}
+			while ${BookmarkIterator:Next(exists)}
+			
+		UIElement[PickupList@Hauler_Frame@ComBot_Hauler]:ClearItems
+		if ${BookmarkIterator:First(exists)}
+			do
+			{	
+				if ${UIElement[Pickup@Hauler_Frame@ComBot_Hauler].Text.Length}
+				{
+					if ${BookmarkIterator.Value.Label.Left[${Config.Hauler.Pickup.Length}].Equal[${Config.Hauler.Pickup}]} && ${BookmarkIterator.Value.Label.NotEqual[${Config.Hauler.Pickup}]}
+						UIElement[PickupList@Hauler_Frame@ComBot_Hauler]:AddItem[${BookmarkIterator.Value.Label.Escape}]
+				}
+				else
+				{
+					UIElement[PickupList@Hauler_Frame@ComBot_Hauler]:AddItem[${BookmarkIterator.Value.Label.Escape}]
+				}
+			}
+			while ${BookmarkIterator:Next(exists)}
+			
+		return FALSE
+	}
+
+}

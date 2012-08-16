@@ -795,12 +795,12 @@ objectdef obj_SalvageUI inherits obj_State
 			{	
 				if ${UIElement[Dropoff@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager].Text.Length}
 				{
-					if ${BookmarkIterator.Value.Label.Left[${Config.Salvager.Salvager_Dropoff.Length}].Equal[${Config.Salvager.Salvager_Dropoff}]}
-						UIElement[DropoffList@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[${BookmarkIterator.Value.Label}]
+					if ${BookmarkIterator.Value.Label.Escape.Left[${Config.Salvager.Salvager_Dropoff.Length}].Equal[${Config.Salvager.Salvager_Dropoff}]}
+						UIElement[DropoffList@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 				else
 				{
-					UIElement[DropoffList@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[${BookmarkIterator.Value.Label}]
+					UIElement[DropoffList@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 			}
 			while ${BookmarkIterator:Next(exists)}
@@ -811,12 +811,12 @@ objectdef obj_SalvageUI inherits obj_State
 			{	
 				if ${UIElement[BeltPatrolBookmark@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager].Text.Length}
 				{
-					if ${BookmarkIterator.Value.Label.Left[${Config.Salvager.BeltPatrolBookmark.Length}].Equal[${Config.Salvager.BeltPatrolBookmark}]}
-						UIElement[BeltPatrolBookmarkList@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[${BookmarkIterator.Value.Label}]
+					if ${BookmarkIterator.Value.Label.Escape.Left[${Config.Salvager.BeltPatrolBookmark.Length}].Equal[${Config.Salvager.BeltPatrolBookmark}]}
+						UIElement[BeltPatrolBookmarkList@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 				else
 				{
-					UIElement[BeltPatrolBookmarkList@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[${BookmarkIterator.Value.Label}]
+					UIElement[BeltPatrolBookmarkList@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 			}
 			while ${BookmarkIterator:Next(exists)}
