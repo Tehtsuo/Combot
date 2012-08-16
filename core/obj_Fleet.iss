@@ -28,7 +28,7 @@ objectdef obj_Fleet inherits obj_State
 		This[parent]:Initialize
 		This.NonGameTiedPulse:Set[TRUE]
 		
-		;This:QueueState["Start"]
+		This:QueueState["Start"]
 	}
 
 	member:bool Start()
@@ -61,12 +61,11 @@ objectdef obj_Fleet inherits obj_State
 		{
 			Me.Fleet:LeaveFleet
 		}
+
 		
-		
-		
-		if ${Me.ID} == ${ActiveCommander}
+		if ${Me.ID} == ${This.ActiveCommander}
 		{
-			if ${InviteFleetMembers}
+			if ${This.InviteFleetMembers}
 			{
 				return FALSE
 			}
@@ -88,9 +87,9 @@ objectdef obj_Fleet inherits obj_State
 			return TRUE
 		}
 		
-		if ${Me.ID} == ${ActiveCommander}
+		if ${Me.ID} == ${This.ActiveCommander}
 		{
-			if ${InviteFleetMembers}
+			if ${This.InviteFleetMembers}
 			{
 				return FALSE
 			}
@@ -98,7 +97,7 @@ objectdef obj_Fleet inherits obj_State
 
 		if ${Me.Fleet.Invited}
 		{
-			if ${Me.Fleet.InvitationText.Find[${ResolveName[${ActiveCommander}]}]}
+			if ${Me.Fleet.InvitationText.Find[${This.ResolveName[${This.ActiveCommander}]}]}
 			{
 				Me.Fleet:AcceptInvite
 				return FALSE
@@ -110,30 +109,35 @@ objectdef obj_Fleet inherits obj_State
 
 	method SaveFleet(string name)
 	{
+		Config.Fleets:ClearFleet[${name}]
+	
 		variable index:fleetmember Members
 		variable iterator Member
-		
 		
 		Me.Fleet:GetMembers[Members]
 		Members:GetIterator[Member]
 		if ${Member:First(exists)}
 			do
 			{
-				if !${Member.Value.IsFleetCommander} && !${Member.Value.IsWingCommander} && !${Member.Value.IsSquadCommander}
+				if ${Member.Value.RoleID} == 4
 				{
-					Config.Fleets.GetFleet[${name}].GetWing[${Me.Fleet.WingName[${Member.Value.WingID}]}].GetSquad[${Me.Fleet.SquadName[${Member.Value.SquadID}]}].GetMember[${Member.Value.ToPilot.Name}]:SetID[${Member.Value.ID}]
+					echo Adding Member
+					Config.Fleets.GetFleet[${name}].GetWing[${Member.Value.WingID}].GetSquad[${Member.Value.SquadID}].GetMember[${Member.Value.ID}]:SetID[${Member.Value.ID}]
 				}
-				if ${Member.Value.IsFleetCommander}
+				if ${Member.Value.RoleID} == 1
 				{
+					echo Adding Fleet Commander
 					Config.Fleets.GetFleet[${name}]:SetCommander[${Member.Value.ID}]
 				}
-				if ${Member.Value.IsWingCommander}
+				if ${Member.Value.RoleID} == 2
 				{
-					Config.Fleets.GetFleet[${name}].GetWing[${Me.Fleet.WingName[${Member.Value.WingID}]}]:SetCommander[${Member.Value.ID}]
+					echo Adding Wing Commander
+					Config.Fleets.GetFleet[${name}].GetWing[${Member.Value.WingID}]:SetCommander[${Member.Value.ID}]
 				}
-				if ${Member.Value.IsSquadCommander}
+				if ${Member.Value.RoleID} == 3
 				{
-					Config.Fleets.GetFleet[${name}].GetWing[${Me.Fleet.WingName[${Member.Value.WingID}]}].GetSquad[${Me.Fleet.SquadName[${Member.Value.SquadID}]}]:SetCommander[${Member.Value.ID}]
+					echo Adding Squad Commander
+					Config.Fleets.GetFleet[${name}].GetWing[${Member.Value.WingID}].GetSquad[${Member.Value.SquadID}]:SetCommander[${Member.Value.ID}]
 				}
 			}
 			while ${Member:Next(exists)}
@@ -292,30 +296,29 @@ objectdef obj_Fleet inherits obj_State
 	member:bool InviteFleetMembers()
 	{
 		variable iterator Wing
-		Config.Fleets.GetFleet[${Config.Fleets.Active}].Wings:GetIterator[Wing]
+		Config.Fleets.GetFleet[${Config.Fleets.Active}].Wings:GetSetIterator[Wing]
 		if ${Wing:First(exists)}
 			do
 			{
-				if ${InviteToFleet[${Wing.Value.Commander}]}
+				if ${This.InviteToFleet[${Wing.Value.FindSetting[Commander]}]}
 					return TRUE
-					
 				variable iterator Squad
-				Wing.Value.Squads:GetIterator[Squad]
+				Wing.Value.FindSet[Squads]:GetSetIterator[Squad]
 				if ${Squad:First(exists)}
 					do
 					{
-						if ${InviteToFleet[${Squad.Value.Commander}]}
+						if ${This.InviteToFleet[${Squad.Value.FindSetting[Commander]}]}
 							return TRUE
 						
 						variable iterator Member
-						Squad.Value.Members:GetIterator[Member]
+						Squad.Value.FindSet[Members]:GetSetIterator[Member]
 						if ${Member:First(exists)}
 							do
 							{
-								if ${InviteToFleet[${Member.Value.ID}]}
+								if ${This.InviteToFleet[${Member.Value.Name}]}
 									return TRUE
 							}
-							while ${Squad:Next(exists)}
+							while ${Member:Next(exists)}
 					}
 					while ${Squad:Next(exists)}
 			}
@@ -327,10 +330,12 @@ objectdef obj_Fleet inherits obj_State
 	
 	member:bool InviteToFleet(int64 value)
 	{
+
 		if ${Me.Fleet.Member[${value}](exists)} || ${value} == 0
 		{
 			return FALSE
 		}
+		
 	
 		variable index:pilot CorpMembers
 		variable iterator CorpMember

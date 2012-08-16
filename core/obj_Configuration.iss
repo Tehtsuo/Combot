@@ -200,9 +200,21 @@ objectdef obj_Configuration_Fleets
 	{
 		if !${This.CommonRef.FindSet[Fleets].FindSet[${FleetID}](exists)}
 		{
+			echo Adding Fleet: ${FleetID}
 			This.CommonRef.FindSet[Fleets]:AddSet[${FleetID}]
+			Config:Save
 		}
 		return ${This.CommonRef.FindSet[Fleets].FindSet[${FleetID}]}
+	}
+	
+	method ClearFleet(string FleetID)
+	{
+		if ${This.CommonRef.FindSet[Fleets].FindSet[${FleetID}](exists)}
+		{
+			echo Deleting Fleet: ${FleetID}
+			This.CommonRef.FindSet[Fleets]:Clear
+			Config:Save
+		}
 	}
 	
 	member:settingsetref Fleets()
@@ -233,11 +245,13 @@ objectdef obj_Configuration_Fleet
 		}
 	}
 	
-	member:obj_Configuration_Wing GetWing(string WingID)
+	member:obj_Configuration_Wing GetWing(int64 WingID)
 	{
 		if !${CurrentRef.FindSet[Wings].FindSet[${WingID}](exists)}
 		{
+			echo Adding Wing: ${WingID}
 			CurrentRef.FindSet[Wings]:AddSet[${WingID}]
+			Config:Save
 		}
 		return ${CurrentRef.FindSet[Wings].FindSet[${WingID}]}
 	}
@@ -246,7 +260,12 @@ objectdef obj_Configuration_Fleet
 	{
 		return ${CurrentRef.FindSet[Wings]}
 	}
-	
+
+	member:settingsetref CommonRef()
+	{
+		return ${CurrentRef}
+	}
+
 	method Set_Default_Values()
 	{
 		CurrentRef:AddSet[Wings]
@@ -254,14 +273,13 @@ objectdef obj_Configuration_Fleet
 		This.CommonRef:AddSetting[Booster,0]
 	}
 	
-	Setting(string, Name, SetName)
 	Setting(int64, Commander, SetCommander)	
 	Setting(int64, Booster, SetBooster)
 }
 
 objectdef obj_Configuration_Wing
 {
-	variable settingsefref CurrentRef
+	variable settingsetref CurrentRef
 
 	method Initialize(settingsetref BaseRef)
 	{
@@ -272,11 +290,13 @@ objectdef obj_Configuration_Wing
 		}
 	}
 	
-	member:obj_Configuration_Squad GetSquad(string SquadID)
+	member:obj_Configuration_Squad GetSquad(int64 SquadID)
 	{
 		if !${CurrentRef.FindSet[Squads].FindSet[${SquadID}](exists)}
 		{
+			echo Adding Squad: ${SquadID}
 			CurrentRef.FindSet[Squads]:AddSet[${SquadID}]
+			Config:Save
 		}
 		return ${CurrentRef.FindSet[Squads].FindSet[${SquadID}]}
 	}
@@ -285,15 +305,20 @@ objectdef obj_Configuration_Wing
 	{
 		return ${CurrentRef.FindSet[Squads]}
 	}
+
+	member:settingsetref CommonRef()
+	{
+		return ${CurrentRef}
+	}
 	
 	method Set_Default_Values()
 	{
+		echo Setting Squad defaults
 		CurrentRef:AddSet[Squads]
 		This.CommonRef:AddSetting[Commander,0]
 		This.CommonRef:AddSetting[Booster,0]
 	}
 	
-	Setting(string, Name, SetName)
 	Setting(int64, Commander, SetCommander)	
 	Setting(int64, Booster, SetBooster)	
 }
@@ -311,11 +336,13 @@ objectdef obj_Configuration_Squad
 		}
 	}
 	
-	member:obj_Configuration_Member GetMember(string MemberID)
+	member:obj_Configuration_Member GetMember(int64 MemberID)
 	{
 		if !${CurrentRef.FindSet[Members].FindSet[${MemberID}](exists)}
 		{
+			echo Adding Member: ${MemberID}
 			CurrentRef.FindSet[Members]:AddSet[${MemberID}]
+			Config:Save
 		}
 		return ${CurrentRef.FindSet[Members].FindSet[${MemberID}]}
 	}
@@ -323,6 +350,11 @@ objectdef obj_Configuration_Squad
 	member:settingsetref Members()
 	{
 		return ${CurrentRef.FindSet[Members]}
+	}
+
+	member:settingsetref CommonRef()
+	{
+		return ${CurrentRef}
 	}
 	
 	method Set_Default_Values()
@@ -332,7 +364,6 @@ objectdef obj_Configuration_Squad
 		This.CommonRef:AddSetting[Booster,0]
 	}
 	
-	Setting(string, Name, SetName)
 	Setting(int64, Commander, SetCommander)	
 	Setting(int64, Booster, SetBooster)	
 }
@@ -355,7 +386,6 @@ objectdef obj_Configuration_Member
 		CurrentRef:AddSetting[Created, TRUE]
 	}
 
-	Setting(int64, ID, SetID)	
 }
 
 objectdef obj_Configuration_RefineData

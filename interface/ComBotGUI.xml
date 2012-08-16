@@ -382,17 +382,19 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							<OnLoad>
 								This:AddItem[No Fleet]
 								variable iterator FleetIterator
-								Script[ComBot].VariableScope.Config.Fleets.Fleets:GetIterator[FleetIterator]
+								Script[ComBot].VariableScope.Config.Fleets.Fleets:GetSetIterator[FleetIterator]
 								if ${FleetIterator:First(exists)}
+								{
 									do
 									{
 										This:AddItem[${FleetIterator.Value.Name}]
 									}
 									while ${FleetIterator:Next(exists)}
-								This.ItemByValue[${Script[ComBot].VariableScope.Config.Fleets.Active}]:Select
+								}
+								This.ItemByText[${Script[ComBot].VariableScope.Config.Fleets.Active}]:Select
 							</OnLoad>
 							<OnSelect>
-								Script[ComBot].VariableScope.Config.Fleets:SetActive[${This.SelectedItem.Value}]
+								Script[ComBot].VariableScope.Config.Fleets:SetActive[${This.SelectedItem.Text}]
 							</OnSelect>
 						</combobox>
 						<button	Name='ModuleSettings'>
