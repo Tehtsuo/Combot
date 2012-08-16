@@ -78,7 +78,7 @@ objectdef obj_Configuration
 	variable obj_Configuration_Security Security
 	variable obj_Configuration_HangarSale HangarSale
 	variable obj_Configuration_Hauler Hauler
-	variable obj_Configuration_Fleet Fleet
+	variable obj_Configuration_Fleets Fleets
 	method Save()
 	{
 		BaseConfig:Save[]
@@ -429,9 +429,9 @@ objectdef obj_Configuration_Security
 
 
 
-objectdef obj_Configuration_Fleet
+objectdef obj_Configuration_Fleets
 {
-	variable string SetName = "Fleet"
+	variable string SetName = "Fleets"
 
 	method Initialize()
 	{
@@ -448,21 +448,58 @@ objectdef obj_Configuration_Fleet
 		return ${BaseConfig.BaseRef.FindSet[${This.SetName}]}
 	}
 	
-	member:obj_Configuration_Wing GetWing(int WingID)
+	member:obj_Configuration_Wing GetFleet(string FleetID)
 	{
-		return ${This.CommonRef.FindSet[DefaultFleet].FindSet[Wings].FindSet[${WingID}]}
+		if !${This.CommonRef.FindSet[Fleets].FindSet[${FleetID}](exists)}
+		{
+			This.CommonRef.FindSet[Fleets]:AddSet[${FleetID}]
+		}
+		return ${This.CommonRef.FindSet[Fleets].FindSet[${FleetID}]}
 	}
 	
-	member:settingsetref Wings()
+	member:settingsetref Fleets()
 	{
-		return ${This.CommonRef.FindSet[DefaultFleet].FindSet[Wings]}
+		return ${This.CommonRef.FindSet[Fleets]}
 	}
 	
 	method Set_Default_Values()
 	{
 		BaseConfig.BaseRef:AddSet[${This.SetName}]
-		This.CommonRef:AddSet[DefaultFleet]
-		This.CommonRef.FindSet[DefaultFleet]:AddSet[Wings]
+		This.CommonRef:AddSet[Fleets]
+	}
+	
+}
+
+objectdef obj_Configuration_Fleet
+{
+	variable settingsetref CurrentRef
+
+	method Initialize(settingsetref BaseRef)
+	{
+		CurrentRef:Set[${BaseRef}]
+		if !${CurrentRef.FindSet[Wings](exists)}
+		{
+			This:Set_Default_Values[]
+		}
+	}
+	
+	member:obj_Configuration_Squad GetWing(string WingID)
+	{
+		if !${CurrentRef.FindSet[Wings].FindSet[${WingID}](exists)}
+		{
+			CurrentRef.FindSet[Wings]:AddSet[${WingID}]
+		}
+		return ${CurrentRef.FindSet[Wings].FindSet[${WingID}]}
+	}
+	
+	member:settingsetref Wings()
+	{
+		return ${CurrentRef.FindSet[Wings]}
+	}
+	
+	method Set_Default_Values()
+	{
+		CurrentRef:AddSet[Squads]
 	}
 }
 
@@ -479,8 +516,12 @@ objectdef obj_Configuration_Wing
 		}
 	}
 	
-	member:obj_Configuration_Squad GetSquad(int SquadID)
+	member:obj_Configuration_Squad GetSquad(string SquadID)
 	{
+		if !${CurrentRef.FindSet[Squads].FindSet[${SquadID}](exists)}
+		{
+			CurrentRef.FindSet[Squads]:AddSet[${SquadID}]
+		}
 		return ${CurrentRef.FindSet[Squads].FindSet[${SquadID}]}
 	}
 	
@@ -497,7 +538,7 @@ objectdef obj_Configuration_Wing
 
 objectdef obj_Configuration_Squad
 {
-	variable settingsefref CurrentRef
+	variable settingsetref CurrentRef
 
 	method Initialize(settingsetref BaseRef)
 	{
@@ -508,8 +549,12 @@ objectdef obj_Configuration_Squad
 		}
 	}
 	
-	member:obj_Configuration_Member GetMember(int MemberID)
+	member:obj_Configuration_Member GetMember(string MemberID)
 	{
+		if !${CurrentRef.FindSet[Members].FindSet[${MemberID}](exists)}
+		{
+			CurrentRef.FindSet[Members]:AddSet[${MemberID}]
+		}
 		return ${CurrentRef.FindSet[Members].FindSet[${MemberID}]}
 	}
 	
@@ -526,7 +571,7 @@ objectdef obj_Configuration_Squad
 
 objectdef obj_Configuration_Member
 {
-	variable settingsefref CurrentRef
+	variable settingsetref CurrentRef
 
 	method Initialize(settingsetref BaseRef)
 	{
