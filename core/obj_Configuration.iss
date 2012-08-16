@@ -117,42 +117,7 @@ objectdef obj_Configuration_Common
 
 
 
-objectdef obj_Configuration_HangarSale
-{
-	variable string SetName = "HangarSale"
 
-	method Initialize()
-	{
-		if !${BaseConfig.BaseRef.FindSet[${This.SetName}](exists)}
-		{
-			UI:Update["obj_Configuration", " ${This.SetName} settings missing - initializing", "o"]
-			This:Set_Default_Values[]
-		}
-		UI:Update["obj_Configuration", " ${This.SetName}: Initialized", "-g"]
-	}
-
-	member:settingsetref CommonRef()
-	{
-		return ${BaseConfig.BaseRef.FindSet[${This.SetName}]}
-	}
-
-	method Set_Default_Values()
-	{
-		BaseConfig.BaseRef:AddSet[${This.SetName}]
-
-		This.CommonRef:AddSetting[PriceMode,Undercut Lowest]
-		This.CommonRef:AddSetting[UndercutPercent,1]
-		This.CommonRef:AddSetting[UndercutValue,1000]
-	}
-	
-	Setting(string, PriceMode, SetPriceMode)
-	Setting(int, UndercutPercent, SetUndercutPercent)
-	Setting(int, UndercutValue, SetUndercutValue)
-	Setting(bool, RePrice, SetRePrice)
-	Setting(bool, Sell, SetSell)
-	Setting(bool, MoveRefines, SetMoveRefines)
-	Setting(int64, MoveRefinesTarget, SetMoveRefinesTarget)
-}
 	
 objectdef obj_Configuration_Hauler
 {
