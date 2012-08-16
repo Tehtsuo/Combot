@@ -87,6 +87,15 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					<Height>20</Height>
 					<Text>Close</Text>
 					<OnLeftClick>
+						if !${EVE.Bookmark[${Script[ComBot].VariableScope.Config.Salvager_Dropoff.Dropoff}](exists)}
+						{
+							Script[ComBot].VariableScope.UI:Update["obj_Salvage", "Unable to verify Dropoff bookmark", "r"]
+						}
+						if !${EVE.Bookmark[${Script[ComBot].VariableScope.Config.Salvager.BeltPatrolBookmark}](exists)}
+						{
+							Script[ComBot].VariableScope.UI:Update["obj_Salvage", "Unable to verify Belt Patrol bookmark", "r"]
+						}
+
 						Script[ComBot].VariableScope.Salvage.SalvageUI:Stop
 						ui -unload "&filepath;/Salvage"
 					</OnLeftClick>

@@ -22,6 +22,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 objectdef obj_Miner inherits obj_State
 {
 	variable obj_MinerUI MinerUI
+	
 	variable obj_TargetList Asteroids
 	variable bool WarpToOrca=FALSE
 
@@ -47,6 +48,7 @@ objectdef obj_Miner inherits obj_State
 		This:AssignStateQueueDisplay[DebugStateList@Debug@ComBotTab@ComBot]
 		if ${This.IsIdle}
 		{
+			This:QueueState["OpenCargoHold"]
 			This:QueueState["Mine"]
 		}
 	}
@@ -132,64 +134,88 @@ objectdef obj_Miner inherits obj_State
 				}
 				break
 			case Container
-				if (${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]}) >= ${Config.Miner.Threshold} * .01
+				if  ${MyShip.HasOreHold}
 				{
-					if ${Drones.DronesInSpace}
+					if ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]} < ${Config.Miner.Threshold} * .01
 					{
-						Drones:Recall
-						return FALSE
+						break
 					}
-					UI:Update["obj_Miner", "Unload trip required", "g"]
-					if ${Config.Miner.OrcaMode}
-					{
-						relay all -event ComBot_Orca_InBelt FALSE
-					}
-					Bookmarks:StoreLocation
-					This:Clear
-					Asteroids.LockedTargetList:Clear
-					Drones:Recall
-					Move:Bookmark[${Config.Miner.Dropoff}]
-					This:QueueState["Traveling", 1000]
-					This:QueueState["Mine"]
 				}
+				else
+				{
+					if ${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity} < ${Config.Miner.Threshold} * .01
+					{
+						break
+					}
+				}
+				
+				if ${Drones.DronesInSpace}
+				{
+					Drones:Recall
+					return FALSE
+				}
+				UI:Update["obj_Miner", "Unload trip required", "g"]
+				if ${Config.Miner.OrcaMode}
+				{
+					relay all -event ComBot_Orca_InBelt FALSE
+				}
+				Bookmarks:StoreLocation
+				This:Clear
+				Asteroids.LockedTargetList:Clear
+				Drones:Recall
+				Move:Bookmark[${Config.Miner.Dropoff}]
+				This:QueueState["Traveling", 1000]
+				This:QueueState["Mine"]
+					
 				break
 			case No Dropoff
 				break
 			case Jetcan
 				break		
 			default
-				if (${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]}) >= ${Config.Miner.Threshold} * .01
+				if  ${MyShip.HasOreHold}
 				{
-					if ${Drones.DronesInSpace}
+					if ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]} < ${Config.Miner.Threshold} * .01
 					{
-						Drones:Recall
-						return FALSE
+						break
 					}
-					UI:Update["obj_Miner", "Unload trip required", "g"]
-					if ${Client.InSpace}
-					{
-						Bookmarks:StoreLocation
-					}
-					if ${Config.Miner.OrcaMode}
-					{
-						relay all -event ComBot_Orca_InBelt FALSE
-					}
-					This:Clear
-					Asteroids.LockedTargetList:Clear
-					Drones:Recall
-					Move:Bookmark[${Config.Miner.Dropoff}]
-					This:QueueState["Traveling", 1000]
-					This:QueueState["PrepOffload", 1000]
-					This:QueueState["Offload", 1000]
-					This:QueueState["StackItemHangar", 1000]
-					This:QueueState["GoToMiningSystem", 1000]
-					This:QueueState["Traveling", 1000]
-					This:QueueState["Mine"]
 				}
-				break
+				else
+				{
+					if ${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity} < ${Config.Miner.Threshold} * .01
+					{
+						break
+					}
+				}
+
+				if ${Drones.DronesInSpace}
+				{
+					Drones:Recall
+					return FALSE
+				}
+				UI:Update["obj_Miner", "Unload trip required", "g"]
+				if ${Client.InSpace}
+				{
+					Bookmarks:StoreLocation
+				}
+				if ${Config.Miner.OrcaMode}
+				{
+					relay all -event ComBot_Orca_InBelt FALSE
+				}
+				This:Clear
+				Asteroids.LockedTargetList:Clear
+				Drones:Recall
+				Move:Bookmark[${Config.Miner.Dropoff}]
+				This:QueueState["Traveling", 1000]
+				This:QueueState["PrepOffload", 1000]
+				This:QueueState["Offload", 1000]
+				This:QueueState["StackItemHangar", 1000]
+				This:QueueState["GoToMiningSystem", 1000]
+				This:QueueState["Traveling", 1000]
+				This:QueueState["Mine"]
 		}
 		Profiling:EndTrack
-		return TRUE;
+		return TRUE
 	}
 
 	member:bool Traveling()
@@ -232,7 +258,15 @@ objectdef obj_Miner inherits obj_State
 	{
 		Profiling:StartTrack["Miner_Offload"]
 		UI:Update["obj_Miner", "Unloading cargo", "g"]
-		Cargo:PopulateCargoList[SHIPOREHOLD]
+		if ${MyShip.HasOreHold}
+		{
+			Cargo:PopulateCargoList[SHIPOREHOLD]
+		}
+		else
+		{
+			Cargo:PopulateCargoList[SHIP]
+			Cargo:Filter["CategoryID == CATEGORYID_ORE", FALSE]
+		}
 		switch ${Config.Miner.Dropoff_Type}
 		{
 			case Personal Hangar
@@ -474,30 +508,60 @@ objectdef obj_Miner inherits obj_State
 				}
 				else
 				{
-					if (${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]}) > 0.10
+					if  ${MyShip.HasOreHold}
 					{
-						if !${EVEWindow[ByName, Inventory].ChildWindowExists[${Orca}]}
+						if ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]} >= ${Config.Miner.Threshold} * .01
 						{
-							UI:Update["obj_Miner", "Opening ${Config.Miner.Container_Name}", "g"]
-							Entity[${Orca}]:Open
+							if !${EVEWindow[ByName, Inventory].ChildWindowExists[${Orca}]}
+							{
+								UI:Update["obj_Miner", "Opening ${Config.Miner.Container_Name}", "g"]
+								Entity[${Orca}]:Open
+								Profiling:EndTrack
+								return FALSE
+							}
+							if !${EVEWindow[ByItemID, ${Orca}](exists)}
+							{
+								EVEWindow[ByName, Inventory]:MakeChildActive[${Orca}]
+								Profiling:EndTrack
+								return FALSE
+							}
+							;UI:Update["obj_Miner", "Unloading to ${Config.Miner.Container_Name}", "g"]
+							Cargo:PopulateCargoList[SHIPOREHOLD]
+							Cargo:MoveCargoList[SHIPCORPORATEHANGAR, "", ${Orca}]
+							This:QueueState["Idle", 1000]
+							This:QueueState["StackItemHangar"]
+							This:QueueState["Mine"]
 							Profiling:EndTrack
-							return FALSE
+							return TRUE
 						}
-						if !${EVEWindow[ByItemID, ${Orca}](exists)}
+					}
+					else
+					{
+						if ${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity} >= ${Config.Miner.Threshold} * .01
 						{
-							EVEWindow[ByName, Inventory]:MakeChildActive[${Orca}]
+							if !${EVEWindow[ByName, Inventory].ChildWindowExists[${Orca}]}
+							{
+								UI:Update["obj_Miner", "Opening ${Config.Miner.Container_Name}", "g"]
+								Entity[${Orca}]:Open
+								Profiling:EndTrack
+								return FALSE
+							}
+							if !${EVEWindow[ByItemID, ${Orca}](exists)}
+							{
+								EVEWindow[ByName, Inventory]:MakeChildActive[${Orca}]
+								Profiling:EndTrack
+								return FALSE
+							}
+							;UI:Update["obj_Miner", "Unloading to ${Config.Miner.Container_Name}", "g"]
+							Cargo:PopulateCargoList[SHIP]
+							Cargo:Filter["CategoryID == CATEGORYID_ORE", FALSE]
+							Cargo:MoveCargoList[SHIPCORPORATEHANGAR, "", ${Orca}]
+							This:QueueState["Idle", 1000]
+							This:QueueState["StackItemHangar"]
+							This:QueueState["Mine"]
 							Profiling:EndTrack
-							return FALSE
+							return TRUE
 						}
-						;UI:Update["obj_Miner", "Unloading to ${Config.Miner.Container_Name}", "g"]
-						Cargo:PopulateCargoList[SHIPOREHOLD]
-						Cargo:Filter["CategoryID == CATEGORYID_ORE", FALSE]
-						Cargo:MoveCargoList[SHIPCORPORATEHANGAR, "", ${Orca}]
-						This:QueueState["Idle", 1000]
-						This:QueueState["StackItemHangar"]
-						This:QueueState["Mine"]
-						Profiling:EndTrack
-						return TRUE
 					}
 				}
 			}
@@ -718,12 +782,12 @@ objectdef obj_MinerUI inherits obj_State
 			{	
 				if ${UIElement[MiningSystem@Miner_Frame@ComBot_Miner].Text.Length}
 				{
-					if ${BookmarkIterator.Value.Label.Left[${Config.Miner.MiningSystem.Length}].Equal[${Config.Miner.MiningSystem}]} && ${BookmarkIterator.Value.Label.NotEqual[${Config.Miner.MiningSystem}]}
-						UIElement[MiningSystemList@Miner_Frame@ComBot_Miner]:AddItem[${BookmarkIterator.Value.Label}]
+					if ${BookmarkIterator.Value.Label.Escape.Left[${Config.Miner.MiningSystem.Length}].Equal[${Config.Miner.MiningSystem}]} && ${BookmarkIterator.Value.Label.NotEqual[${Config.Miner.MiningSystem}]}
+						UIElement[MiningSystemList@Miner_Frame@ComBot_Miner]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 				else
 				{
-					UIElement[MiningSystemList@Miner_Frame@ComBot_Miner]:AddItem[${BookmarkIterator.Value.Label}]
+					UIElement[MiningSystemList@Miner_Frame@ComBot_Miner]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 			}
 			while ${BookmarkIterator:Next(exists)}
@@ -734,12 +798,12 @@ objectdef obj_MinerUI inherits obj_State
 			{	
 				if ${UIElement[Dropoff@Miner_Frame@ComBot_Miner].Text.Length}
 				{
-					if ${BookmarkIterator.Value.Label.Left[${Config.Miner.Dropoff.Length}].Equal[${Config.Miner.Dropoff}]}
-						UIElement[DropoffList@Miner_Frame@ComBot_Miner]:AddItem[${BookmarkIterator.Value.Label}]
+					if ${BookmarkIterator.Value.Label.Escape.Left[${Config.Miner.Dropoff.Length}].Equal[${Config.Miner.Dropoff}]}
+						UIElement[DropoffList@Miner_Frame@ComBot_Miner]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 				else
 				{
-					UIElement[DropoffList@Miner_Frame@ComBot_Miner]:AddItem[${BookmarkIterator.Value.Label}]
+					UIElement[DropoffList@Miner_Frame@ComBot_Miner]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 			}
 			while ${BookmarkIterator:Next(exists)}

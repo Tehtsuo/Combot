@@ -58,7 +58,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 			<Width>100%</Width>
 			<Height>20</Height>
 			<Border>0</Border>
-			<BackgroundColor>FF000000</BackgroundColor>
+			<BackgroundColor>FF888888</BackgroundColor>
 			<Children>
 				<Text name='ComBot_Miner_TitleBar_Title'>
 					<X>0</X>
@@ -87,6 +87,14 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					<Height>20</Height>
 					<Text>Close</Text>
 					<OnLeftClick>
+						if !${EVE.Bookmark[${Script[ComBot].VariableScope.Config.Miner.Dropoff}](exists)}
+						{
+							Script[ComBot].VariableScope.UI:Update["obj_Miner", "Unable to verify Dropoff bookmark", "r"]
+						}
+						if !${EVE.Bookmark[${Script[ComBot].VariableScope.Config.Miner.MiningSystem}](exists)}
+						{
+							Script[ComBot].VariableScope.UI:Update["obj_Miner", "Unable to verify Mining System bookmark", "r"]
+						}
 						Script[ComBot].VariableScope.Miner.MinerUI:Stop
 						ui -unload "&filepath;/Miner"
 					</OnLeftClick>
@@ -154,16 +162,16 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					</listbox>
 					
 					<Text name='Dropoff_ContainerTitle'> 
-						<X>1%</X> 
-						<Y>49%</Y> 
+						<X>67%</X> 
+						<Y>18%</Y> 
 						<Width>32%</Width> 
 						<Height>2%</Height> 
 						<Alignment>Center</Alignment>
 						<Text>Container Name</Text>
 					</Text>
 					<TextEntry name='Dropoff_Container'> 
-						<X>1%</X> 
-						<Y>51%</Y> 
+						<X>67%</X> 
+						<Y>20%</Y> 
 						<Width>32%</Width> 
 						<Height>3%</Height> 
 						<OnLoad>
@@ -175,18 +183,25 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					</TextEntry>
 					
 					<Text name='ThresholdTitle'> 
-						<X>1%</X> 
-						<Y>55%</Y> 
+						<X>67%</X> 
+						<Y>25%</Y> 
 						<Width>32%</Width> 
 						<Height>2%</Height> 
 						<Alignment>Center</Alignment>
 						<OnLoad>
-							This:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Config.Miner.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Config.Miner.Threshold} * .01 * ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]}].Round} m3]
+							if ${MyShip.HasOreHold}
+							{
+								This:SetText[OreHold Threshold: ${Script[ComBot].VariableScope.Config.Miner.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Config.Miner.Threshold} * .01 * ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]}].Round} m3]
+							}
+							else
+							{
+								This:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Config.Miner.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Config.Miner.Threshold} * .01 * ${MyShip.CargoCapacity}].Round} m3]
+							}
 						</OnLoad>
 					</Text>						 
 					<Slider name='Threshold'> 
-						<X>1%</X> 
-						<Y>57%</Y> 
+						<X>67%</X> 
+						<Y>27%</Y> 
 						<Width>32%</Width> 
 						<Height>5%</Height> 
 						<Border>1</Border>
@@ -196,13 +211,20 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						</OnLoad>
 						<OnChange>
 							Script[ComBot].VariableScope.Config.Miner:SetThreshold[${This.Value}]
-							UIElement[ThresholdTitle@Miner_Frame@ComBot_Miner]:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Config.Miner.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Config.Miner.Threshold} * .01 * ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]}].Round} m3]
+							if ${MyShip.HasOreHold}
+							{
+								UIElement[ThresholdTitle@Miner_Frame@ComBot_Miner]:SetText[OreHold Threshold: ${Script[ComBot].VariableScope.Config.Miner.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Config.Miner.Threshold} * .01 * ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]}].Round} m3]
+							}
+							else
+							{
+								UIElement[ThresholdTitle@Miner_Frame@ComBot_Miner]:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Config.Miner.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Config.Miner.Threshold} * .01 * ${MyShip.CargoCapacity}].Round} m3]
+							}
 						</OnChange>
 					</Slider>						 
 
 					<Text name='DropoffSubTypeTitle'> 
-						<X>1%</X> 
-						<Y>30%</Y> 
+						<X>67%</X> 
+						<Y>1%</Y> 
 						<Width>32%</Width> 
 						<Height>2%</Height> 
 						<Alignment>Center</Alignment>
@@ -212,8 +234,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<BackgroundColor>FF000000</BackgroundColor>
 						<Border>1</Border>
 						<BorderColor>FFFFFFFF</BorderColor>
-						<X>1%</X>
-						<Y>32%</Y>
+						<X>67%</X>
+						<Y>3%</Y>
 						<Width>32%</Width>
 						<Height>15%</Height>
 						<OnLoad>
@@ -264,8 +286,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					</listbox>
 					
 					<Text name='DropoffTypeTitle'> 
-						<X>1%</X> 
-						<Y>7%</Y> 
+						<X>34%</X> 
+						<Y>1%</Y> 
 						<Width>32%</Width> 
 						<Height>2%</Height> 
 						<Alignment>Center</Alignment>
@@ -275,8 +297,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<BackgroundColor>FF000000</BackgroundColor>
 						<Border>1</Border>
 						<BorderColor>FFFFFFFF</BorderColor>
-						<X>1%</X>
-						<Y>9%</Y>
+						<X>34%</X>
+						<Y>3%</Y>
 						<Width>32%</Width>
 						<Height>20%</Height>
 						<Items>
@@ -377,16 +399,16 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 		
 
 					<Text name='MiningSystemTitle'> 
-						<X>34%</X> 
-						<Y>1%</Y> 
+						<X>1%</X> 
+						<Y>7%</Y> 
 						<Width>32%</Width> 
 						<Height>2%</Height> 
 						<Alignment>Center</Alignment>
 						<Text>Mining System Bookmark</Text>
 					</Text>						 
 					<TextEntry name='MiningSystem'> 
-						<X>34%</X> 
-						<Y>3%</Y> 
+						<X>1%</X> 
+						<Y>9%</Y> 
 						<Width>32%</Width> 
 						<Height>3%</Height> 
 						<OnLoad>
@@ -427,15 +449,15 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 				
 					<Text name='OrePrefixTitle'>
-						<X>34%</X>
-						<Y>30%</Y>
+						<X>1%</X>
+						<Y>16.5%</Y>
 						<Width>20%</Width> 
 						<Height>2%</Height> 
 						<Text>Belt Prefix:</Text>
 					</Text>
 					<Textentry name='OrePrefix'>
-						<X>46%</X>
-						<Y>30%</Y>
+						<X>13%</X>
+						<Y>16%</Y>
 						<Width>20%</Width> 
 						<Height>3%</Height> 
 						<OnLoad>
@@ -450,15 +472,15 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					</Textentry>
 					
 					<Text name='IcePrefixTitle'>
-						<X>34%</X>
-						<Y>34%</Y>
+						<X>1%</X>
+						<Y>20.5%</Y>
 						<Width>20%</Width> 
 						<Height>2%</Height> 
 						<Text>Ice Belt Prefix:</Text>
 					</Text>
 					<Textentry name='IcePrefix'>
-						<X>46%</X>
-						<Y>34%</Y>
+						<X>13%</X>
+						<Y>20%</Y>
 						<Width>20%</Width> 
 						<Height>3%</Height> 
 						<OnLoad>
@@ -473,8 +495,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					</Textentry>
 					
 					<Checkbox name='obj_MinerUseBookmarks'>
-						<X>34%</X>
-						<Y>25%</Y>
+						<X>1%</X>
+						<Y>13%</Y>
 						<Width>20%</Width> 
 						<Height>3%</Height> 
 						<Text>Use belt bookmarks</Text>
@@ -494,6 +516,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								UIElement[IcePrefixTitle@Miner_Frame@ComBot_Miner]:Hide
 								UIElement[IcePrefix@Miner_Frame@ComBot_Miner]:Hide
 							}
+							This:SetZOrder[movetop]
 						</OnLoad>
 						<OnLeftClick>
 							Script[ComBot].VariableScope.Config.Miner:SetUseBookmarks[${This.Checked}]
@@ -511,13 +534,14 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								UIElement[IcePrefixTitle@Miner_Frame@ComBot_Miner]:Hide
 								UIElement[IcePrefix@Miner_Frame@ComBot_Miner]:Hide
 							}
+							This:SetZOrder[movetop]
 						</OnLeftClick>
 					</Checkbox>
 					
 					
 					<Checkbox name='obj_MinerOrcaMode'>
-						<X>34%</X>
-						<Y>40%</Y>
+						<X>1%</X>
+						<Y>28%</Y>
 						<Width>32%</Width> 
 						<Height>3%</Height> 
 						<Text>Orca Mode</Text>
@@ -536,6 +560,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									UIElement[MaxLock@Miner_Frame@ComBot_Miner]:Show
 								}
 							}
+							This:SetZOrder[movetop]
 						</OnLoad>
 						<OnLeftClick>
 							Script[ComBot].VariableScope.Config.Miner:SetOrcaMode[${This.Checked}]
@@ -549,12 +574,13 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								UIElement[MaxLockTitle@Miner_Frame@ComBot_Miner]:Show
 								UIElement[MaxLock@Miner_Frame@ComBot_Miner]:Show
 							}
+							This:SetZOrder[movetop]
 						</OnLeftClick>
 					</Checkbox>
 					
 					<Text name='MaxLockTitle'> 
 						<X>34%</X> 
-						<Y>45%</Y> 
+						<Y>25%</Y> 
 						<Width>32%</Width> 
 						<Height>2%</Height> 
 						<Alignment>Center</Alignment>
@@ -564,7 +590,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					</Text>						 
 					<Slider name='MaxLock'> 
 						<X>34%</X> 
-						<Y>47%</Y> 
+						<Y>27%</Y> 
 						<Width>32%</Width> 
 						<Height>5%</Height> 
 						<Border>1</Border>
@@ -584,7 +610,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					
 					<Text name='obj_MinerOrePriorityTitle'> 
 						<X>67%</X> 
-						<Y>1%</Y> 
+						<Y>50%</Y> 
 						<Width>32%</Width> 
 						<Height>2%</Height> 
 						<Alignment>Center</Alignment>
@@ -595,7 +621,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Border>1</Border>
 						<BorderColor>FFFFFFFF</BorderColor>
 						<X>67%</X>
-						<Y>3%</Y>
+						<Y>53%</Y>
 						<Width>32%</Width>
 						<Height>40%</Height>
 						<SelectMultiple>1</SelectMultiple>
@@ -719,7 +745,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					</listbox>
 					<Checkbox name='obj_MinerIceMining'>
 						<X>67%</X>
-						<Y>45%</Y>
+						<Y>95%</Y>
 						<Width>32%</Width> 
 						<Height>20</Height> 
 						<Text>Ice Mining</Text>
@@ -906,6 +932,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 										}
 									}
 								}								
+								This:SetZOrder[movetop]
 							</OnLoad>
 							<OnLeftClick>
 								Script[ComBot].VariableScope.Config.Miner:SetIceMining[${This.Checked}]
@@ -1087,7 +1114,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 										}
 									}
 								}
-							Script[ComBot].VariableScope.Miner:PopulateTargetList
+								Script[ComBot].VariableScope.Miner:PopulateTargetList
+								This:SetZOrder[movetop]
 							</OnLeftClick>
 					</Checkbox>
 					

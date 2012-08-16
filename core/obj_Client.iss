@@ -51,6 +51,8 @@ objectdef obj_Client
 			
 			This.NextPulse:Set[${Math.Calc[${LavishScript.RunningTime} + ${PulseIntervalInMilliseconds} + ${Math.Rand[500]}]}]
 
+			This:ManageGraphics
+			
 			if ${ComBot.Paused}
 			{
 				return
@@ -62,6 +64,13 @@ objectdef obj_Client
 	
 	member:bool InSpace()
 	{
+		if ${Me.InStation}
+		{
+			if ${Ship.RetryUpdateModuleList} == 0
+			{
+				Ship.RetryUpdateModuleList:Set[1]
+			}
+		}
 		if ${Me.InSpace(type).Name.Equal[bool]} && ${EVE.EntitiesCount} > 0
 		{
 			return ${Me.InSpace}
@@ -69,7 +78,33 @@ objectdef obj_Client
 		return FALSE
 	}
 	
-	
+	method ManageGraphics()
+	{
+		if ${Config.Common.Disable3D} && ${EVE.Is3DDisplayOn}
+		{
+			EVE:Toggle3DDisplay
+		}
+		elseif !${Config.Common.Disable3D} && !${EVE.Is3DDisplayOn}
+		{
+			EVE:Toggle3DDisplay
+		}
+		if ${Config.Common.DisableUI} && ${EVE.IsUIDisplayOn}
+		{
+			EVE:ToggleUIDisplay
+		}
+		elseif !${Config.Common.DisableUI} && !${EVE.IsUIDisplayOn}
+		{
+			EVE:ToggleUIDisplay
+		}
+		if ${Config.Common.DisableTexture} && ${EVE.IsTextureLoadingOn}
+		{
+			EVE:ToggleTextureLoading
+		}
+		elseif !${Config.Common.DisableTexture} && !${EVE.IsTextureLoadingOn}
+		{
+			EVE:ToggleTextureLoading
+		}
+	}
 
 	method Wait(int delay)
 	{
