@@ -116,52 +116,6 @@ objectdef obj_Configuration_Common
 }
 
 
-
-
-	
-objectdef obj_Configuration_Hauler
-{
-	variable string SetName = "Hauler"
-
-	method Initialize()
-	{
-		if !${BaseConfig.BaseRef.FindSet[${This.SetName}](exists)}
-		{
-			UI:Update["obj_Configuration", " ${This.SetName} settings missing - initializing", "o"]
-			This:Set_Default_Values[]
-		}
-		UI:Update["obj_Configuration", " ${This.SetName}: Initialized", "-g"]
-	}
-
-	member:settingsetref CommonRef()
-	{
-		return ${BaseConfig.BaseRef.FindSet[${This.SetName}]}
-	}
-
-	method Set_Default_Values()
-	{
-		BaseConfig.BaseRef:AddSet[${This.SetName}]
-
-		This.CommonRef:AddSetting[Dropoff_ContainerName,""]
-		This.CommonRef:AddSetting[Pickup_ContainerName,""]
-		This.CommonRef:AddSetting[Dropoff,""]
-		This.CommonRef:AddSetting[Pickup,""]
-		
-	}
-	
-	Setting(string, MiningSystem, SetMiningSystem)	
-	Setting(string, Pickup_SubType, SetPickup_SubType)
-	Setting(string, Dropoff, SetDropoff)
-	Setting(string, Pickup, SetPickup)
-	Setting(string, Dropoff_Type, SetDropoff_Type)
-	Setting(string, Pickup_Type, SetPickup_Type)
-	Setting(string, Dropoff_ContainerName, SetDropoff_ContainerName)
-	Setting(string, Pickup_ContainerName, SetPickup_ContainerName)
-	Setting(int, Threshold, SetThreshold)	
-	
-}
-
-
 	
 objectdef obj_Configuration_Security
 {
@@ -220,8 +174,6 @@ objectdef obj_Configuration_Security
 	
 }	
 	
-
-
 
 
 
