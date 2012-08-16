@@ -454,6 +454,9 @@ objectdef obj_Configuration_Fleet
 	{
 		CurrentRef:AddSet[Squads]
 	}
+	
+	Setting(string, Commander, SetCommander)	
+	Setting(string, Booster, SetBooster)	
 }
 
 objectdef obj_Configuration_Wing
@@ -487,6 +490,9 @@ objectdef obj_Configuration_Wing
 	{
 		CurrentRef:AddSet[Squads]
 	}
+	
+	Setting(string, Commander, SetCommander)	
+	Setting(string, Booster, SetBooster)	
 }
 
 objectdef obj_Configuration_Squad
@@ -520,6 +526,9 @@ objectdef obj_Configuration_Squad
 	{
 		CurrentRef:AddSet[Members]
 	}
+	
+	Setting(string, Commander, SetCommander)	
+	Setting(string, Booster, SetBooster)	
 }
 
 objectdef obj_Configuration_Member
@@ -539,6 +548,8 @@ objectdef obj_Configuration_Member
 	{
 		CurrentRef:AddSetting[Created, TRUE]
 	}
+
+	Setting(string, Name, SetName)	
 }
 
 objectdef obj_Configuration_RefineData
