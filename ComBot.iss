@@ -48,6 +48,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 #include core/obj_Defense.iss
 #include core/obj_Profiling.iss
 #include core/obj_Delay.iss
+#include core/obj_Fleet.iss
 
 #include behavior/Salvage.iss
 #include behavior/Miner.iss
@@ -88,6 +89,7 @@ function main()
 	declarevariable Jetcan obj_Jetcan script
 	declarevariable Defense obj_Defense script
 	declarevariable Delay obj_Delay script
+	declarevariable Fleets obj_Fleet script
 
 	declarevariable Salvage obj_Salvage script
 	declarevariable Miner obj_Miner script
