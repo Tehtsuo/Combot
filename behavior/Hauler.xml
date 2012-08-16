@@ -75,6 +75,15 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					<Height>20</Height>
 					<Text>Close</Text>
 					<OnLeftClick>
+						if !${EVE.Bookmark[${Script[ComBot].VariableScope.Config.Hauler.Dropoff}](exists)}
+						{
+							Script[ComBot].VariableScope.UI:Update["obj_Hauler", "Unable to verify Dropoff bookmark", "r"]
+						}
+						if !${EVE.Bookmark[${Script[ComBot].VariableScope.Config.Hauler.Pickup}](exists)}
+						{
+							Script[ComBot].VariableScope.UI:Update["obj_Hauler", "Unable to verify Pickup bookmark", "r"]
+						}
+						Script[ComBot].VariableScope.Hauler.HaulerUI:Stop
 						ui -unload "&filepath;/Hauler"
 					</OnLeftClick>
 				</button>

@@ -27,6 +27,24 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 		<Size>8</Size>
 		<Color>FFFFFFFF</Color>
 	</template>	
+	<template name='Text.Font'>	
+		<Name>Verdana</Name>
+		<Size>12</Size>
+		<Color>FFFFFFFF</Color>
+		<Bold />
+	</template>	
+	<template name='Checkbox.Font'>	
+		<Name>Verdana</Name>
+		<Size>12</Size>
+		<Color>FFFFFFFF</Color>
+		<Bold />
+	</template>	
+	<template name='Button.Font'>	
+		<Name>Verdana</Name>
+		<Size>12</Size>
+		<Color>FF000000</Color>
+		<Bold />
+	</template>	
 
 	<window name='ComBot_Security'>
 		<Visible>1</Visible>
@@ -69,6 +87,11 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					<Height>20</Height>
 					<Text>Close</Text>
 					<OnLeftClick>
+						if !${EVE.Bookmark[${Script[ComBot].VariableScope.Config.Security.FleeTo}](exists)}
+						{
+							Script[ComBot].VariableScope.UI:Update["obj_Security", "Unable to find flee bookmark. This is DANGEROUS!", "r"]
+							Script[ComBot].VariableScope.UI:Update["obj_Security", "Verify your flee bookmark in the Security settings! ", "r"]
+						}
 						ui -unload "&filepath;/ComBotGUI_Security"
 					</OnLeftClick>
 				</button>
