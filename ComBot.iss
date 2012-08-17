@@ -78,6 +78,18 @@ function main()
 	declarevariable Config obj_Configuration script
 	UI:Reload
 	
+	declarevariable Login obj_Login script
+	while TRUE
+	{
+		if ${Me(exists)} && ${MyShip(exists)} && (${Me.InSpace} || ${Me.InStation})
+		{
+			echo Logged in
+			break
+		}
+		wait 10
+	}
+	Config.Common:SetCharID[${Me.CharID}]
+	
 	declarevariable Profiling obj_Profiling script
 	declarevariable Client obj_Client script
 	declarevariable Move obj_Move script
@@ -103,17 +115,6 @@ function main()
 	declarevariable HangerSale obj_HangerSale script
 	
 	UI:Update["ComBot", "Module initialization complete", "y"]
-
-	while TRUE
-	{
-		if ${Me(exists)} && ${MyShip(exists)} && (${Me.InSpace} || ${Me.InStation})
-		{
-			break
-		}
-		wait 10
-	}
-	
-	Ship.RetryUpdateModuleList:Set[1]
 	
 	if ${Config.Common.AutoStart}
 	{

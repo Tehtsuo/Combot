@@ -373,9 +373,29 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								Script[ComBot].VariableScope.Config.Common:SetDisableTexture[${This.Checked}]
 							</OnLeftClick>
 						</Checkbox>
+						<Text name='PasswordLabel'>
+							<X>1%</X>
+							<Y>70%</Y>
+							<Width>48%</Width> 
+							<Height>6%</Height> 
+							<Text>Password for auto-login</Text>
+						</Textentry>
+						<Textentry name='Password'>
+							<X>50%</X>
+							<Y>70%</Y>
+							<Width>48%</Width> 
+							<Height>6%</Height> 
+							<PasswordCharacter>*</PasswordCharacter>
+							<OnLoad>
+								This:SetText[${Script[ComBot].VariableScope.Config.Common.Password}]
+							</OnLoad>
+							<OnChange>
+								Script[ComBot].VariableScope.Config.Common:SetPassword[${This.Text}]
+							</OnChange>
+						</Textentry>
 						<combobox Name="FleetSelection">
 							<BackgroundColor>FF000000</BackgroundColor>
-							<X>1%</X>
+							<X>50%</X>
 							<Y>80%</Y>
 							<Width>48%</Width>
 							<Height>6%</Height>
