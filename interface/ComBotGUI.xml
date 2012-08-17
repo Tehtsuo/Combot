@@ -393,6 +393,25 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								Script[ComBot].VariableScope.Config.Common:SetPassword[${This.Text}]
 							</OnChange>
 						</Textentry>
+						<Text name='AccountLabel'>
+							<X>1%</X>
+							<Y>60%</Y>
+							<Width>48%</Width> 
+							<Height>6%</Height> 
+							<Text>Account for auto-login</Text>
+						</Text>
+						<Textentry name='Account'>
+							<X>50%</X>
+							<Y>60%</Y>
+							<Width>48%</Width> 
+							<Height>6%</Height> 
+							<OnLoad>
+								This:SetText[${Script[ComBot].VariableScope.Config.Common.Account}]
+							</OnLoad>
+							<OnChange>
+								Script[ComBot].VariableScope.Config.Common:SetAccount[${This.Text}]
+							</OnChange>
+						</Textentry>
 						<combobox Name="FleetSelection">
 							<BackgroundColor>FF000000</BackgroundColor>
 							<X>50%</X>
