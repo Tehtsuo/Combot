@@ -63,6 +63,7 @@ function atexit()
 function main()
 {
 	declarevariable EVEExtension obj_EVEExtension script
+	call EVEExtension.Initialize
 	while !${EVEExtension.Ready}
 	{
 		wait 10
@@ -102,8 +103,15 @@ function main()
 	declarevariable HangerSale obj_HangerSale script
 	
 	UI:Update["ComBot", "Module initialization complete", "y"]
-	
-	
+
+	while TRUE
+	{
+		if ${Me(exists)} && ${MyShip(exists)} && (${Me.InSpace} || ${Me.InStation})
+		{
+			break
+		}
+		wait 10
+	}
 	
 	if ${Config.Common.AutoStart}
 	{

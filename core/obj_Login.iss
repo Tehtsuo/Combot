@@ -32,6 +32,7 @@ objectdef obj_EVEExtension
 				break
 			}
 			extension ISXEVE
+			wait 10
 		}
 		while !${ISXEVE(exists)} || !${ISXEVE.IsReady}
 		Ready:Set[TRUE]
