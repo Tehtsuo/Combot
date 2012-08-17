@@ -78,7 +78,7 @@ function main()
 	declarevariable Config obj_Configuration script
 	UI:Reload
 	
-	declarevariable Login obj_Login script
+	declarevariable ComBotLogin obj_Login script
 	while TRUE
 	{
 		if ${Me(exists)} && ${MyShip(exists)} && (${Me.InSpace} || ${Me.InStation})
