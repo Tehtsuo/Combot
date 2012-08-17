@@ -903,7 +903,7 @@ objectdef obj_MinerUI inherits obj_State
 			{	
 				if ${UIElement[MiningSystem@Miner_Frame@ComBot_Miner].Text.Length}
 				{
-					if ${BookmarkIterator.Value.Label.Escape.Left[${Config.MiningSystem.Length}].Equal[${Config.MiningSystem}]} && ${BookmarkIterator.Value.Label.NotEqual[${Config.MiningSystem}]}
+					if ${BookmarkIterator.Value.Label.Left[${Miner.Config.MiningSystem.Length}].Equal[${Miner.Config.MiningSystem}]} && ${BookmarkIterator.Value.Label.NotEqual[${Miner.Config.MiningSystem}]}
 						UIElement[MiningSystemList@Miner_Frame@ComBot_Miner]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 				else
@@ -919,7 +919,7 @@ objectdef obj_MinerUI inherits obj_State
 			{	
 				if ${UIElement[Dropoff@Miner_Frame@ComBot_Miner].Text.Length}
 				{
-					if ${BookmarkIterator.Value.Label.Escape.Left[${Config.Dropoff.Length}].Equal[${Config.Dropoff}]}
+					if ${BookmarkIterator.Value.Label.Left[${Miner.Config.Dropoff.Length}].Equal[${Miner.Config.Dropoff}]} && ${BookmarkIterator.Value.Label.NotEqual[${Miner.Config.Dropoff}]}
 						UIElement[DropoffList@Miner_Frame@ComBot_Miner]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 				else

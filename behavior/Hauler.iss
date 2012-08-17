@@ -834,7 +834,7 @@ objectdef obj_HaulerUI inherits obj_State
 			{	
 				if ${UIElement[Dropoff@Hauler_Frame@ComBot_Hauler].Text.Length}
 				{
-					if ${BookmarkIterator.Value.Label.Left[${Config.Dropoff.Length}].Equal[${Config.Dropoff}]} && ${BookmarkIterator.Value.Label.NotEqual[${Config.Dropoff}]}
+					if ${BookmarkIterator.Value.Label.Left[${Hauler.Config.Dropoff.Length}].Equal[${Hauler.Config.Dropoff}]} && ${BookmarkIterator.Value.Label.NotEqual[${Hauler.Config.Dropoff}]}
 						UIElement[DropoffList@Hauler_Frame@ComBot_Hauler]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 				else
@@ -850,7 +850,7 @@ objectdef obj_HaulerUI inherits obj_State
 			{	
 				if ${UIElement[Pickup@Hauler_Frame@ComBot_Hauler].Text.Length}
 				{
-					if ${BookmarkIterator.Value.Label.Left[${Config.Pickup.Length}].Equal[${Config.Pickup}]} && ${BookmarkIterator.Value.Label.NotEqual[${Config.Pickup}]}
+					if ${BookmarkIterator.Value.Label.Left[${Hauler.Config.Pickup.Length}].Equal[${Hauler.Config.Pickup}]} && ${BookmarkIterator.Value.Label.NotEqual[${Hauler.Config.Pickup}]}
 						UIElement[PickupList@Hauler_Frame@ComBot_Hauler]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 				else
