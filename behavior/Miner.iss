@@ -145,7 +145,7 @@ objectdef obj_Configuration_Miner
 objectdef obj_Miner inherits obj_State
 {
 	variable obj_Configuration_Miner Config
-	variable obj_MinerUI UI
+	variable obj_MinerUI LocalUI
 	
 	variable obj_TargetList Asteroids
 	variable bool WarpToOrca=FALSE
@@ -591,6 +591,10 @@ objectdef obj_Miner inherits obj_State
 		{
 			MaxTarget:Set[${Ship.ModuleList_MiningLaser.Count}]
 		}
+		if ${Config.IceMining}
+		{
+			MaxTarget:Set[1]
+		}
 		
 		
 		Asteroids.MinLockCount:Set[${MaxTarget}]
@@ -816,8 +820,8 @@ objectdef obj_Miner inherits obj_State
 					}
 					if ${Config.IceMining}
 					{
-						UI:Update["obj_Miner", "Activating ${Ship.ModuleList_MiningLaser.InActiveCount} laser(s) on ${Roid.Value.Name} (${ComBot.MetersToKM_Str[${Roid.Value.Distance}]})", "y"]
-						Ship.ModuleList_MiningLaser:ActivateCount[${Ship.ModuleList_MiningLaser.InActiveCount}, ${Roid.Value.ID}]
+						UI:Update["obj_Miner", "Activating ${Ship.ModuleList_MiningLaser.InactiveCount} laser(s) on ${Roid.Value.Name} (${ComBot.MetersToKM_Str[${Roid.Value.Distance}]})", "y"]
+						Ship.ModuleList_MiningLaser:ActivateCount[${Ship.ModuleList_MiningLaser.InactiveCount}, ${Roid.Value.ID}]
 						Profiling:EndTrack
 						return TRUE
 					}

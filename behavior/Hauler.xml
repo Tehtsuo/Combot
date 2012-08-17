@@ -83,7 +83,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						{
 							Script[ComBot].VariableScope.UI:Update["obj_Hauler", "Unable to verify Pickup bookmark", "r"]
 						}
-						Script[ComBot].VariableScope.Hauler.UI:Stop
+						Script[ComBot].VariableScope.Hauler.LocalUI:Stop
 						ui -unload "&filepath;/Hauler"
 					</OnLeftClick>
 				</button>
@@ -151,7 +151,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								Script[ComBot].VariableScope.Hauler.Config:SetDropoff[\"\"]
 							}
 							UIElement[DropoffList@Hauler_Frame@ComBot_Hauler]:Show
-							Script[ComBot].VariableScope.Hauler.UI:Start
+							Script[ComBot].VariableScope.Hauler.LocalUI:Start
 						</OnChange>
 					</Textentry>
 					<listbox Name="DropoffList">
@@ -170,7 +170,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							UIElement[Dropoff@Hauler_Frame@ComBot_Hauler]:SetText[${This.SelectedItem.Text}]
 							Script[ComBot].VariableScope.Hauler.Config:SetDropoff[${This.SelectedItem.Text}]
 							This:Hide
-							Script[ComBot].VariableScope.Hauler.UI:Stop
+							Script[ComBot].VariableScope.Hauler.LocalUI:Stop
 						</OnSelect>
 					</listbox>
 					
@@ -271,7 +271,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								Script[ComBot].VariableScope.Hauler.Config:SetPickup[\"\"]
 							}
 							UIElement[PickupList@Hauler_Frame@ComBot_Hauler]:Show
-							Script[ComBot].VariableScope.Hauler.UI:Start
+							Script[ComBot].VariableScope.Hauler.LocalUI:Start
 						</OnChange>
 					</Textentry>
 					<listbox Name="PickupList">
@@ -290,7 +290,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							UIElement[Pickup@Hauler_Frame@ComBot_Hauler]:SetText[${This.SelectedItem.Text}]
 							Script[ComBot].VariableScope.Hauler.Config:SetPickup[${This.SelectedItem.Text}]
 							This:Hide
-							Script[ComBot].VariableScope.Hauler.UI:Stop
+							Script[ComBot].VariableScope.Hauler.LocalUI:Stop
 						</OnSelect>
 					</listbox>					
 					

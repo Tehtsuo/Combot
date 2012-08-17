@@ -96,7 +96,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							Script[ComBot].VariableScope.UI:Update["obj_Salvage", "Unable to verify Belt Patrol bookmark", "r"]
 						}
 
-						Script[ComBot].VariableScope.Salvage.UI:Stop
+						Script[ComBot].VariableScope.Salvage.LocalUI:Stop
 						ui -unload "&filepath;/Salvage"
 					</OnLeftClick>
 				</button>
@@ -161,7 +161,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								Script[ComBot].VariableScope.Salvage.Config:SetDropoff[\"\"]
 							}
 							UIElement[DropoffList@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Show
-							Script[ComBot].VariableScope.Salvage.UI:Start
+							Script[ComBot].VariableScope.Salvage.LocalUI:Start
 						</OnChange>
 					</Textentry>
 					<listbox Name="DropoffList">
@@ -179,7 +179,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<OnSelect>
 							UIElement[Dropoff@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText[${This.SelectedItem.Text}]
 							Script[ComBot].VariableScope.Salvage.Config:SetDropoff[${This.SelectedItem.Text}]
-							Script[ComBot].VariableScope.Salvage.UI:Stop
+							Script[ComBot].VariableScope.Salvage.LocalUI:Stop
 							This:Hide
 						</OnSelect>
 					</listbox>
@@ -238,7 +238,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								Script[ComBot].VariableScope.Salvage.Config:SetBeltPatrol[\"\"]
 							}
 							UIElement[BeltPatrolBookmarkList@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Show
-							Script[ComBot].VariableScope.Salvage.UI:Start
+							Script[ComBot].VariableScope.Salvage.LocalUI:Start
 						</OnChange>
 					</Textentry>
 					<listbox Name="BeltPatrolBookmarkList">
@@ -255,7 +255,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<OnSelect>
 							UIElement[BeltPatrolBookmark@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText[${This.SelectedItem.Text}]
 							Script[ComBot].VariableScope.Salvage.Config:SetBeltPatrol[${This.SelectedItem.Text}]
-							Script[ComBot].VariableScope.Salvage.UI:Stop
+							Script[ComBot].VariableScope.Salvage.LocalUI:Stop
 							This:Hide
 						</OnSelect>
 					</listbox>

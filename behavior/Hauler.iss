@@ -64,7 +64,7 @@ objectdef obj_Configuration_Hauler
 objectdef obj_Hauler inherits obj_State
 {
 	variable obj_Configuration_Hauler Config
-	variable obj_HaulerUI UI
+	variable obj_HaulerUI LocalUI
 
 	variable float OrcaCargo
 	variable index:fleetmember FleetMembers

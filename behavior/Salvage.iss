@@ -59,7 +59,7 @@ objectdef obj_Configuration_Salvager
 objectdef obj_Salvage inherits obj_State
 {
 	variable obj_Configuration_Salvager Config
-	variable obj_SalvageUI UI
+	variable obj_SalvageUI LocalUI
 	
 	variable obj_LootCans LootCans
 	variable bool ForceBookmarkCycle=FALSE

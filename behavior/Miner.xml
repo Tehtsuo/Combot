@@ -95,7 +95,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						{
 							Script[ComBot].VariableScope.UI:Update["obj_Miner", "Unable to verify Mining System bookmark", "r"]
 						}
-						Script[ComBot].VariableScope.Miner.UI:Stop
+						Script[ComBot].VariableScope.Miner.LocalUI:Stop
 						ui -unload "&filepath;/Miner"
 					</OnLeftClick>
 				</button>
@@ -138,7 +138,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								Script[ComBot].VariableScope.Miner.Config:SetDropoff[\"\"]
 							}
 							UIElement[DropoffList@Miner_Frame@ComBot_Miner]:Show
-							Script[ComBot].VariableScope.Miner.UI:Start
+							Script[ComBot].VariableScope.Miner.LocalUI:Start
 						</OnChange>
 					</Textentry>
 					<listbox Name="DropoffList">
@@ -157,7 +157,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							UIElement[Dropoff@Miner_Frame@ComBot_Miner]:SetText[${This.SelectedItem.Text}]
 							Script[ComBot].VariableScope.Miner.Config:SetDropoff[${This.SelectedItem.Text}]
 							This:Hide
-							Script[ComBot].VariableScope.Miner.UI:Stop
+							Script[ComBot].VariableScope.Miner.LocalUI:Stop
 						</OnSelect>
 					</listbox>
 					
@@ -441,7 +441,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								Script[ComBot].VariableScope.Miner.Config:SetMiningSystem[\"\"]
 							}
 							UIElement[MiningSystemList@Miner_Frame@ComBot_Miner]:Show
-							Script[ComBot].VariableScope.Miner.UI:Start
+							Script[ComBot].VariableScope.Miner.LocalUI:Start
 						</OnChange>
 					</TextEntry>						 
 					<listbox Name="MiningSystemList">
@@ -460,7 +460,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							UIElement[MiningSystem@Miner_Frame@ComBot_Miner]:SetText[${This.SelectedItem.Text}]
 							Script[ComBot].VariableScope.Miner.Config:SetMiningSystem[${This.SelectedItem.Text}]
 							This:Hide
-							Script[ComBot].VariableScope.Miner.UI:Stop
+							Script[ComBot].VariableScope.Miner.LocalUI:Stop
 						</OnSelect>
 					</listbox>
 
