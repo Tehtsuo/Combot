@@ -128,6 +128,8 @@ objectdef obj_Login inherits obj_State
 		Login:SetUsername[${Config.Common.Account}]
 		Login:SetPassword[${Config.Common.Password}]
 		Login:Connect
+		UI:Update["obj_Login", "Login command sent", "g"]
+		This:InsertState["Idle", 20000]
 		return FALSE
 	}
 	
@@ -137,7 +139,39 @@ objectdef obj_Login inherits obj_State
 		{
 			return TRUE
 		}
-	}
+		
+		if ${EVE.IsProgressWindowOpen}
+		{
+			return FALSE
+		}
+		
+		if ${EVEWindow[ByName,MessageBox(exists)} || ${EVEWindow[ByCaption,System Congested](exists)}
+		{
+			UI:Update["obj_Login", "System may be congested, waiting 10 seconds", "g"]
+			Press Esc
+			This:InsertState["Idle", 10000]
+			return FALSE
+		}
+		
+		if ${EVEWindow[ByName,modal].Text.Find["The daily downtime will begin in"](exists)}
+		{
+			EVEWindow[ByName,modal]:ClickButtonOK
+			return FALSE
+		}
+		
+		if ${EVEWindow[ByName,modal].Text.Find["has been flagged for recustomization"](exists)}
+		{
+			EVEWindow[ByName,modal]:ClickButtonNo
+			return FALSE
+		}
+		if !${CharSelect.CharExists[${Config.Common.CharID}]}
+		{
+			return FALSE
+		}
 
-	
+		CharSelect:ClickCharacter[${Config.Common.CharID}]
+		UI:Update["obj_Login", "Character select command sent", "g"]
+		This:InsertState["Idle", 20000]
+		return FALSE
+	}
 }
