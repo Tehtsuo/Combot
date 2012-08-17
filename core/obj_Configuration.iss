@@ -113,6 +113,8 @@ objectdef obj_Configuration_Common
 	Setting(bool, DisableUI, SetDisableUI)
 	Setting(bool, DisableTexture, SetDisableTexture)
 	Setting(string, ActiveTab, SetActiveTab)
+	Setting(int64, CharID, SetCharID)
+	Setting(string, Password, SetPassword)
 }
 
 

@@ -49,6 +49,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 #include core/obj_Profiling.iss
 #include core/obj_Delay.iss
 #include core/obj_Fleet.iss
+#include core/obj_Login.iss
 
 #include behavior/Salvage.iss
 #include behavior/Miner.iss
@@ -64,6 +65,12 @@ function atexit()
 
 function main()
 {
+	declarevariable EVEExtension obj_EVEExtension script
+	while !${EVEExtension.Ready}
+	{
+		wait 10
+	}
+
 	module -require LSMIPC
 	echo "${Time} ComBot: Starting"
 
