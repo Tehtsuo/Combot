@@ -19,10 +19,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-#if ${ISXEVE(exists)}
-#else
-	#error ComBot requires ISXEVE to be loaded before running
-#endif
+
 
 #include core/Defines.iss
 #include core/Macros.iss
