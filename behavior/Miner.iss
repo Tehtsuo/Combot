@@ -477,6 +477,8 @@ objectdef obj_Miner inherits obj_State
 		{
 			variable index:bookmark BookmarkIndex
 			variable int RandomBelt
+			variable string Label
+			variable string prefix
 			EVE:GetBookmarks[BookmarkIndex]
 
 			while ${BookmarkIndex.Used} > 0
