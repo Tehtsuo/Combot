@@ -145,7 +145,7 @@ objectdef obj_Login inherits obj_State
 			return FALSE
 		}
 		
-		if ${EVEWindow[ByName,MessageBox(exists)} || ${EVEWindow[ByCaption,System Congested](exists)}
+		if ${EVEWindow[ByName,MessageBox](exists)} || ${EVEWindow[ByCaption,System Congested](exists)}
 		{
 			UI:Update["obj_Login", "System may be congested, waiting 10 seconds", "g"]
 			Press Esc
