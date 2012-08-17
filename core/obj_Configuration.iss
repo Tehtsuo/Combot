@@ -23,18 +23,27 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 objectdef obj_Configuration_BaseConfig
 {
 	variable string CONFIG_FILE = "${Me.Name} Config.xml"
-	if ${EVEExtension.Character.Length}
-	{
-		CONFIG_FILE:Set["${EVEExtension.Character} Config.xml"]
-	}
 	variable filepath CONFIG_PATH = "${Script.CurrentDirectory}/config"
 	variable settingsetref BaseRef
 
 	method Initialize()
 	{
+		if ${EVEExtension.Character.Length}
+		{
+			CONFIG_FILE:Set["${EVEExtension.Character} Config.xml"]
+		}
+
 		LavishSettings[ComBotSettings]:Clear
 		LavishSettings:AddSet[ComBotSettings]
-		LavishSettings[ComBotSettings]:AddSet[${Me.Name}]
+		if ${EVEExtension.Character.Length}
+		{
+			LavishSettings[ComBotSettings]:AddSet[${EVEExtension.Character}]
+		}
+		else
+		{
+			LavishSettings[ComBotSettings]:AddSet[${Me.Name}]
+		}
+		
 
 
 		if !${CONFIG_PATH.FileExists["${CONFIG_PATH}/${CONFIG_FILE}"]}
@@ -43,7 +52,15 @@ objectdef obj_Configuration_BaseConfig
 			LavishSettings[ComBotSettings]:Import["${CONFIG_PATH}/${CONFIG_FILE}"]
 		}
 
-		BaseRef:Set[${LavishSettings[ComBotSettings].FindSet[${Me.Name}]}]
+		if ${EVEExtension.Character.Length}
+		{
+			BaseRef:Set[${LavishSettings[ComBotSettings].FindSet[${EVEExtension.Character}]}]
+		}
+		else
+		{
+			BaseRef:Set[${LavishSettings[ComBotSettings].FindSet[${Me.Name}]}]
+		}
+		
 	}
 
 	method Shutdown()
