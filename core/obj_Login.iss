@@ -100,7 +100,8 @@ objectdef obj_Login inherits obj_State
 		{
 			UI:Update["obj_Login", "Server not up.  Beginning 5 minute wait.", "-o"]		
 			This:InsertState["Idle", 300000]
-			return FALSE
+			This:QueueState["Login"]
+			return TRUE
 		}
 		
 		if 	${EVEWindow[ByCaption,LOGIN DATA INCORRECT](exists)} || \
@@ -121,7 +122,8 @@ objectdef obj_Login inherits obj_State
 			UI:Update["obj_Login", "Server is cranky, trying again in 10 seconds", "g"]
 			Press Esc
 			This:InsertState["Idle", 10000]
-			return FALSE
+			This:QueueState["Login"]
+			return TRUE
 			
 		}
 		
@@ -130,7 +132,8 @@ objectdef obj_Login inherits obj_State
 		Login:Connect
 		UI:Update["obj_Login", "Login command sent", "g"]
 		This:InsertState["Idle", 20000]
-		return FALSE
+		This:QueueState["Login"]
+		return TRUE
 	}
 	
 	member:bool SelectCharacter()
@@ -150,10 +153,12 @@ objectdef obj_Login inherits obj_State
 			UI:Update["obj_Login", "System may be congested, waiting 10 seconds", "g"]
 			Press Esc
 			This:InsertState["Idle", 10000]
-			return FALSE
+			This:QueueState["SelectCharacter"]
+			return TRUE
 		}
 		
-		if ${EVEWindow[ByName,modal].Text.Find["The daily downtime will begin in"](exists)}
+		if  ${EVEWindow[ByName,modal].Text.Find["The daily downtime will begin in"](exists)} || \
+			${EVEWindow[ByName,modal].Text.Find["local session information is corrupt"](exists)}
 		{
 			EVEWindow[ByName,modal]:ClickButtonOK
 			return FALSE
@@ -172,6 +177,7 @@ objectdef obj_Login inherits obj_State
 		CharSelect:ClickCharacter[${Config.Common.CharID}]
 		UI:Update["obj_Login", "Character select command sent", "g"]
 		This:InsertState["Idle", 20000]
-		return FALSE
+		This:QueueState["SelectCharacter"]
+		return TRUE
 	}
 }
