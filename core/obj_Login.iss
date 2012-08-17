@@ -22,6 +22,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 objectdef obj_EVEExtension
 {
 	variable bool Ready=FALSE
+	variable string Character=""
 	
 	function Initialize()
 	{
@@ -54,14 +55,89 @@ objectdef obj_Login inherits obj_State
 			return
 		}
 		
-		;This:QueueState["Login"]
+		if ${EVEExtension.Character.Length}
+		{
+			UI:Update["obj_Login", "Beginning auto-login for character \ao${EVEExtension.Character}", "y"]		
+		}
+		else
+		{
+			UI:Update["obj_Login", "Autologin character not specified.  Specify a character in your command line.", "r"]
+			return
+		}
+		
+		
+		This:QueueState["Login"]
+		This:QueueState["SelectCharacter"]
 	}
 
 	member:bool Login()
 	{
-
+		if ${CharSelect(exists)}
+		{
+			return TRUE
+		}
+		
+		if ${EVEWindow[ByName,modal](exists)}
+		{
+			if ${EVEWindow[ByName,modal].Text.Find["There is a new build available"](exists)}
+			{
+				EVEWindow[ByName,modal]:ClickButtonYes
+				return FALSE
+			}
+			elseif 	${EVEWindow[ByName,modal].Text.Find["A client update is available"](exists)} || \
+					${EVEWindow[ByName,modal].Text.Find["The client update has been installed."](exists)} || \
+					${EVEWindow[ByName,modal].Text.Find["The update has been downloaded."](exists)} || \
+					${EVEWindow[ByName,modal].Text.Find["The daily downtime will begin in"](exists)} || \
+					${EVEWindow[ByName,modal].Text.Find["The connection to the server was closed"](exists)} || \
+					${EVEWindow[ByName,modal].Text.Find["At any time you can log in to the account management page"](exists)}
+			{
+				EVEWindow[ByName,modal]:ClickButtonOK
+				return FALSE
+			}
+		}
+		
+		if !${Login.ServerStatus.Find["OK"](exists)}
+		{
+			UI:Update["obj_Login", "Server not up.  Beginning 5 minute wait.", "-o"]		
+			This:InsertState["Idle", 300000]
+			return FALSE
+		}
+		
+		if 	${EVEWindow[ByCaption,LOGIN DATA INCORRECT](exists)} || \
+			${EVEWindow[ByName,modal].Text.Find["Account subscription expired"](exists)} || \
+			${EVEWindow[ByName,modal].Text.Find["has been disabled"](exists)}
+		{
+			UI:Update["obj_Login", "Login failed, stopping script.", "r"]
+			This:Clear
+			Display.Window:Flash
+			return TRUE
+		}
+		
+		if 	${EVEWindow[ByCaption,Connection in Progress](exists)} || \
+			${EVEWindow[ByCaption,CONNECTION IN PROGRESS](exists)} || \
+			${EVEWindow[ByCaption,Connection Not Allowed](exists)} || \
+			${EVEWindow[ByCaption,CONNECTION FAILED](exists)}
+		{
+			UI:Update["obj_Login", "Server is cranky, trying again in 10 seconds", "g"]
+			Press Esc
+			This:InsertState["Idle", 10000]
+			return FALSE
+			
+		}
+		
+		Login:SetUsername[${Config.Common.Account}]
+		Login:SetPassword[${Config.Common.Password}]
+		Login:Connect
+		return FALSE
 	}
 	
+	member:bool SelectCharacter()
+	{
+		if ${Me(exists)} && ${MyShip(exists)} && (${Me.InSpace} || ${Me.InStation})
+		{
+			return TRUE
+		}
+	}
 
 	
 }

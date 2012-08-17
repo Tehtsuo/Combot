@@ -22,8 +22,12 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 objectdef obj_Configuration_BaseConfig
 {
-	variable filepath CONFIG_PATH = "${Script.CurrentDirectory}/config"
 	variable string CONFIG_FILE = "${Me.Name} Config.xml"
+	if ${EVEExtension.Character.Length}
+	{
+		CONFIG_FILE:Set["${EVEExtension.Character} Config.xml"]
+	}
+	variable filepath CONFIG_PATH = "${Script.CurrentDirectory}/config"
 	variable settingsetref BaseRef
 
 	method Initialize()
