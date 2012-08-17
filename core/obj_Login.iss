@@ -49,10 +49,15 @@ objectdef obj_Login inherits obj_State
 		This[parent]:Initialize
 		This.NonGameTiedPulse:Set[TRUE]
 		
-		;This:QueueState["LoadExtension"]
+		if ${Me(exists)} && ${MyShip(exists)} && (${Me.InSpace} || ${Me.InStation})
+		{
+			return
+		}
+		
+		;This:QueueState["Login"]
 	}
 
-	member:bool LoadExtension()
+	member:bool Login()
 	{
 
 	}

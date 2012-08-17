@@ -113,6 +113,8 @@ function main()
 		wait 10
 	}
 	
+	Ship.RetryUpdateModuleList:Set[1]
+	
 	if ${Config.Common.AutoStart}
 	{
 		ComBot:Resume
