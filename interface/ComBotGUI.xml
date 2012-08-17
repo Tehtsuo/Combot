@@ -379,7 +379,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							<Width>48%</Width> 
 							<Height>6%</Height> 
 							<Text>Password for auto-login</Text>
-						</Textentry>
+						</Text>
 						<Textentry name='Password'>
 							<X>50%</X>
 							<Y>70%</Y>
