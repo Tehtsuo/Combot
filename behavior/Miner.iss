@@ -601,13 +601,14 @@ objectdef obj_Miner inherits obj_State
 			Asteroids.AutoRelockPriority:Set[FALSE]
 			
 			
+			Cargo:PopulateCargoList[SHIPCORPORATEHANGAR]
+			Cargo:Filter["CategoryID == CATEGORYID_ORE", FALSE]
+			
 			if ${Config.Dropoff_Type.Equal[No Dropoff]}
 			{
 			}
-			elseif ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipCorpHangar]} > 0
+			elseif ${Cargo.CargoList.Used}
 			{
-				Cargo:PopulateCargoList[SHIPCORPORATEHANGAR]
-				Cargo:Filter["CategoryID == CATEGORYID_ORE", FALSE]
 				Cargo:MoveCargoList[SHIPOREHOLD]
 				This:QueueState["StackOreHold", 1000]
 				This:QueueState["CheckCargoHold", 1000]
