@@ -287,7 +287,6 @@ objectdef obj_Miner inherits obj_State
 				Bookmarks:StoreLocation
 				This:Clear
 				Asteroids.LockedTargetList:Clear
-				Drones:Recall
 				Move:Bookmark[${Config.Dropoff}]
 				This:QueueState["Traveling", 1000]
 				This:QueueState["Mine"]
@@ -329,7 +328,6 @@ objectdef obj_Miner inherits obj_State
 				}
 				This:Clear
 				Asteroids.LockedTargetList:Clear
-				Drones:Recall
 				Move:Bookmark[${Config.Dropoff}]
 				This:QueueState["Traveling", 1000]
 				This:QueueState["PrepOffload", 1000]
