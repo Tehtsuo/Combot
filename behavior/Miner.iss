@@ -400,8 +400,44 @@ objectdef obj_Miner inherits obj_State
 				break
 		}
 		Profiling:EndTrack
+		if ${Config.OrcaMode}
+		{
+			This:InsertState["OffloadOrca"]
+		}
 		return TRUE
 	}
+	member:bool OffloadOrca()
+	{
+		Profiling:StartTrack["Miner_OffloadOrca"]
+		Cargo:PopulateCargoList[SHIP]
+		Cargo:Filter["CategoryID == CATEGORYID_ORE", FALSE]
+		if !${Cargo.CargoList.Used}
+		{
+			Cargo:PopulateCargoList[SHIPCORPORATEHANGAR]
+			Cargo:Filter["CategoryID == CATEGORYID_ORE", FALSE]
+		}
+		switch ${Config.Dropoff_Type}
+		{
+			case Personal Hangar
+				Cargo:MoveCargoList[HANGAR]
+				break
+			case Corporation Folder
+				Cargo:MoveCargoList[CORPORATEHANGAR, ${Config.Dropoff_SubType}]
+				break
+		}
+		Cargo:PopulateCargoList[SHIPCORPORATEHANGAR]
+		Cargo:Filter["CategoryID == CATEGORYID_ORE", FALSE]
+		Profiling:EndTrack
+
+		if ${Cargo.CargoList.Used}
+		{
+			return FALSE
+		}
+		else
+		{
+			return TRUE
+		}
+	}	
 	
 	member:bool StackItemHangar()
 	{
@@ -614,7 +650,11 @@ objectdef obj_Miner inherits obj_State
 			elseif ${Cargo.CargoList.Used}
 			{
 				Cargo:MoveCargoList[SHIPOREHOLD]
+				Cargo:PopulateCargoList[SHIPCORPORATEHANGAR]
+				Cargo:Filter["CategoryID == CATEGORYID_ORE", FALSE]
+				Cargo:MoveCargoList[SHIP]
 				This:QueueState["StackOreHold", 1000]
+				This:QueueState["StackCargoHold", 1000]
 				This:QueueState["CheckCargoHold", 1000]
 				This:QueueState["Idle", 1000]
 				This:QueueState["Mine"]
@@ -864,6 +904,11 @@ objectdef obj_Miner inherits obj_State
 	member:bool StackOreHold()
 	{
 		EVE:StackItems[MyShip,OreHold]
+		return TRUE
+	}
+	member:bool StackCargoHold()
+	{
+		EVE:StackItems[MyShip,CargoHold]
 		return TRUE
 	}
 	
