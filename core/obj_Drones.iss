@@ -185,7 +185,7 @@ objectdef obj_Drones inherits obj_State
 		}
 		else
 		{
-			if ${DronesOut}
+			if !${This.DronesInSpace.Equal[0]}
 			{
 				This:Recall
 			}
