@@ -76,7 +76,12 @@ objectdef obj_Login inherits obj_State
 		{
 			return FALSE
 		}	
-	
+
+		if ${Me(exists)} && ${MyShip(exists)} && (${Me.InSpace} || ${Me.InStation})
+		{
+			return TRUE
+		}
+		
 		if ${CharSelect(exists)}
 		{
 			return TRUE
