@@ -72,6 +72,11 @@ objectdef obj_Login inherits obj_State
 
 	member:bool Login()
 	{
+		if ${EVE.IsProgressWindowOpen}
+		{
+			return FALSE
+		}	
+	
 		if ${CharSelect(exists)}
 		{
 			return TRUE
@@ -98,8 +103,8 @@ objectdef obj_Login inherits obj_State
 		
 		if !${Login.ServerStatus.Find["OK"](exists)}
 		{
-			UI:Update["obj_Login", "Server not up.  Beginning 5 minute wait.", "-o"]		
-			This:InsertState["Idle", 300000]
+			UI:Update["obj_Login", "Server not up.  Trying again in 10 seconds", "-o"]		
+			This:InsertState["Idle", 10000]
 			This:QueueState["Login"]
 			return TRUE
 		}
