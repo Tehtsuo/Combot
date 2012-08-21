@@ -524,7 +524,7 @@ objectdef obj_Hauler inherits obj_State
 			return FALSE
 		}
 
-		
+		echo Pickup Type
 		switch ${Config.Pickup_Type}
 		{
 			case Orca
@@ -619,9 +619,11 @@ objectdef obj_Hauler inherits obj_State
 				}
 				break
 			case Jetcan
-				Switch ${Config.JetCanMode}
+				echo Jetcan Mode ${Config.Pickup_SubType}
+				Switch ${Config.Pickup_SubType}
 				{
-					case Service Fleet
+					case Fleet Jetcan
+						echo Fleet Jetcan
 						if ${MyShip.UsedCargoCapacity} > (${Config.Threshold} * .01 * ${MyShip.CargoCapacity}) || ${EVE.Bookmark[${Config.Pickup}].SolarSystemID} != ${Me.SolarSystemID}
 						{
 							break
@@ -656,7 +658,7 @@ objectdef obj_Hauler inherits obj_State
 							return TRUE
 						}
 						break
-					case Service Corporate Bookmarks
+					case Corporate Bookmark Jetcan
 						variable string Target
 						variable string BookmarkTime="24:00"
 						variable bool BookmarkFound
@@ -717,7 +719,7 @@ objectdef obj_Hauler inherits obj_State
 						
 						break
 						
-					case Service On-Demand
+					case On-Demand Jetcan
 						
 						if ${Entity[${OnDemandHaulQueue.Peek.BeltID}](exists)}
 						{
