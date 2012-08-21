@@ -468,6 +468,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							<Width>58%</Width>
 							<Height>6%</Height>
 							<OnLoad>
+								echo ${This.FullName}
+							
 								This:AddItem[No Fleet]
 								variable iterator FleetIterator
 								Script[ComBot].VariableScope.Config.Fleets.Fleets:GetSetIterator[FleetIterator]

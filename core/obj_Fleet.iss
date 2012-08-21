@@ -93,10 +93,14 @@ objectdef obj_Fleet inherits obj_State
 			return TRUE
 		}
 		
+		echo Before Active Commander
+		
 		if ${Me.ID} == ${This.ActiveCommander}
 		{
+			echo Before Invite
 			if ${This.InviteFleetMembers}
 			{
+				echo Invited
 				return FALSE
 			}
 		}
@@ -147,7 +151,8 @@ objectdef obj_Fleet inherits obj_State
 				}
 			}
 			while ${Member:Next(exists)}
-		
+
+			
 	}
 	
 
