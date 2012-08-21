@@ -101,10 +101,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							<Item>Match Highest Buyout</Item>
 						</Items>
 						<OnLoad>
-							This.ItemByText[${Script[ComBot].VariableScope.HangarSale.Config.PriceMode}]:Select
+							This.ItemByText[${Script[ComBot].VariableScope.HangerSale.Config.PriceMode}]:Select
 						</OnLoad>
 						<OnSelect>
-							Script[ComBot].VariableScope.HangarSale.Config:SetPriceMode[${This.SelectedItem.Text}]
+							Script[ComBot].VariableScope.HangerSale.Config:SetPriceMode[${This.SelectedItem.Text}]
 						</OnSelect>
 					</ComboBox>						 
 					<Checkbox name='obj_HangarSale_RePrice'>
@@ -114,13 +114,13 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Height>20</Height> 
 						<Text>Re-price active sell orders</Text>
 							<OnLoad>
-							if ${Script[ComBot].VariableScope.HangarSale.Config.RePrice}
+							if ${Script[ComBot].VariableScope.HangerSale.Config.RePrice}
 							{
 								This:SetChecked
 							}
 						</OnLoad>
 						<OnLeftClick>
-							Script[ComBot].VariableScope.HangarSale.Config:SetRePrice[${This.Checked}]
+							Script[ComBot].VariableScope.HangerSale.Config:SetRePrice[${This.Checked}]
 						</OnLeftClick>
 					</Checkbox>
 					<Checkbox name='obj_HangarSale_Sell'>
@@ -130,13 +130,13 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Height>20</Height> 
 						<Text>Place new sell orders</Text>
 						<OnLoad>
-							if ${Script[ComBot].VariableScope.HangarSale.Config.Sell}
+							if ${Script[ComBot].VariableScope.HangerSale.Config.Sell}
 							{
 								This:SetChecked
 							}
 						</OnLoad>
 						<OnLeftClick>
-							Script[ComBot].VariableScope.HangarSale.Config:SetSell[${This.Checked}]
+							Script[ComBot].VariableScope.HangerSale.Config:SetSell[${This.Checked}]
 						</OnLeftClick>
 					</Checkbox>
 					<Text name='obj_HangarSale_UndercutPercentTitle'> 
@@ -146,7 +146,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Height>2%</Height> 
 						<Alignment>Center</Alignment>
 						<OnLoad>
-							This:SetText[Undercut %: ${Script[ComBot].VariableScope.HangarSale.Config.UndercutPercent}]
+							This:SetText[Undercut %: ${Script[ComBot].VariableScope.HangerSale.Config.UndercutPercent}]
 						</OnLoad>
 					</Text>						 
 					<Slider name='obj_HangarSale_UndercutPercent'> 
@@ -157,11 +157,11 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Border>1</Border>
 						<Range>100</Range>
 						<OnLoad>
-							This:SetValue[${Script[ComBot].VariableScope.HangarSale.Config.UndercutPercent}]
+							This:SetValue[${Script[ComBot].VariableScope.HangerSale.Config.UndercutPercent}]
 						</OnLoad>
 						<OnChange>
-							UIElement[obj_HangarSale_UndercutPercentTitle@ComBot_HangarSale_Frame@ComBot_HangarSale]:SetText[Undercut %: ${Script[ComBot].VariableScope.HangarSale.Config.UndercutPercent}]
-							Script[ComBot].VariableScope.HangarSale.Config:SetUndercutPercent[${This.Value}]
+							UIElement[obj_HangarSale_UndercutPercentTitle@ComBot_HangarSale_Frame@ComBot_HangarSale]:SetText[Undercut %: ${Script[ComBot].VariableScope.HangerSale.Config.UndercutPercent}]
+							Script[ComBot].VariableScope.HangerSale.Config:SetUndercutPercent[${This.Value}]
 						</OnChange>
 					</Slider>						 
 					<Text name='obj_HangarSale_UndercutValueTitle'> 
@@ -171,7 +171,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Height>2%</Height> 
 						<Alignment>Center</Alignment>
 						<OnLoad>
-							This:SetText[Undercut Value: ${Script[ComBot].VariableScope.ComBot.ISK_To_Str[${Script[ComBot].VariableScope.HangarSale.Config.UndercutValue}]}]
+							This:SetText[Undercut Value: ${Script[ComBot].VariableScope.ComBot.ISK_To_Str[${Script[ComBot].VariableScope.HangerSale.Config.UndercutValue}]}]
 						</OnLoad>
 					</Text>						 
 					<Slider name='obj_HangarSale_UndercutValue'> 
@@ -182,11 +182,11 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Border>1</Border>
 						<Range>1000</Range>
 						<OnLoad>
-							This:SetValue[${Script[ComBot].VariableScope.HangarSale.Config.UndercutValue}]
+							This:SetValue[${Script[ComBot].VariableScope.HangerSale.Config.UndercutValue}]
 						</OnLoad>
 						<OnChange>
-							Script[ComBot].VariableScope.HangarSale.Config:SetUndercutValue[${This.Value}]
-							UIElement[obj_HangarSale_UndercutValueTitle@ComBot_HangarSale_Frame@ComBot_HangarSale]:SetText[Undercut Value: ${Script[ComBot].VariableScope.ComBot.ISK_To_Str[${Script[ComBot].VariableScope.HangarSale.Config.UndercutValue}]}]
+							Script[ComBot].VariableScope.HangerSale.Config:SetUndercutValue[${This.Value}]
+							UIElement[obj_HangarSale_UndercutValueTitle@ComBot_HangarSale_Frame@ComBot_HangarSale]:SetText[Undercut Value: ${Script[ComBot].VariableScope.ComBot.ISK_To_Str[${Script[ComBot].VariableScope.HangerSale.Config.UndercutValue}]}]
 						</OnChange>
 					</Slider>						 
 
@@ -197,13 +197,13 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Height>3%</Height> 
 						<Text>Move items marked for refining</Text>
 						<OnLoad>
-							if ${Script[ComBot].VariableScope.HangarSale.Config.MoveRefines}
+							if ${Script[ComBot].VariableScope.HangerSale.Config.MoveRefines}
 							{
 								This:SetChecked
 							}
 						</OnLoad>
 						<OnLeftClick>
-							Script[ComBot].VariableScope.HangarSale.Config:SetMoveRefines[${This.Checked}]
+							Script[ComBot].VariableScope.HangerSale.Config:SetMoveRefines[${This.Checked}]
 						</OnLeftClick>
 					</Checkbox>						 
 					<listbox Name="MoveRefinesTarget">
@@ -241,10 +241,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									
 								}
 								while ${NameIterator:Next(exists)}
-							This.ItemByValue[${Script[ComBot].VariableScope.HangarSale.Config.MoveRefinesTarget}]:Select
+							This.ItemByValue[${Script[ComBot].VariableScope.HangerSale.Config.MoveRefinesTarget}]:Select
 						</OnLoad>
 						<OnSelect>
-							Script[ComBot].VariableScope.HangarSale.Config:SetMoveRefinesTarget[${This.SelectedItem.Value}]
+							Script[ComBot].VariableScope.HangerSale.Config:SetMoveRefinesTarget[${This.SelectedItem.Value}]
 						</OnSelect>
 					</listbox>
 
