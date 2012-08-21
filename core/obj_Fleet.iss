@@ -309,7 +309,7 @@ objectdef obj_Fleet inherits obj_State
 				}
 			}
 			while ${Wing:Next(exists)}	
-
+		echo Need a new wing for ${value}
 		return FALSE
 	}
 	
