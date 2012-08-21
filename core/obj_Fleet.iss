@@ -259,10 +259,9 @@ objectdef obj_Fleet inherits obj_State
 		if ${Wing:First(exists)}
 			do
 			{
-				echo Wing ${Wing.Key} Exists: ${This.WingExists[${Wing.Key}]}
 				if !${This.WingExists[${Wing.Key}]}
 				{
-					Me.Fleet:CreateWing
+					;Me.Fleet:CreateWing
 					return TRUE
 				}
 			}
@@ -276,6 +275,7 @@ objectdef obj_Fleet inherits obj_State
 		;	Say yes if the wing from settings is already translated
 		if ${This.WingTranslation.Element[${value}](exists)}
 		{
+			echo Wing ${value} already exists in WingTranslation
 			return TRUE
 		}
 
@@ -301,6 +301,7 @@ objectdef obj_Fleet inherits obj_State
 					while ${Translated:Next(exists)}	
 				if ${Untranslated}
 				{
+					echo Translating ${value} to ${Wing.Value}
 					This.WingTranslation:Set[${value}, ${Wing.Value}]
 					return TRUE
 				}
