@@ -28,6 +28,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 	method setname(type value)
 	{
+		echo name -> ${value}
 		This.CommonRef:AddSetting[name,${value}]
 		Config:Save
 	}
