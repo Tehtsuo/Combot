@@ -60,7 +60,6 @@ objectdef obj_Fleet inherits obj_State
 			return TRUE
 		}
 		
-		echo ${This.ActiveCommander} != ${Me.CharID} && !${Me.Fleet.IsMember[${This.ActiveCommander}]}
 		if ${This.ActiveCommander} != ${Me.CharID} && !${Me.Fleet.IsMember[${This.ActiveCommander}]}
 		{
 			Me.Fleet:LeaveFleet
@@ -84,27 +83,21 @@ objectdef obj_Fleet inherits obj_State
 	
 	member:bool OutFleet()
 	{
-		echo Before No Fleet check
 		if ${Config.Fleets.Active.Equal[No Fleet]}
 		{
 			return FALSE
 		}
 
-		echo Before IsMember check
 		if ${Me.Fleet.IsMember[${Me.CharID}]}
 		{
 			This:QueueState["InFleet"]
 			return TRUE
 		}
 		
-		echo ${Me.ID} == ${This.ActiveCommander}
-		
 		if ${Me.ID} == ${This.ActiveCommander}
 		{
-			echo Before Invite
 			if ${This.InviteFleetMembers}
 			{
-				echo Invited
 				return FALSE
 			}
 		}
@@ -292,20 +285,25 @@ objectdef obj_Fleet inherits obj_State
 				}
 			}
 			while ${Wing:Next(exists)}	
-		if ${Wing:First(exists)}
+		variable iterator TranslatedWing
+		variable bool NewWing=TRUE
+		This.WingTranslation:GetIterator[TranslatedWing]
+		if ${TranslatedWing:First(exists)}
 			do
 			{
-				if !${This.WingTranslation.Element[${Wing.Key}](exists)}
+				if ${TranslatedWing.Value} == ${value}
 				{
-					echo Translating ${Wing.Key} to ${value}
-					This.WingTranslation:Set[${Wing.Key}, ${value}]
-					return FALSE
+					NewWing:Set[FALSE]
+					break
 				}
 			}
-			while ${Wing:Next(exists)}
+			while ${TranslatedWing:Next(exists)}
 		
-		echo Creating Wing
-		Me.Fleet:CreateWing
+		if ${NewWing}
+		{
+			echo Creating Wing
+			Me.Fleet:CreateWing
+		}
 		return FALSE
 	}
 	
