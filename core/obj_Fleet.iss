@@ -128,7 +128,7 @@ objectdef obj_Fleet inherits obj_State
 				if ${Member.Value.RoleID} == 4
 				{
 					echo Adding Member
-					Config.Fleets.GetFleet[${name}].GetWing[${Member.Value.WingID}].GetSquad[${Member.Value.SquadID}].GetMember[${Member.Value.ID}]:SetID[${Member.Value.ID}]
+					Config.Fleets.GetFleet[${name}].GetWing[${Member.Value.WingID}].GetSquad[${Member.Value.SquadID}].GetMember[${Member.Value.ID}]:SetCreated[TRUE]
 				}
 				if ${Member.Value.RoleID} == 1
 				{

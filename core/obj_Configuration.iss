@@ -414,7 +414,8 @@ objectdef obj_Configuration_Member
 		CurrentRef:AddSetting[Created, TRUE]
 		Config:Save
 	}
-
+	
+	Setting(bool, Created, SetCreated)	
 }
 
 objectdef obj_Configuration_RefineData
