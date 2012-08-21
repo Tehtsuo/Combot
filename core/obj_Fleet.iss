@@ -35,6 +35,7 @@ objectdef obj_Fleet inherits obj_State
 
 	member:bool Start()
 	{
+		echo In Fleet: ${Me.Fleet.IsMember[${Me.CharID}]}
 		if ${Me.Fleet.IsMember[${Me.CharID}]}
 		{
 			This:QueueState["InFleet"]
@@ -82,11 +83,13 @@ objectdef obj_Fleet inherits obj_State
 	
 	member:bool OutFleet()
 	{
+		echo Before No Fleet check
 		if ${Config.Fleets.Active.Equal[No Fleet]}
 		{
 			return FALSE
 		}
 
+		echo Before IsMember check
 		if !${Me.Fleet.IsMember[${Me.CharID}]}
 		{
 			This:QueueState["InFleet"]
@@ -152,10 +155,25 @@ objectdef obj_Fleet inherits obj_State
 			}
 			while ${Member:Next(exists)}
 
-			
+		This:UpdateFleetUI
 	}
 	
-
+	method UpdateFleetUI()
+	{
+		UIElement[FleetSelection@Settings@ComBotTab@ComBot]:ClearItems
+		UIElement[FleetSelection@Settings@ComBotTab@ComBot]:AddItem[No Fleet]
+		variable iterator FleetIterator
+		Config.Fleets.Fleets:GetSetIterator[FleetIterator]
+		if ${FleetIterator:First(exists)}
+		{
+			do
+			{
+				UIElement[FleetSelection@Settings@ComBotTab@ComBot]:AddItem[${FleetIterator.Key}]
+			}
+			while ${FleetIterator:Next(exists)}
+		}
+		UIElement[FleetSelection@Settings@ComBotTab@ComBot].ItemByText[${Config.Fleets.Active}]:Select
+	}
 
 
 	
