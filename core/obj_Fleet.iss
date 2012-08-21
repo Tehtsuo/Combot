@@ -284,11 +284,11 @@ objectdef obj_Fleet inherits obj_State
 		if ${Wing:First(exists)}
 			do
 			{
-				echo ${WingTranslation.Element[${Wing.Value}](exists)}
-				if ${WingTranslation.Element[${Wing.Value}](exists)}
+				echo ${This.WingTranslation.Element[${Wing.Value}](exists)}
+				if ${This.WingTranslation.Element[${Wing.Value}](exists)}
 				{
-					echo ${WingTranslation.Element[${Wing.Value}].Value} == ${value}
-					if ${WingTranslation.Element[${Wing.Value}].Value} == ${value}
+					echo ${This.WingTranslation.Element[${Wing.Value}].Value} == ${value}
+					if ${This.WingTranslation.Element[${Wing.Value}].Value} == ${value}
 					{
 						return TRUE
 					}
@@ -299,10 +299,10 @@ objectdef obj_Fleet inherits obj_State
 		if ${Wing:First(exists)}
 			do
 			{
-				echo ${WingTranslation.Element[${Wing.Value}](exists)}
-				if ${WingTranslation.Element[${Wing.Value}](exists)}
+				echo ${This.WingTranslation.Element[${Wing.Value}](exists)}
+				if ${This.WingTranslation.Element[${Wing.Value}](exists)}
 				{
-					WingTranslation.Set[${Wing.Value}, ${value}]
+					This.WingTranslation.Set[${Wing.Value}, ${value}]
 				}
 			}
 			while ${Wing:Next(exists)}
