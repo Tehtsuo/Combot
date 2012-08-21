@@ -477,7 +477,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								{
 									do
 									{
-										This:AddItem[${FleetIterator.Value.Name}]
+										This:AddItem[${FleetIterator.Key}]
 									}
 									while ${FleetIterator:Next(exists)}
 								}
