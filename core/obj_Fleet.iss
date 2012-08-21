@@ -293,7 +293,7 @@ objectdef obj_Fleet inherits obj_State
 				if ${Translated:First(exists)}
 					do
 					{
-						if ${Translated.Value} == ${value}
+						if ${Translated.Value} == ${Wing.Value}
 						{
 							Untranslated:Set[FALSE]
 						}
