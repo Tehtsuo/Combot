@@ -284,6 +284,8 @@ objectdef obj_Fleet inherits obj_State
 		if ${Wing:First(exists)}
 			do
 			{
+				echo Wing information:  Key: ${Wing.Key}  Value: ${Wing.Value}
+				echo WingTranslation information:  Key: ${This.WingTranslation.Element[${Wing.Key}].Key}  Value: ${This.WingTranslation.Element[${Wing.Key}].Value}
 				echo ${This.WingTranslation.Element[${Wing.Key}](exists)}
 				if ${This.WingTranslation.Element[${Wing.Key}](exists)}
 				{
