@@ -69,7 +69,9 @@ objectdef obj_Fleet inherits obj_State
 		{
 			if ${This.StructureFleet}
 			{
-				return FALSE
+				This:QueueState["Idle", 5000]
+				This:QueueState["InFleet]
+				return TRUE
 			}
 		
 			if ${This.InviteFleetMembers}
