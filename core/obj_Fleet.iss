@@ -60,7 +60,7 @@ objectdef obj_Fleet inherits obj_State
 			return TRUE
 		}
 		
-		if ${ActiveCommander} && !${Me.Fleet.Member[${ActiveCommander}](exists)}
+		if !${ActiveCommander} && !${Me.Fleet.Member[${ActiveCommander}](exists)}
 		{
 			Me.Fleet:LeaveFleet
 		}
@@ -96,7 +96,7 @@ objectdef obj_Fleet inherits obj_State
 			return TRUE
 		}
 		
-		echo Before Active Commander
+		echo ${Me.ID} == ${This.ActiveCommander}
 		
 		if ${Me.ID} == ${This.ActiveCommander}
 		{
