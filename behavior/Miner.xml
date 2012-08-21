@@ -448,8 +448,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<BackgroundColor>FF000000</BackgroundColor>
 						<Border>1</Border>
 						<BorderColor>FFFFFFFF</BorderColor>
-						<X>34%</X>
-						<Y>6%</Y>
+						<X>1%</X>
+						<Y>12%</Y>
 						<Width>32%</Width>
 						<Height>17%</Height>
 						<OnLoad>
