@@ -93,10 +93,8 @@ objectdef obj_Salvage inherits obj_State
 	
 	method Stop()
 	{
-		UI:Update["obj_Salvage", "Salvage stopped, setting destination to station", "g"]
+		This:DeactivateStateQueueDisplay
 		This:Clear
-		Move:Bookmark[${Config.Dropoff}]
-		This:QueueState["Traveling"]
 	}
 
 	member:bool CheckBookmarks()

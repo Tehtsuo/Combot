@@ -27,7 +27,6 @@ objectdef obj_Security inherits obj_State
 	{
 		This[parent]:Initialize
 		This.NonGameTiedPulse:Set[FALSE]
-		This:AssignStateQueueDisplay[obj_SecurityStateList@Security@ComBotTab@ComBot]
 
 		if !${Config.Security.FleeTo(exists)} || ${Config.Security.FleeTo.Equal[NULL]} || ${Config.Security.FleeTo.Equal[]}
 		{

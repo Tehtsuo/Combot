@@ -206,11 +206,15 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								Script[ComBot].VariableScope.Config.Common:SetComBot_Mode[${This.SelectedItem.Value}]
 								for ( counter:Set[1] ; ${counter} &lt;= ${This.Items} ; counter:Inc )
 								{
-									Script[ComBot].VariableScope.${This.OrderedItem[${Counter}]}:Clear
+									Script[ComBot].VariableScope.${This.OrderedItem[${counter}].Value}:Stop
 								}
 								if ${Script[ComBot].VariableScope.UI.Reloaded}
 								{
-									Script[ComBot].VariableScope.ComBot:Pause
+									if !${Script[ComBot].VariableScope.ComBot.Paused}
+									{
+										Script[ComBot].VariableScope.UI:Update["ComBot", "Paused", "r"]
+										Script[ComBot].VariableScope.ComBot:Pause
+									}
 								}
 							</OnSelect>
 						</combobox>
@@ -373,6 +377,18 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								Script[ComBot].VariableScope.Config.Common:SetDisableTexture[${This.Checked}]
 							</OnLeftClick>
 						</Checkbox>
+						<button	Name='SecurityConfig'>
+							<Font template='Button.Font' />
+							<BackgroundColor>FF000000</BackgroundColor>
+							<X>1%</X>
+							<Y>50%</Y>
+							<Width>28%</Width>
+							<Height>6%</Height>
+							<Text>Security Settings</Text>
+							<OnLeftClick>
+								timedcommand 0 "ui -load \"&filepath;/ComBotGUI_Security.xml\""
+							</OnLeftClick>
+						</button>						
 						
 						<frame name='AutoLoginFillerFrame'>
 							<BackgroundColor>FF000000</BackgroundColor>
@@ -558,70 +574,6 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					</Tab>
 					
 
-					
-
-					<Tab Name='Security'>
-						<frame name='obj_SecurityFillerFrame'>
-							<BackgroundColor>FF000000</BackgroundColor>
-							<Border>1</Border>
-							<BorderColor>FFFFFFFF</BorderColor>
-							<X>0</X>
-							<Y>0</Y>
-							<Height>100%</Height>
-							<Width>100%</Width>
-							<OnLoad>
-								This:SetLeftClickThru[TRUE]
-							</OnLoad>
-						</frame>					
-						<Text name='obj_SecurityListTitle'> 
-									<X>0</X> 
-									<Y>5%</Y> 
-									<Width>40%</Width> 
-									<Height>5%</Height> 
-									<Alignment>Center</Alignment>
-									<Text>Security Risks</Text>
-						</Text>						 
-						<listbox Name="obj_SecurityList">
-							<Font template='Console.Font' />
-							<BackgroundColor>FF000000</BackgroundColor>
-							<Border>1</Border>
-							<BorderColor>FFFFFFFF</BorderColor>
-							<X>0</X>
-							<Y>10%</Y>
-							<Width>40%</Width>
-							<Height>80%</Height>
-						</listbox>
-						<Text name='obj_SecurityStateListTitle'> 
-									<X>40%</X> 
-									<Y>5%</Y> 
-									<Width>40%</Width> 
-									<Height>5%</Height> 
-									<Alignment>Center</Alignment>
-									<Text>Pending States</Text>
-						</Text>						 
-						<listbox Name="obj_SecurityStateList">
-							<Font template='Listbox.Font' />
-							<BackgroundColor>FF000000</BackgroundColor>
-							<Border>1</Border>
-							<BorderColor>FFFFFFFF</BorderColor>
-							<X>40%</X>
-							<Y>10%</Y>
-							<Width>40%</Width>
-							<Height>80%</Height>
-						</listbox>
-						<button	Name='Config'>
-							<Font template='Button.Font' />
-							<BackgroundColor>FF000000</BackgroundColor>
-							<X>0%</X>
-							<Y>90%</Y>
-							<Width>100%</Width>
-							<Height>10%</Height>
-							<Text>Settings</Text>
-							<OnLeftClick>
-								timedcommand 0 "ui -load \"&filepath;/ComBotGUI_Security.xml\""
-							</OnLeftClick>
-						</button>						
-					</Tab>-->
 					<Tab Name='Profiling'>
 						<frame name='obj_ProfilingFillerFrame'>
 							<BackgroundColor>FF000000</BackgroundColor>

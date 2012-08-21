@@ -107,8 +107,6 @@ objectdef obj_Hauler inherits obj_State
 	method Stop()
 	{
 		This:DeactivateStateQueueDisplay
-
-		UI:Update["obj_Hauler", "Stopped", "r"]
 		This:Clear
 	}
 	method PopulateTargetList(int64 ID)
