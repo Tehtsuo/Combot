@@ -90,7 +90,7 @@ objectdef obj_Fleet inherits obj_State
 		}
 
 		echo Before IsMember check
-		if !${Me.Fleet.IsMember[${Me.CharID}]}
+		if ${Me.Fleet.IsMember[${Me.CharID}]}
 		{
 			This:QueueState["InFleet"]
 			return TRUE
