@@ -285,25 +285,20 @@ objectdef obj_Fleet inherits obj_State
 				}
 			}
 			while ${Wing:Next(exists)}	
-		variable iterator TranslatedWing
-		variable bool NewWing=TRUE
-		This.WingTranslation:GetIterator[TranslatedWing]
-		if ${TranslatedWing:First(exists)}
+		
+		if ${Wing:First(exists)}
 			do
 			{
-				if ${TranslatedWing.Value} == ${value}
+				if !${This.WingTranslation.Element[${Wing.Key}](exists)}
 				{
-					NewWing:Set[FALSE]
-					break
+					This.WingTranslation:Set[${Wing.Key}, ${value}]
 				}
 			}
-			while ${TranslatedWing:Next(exists)}
-		
-		if ${NewWing}
-		{
-			echo Creating Wing
-			Me.Fleet:CreateWing
-		}
+			while ${Wing:Next(exists)}	
+
+		echo Creating Wing
+		Me.Fleet:CreateWing
+
 		return FALSE
 	}
 	
