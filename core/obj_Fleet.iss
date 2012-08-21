@@ -261,6 +261,7 @@ objectdef obj_Fleet inherits obj_State
 			{
 				if !${This.WingExists[${Wing.Key}]}
 				{
+					Me.Fleet:CreateWing
 					return TRUE
 				}
 			}
@@ -289,15 +290,11 @@ objectdef obj_Fleet inherits obj_State
 			{
 				if !${This.WingTranslation.Element[${Wing.Key}](exists)}
 				{
-					echo Translating ${Wing.Key} to ${value}
 					This.WingTranslation:Set[${Wing.Key}, ${value}]
 					return TRUE
 				}
 			}
 			while ${Wing:Next(exists)}	
-
-		echo Creating Wing
-		Me.Fleet:CreateWing
 
 		return FALSE
 	}
