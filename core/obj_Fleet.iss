@@ -60,8 +60,8 @@ objectdef obj_Fleet inherits obj_State
 			return TRUE
 		}
 		
-		echo ${This.ActiveCommander} && ${Me.Fleet.Member[${This.ActiveCommander}](exists)}
-		if !${This.ActiveCommander} && !${Me.Fleet.Member[${This.ActiveCommander}](exists)}
+		echo ${This.ActiveCommander} && ${Me.Fleet.IsMember[${This.ActiveCommander}]}
+		if !${This.ActiveCommander} && !${Me.Fleet.IsMember[${This.ActiveCommander}]}
 		{
 			Me.Fleet:LeaveFleet
 		}
@@ -273,9 +273,6 @@ objectdef obj_Fleet inherits obj_State
 			}
 			while ${Wing:Next(exists)}		
 
-		
-	
-			
 		return FALSE
 	}
 	
@@ -283,21 +280,26 @@ objectdef obj_Fleet inherits obj_State
 	{
 		variable iterator Wing
 		Config.Fleets.GetFleet[${Config.Fleets.Active}].Wings:GetSetIterator[Wing]
+		echo Check for already in Translation table
 		if ${Wing:First(exists)}
 			do
 			{
+				echo ${WingTranslation.Element[${Wing.Value}](exists)}
 				if ${WingTranslation.Element[${Wing.Value}](exists)}
 				{
+					echo ${WingTranslation.Element[${Wing.Value}].Value} == ${value}
 					if ${WingTranslation.Element[${Wing.Value}].Value} == ${value}
 					{
 						return TRUE
 					}
 				}
 			}
-			while ${Wing:Next(exists)}		
+			while ${Wing:Next(exists)}	
+		echo Add to free spot in Translation table
 		if ${Wing:First(exists)}
 			do
 			{
+				echo ${WingTranslation.Element[${Wing.Value}](exists)}
 				if ${WingTranslation.Element[${Wing.Value}](exists)}
 				{
 					WingTranslation.Set[${Wing.Value}, ${value}]
