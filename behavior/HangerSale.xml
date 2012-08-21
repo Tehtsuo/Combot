@@ -180,12 +180,12 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Width>30%</Width> 
 						<Height>3%</Height> 
 						<Border>1</Border>
-						<Range>100</Range>
+						<Range>1000</Range>
 						<OnLoad>
-							This:SetValue[${Math.Calc[${Script[ComBot].VariableScope.HangarSale.Config.UndercutValue} / 1000]}]
+							This:SetValue[${Script[ComBot].VariableScope.HangarSale.Config.UndercutValue}]
 						</OnLoad>
 						<OnChange>
-							Script[ComBot].VariableScope.HangarSale.Config:SetUndercutValue[${Math.Calc[${This.Value} * 1000]}]
+							Script[ComBot].VariableScope.HangarSale.Config:SetUndercutValue[${This.Value}]
 							UIElement[obj_HangarSale_UndercutValueTitle@ComBot_HangarSale_Frame@ComBot_HangarSale]:SetText[Undercut Value: ${Script[ComBot].VariableScope.ComBot.ISK_To_Str[${Script[ComBot].VariableScope.HangarSale.Config.UndercutValue}]}]
 						</OnChange>
 					</Slider>						 
