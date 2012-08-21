@@ -226,6 +226,7 @@ objectdef obj_Configuration_Fleets
 		{
 			echo Adding Fleet: ${FleetID}
 			This.CommonRef.FindSet[Fleets]:AddSet[${FleetID}]
+			echo Added Fleet: ${This.CommonRef.FindSet[Fleets].FindSet[${FleetID}](exists)}
 			Config:Save
 		}
 		return ${This.CommonRef.FindSet[Fleets].FindSet[${FleetID}]}
