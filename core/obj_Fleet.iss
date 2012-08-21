@@ -280,13 +280,11 @@ objectdef obj_Fleet inherits obj_State
 	{
 		variable iterator Wing
 		Config.Fleets.GetFleet[${Config.Fleets.Active}].Wings:GetSetIterator[Wing]
-		echo Check for already in Translation table
 		if ${Wing:First(exists)}
 			do
 			{
 				if ${This.WingTranslation.Element[${Wing.Key}](exists)}
 				{
-					echo ${This.WingTranslation.Element[${Wing.Key}]} == ${value}
 					if ${This.WingTranslation.Element[${Wing.Key}]} == ${value}
 					{
 						return TRUE
@@ -294,19 +292,19 @@ objectdef obj_Fleet inherits obj_State
 				}
 			}
 			while ${Wing:Next(exists)}	
-		echo Add to free spot in Translation table
 		if ${Wing:First(exists)}
 			do
 			{
-				echo ${This.WingTranslation.Element[${Wing.Key}](exists)}
 				if !${This.WingTranslation.Element[${Wing.Key}](exists)}
 				{
+					echo Translating ${Wing.Key} to ${value}
 					This.WingTranslation:Set[${Wing.Key}, ${value}]
 					return FALSE
 				}
 			}
 			while ${Wing:Next(exists)}
-			
+		
+		echo Creating Wing
 		Me.Fleet:CreateWing
 		return FALSE
 	}
