@@ -21,6 +21,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 objectdef obj_Fleet inherits obj_State
 {
+	variable collection:int64 WingTranslation
+	variable collection:int64 SquadTranslation
 	
 	
 	method Initialize()
@@ -61,10 +63,14 @@ objectdef obj_Fleet inherits obj_State
 		{
 			Me.Fleet:LeaveFleet
 		}
-
 		
 		if ${Me.ID} == ${This.ActiveCommander}
 		{
+			if ${This.StructureFleet}
+			{
+				return FALSE
+			}
+		
 			if ${This.InviteFleetMembers}
 			{
 				return FALSE
@@ -224,35 +230,53 @@ objectdef obj_Fleet inherits obj_State
 		return "FALSE"
 	}
 	
-	member:bool ArrangeFleet()
+	member:bool StructureFleet()
 	{
-		variable set:string WingNames
-		variable set:string SquadNames
-	
-		variable iterator ConfigWing
-		variable iterator ConfigSquad
-
-		
-		Config.Fleets.GetFleet[${Config.Fleets.Active}].Wings:GetIterator[ConfigWing]
-		if ${ConfigWing:First(exists)}
+		variable iterator Wing
+		Config.Fleets.GetFleet[${Config.Fleets.Active}].Wings:GetSetIterator[Wing]
+		if ${Wing:First(exists)}
 			do
 			{
-				if ${FindWing[${ConfigWing.Value.Name}]}
+				if !${This.WingExists[${Wing.Value}]}
 				{
+					return TRUE
 				}
-			
-				ConfigWing.Value.Squads:GetIterator[ConfigSquad]
-				if ${ConfigSquad:First(exists)}
-					do
-					{
-
-					}
-					while ${ConfigSquad:Next(exists)}
 			}
-			while ${ConfigWing:Next(exists)}
+			while ${Wing:Next(exists)}		
+
 		
 	
 			
+		return FALSE
+	}
+	
+	member:bool WingExists(int64 value)
+	{
+		variable iterator Wing
+		Config.Fleets.GetFleet[${Config.Fleets.Active}].Wings:GetSetIterator[Wing]
+		if ${Wing:First(exists)}
+			do
+			{
+				if ${WingTranslation.Element[${Wing.Value}](exists)}
+				{
+					if ${WingTranslation.Element[${Wing.Value}].Value} == ${value}
+					{
+						return TRUE
+					}
+				}
+			}
+			while ${Wing:Next(exists)}		
+		if ${Wing:First(exists)}
+			do
+			{
+				if ${WingTranslation.Element[${Wing.Value}](exists)}
+				{
+					WingTranslation.Set[${Wing.Value}, ${value}]
+				}
+			}
+			while ${Wing:Next(exists)}
+			
+		Me.Fleet:CreateWing
 		return FALSE
 	}
 	
@@ -274,6 +298,7 @@ objectdef obj_Fleet inherits obj_State
 			while ${Wing:Next(exists)}
 		return 0
 	}
+	
 	member:int64 FindSquad(string name, int64 WingID)
 	{
 		variable index:int64 Squads
