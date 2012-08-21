@@ -284,19 +284,21 @@ objectdef obj_Fleet inherits obj_State
 		;	Otherwise, find a wing in-game that isn't in WingTranslation
 		variable index:int64 Wings
 		variable iterator Wing
+		variable bool Untranslated
+		variable iterator Translated
 		Me.Fleet:GetWings[Wings]
 		Wings:GetIterator[Wing]
 		if ${Wing:First(exists)}
 			do
 			{
-				variable bool Untranslated=TRUE
-				variable iterator Translated
+				Untranslated:Set[TRUE]
 				This.WingTranslation:GetIterator[Translated]
 				if ${Translated:First(exists)}
 					do
 					{
 						if ${Translated.Value} == ${Wing.Value}
 						{
+							echo Ignoring ${Wing.Value} as it is already in WingTranslation
 							Untranslated:Set[FALSE]
 						}
 					}
