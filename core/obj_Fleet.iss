@@ -35,7 +35,6 @@ objectdef obj_Fleet inherits obj_State
 
 	member:bool Start()
 	{
-		echo In Fleet: ${Me.Fleet.IsMember[${Me.CharID}]}
 		if ${Me.Fleet.IsMember[${Me.CharID}]}
 		{
 			This:QueueState["InFleet"]
@@ -266,6 +265,18 @@ objectdef obj_Fleet inherits obj_State
 					Me.Fleet:CreateWing
 					return TRUE
 				}
+				variable iterator Squad
+				Wing.Value.FindSet[Squads]:GetSetIterator[Squad]
+				if ${Squad:First(exists)}
+					do
+					{
+						if !${This.SquadExists[${Wing.Key}, ${Squad.Key}]}
+						{
+							Me.Fleet:CreateSquad[${This.WingTranslation.Element[${Wing.Key}]}]
+							return TRUE
+						}
+					}
+					while ${Squad:Next(exists)}
 			}
 			while ${Wing:Next(exists)}		
 
@@ -277,7 +288,6 @@ objectdef obj_Fleet inherits obj_State
 		;	Say yes if the wing from settings is already translated
 		if ${This.WingTranslation.Element[${value}](exists)}
 		{
-			echo Wing ${value} already exists in WingTranslation
 			return TRUE
 		}
 
@@ -298,60 +308,60 @@ objectdef obj_Fleet inherits obj_State
 					{
 						if ${Translated.Value} == ${Wing.Value}
 						{
-							echo Ignoring ${Wing.Value} as it is already in WingTranslation
 							Untranslated:Set[FALSE]
 						}
 					}
 					while ${Translated:Next(exists)}	
 				if ${Untranslated}
 				{
-					echo Translating ${value} to ${Wing.Value}
 					This.WingTranslation:Set[${value}, ${Wing.Value}]
 					return TRUE
 				}
 			}
 			while ${Wing:Next(exists)}	
-		echo Need a new wing for ${value}
 		return FALSE
 	}
-	
-	member:int64 FindWing(string name)
+
+	member:bool SquadExists(int64 wing, int64 value)
 	{
-		variable index:int64 Wings
-		variable iterator Wing
-		Me.Fleet:GetWings[Wings]
-		Wings:GetIterator[Wing]
-		if ${Wing:First(exists)}
-			do
-			{
-				if ${Me.Fleet.WingName[${Wing.Value.ID}].Equal[${name}]}
-				{
-					return ${Wing.Value.ID}
-				}
-			
-			}
-			while ${Wing:Next(exists)}
-		return 0
-	}
-	
-	member:int64 FindSquad(string name, int64 WingID)
-	{
+		;	Say yes if the squad from settings is already translated
+		if ${This.SquadTranslation.Element[${value}](exists)}
+		{
+			return TRUE
+		}
+
+		;	Otherwise, find a squad in-game that isn't in WingTranslation
 		variable index:int64 Squads
 		variable iterator Squad
-		Me.Fleet:GetSquads[Squads]
+		variable bool Untranslated
+		variable iterator Translated
+		Me.Fleet:GetSquads[Squads, ${This.WingTranslation.Element[${wing}]}]
 		Squads:GetIterator[Squad]
 		if ${Squad:First(exists)}
 			do
 			{
-				if ${Me.Fleet.SquadName[${Squad.Value.ID}].Equal[${name}]}
+				Untranslated:Set[TRUE]
+				This.SquadTranslation:GetIterator[Translated]
+				if ${Translated:First(exists)}
+					do
+					{
+						if ${Translated.Value} == ${Squad.Value}
+						{
+							Untranslated:Set[FALSE]
+						}
+					}
+					while ${Translated:Next(exists)}	
+				if ${Untranslated}
 				{
-					return ${Squad.Value.ID}
+					echo Translated squad ${value} to ${Squad.Value}
+					This.SquadTranslation:Set[${value}, ${Squad.Value}]
+					return TRUE
 				}
-			
 			}
-			while ${Squad:Next(exists)}
-		return 0
+			while ${Squad:Next(exists)}	
+		return FALSE
 	}
+	
 	
 	member:bool InviteFleetMembers()
 	{
