@@ -60,6 +60,7 @@ objectdef obj_Fleet inherits obj_State
 			return TRUE
 		}
 		
+		echo ${ActiveCommander} && ${Me.Fleet.Member[${ActiveCommander}](exists)}
 		if !${ActiveCommander} && !${Me.Fleet.Member[${ActiveCommander}](exists)}
 		{
 			Me.Fleet:LeaveFleet
