@@ -275,10 +275,23 @@ objectdef obj_Fleet inherits obj_State
 							Me.Fleet:CreateSquad[${This.WingTranslation.Element[${Wing.Key}]}]
 							return TRUE
 						}
+						
+						variable iterator Member
+						Squad.Value.FindSet[Members]:GetSetIterator[Member]
+						if ${Member:First(exists)}
+							do
+							{
+								if ${This.MoveMember[${Wing.Key}, ${Squad.Key}, ${Member.Key}]}
+								{
+									return TRUE
+								}
+							}
+							while ${Member:Next(exists)}
 					}
 					while ${Squad:Next(exists)}
 			}
-			while ${Wing:Next(exists)}		
+			while ${Wing:Next(exists)}
+		
 
 		return FALSE
 	}
@@ -362,6 +375,19 @@ objectdef obj_Fleet inherits obj_State
 		return FALSE
 	}
 	
+	member:bool MoveMember(int64 wing, int64 squad, int64 value)
+	{
+		if ${Me.Fleet.Member[${value}](exists)}
+		{
+			if 	${Me.Fleet.Member[${value}].WingID} != ${This.WingTranslation.Element[${wing}]} ||\
+				${Me.Fleet.Member[${value}].SquadID} != ${This.SquadTranslation.Element[${squad}]}
+			{
+				Me.Fleet.Member[${value}]:Move[${This.WingTranslation.Element[${wing}]}, ${This.SquadTranslation.Element[${squad}]}]
+				return TRUE
+			}
+		}
+		return FALSE
+	}
 	
 	member:bool InviteFleetMembers()
 	{
