@@ -278,11 +278,12 @@ objectdef obj_Fleet inherits obj_State
 		if ${Wing:First(exists)}
 			do
 			{
-				echo Existing Check:  ${This.WingTranslation.Element[${Wing.Key}]}   ${Wing.Key}
 				if ${This.WingTranslation.Element[${Wing.Key}](exists)}
 				{
+					echo Found wing in WingTranslation.  If ${This.WingTranslation.Element[${Wing.Key}]} == ${value} return TRUE
 					if ${This.WingTranslation.Element[${Wing.Key}]} == ${value}
 					{
+						echo return TRUE
 						return TRUE
 					}
 				}
@@ -292,7 +293,6 @@ objectdef obj_Fleet inherits obj_State
 		if ${Wing:First(exists)}
 			do
 			{
-				echo Translation Check:  ${This.WingTranslation.Element[${Wing.Key}]}   ${Wing.Key}
 				if !${This.WingTranslation.Element[${Wing.Key}](exists)}
 				{
 					echo Translating ${Wing.Key} to ${value}
