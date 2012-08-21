@@ -273,25 +273,35 @@ objectdef obj_Fleet inherits obj_State
 	
 	member:bool WingExists(int64 value)
 	{
-	
+		;	Say yes if the wing from settings is already translated
+		if ${This.WingTranslation.Element[${value}](exists)}
+		{
+			return TRUE
+		}
+
+		;	Otherwise, find a wing in-game that isn't in WingTranslation
+		variable index:int64 Wings
 		variable iterator Wing
-		Config.Fleets.GetFleet[${Config.Fleets.Active}].Wings:GetSetIterator[Wing]
+		Me.Fleet:GetWings[Wings]
+		Wings:GetIterator[Wing]
 		if ${Wing:First(exists)}
 			do
 			{
-				if ${This.WingTranslation.Element[${Wing.Key}](exists)}
+				variable bool Untranslated=TRUE
+				variable iterator Translated
+				This.WingTranslation:GetIterator[Translated]
+				if ${Translated:First(exists)}
+					do
+					{
+						if ${Translated.Value} == ${value}
+						{
+							Untranslated:Set[FALSE]
+						}
+					}
+					while ${Translated:Next(exists)}	
+				if ${Untranslated}
 				{
-					return TRUE
-				}
-			}
-			while ${Wing:Next(exists)}	
-		
-		if ${Wing:First(exists)}
-			do
-			{
-				if !${This.WingTranslation.Element[${Wing.Key}](exists)}
-				{
-					This.WingTranslation:Set[${Wing.Key}, ${value}]
+					This.WingTranslation:Set[${value}, ${Wing.Value}]
 					return TRUE
 				}
 			}
