@@ -295,6 +295,7 @@ objectdef obj_Fleet inherits obj_State
 				{
 					echo Translating ${Wing.Key} to ${value}
 					This.WingTranslation:Set[${Wing.Key}, ${value}]
+					return TRUE
 				}
 			}
 			while ${Wing:Next(exists)}	
