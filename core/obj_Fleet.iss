@@ -271,8 +271,6 @@ objectdef obj_Fleet inherits obj_State
 	
 	member:bool WingExists(int64 value)
 	{
-		echo Processing ${value}
-		echo Currently ${WingTranslation.Used} wings in WingTranslation
 	
 		variable iterator Wing
 		Config.Fleets.GetFleet[${Config.Fleets.Active}].Wings:GetSetIterator[Wing]
@@ -281,12 +279,7 @@ objectdef obj_Fleet inherits obj_State
 			{
 				if ${This.WingTranslation.Element[${Wing.Key}](exists)}
 				{
-					echo Found wing in WingTranslation.  If ${This.WingTranslation.Element[${Wing.Key}]} == ${value} return TRUE
-					if ${This.WingTranslation.Element[${Wing.Key}]} == ${value}
-					{
-						echo return TRUE
-						return TRUE
-					}
+					return TRUE
 				}
 			}
 			while ${Wing:Next(exists)}	
