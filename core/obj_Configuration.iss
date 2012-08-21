@@ -251,6 +251,7 @@ objectdef obj_Configuration_Fleets
 		BaseConfig.BaseRef:AddSet[${This.SetName}]
 		This.CommonRef:AddSet[Fleets]
 		This.CommonRef:AddSetting[Active,"No Fleet"]
+		Config:Save
 	}
 	
 	Setting(string, Active, SetActive)
@@ -295,6 +296,7 @@ objectdef obj_Configuration_Fleet
 		CurrentRef:AddSet[Wings]
 		This.CommonRef:AddSetting[Commander,0]
 		This.CommonRef:AddSetting[Booster,0]
+		Config:Save
 	}
 	
 	Setting(int64, Commander, SetCommander)	
@@ -341,6 +343,7 @@ objectdef obj_Configuration_Wing
 		CurrentRef:AddSet[Squads]
 		This.CommonRef:AddSetting[Commander,0]
 		This.CommonRef:AddSetting[Booster,0]
+		Config:Save
 	}
 	
 	Setting(int64, Commander, SetCommander)	
@@ -386,6 +389,7 @@ objectdef obj_Configuration_Squad
 		CurrentRef:AddSet[Members]
 		This.CommonRef:AddSetting[Commander,0]
 		This.CommonRef:AddSetting[Booster,0]
+		Config:Save
 	}
 	
 	Setting(int64, Commander, SetCommander)	
@@ -408,6 +412,7 @@ objectdef obj_Configuration_Member
 	method Set_Default_Values()
 	{
 		CurrentRef:AddSetting[Created, TRUE]
+		Config:Save
 	}
 
 }
