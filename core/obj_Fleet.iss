@@ -261,7 +261,7 @@ objectdef obj_Fleet inherits obj_State
 			{
 				if !${This.WingExists[${Wing.Key}]}
 				{
-					;Me.Fleet:CreateWing
+					Me.Fleet:CreateWing
 					return TRUE
 				}
 			}
