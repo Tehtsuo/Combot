@@ -259,6 +259,7 @@ objectdef obj_Fleet inherits obj_State
 		if ${Wing:First(exists)}
 			do
 			{
+				echo Wing ${Wing.Key} Exists: ${This.WingExists[${Wing.Key}]}
 				if !${This.WingExists[${Wing.Key}]}
 				{
 					Me.Fleet:CreateWing
