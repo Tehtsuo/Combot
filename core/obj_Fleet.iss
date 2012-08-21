@@ -91,6 +91,8 @@ objectdef obj_Fleet inherits obj_State
 
 		if ${Me.Fleet.IsMember[${Me.CharID}]}
 		{
+			This.WingTranslation:Clear
+			This.SquadTranslation:Clear
 			This:QueueState["InFleet"]
 			return TRUE
 		}
@@ -117,7 +119,7 @@ objectdef obj_Fleet inherits obj_State
 
 	method SaveFleet(string name)
 	{
-		Config.Fleets:ClearFleet[${name}]
+		Config.Fleets:ClearFleet[${name.Escape}]
 	
 		variable index:fleetmember Members
 		variable iterator Member
@@ -130,26 +132,32 @@ objectdef obj_Fleet inherits obj_State
 				if ${Member.Value.RoleID} == 4
 				{
 					echo Adding Member
-					Config.Fleets.GetFleet[${name}].GetWing[${Member.Value.WingID}].GetSquad[${Member.Value.SquadID}].GetMember[${Member.Value.ID}]:SetCreated[TRUE]
+					Config.Fleets.GetFleet[${name.Escape}].GetWing[${Member.Value.WingID}].GetSquad[${Member.Value.SquadID}].GetMember[${Member.Value.ID}]:SetCreated[TRUE]
 				}
 				if ${Member.Value.RoleID} == 1
 				{
 					echo Adding Fleet Commander
-					Config.Fleets.GetFleet[${name}]:SetCommander[${Member.Value.ID}]
+					Config.Fleets.GetFleet[${name.Escape}]:SetCommander[${Member.Value.ID}]
 				}
 				if ${Member.Value.RoleID} == 2
 				{
 					echo Adding Wing Commander
-					Config.Fleets.GetFleet[${name}].GetWing[${Member.Value.WingID}]:SetCommander[${Member.Value.ID}]
+					Config.Fleets.GetFleet[${name.Escape}].GetWing[${Member.Value.WingID}]:SetCommander[${Member.Value.ID}]
 				}
 				if ${Member.Value.RoleID} == 3
 				{
 					echo Adding Squad Commander
-					Config.Fleets.GetFleet[${name}].GetWing[${Member.Value.WingID}].GetSquad[${Member.Value.SquadID}]:SetCommander[${Member.Value.ID}]
+					Config.Fleets.GetFleet[${name.Escape}].GetWing[${Member.Value.WingID}].GetSquad[${Member.Value.SquadID}]:SetCommander[${Member.Value.ID}]
 				}
 			}
 			while ${Member:Next(exists)}
 
+		This:UpdateFleetUI
+	}
+	
+	method DeleteFleet(string name)
+	{
+		Config.Fleets:ClearFleet[${name}]
 		This:UpdateFleetUI
 	}
 	
@@ -167,7 +175,8 @@ objectdef obj_Fleet inherits obj_State
 			}
 			while ${FleetIterator:Next(exists)}
 		}
-		UIElement[FleetSelection@Settings@ComBotTab@ComBot].ItemByText[${Config.Fleets.Active}]:Select
+		UIElement[FleetSelection@Settings@ComBotTab@ComBot].ItemByText[No Fleet]:Select
+		
 	}
 
 
@@ -256,6 +265,8 @@ objectdef obj_Fleet inherits obj_State
 	member:bool StructureFleet()
 	{
 		variable iterator Wing
+		variable iterator Squad
+		variable iterator Member
 		Config.Fleets.GetFleet[${Config.Fleets.Active}].Wings:GetSetIterator[Wing]
 		if ${Wing:First(exists)}
 			do
@@ -265,7 +276,6 @@ objectdef obj_Fleet inherits obj_State
 					Me.Fleet:CreateWing
 					return TRUE
 				}
-				variable iterator Squad
 				Wing.Value.FindSet[Squads]:GetSetIterator[Squad]
 				if ${Squad:First(exists)}
 					do
@@ -276,11 +286,11 @@ objectdef obj_Fleet inherits obj_State
 							return TRUE
 						}
 						
-						variable iterator Member
 						Squad.Value.FindSet[Members]:GetSetIterator[Member]
 						if ${Member:First(exists)}
 							do
 							{
+								echo Member ${Member.Key} is supposed to be in Wing ${Wing.Key}, Squad ${Squad.Key}
 								if ${This.MoveMember[${Wing.Key}, ${Squad.Key}, ${Member.Key}]}
 								{
 									return TRUE
@@ -366,7 +376,6 @@ objectdef obj_Fleet inherits obj_State
 					while ${Translated:Next(exists)}	
 				if ${Untranslated}
 				{
-					echo Translated squad ${value} to ${Squad.Value}
 					This.SquadTranslation:Set[${value}, ${Squad.Value}]
 					return TRUE
 				}

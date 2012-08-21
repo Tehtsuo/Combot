@@ -468,8 +468,6 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							<Width>58%</Width>
 							<Height>6%</Height>
 							<OnLoad>
-								echo ${This.FullName}
-							
 								This:AddItem[No Fleet]
 								variable iterator FleetIterator
 								Script[ComBot].VariableScope.Config.Fleets.Fleets:GetSetIterator[FleetIterator]
@@ -485,6 +483,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							</OnLoad>
 							<OnSelect>
 								Script[ComBot].VariableScope.Config.Fleets:SetActive[${This.SelectedItem.Text}]
+								Script[ComBot].VariableScope.Fleets.WingTranslation:Clear
+								Script[ComBot].VariableScope.Fleets.SquadTranslation:Clear
 							</OnSelect>
 						</combobox>
 						<button	Name='SaveFleet'>
@@ -496,7 +496,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							<Height>6%</Height>
 							<Text>Save</Text>
 							<OnLeftClick>
-								echo Save Fleet
+								timedcommand 0 "ui -load \"${Script[ComBot].CurrentDirectory}/interface/ComBotGUI_NewFleet.xml\""
 							</OnLeftClick>
 						</button>							
 						<button	Name='DeleteFleet'>
@@ -508,7 +508,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							<Height>6%</Height>
 							<Text>Delete</Text>
 							<OnLeftClick>
-								echo Delete Fleet
+								Script[ComBot].VariableScope.Fleets:DeleteFleet[${UIElement[FleetSelection@Settings@ComBotTab@ComBot].SelectedItem.Text}]
 							</OnLeftClick>
 						</button>							
 						<button	Name='ModuleSettings'>
