@@ -52,7 +52,7 @@ objectdef obj_Jetcan inherits obj_State
 			return FALSE
 		}
 
-		if  ${MyMyShip.HasOreHold}
+		if  ${MyShip.HasOreHold}
 		{
 			if ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]} < ${Config.Miner.Threshold} * .01
 			{
