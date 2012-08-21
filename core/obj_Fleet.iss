@@ -271,6 +271,7 @@ objectdef obj_Fleet inherits obj_State
 	
 	member:bool WingExists(int64 value)
 	{
+		echo Processing ${value}
 		echo Currently ${WingTranslation.Used} wings in WingTranslation
 	
 		variable iterator Wing
