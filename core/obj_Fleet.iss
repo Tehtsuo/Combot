@@ -183,24 +183,29 @@ objectdef obj_Fleet inherits obj_State
 		{
 			return ${Config.Fleets.GetFleet[${Config.Fleets.Active}].Commander}
 		}
+	
 		variable iterator Wing
-		Config.Fleets.GetFleet[${Config.Fleets.Active}].Wings:GetIterator[Wing]
+		Config.Fleets.GetFleet[${Config.Fleets.Active}].Wings:GetSetIterator[Wing]
 		if ${Wing:First(exists)}
-		{
-			if ${Wing.Value.Commander} > 0
+			do
 			{
-				return ${Wing.Value.Commander}
+				if ${Wing.Value.FindSetting[Commander].Int}
+					return ${Wing.Value.FindSetting[Commander].Int}
+					
+				variable iterator Squad
+				Wing.Value.FindSet[Squads]:GetSetIterator[Squad]
+				if ${Squad:First(exists)}
+					do
+					{
+						if ${Squad.Value.FindSetting[Commander].Int}
+							return ${Squad.Value.FindSetting[Commander].Int}
+					}
+					while ${Squad:Next(exists)}
 			}
-			variable iterator Squad
-			Wing.Value.Squads:GetIterator[Squad]
-			if ${Squad:First(exists)}
-			{
-				if ${Squad.Value.Commander} > 0
-				{
-					return ${Squad.Value.Commander}
-				}
-			}
-		}
+			while ${Wing:Next(exists)}
+			
+		return 0		
+		
 	}
 	
 	member:string ResolveName(int64 value)
