@@ -46,6 +46,8 @@ objectdef obj_TargetList inherits obj_State
 	variable bool Updated = FALSE
 	variable IPCCollection:int IPCTargets
 	variable bool UseIPC = FALSE
+	variable IPCCollection:string IPCExclusion
+	variable bool UseIPCExclusion = FALSE
 	
 	method Initialize()
 	{
@@ -77,6 +79,12 @@ objectdef obj_TargetList inherits obj_State
 	{
 		IPCTargets:SetIPCName[${IPCName}]
 		UseIPC:Set[TRUE]
+	}
+	
+	method SetIPCExclusion(string IPCName)
+	{
+		IPCExclusion:SetIPCName[${IPCName}]
+		UseIPCExclusion:Set[TRUE]
 	}
 	
 	method RequestUpdate()
@@ -437,12 +445,32 @@ objectdef obj_TargetList inherits obj_State
 			{
 				if !${EntityIterator.Value.IsLockedTarget} && !${EntityIterator.Value.BeingTargeted} && ${LockedAndLockingTargets.Used} < ${MinLockCount} && ${MaxTarget} > (${Me.TargetCount} + ${Me.TargetingCount}) && ${EntityIterator.Value.Distance} < ${MyShip.MaxTargetRange} && (${EntityIterator.Value.Distance} < ${MaxRange} || ${LockOutOfRange}) && ${TargetList_DeadDelay.Element[${EntityIterator.Value.ID}]} < ${LavishScript.RunningTime}
 				{
-					EntityIterator.Value:LockTarget
-					LockedAndLockingTargets:Add[${EntityIterator.Value.ID}]
-					OwnedTargets:Add[${EntityIterator.Value.ID}]
-					This:QueueState["Idle", ${Math.Rand[200]}]
-					Profiling:EndTrack
-					return TRUE
+					if ${UseIPCExclusion}
+					{
+						if !${IPCExclusion.Contains[${EntityIterator.Value.ID}]}
+						{
+							IPCExclusion:Set[${EntityIterator.Value.ID}, ${Me.Name}]
+							return TRUE
+						}
+						if ${IPCExclusion.Element[${EntityIterator.Value.ID}].Equal[${Me.Name}]}
+						{
+							EntityIterator.Value:LockTarget
+							LockedAndLockingTargets:Add[${EntityIterator.Value.ID}]
+							OwnedTargets:Add[${EntityIterator.Value.ID}]
+							This:QueueState["Idle", ${Math.Rand[200]}]
+							Profiling:EndTrack
+							return TRUE
+						}
+					}
+					else
+					{
+						EntityIterator.Value:LockTarget
+						LockedAndLockingTargets:Add[${EntityIterator.Value.ID}]
+						OwnedTargets:Add[${EntityIterator.Value.ID}]
+						This:QueueState["Idle", ${Math.Rand[200]}]
+						Profiling:EndTrack
+						return TRUE
+					}
 				}
 			}
 			while ${EntityIterator:Next(exists)}

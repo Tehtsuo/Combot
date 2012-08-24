@@ -157,6 +157,7 @@ objectdef obj_Miner inherits obj_State
 		Event[ComBot_Orca_InBelt]:AttachAtom[This:OrcaInBelt]
 		PulseFrequency:Set[500]
 		Asteroids.LockOutOfRange:Set[FALSE]
+		Asteroids:SetIPCExclusion["MiningTargets"]
 	}
 
 	method Shutdown()
