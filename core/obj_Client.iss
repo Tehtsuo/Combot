@@ -35,6 +35,18 @@ objectdef obj_Client
 	method Shutdown()
 	{
 		Event[ISXEVE_onFrame]:DetachAtom[This:Pulse]
+		if !${EVE.Is3DDisplayOn}
+		{
+			EVE:Toggle3DDisplay
+		}
+		if !${EVE.IsUIDisplayOn}
+		{
+			EVE:ToggleUIDisplay
+		}
+		if !${EVE.IsTextureLoadingOn}
+		{
+			EVE:ToggleTextureLoading
+		}		
 	}	
 
 	method Pulse()
