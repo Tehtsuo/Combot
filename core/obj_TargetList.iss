@@ -451,7 +451,7 @@ objectdef obj_TargetList inherits obj_State
 				{
 					if ${UseIPCExclusion}
 					{
-						if !${IPCExclusion.Contains[${EntityIterator.Value.ID}]}
+						if !${IPCExclusion.Element[${EntityIterator.Value.ID}](exists)}
 						{
 							IPCExclusion:Set[${EntityIterator.Value.ID}, ${Me.Name}]
 							return TRUE
