@@ -432,6 +432,10 @@ objectdef obj_TargetList inherits obj_State
 				if !${Entity[${EntityIterator.Value}](exists)} || (!${Entity[${EntityIterator.Value}].IsLockedTarget} && !${Entity[${EntityIterator.Value}].BeingTargeted})
 				{
 					OwnedTargets:Remove[${EntityIterator.Value}]
+					if ${UseIPCExclusion}
+					{
+						IPCExclusion:Erase[${EntityIterator.Value}]
+					}
 					LockedAndLockingTargets:Remove[${EntityIterator.Value}]
 				}
 			}
