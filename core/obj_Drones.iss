@@ -188,8 +188,8 @@ objectdef obj_Drones inherits obj_State
 			if !${This.DronesInSpace.Equal[0]}
 			{
 				This:Recall
-				This:InsertState["Idle", 5000]
-				This:InsertState["DroneControl"]
+				This:QueueState["Idle", 5000]
+				This:QueueState["DroneControl"]
 				return TRUE
 			}
 		}
