@@ -503,7 +503,7 @@ objectdef obj_TargetList inherits obj_State
 	
 	method ClearExclusions()
 	{
-		variable Iterator ExclusionIterator
+		variable iterator ExclusionIterator
 		IPCExclusion:GetIterator[ExclusionIterator]
 		if ${ExclusionIterator:First(exists)}
 		{
