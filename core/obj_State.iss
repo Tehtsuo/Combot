@@ -215,6 +215,7 @@ objectdef obj_State
 	method Clear()
 	{
 		States:Clear
+		CurState:Set["Idle", 100, ""]
 		UIElement[${QueueListbox}]:ClearItems
 		UIElement[${QueueListbox}]:AddItem[${CurState.Name}]
 	}
