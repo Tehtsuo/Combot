@@ -46,7 +46,7 @@ objectdef obj_TargetList inherits obj_State
 	variable bool Updated = FALSE
 	variable IPCCollection:int IPCTargets
 	variable bool UseIPC = FALSE
-	variable IPCCollection:string IPCExclusion
+	variable IPCCollection:int IPCExclusion
 	variable bool UseIPCExclusion = FALSE
 	
 	method Initialize()
@@ -453,10 +453,12 @@ objectdef obj_TargetList inherits obj_State
 					{
 						if !${IPCExclusion.Element[${EntityIterator.Value.ID}](exists)}
 						{
-							IPCExclusion:Set[${EntityIterator.Value.ID}, ${Me.Name}]
+							IPCExclusion:Set[${EntityIterator.Value.ID}, ${Me.CharID}]
+							This:InsertState["LockIfMine", "1000", ${EntityIterator.Value.ID}]
+							Profiling:EndTrack
 							return TRUE
 						}
-						if ${IPCExclusion.Element[${EntityIterator.Value.ID}].Equal[${Me.Name}]}
+						if ${IPCExclusion.Element[${EntityIterator.Value.ID}].Equal[${Me.CharID}]}
 						{
 							EntityIterator.Value:LockTarget
 							LockedAndLockingTargets:Add[${EntityIterator.Value.ID}]
@@ -481,6 +483,18 @@ objectdef obj_TargetList inherits obj_State
 		}
 		
 		Profiling:EndTrack
+		return TRUE
+	}
+	
+	member:bool LockIfMine(int64 ID)
+	{
+		if ${IPCExclusion.Element[${ID}].Equal[${Me.CharID}]}
+		{
+			Entity[${ID}]:LockTarget
+			LockedAndLockingTargets:Add[${ID}]
+			OwnedTargets:Add[${ID}]
+			This:QueueState["Idle", ${Math.Rand[200]}]
+		}
 		return TRUE
 	}
 	
