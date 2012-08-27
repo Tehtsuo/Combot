@@ -447,18 +447,30 @@ objectdef obj_TargetList inherits obj_State
 		{
 			do
 			{
-				if !${EntityIterator.Value.IsLockedTarget} && !${EntityIterator.Value.BeingTargeted} && ${LockedAndLockingTargets.Used} < ${MinLockCount} && ${MaxTarget} > (${Me.TargetCount} + ${Me.TargetingCount}) && ${EntityIterator.Value.Distance} < ${MyShip.MaxTargetRange} && (${EntityIterator.Value.Distance} < ${MaxRange} || ${LockOutOfRange}) && ${TargetList_DeadDelay.Element[${EntityIterator.Value.ID}]} < ${LavishScript.RunningTime}
+				if ${EntityIterator.Value.ID(exists)
 				{
-					if ${UseIPCExclusion}
+					if !${EntityIterator.Value.IsLockedTarget} && !${EntityIterator.Value.BeingTargeted} && ${LockedAndLockingTargets.Used} < ${MinLockCount} && ${MaxTarget} > (${Me.TargetCount} + ${Me.TargetingCount}) && ${EntityIterator.Value.Distance} < ${MyShip.MaxTargetRange} && (${EntityIterator.Value.Distance} < ${MaxRange} || ${LockOutOfRange}) && ${TargetList_DeadDelay.Element[${EntityIterator.Value.ID}]} < ${LavishScript.RunningTime}
 					{
-						if !${IPCExclusion.Element[${EntityIterator.Value.ID}](exists)}
+						if ${UseIPCExclusion}
 						{
-							IPCExclusion:Set[${EntityIterator.Value.ID}, ${Me.CharID}]
-							This:InsertState["LockIfMine", "1000", ${EntityIterator.Value.ID}]
-							Profiling:EndTrack
-							return TRUE
+							if !${IPCExclusion.Element[${EntityIterator.Value.ID}](exists)}
+							{
+								IPCExclusion:Set[${EntityIterator.Value.ID}, ${Me.CharID}]
+								This:InsertState["LockIfMine", "1000", ${EntityIterator.Value.ID}]
+								Profiling:EndTrack
+								return TRUE
+							}
+							if ${IPCExclusion.Element[${EntityIterator.Value.ID}].Equal[${Me.CharID}]}
+							{
+								EntityIterator.Value:LockTarget
+								LockedAndLockingTargets:Add[${EntityIterator.Value.ID}]
+								OwnedTargets:Add[${EntityIterator.Value.ID}]
+								This:QueueState["Idle", ${Math.Rand[200]}]
+								Profiling:EndTrack
+								return TRUE
+							}
 						}
-						if ${IPCExclusion.Element[${EntityIterator.Value.ID}].Equal[${Me.CharID}]}
+						else
 						{
 							EntityIterator.Value:LockTarget
 							LockedAndLockingTargets:Add[${EntityIterator.Value.ID}]
@@ -467,15 +479,6 @@ objectdef obj_TargetList inherits obj_State
 							Profiling:EndTrack
 							return TRUE
 						}
-					}
-					else
-					{
-						EntityIterator.Value:LockTarget
-						LockedAndLockingTargets:Add[${EntityIterator.Value.ID}]
-						OwnedTargets:Add[${EntityIterator.Value.ID}]
-						This:QueueState["Idle", ${Math.Rand[200]}]
-						Profiling:EndTrack
-						return TRUE
 					}
 				}
 			}
