@@ -278,7 +278,9 @@ objectdef obj_Miner inherits obj_State
 				if ${Drones.DronesInSpace}
 				{
 					Drones:Recall
-					return FALSE
+					This:InsertState["CheckCargoHold"]
+					This:InsertState["Idle", 5000]
+					return TRUE
 				}
 				UI:Update["obj_Miner", "Unload trip required", "g"]
 				if ${Config.OrcaMode}
@@ -317,7 +319,9 @@ objectdef obj_Miner inherits obj_State
 				if ${Drones.DronesInSpace}
 				{
 					Drones:Recall
-					return FALSE
+					This:InsertState["CheckCargoHold"]
+					This:InsertState["Idle", 5000]
+					return TRUE
 				}
 				UI:Update["obj_Miner", "Unload trip required", "g"]
 				if ${Client.InSpace}
