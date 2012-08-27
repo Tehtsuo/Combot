@@ -490,19 +490,20 @@ objectdef obj_TargetList inherits obj_State
 			if ${UseIPCExclusion} && ${ForceLockExclusion}
 			{
 				if ${EntityIterator:First(exists)}
-			{
-				do
 				{
-					if ${EntityIterator.Value.ID(exists)}
+					do
 					{
-						if !${EntityIterator.Value.IsLockedTarget} && !${EntityIterator.Value.BeingTargeted} && ${LockedAndLockingTargets.Used} < ${MinLockCount} && ${MaxTarget} > (${Me.TargetCount} + ${Me.TargetingCount}) && ${EntityIterator.Value.Distance} < ${MyShip.MaxTargetRange} && (${EntityIterator.Value.Distance} < ${MaxRange} || ${LockOutOfRange}) && ${TargetList_DeadDelay.Element[${EntityIterator.Value.ID}]} < ${LavishScript.RunningTime}
+						if ${EntityIterator.Value.ID(exists)}
 						{
-							EntityIterator.Value:LockTarget
-							LockedAndLockingTargets:Add[${EntityIterator.Value.ID}]
-							OwnedTargets:Add[${EntityIterator.Value.ID}]
-							This:QueueState["Idle", ${Math.Rand[200]}]
-							Profiling:EndTrack
-							return TRUE
+							if !${EntityIterator.Value.IsLockedTarget} && !${EntityIterator.Value.BeingTargeted} && ${LockedAndLockingTargets.Used} < ${MinLockCount} && ${MaxTarget} > (${Me.TargetCount} + ${Me.TargetingCount}) && ${EntityIterator.Value.Distance} < ${MyShip.MaxTargetRange} && (${EntityIterator.Value.Distance} < ${MaxRange} || ${LockOutOfRange}) && ${TargetList_DeadDelay.Element[${EntityIterator.Value.ID}]} < ${LavishScript.RunningTime}
+							{
+								EntityIterator.Value:LockTarget
+								LockedAndLockingTargets:Add[${EntityIterator.Value.ID}]
+								OwnedTargets:Add[${EntityIterator.Value.ID}]
+								This:QueueState["Idle", ${Math.Rand[200]}]
+								Profiling:EndTrack
+								return TRUE
+							}
 						}
 					}
 				}
