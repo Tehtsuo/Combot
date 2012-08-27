@@ -182,6 +182,7 @@ objectdef obj_Miner inherits obj_State
 	method Stop()
 	{
 		This:DeactivateStateQueueDisplay
+		Asteroids:ClearExclusions
 		This:Clear
 	}
 	
@@ -245,6 +246,7 @@ objectdef obj_Miner inherits obj_State
 					}
 					UI:Update["obj_Miner", "Warping to ${Local[${Config.Container_Name}].ToFleetMember.ToPilot.Name}", "g"]
 					Local[${Config.Container_Name}].ToFleetMember:WarpTo
+					Asteroids:ClearExclusions
 					Client:Wait[5000]
 					This:Clear
 					Asteroids.LockedTargetList:Clear
@@ -286,6 +288,7 @@ objectdef obj_Miner inherits obj_State
 				Bookmarks:StoreLocation
 				This:Clear
 				Asteroids.LockedTargetList:Clear
+				Asteroids:ClearExclusions
 				Move:Bookmark[${Config.Dropoff}]
 				This:QueueState["Traveling", 1000]
 				This:QueueState["Mine"]
@@ -327,6 +330,7 @@ objectdef obj_Miner inherits obj_State
 				}
 				This:Clear
 				Asteroids.LockedTargetList:Clear
+				Asteroids:ClearExclusions
 				Move:Bookmark[${Config.Dropoff}]
 				This:QueueState["Traveling", 1000]
 				This:QueueState["PrepOffload", 1000]

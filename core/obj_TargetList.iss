@@ -501,6 +501,23 @@ objectdef obj_TargetList inherits obj_State
 		return TRUE
 	}
 	
+	method ClearExclusions()
+	{
+		variable Iterator ExclusionIterator
+		IPCExclusion:GetIterator[ExclusionIterator]
+		if ${ExclusionIterator:First(exists)}
+		{
+			do
+			{
+				if ${ExclusionIterator.Value.Equal[${Me.CharID}]}
+				{
+					IPCExclusion:Erase[${ExclusionIterator.Key}]
+				}
+			}
+			while ${ExclusionIterator:Next(exists)}
+		}
+	}
+	
 	method DeepCopyEntityIndex(string From, string To)
 	{
 		variable iterator EntityIterator
