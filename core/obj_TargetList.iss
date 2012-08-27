@@ -447,7 +447,7 @@ objectdef obj_TargetList inherits obj_State
 		{
 			do
 			{
-				if ${EntityIterator.Value.ID(exists)
+				if ${EntityIterator.Value.ID(exists)}
 				{
 					if !${EntityIterator.Value.IsLockedTarget} && !${EntityIterator.Value.BeingTargeted} && ${LockedAndLockingTargets.Used} < ${MinLockCount} && ${MaxTarget} > (${Me.TargetCount} + ${Me.TargetingCount}) && ${EntityIterator.Value.Distance} < ${MyShip.MaxTargetRange} && (${EntityIterator.Value.Distance} < ${MaxRange} || ${LockOutOfRange}) && ${TargetList_DeadDelay.Element[${EntityIterator.Value.ID}]} < ${LavishScript.RunningTime}
 					{

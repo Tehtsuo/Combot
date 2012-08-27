@@ -222,6 +222,10 @@ objectdef obj_Configuration_Fleets
 	
 	member:obj_Configuration_Fleet GetFleet(string FleetID)
 	{
+		if !${This.CommonRef.FindSet[Fleets](exists)}
+		{
+			This.CommonRef:AddSet[Fleets]
+		}
 		if !${This.CommonRef.FindSet[Fleets].FindSet[${FleetID}](exists)}
 		{
 			echo Adding Fleet: ${FleetID}
