@@ -49,6 +49,7 @@ objectdef obj_Ship
 	variable obj_ModuleList ModuleList_TargetPainter
 	variable obj_ModuleList ModuleList_TrackingComputer
 	variable obj_ModuleList ModuleList_GangLinks
+	variable obj_ModuleList ModuleList_EnergyTransfer
 
 	method Initialize()
 	{
@@ -72,6 +73,7 @@ objectdef obj_Ship
 		ModuleLists:Insert[TargetPainter]
 		ModuleLists:Insert[TrackingComputer]
 		ModuleLists:Insert[GangLinks]
+		ModuleLists:Insert[EnergyTransfer]
 	}
 
 	method Shutdown()
@@ -246,6 +248,9 @@ objectdef obj_Ship
 					break
 				case GROUP_GANGLINK
 					This.ModuleList_GangLinks:Insert[${ModuleIter.Value.ID}]
+					break
+				case GROUP_ENERGY_TRANSFER
+					This.ModuleList_EnergyTransfer:Insert[${ModuleIter.Value.ID}]
 					break
 				default
 					break
