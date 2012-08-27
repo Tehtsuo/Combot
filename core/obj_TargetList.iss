@@ -504,18 +504,27 @@ objectdef obj_TargetList inherits obj_State
 	method ClearExclusions()
 	{
 		variable iterator ExclusionIterator
+		variable queue:string EraseQueue
+		
 		IPCExclusion:GetIterator[ExclusionIterator]
+		
 		if ${ExclusionIterator:First(exists)}
 		{
 			do
 			{
 				if ${ExclusionIterator.Value.Equal[${Me.CharID}]}
 				{
-					IPCExclusion:Erase[${ExclusionIterator.Key}]
+					EraseQueue:Queue[${ExclusionIterator.Key}]
 				}
 			}
 			while ${ExclusionIterator:Next(exists)}
 		}
+		while ${EraseQueue.Used} > 0
+		{
+			IPCExclusion:Erase[${EraseQueue.Peek}]
+			EraseQueue:Dequeue
+		}
+		
 	}
 	
 	method DeepCopyEntityIndex(string From, string To)
