@@ -158,6 +158,7 @@ objectdef obj_Miner inherits obj_State
 		PulseFrequency:Set[500]
 		Asteroids.LockOutOfRange:Set[FALSE]
 		Asteroids:SetIPCExclusion["MiningTargets"]
+		Asteroids.ForceLockExclusion:Set[TRUE]
 	}
 
 	method Shutdown()
