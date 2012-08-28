@@ -506,8 +506,8 @@ objectdef obj_TargetList inherits obj_State
 							}
 						}
 					}
+					while ${EntityIterator:Next(exists)}
 				}
-				while ${EntityIterator:Next(exists)}
 			}
 		}
 		Profiling:EndTrack
