@@ -30,26 +30,27 @@ objectdef obj_Ship inherits obj_State
 	{
 		This[parent]:Initialize
 		This.NonGameTiedPulse:Set[TRUE]
-		ModuleLists:Insert[ArmorProjectors, "ToItem.GroupID = GROUP_ARMOR_PROJECTOR"]
-		ModuleLists:Insert[ShieldTransporters, "ToItem.GroupID = GROUP_SHIELD_TRANSPORTERS"]
-		ModuleLists:Insert[MiningLaser, "MiningAmount !~ NULL"]
-		ModuleLists:Insert[Weapon, "ToItem.GroupID = GROUP_ENERGYWEAPON || ToItem.GroupID = GROUP_PROJECTILEWEAPON || ToItem.GroupID = GROUP_HYBRIDWEAPON || ToItem.GroupID = GROUP_MISSILELAUNCHER || ToItem.GroupID = GROUP_MISSILELAUNCHERASSAULT || ToItem.GroupID = GROUP_MISSILELAUNCHERBOMB || ToItem.GroupID = GROUP_MISSILELAUNCHERCITADEL || ToItem.GroupID = GROUP_MISSILELAUNCHERCRUISE || ToItem.GroupID = GROUP_MISSILELAUNCHERDEFENDER || ToItem.GroupID = GROUP_MISSILELAUNCHERHEAVY || ToItem.GroupID = GROUP_MISSILELAUNCHERHEAVYASSAULT || ToItem.GroupID = GROUP_MISSILELAUNCHERROCKET || ToItem.GroupID = GROUP_MISSILELAUNCHERSIEGE || ToItem.GroupID = GROUP_MISSILELAUNCHERSNOWBALL || ToItem.GroupID = GROUP_MISSILELAUNCHERSTANDARD"]
-		ModuleLists:Insert[ECCM, "ToItem.GroupID = GROUP_ECCM"]
-		ModuleLists:Insert[ActiveResists, "ToItem.GroupID = GROUP_DAMAGE_CONTROL || ToItem.GroupID = GROUP_SHIELD_HARDENER || ToItem.GroupID = GROUP_ARMOR_HARDENERS || ToItem.GroupID = GROUP_ARMOR_RESISTANCE_SHIFT_HARDENER"]
-		ModuleLists:Insert[Regen_Shield, "ToItem.GroupID = GROUP_SHIELD_BOOSTER"]
-		ModuleLists:Insert[Repair_Armor, "ToItem.GroupID = GROUP_ARMOR_REPAIRERS"]
-		ModuleLists:Insert[Repair_Hull, "ToItem.GroupID = NONE"]
-		ModuleLists:Insert[AB_MWD, "ToItem.GroupID = GROUP_AFTERBURNER"]
-		ModuleLists:Insert[Passive, "!IsActivatable"]
-		ModuleLists:Insert[Salvagers, "(ToItem.GroupID = GROUP_DATA_MINER && ToItem.TypeID = TYPE_SALVAGER) || ToItem.GroupID = GROUP_SALVAGER"]
-		ModuleLists:Insert[TractorBeams, "ToItem.GroupID = GROUP_TRACTOR_BEAM"]
-		ModuleLists:Insert[Cloaks, "ToItem.GroupID = GROUP_CLOAKING_DEVICE"]
-		ModuleLists:Insert[StasisWeb, "ToItem.GroupID = GROUP_STASIS_WEB"]
-		ModuleLists:Insert[SensorBoost, "ToItem.GroupID = GROUP_SENSORBOOSTER"]
-		ModuleLists:Insert[TargetPainter, "ToItem.GroupID = GROUP_TARGETPAINTER"]
-		ModuleLists:Insert[TrackingComputer, "ToItem.GroupID = GROUP_TRACKINGCOMPUTER"]
-		ModuleLists:Insert[GangLinks, "ToItem.GroupID = GROUP_GANGLINK"]
-		ModuleLists:Insert[EnergyTransfer, "ToItem.GroupID = GROUP_ENERGY_TRANSFER"]
+		This:AddModuleList[ArmorProjectors, "ToItem.GroupID = GROUP_ARMOR_PROJECTOR"]
+		This:AddModuleList[ShieldTransporters, "ToItem.GroupID = GROUP_SHIELD_TRANSPORTERS"]
+		This:AddModuleList[MiningLaser, "ToItem.GroupID = GROUP_MININGLASER || ToItem.GroupID = GROUP_STRIPMINER || ToItem.GroupID = GROUP_FREQUENCYMININGLASER"]
+		This:AddModuleList[Weapon, "ToItem.GroupID = GROUP_ENERGYWEAPON || ToItem.GroupID = GROUP_PROJECTILEWEAPON || ToItem.GroupID = GROUP_HYBRIDWEAPON || ToItem.GroupID = GROUP_MISSILELAUNCHER || ToItem.GroupID = GROUP_MISSILELAUNCHERASSAULT || ToItem.GroupID = GROUP_MISSILELAUNCHERBOMB || ToItem.GroupID = GROUP_MISSILELAUNCHERCITADEL || ToItem.GroupID = GROUP_MISSILELAUNCHERCRUISE || ToItem.GroupID = GROUP_MISSILELAUNCHERDEFENDER || ToItem.GroupID = GROUP_MISSILELAUNCHERHEAVY || ToItem.GroupID = GROUP_MISSILELAUNCHERHEAVYASSAULT || ToItem.GroupID = GROUP_MISSILELAUNCHERROCKET || ToItem.GroupID = GROUP_MISSILELAUNCHERSIEGE || ToItem.GroupID = GROUP_MISSILELAUNCHERSNOWBALL || ToItem.GroupID = GROUP_MISSILELAUNCHERSTANDARD"]
+		This:AddModuleList[ECCM, "ToItem.GroupID = GROUP_ECCM"]
+		This:AddModuleList[ActiveResists, "ToItem.GroupID = GROUP_DAMAGE_CONTROL || ToItem.GroupID = GROUP_SHIELD_HARDENER || ToItem.GroupID = GROUP_ARMOR_HARDENERS || ToItem.GroupID = GROUP_ARMOR_RESISTANCE_SHIFT_HARDENER"]
+		This:AddModuleList[Regen_Shield, "ToItem.GroupID = GROUP_SHIELD_BOOSTER"]
+		This:AddModuleList[Repair_Armor, "ToItem.GroupID = GROUP_ARMOR_REPAIRERS"]
+		This:AddModuleList[Repair_Hull, "ToItem.GroupID = NONE"]
+		This:AddModuleList[AB_MWD, "ToItem.GroupID = GROUP_AFTERBURNER"]
+		This:AddModuleList[Passive, "!IsActivatable"]
+		This:AddModuleList[Salvagers, "(ToItem.GroupID = GROUP_DATA_MINER && ToItem.TypeID = TYPE_SALVAGER) || ToItem.GroupID = GROUP_SALVAGER"]
+		This:AddModuleList[TractorBeams, "ToItem.GroupID = GROUP_TRACTOR_BEAM"]
+		This:AddModuleList[Cloaks, "ToItem.GroupID = GROUP_CLOAKING_DEVICE"]
+		This:AddModuleList[StasisWeb, "ToItem.GroupID = GROUP_STASIS_WEB"]
+		This:AddModuleList[SensorBoost, "ToItem.GroupID = GROUP_SENSORBOOSTER"]
+		This:AddModuleList[TargetPainter, "ToItem.GroupID = GROUP_TARGETPAINTER"]
+		This:AddModuleList[TrackingComputer, "ToItem.GroupID = GROUP_TRACKINGCOMPUTER"]
+		This:AddModuleList[GangLinks, "ToItem.GroupID = GROUP_GANGLINK"]
+		This:AddModuleList[EnergyTransfer, "ToItem.GroupID = GROUP_ENERGY_TRANSFER"]
+		This:Clear
 		This:QueueState["WaitForSpace"]
 		This:QueueState["UpdateModules"]
 	}
@@ -73,11 +74,13 @@ objectdef obj_Ship inherits obj_State
 		return FALSE
 	}	
 	
-	method UpdateModules()
+	member:bool UpdateModules()
 	{
 		variable iterator List
 		variable index:module ModuleList
 		ModuleLists:GetIterator[List]
+		
+		UI:Update["obj_Ship", "Update Called"]
 
 		if !${Client.InSpace}
 		{
@@ -87,7 +90,7 @@ objectdef obj_Ship inherits obj_State
 		}
 
 		/* build module lists */
-		This.ModuleList:Clear
+		ModuleList:Clear
 
 		if ${List:First(exists)}
 			do
@@ -162,6 +165,7 @@ objectdef obj_Ship inherits obj_State
 		This:QueueState["WaitForStation"]
 		This:QueueState["WaitForSpace"]
 		This:QueueState["UpdateModules"]
+		return TRUE
 	}
 	
 	member:bool WaitForStation()
