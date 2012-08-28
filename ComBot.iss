@@ -29,6 +29,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 #include core/obj_State.iss
 #include core/obj_ComBotUI.iss
 #include core/obj_Client.iss
+#include core/obj_HaulItem.iss
 #include core/obj_Move.iss
 #include core/obj_Module.iss
 #include core/obj_ModuleList.iss

@@ -19,14 +19,16 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-objectdef obj_HaulLocation
+objectdef obj_HaulItem
 {
 	variable int BeltID
-	variable int CharID
+	variable int JetCanID
+	variable float Amount
 	
-	method Initialize(int newBeltID, int newCharID)
+	method Initialize(int newBeltID, int newJetCanID, float newAmount)
 	{
 		BeltID:Set[${newBeltID}]
-		CharID:Set[${newCharID}]
+		JetCanID:Set[${newJetCanID}]
+		Amount:Set[${newAmount}]
 	}
 }

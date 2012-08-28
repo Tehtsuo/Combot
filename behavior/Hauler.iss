@@ -70,7 +70,8 @@ objectdef obj_Hauler inherits obj_State
 	variable index:fleetmember FleetMembers
 	variable int64 CurrentCan
 	variable bool PopCan
-	variable IPCQueue:obj_HaulLocation OnDemandHaulQueue = "HaulerOnDemandQueue"
+	variable IPCCollection:IPCCollection:obj_HaulItem OnDemandHaulQueue = "HaulerOnDemandQueue"
+	variable obj_HaulItem HaulItem
 	
 	variable obj_TargetList IR_Cans
 	variable obj_TargetList OOR_Cans

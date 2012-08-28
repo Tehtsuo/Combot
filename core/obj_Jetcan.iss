@@ -22,7 +22,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 objectdef obj_Jetcan inherits obj_State
 {
 	variable collection:int CanAges
-	variable IPCQueue:obj_HaulLocation OnDemandHaulQueue = "HaulerOnDemandQueue"
+	variable IPCCollection:IPCCollection:obj_HaulItem OnDemandHaulQueue = "HaulerOnDemandQueue"
 	
 	method Initialize()
 	{
@@ -202,10 +202,6 @@ objectdef obj_Jetcan inherits obj_State
 					{
 						TargetIterator.Value:CreateBookmark["Haul: ${Me.Name} ${EVETime.Time}", "Miner Haul", "Corporation Locations"]
 					}
-					if ${Config.Miner.Dropoff_SubType.Equal["On-Demand Jetcan"]} && ${Entity[GroupID == GROUP_ASTEROIDBELT && Distance < 500000](exists)}
-					{
-						OnDemandHaulQueue:Insert[${Entity[GroupID == GROUP_ASTEROIDBELT && Distance < 500000].ID}, ${Me.ID}]
-					}
 					return TRUE
 				}
 			}
@@ -233,6 +229,14 @@ objectdef obj_Jetcan inherits obj_State
 		{
 			EVEWindow[ByName, Inventory]:MakeChildActive[${ID}]
 			return FALSE
+		}
+		if ${Config.Miner.Dropoff_SubType.Equal["On-Demand Jetcan"]} && ${Entity[GroupID == GROUP_ASTEROIDBELT && Distance < 500000](exists)}
+		{
+			if !${OnDemandHaulQueue.Element[${Me.Name}](exists)}
+			{
+				OnDemandHaulQueue:Set[${Me.Name}, HaulerOnDemandQueue_${Me.Name}]
+			}
+			OnDemandHaulQueue.Element[${Me.Name}]:Set[${ID}, ${Entity[GroupID == GROUP_ASTEROIDBELT && Distance < 500000].ID}, ${ID}, ${EVEWindow[ByName, Inventory].ChildUsedCapacity[${ID}]}]
 		}
 		EVEWindow[ByItemID, ${ID}]:StackAll
 		return TRUE
@@ -315,6 +319,7 @@ objectdef obj_Jetcan inherits obj_State
 			if !${CanAges.Element[CanIterator.Value.ID](exists)}
 			{
 				Cargo:MoveCargoList[CONTAINER, "", ${CanIterator.Value.ID}]
+				This:InsertState["Stack", 1000, ${TargetIterator.Value}]
 				return TRUE
 			}
 		}
@@ -353,7 +358,7 @@ objectdef obj_Jetcan inherits obj_State
 					Cargo:Filter["CategoryID == CATEGORYID_ORE", FALSE]
 				}
 				Cargo:MoveCargoList[CONTAINER, "", ${TargetIterator.Value}]
-				This:QueueState["Stack", 1000, ${TargetIterator.Value}]
+				This:InsertState["Stack", 1000, ${TargetIterator.Value}]
 				return TRUE
 			}
 			while ${TargetIterator:Next(exists)}
