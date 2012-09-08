@@ -25,6 +25,7 @@ objectdef obj_Drones inherits obj_State
 	variable int64 CurrentTarget = -1
 	variable bool DronesRemainDocked = FALSE
 	variable bool DronesOut = FALSE
+	variable bool PrioritizeFrigates = FALSE
 	
 	method Initialize()
 	{
@@ -35,6 +36,7 @@ objectdef obj_Drones inherits obj_State
 		DroneTargets.AutoLock:Set[TRUE]
 		DroneTargets.AutoRelock:Set[TRUE]
 		DroneTargets:SetIPCName["DroneTargets"]
+		DroneTargets.PrioritizeFrigates:Set[${This.PrioritizeFrigates}]
 		
 		variable index:activedrone ActiveDrones
 		Me:GetActiveDrones[ActiveDrones]
@@ -188,8 +190,8 @@ objectdef obj_Drones inherits obj_State
 			if !${This.DronesInSpace.Equal[0]}
 			{
 				This:Recall
-				This:InsertState["Idle", 5000]
-				This:InsertState["DroneControl"]
+				This:QueueState["Idle", 10000]
+				This:QueueState["DroneControl"]
 				return TRUE
 			}
 		}

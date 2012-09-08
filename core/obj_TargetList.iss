@@ -46,6 +46,7 @@ objectdef obj_TargetList inherits obj_State
 	variable bool Updated = FALSE
 	variable IPCCollection:int IPCTargets
 	variable bool UseIPC = FALSE
+	variable bool PrioritizeFrigates = FALSE
 	
 	method Initialize()
 	{
@@ -69,6 +70,10 @@ objectdef obj_TargetList inherits obj_State
 	
 	method AddTargetingMe()
 	{
+		if ${This.PrioritizeFrigates}
+		{
+			This:AddQueryString["IsTargetingMe && IsNPC && !IsMoribund && Bounty < 100000"]
+		}
 		This:AddQueryString["IsTargetingMe && IsNPC && !IsMoribund"]
 		NeedUpdate:Set[TRUE]
 	}

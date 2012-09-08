@@ -52,6 +52,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 #include behavior/Miner.iss
 #include behavior/Hauler.iss
 #include behavior/HangerSale.iss
+#include behavior/Ratter.iss
 #include behavior/Combat.iss
 
 
@@ -112,6 +113,7 @@ function main(string Character="")
 	declarevariable Salvage obj_Salvage script
 	declarevariable Miner obj_Miner script
 	declarevariable Hauler obj_Hauler script
+	declarevariable Ratter obj_Ratter script
 	declarevariable Combat obj_Combat script
 	declarevariable HangerSale obj_HangerSale script
 	
