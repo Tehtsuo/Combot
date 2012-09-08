@@ -558,9 +558,9 @@ objectdef obj_Salvage inherits obj_State
 	{
 		if ${EVEWindow[byCaption, "wreck"](exists)}
 		{
-			UI:Update["obj_Salvage", "Bugged inventory window found, closing", "y"]
-			EVEWindow[byCaption, "wreck"]:Close
-			return FALSE
+			UI:Update["obj_Salvage", "Bugged inventory window found, ignoring", "y"]
+			/*EVEWindow[byCaption, "wreck"]:Close
+			return FALSE*/
 		}
 		if !${EVEWindow[ByName, "Inventory"](exists)}
 		{
