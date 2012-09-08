@@ -76,7 +76,7 @@ objectdef obj_Ratter inherits obj_State
 	{
 		This:PopulateTargetList
 		Drones:RemainDocked
-		Drones:Defensive
+		Drones:Aggressive
 		Drones.PrioritizeFrigates:Set[TRUE]
 		UI:Update["obj_Ratter", "Started", "g"]
 		This:AssignStateQueueDisplay[DebugStateList@Debug@ComBotTab@ComBot]
@@ -165,8 +165,9 @@ objectdef obj_Ratter inherits obj_State
 			return TRUE
 		}
 		
-		if ${Rats.TargetList.Used} == 0 && !${Drones.DronesInSpace}
+		if !${Rats.TargetList.Used} && !${Drones.DronesInSpace} && !${Drones.DroneTargets.TargetList.Used}
 		{
+			echo ${Drones.DroneTargets.TargetList.Used} drone targets
 			This:QueueState["MoveToBelt"]
 			This:QueueState["Traveling"]
 			This:QueueState["InitialUpdate"]

@@ -55,7 +55,6 @@ objectdef obj_Drones inherits obj_State
 	method Aggressive()
 	{
 		DroneTargets:ClearQueryString
-		DroneTargets:AddTargetingMe
 		DroneTargets:AddAllNPCs
 	}
 

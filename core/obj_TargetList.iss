@@ -133,6 +133,10 @@ objectdef obj_TargetList inherits obj_State
 		QueryString:Concat["GroupID = CATEGORYID_ORE ||"]
 		QueryString:Concat["GroupID = GROUP_LARGECOLLIDABLESTRUCTURE)"]
 		
+		if ${This.PrioritizeFrigates}
+		{
+			This:AddQueryString["${QueryString.Escape} && Bounty < 100000"]
+		}
 		This:AddQueryString["${QueryString.Escape}"]
 	}
 	
