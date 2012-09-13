@@ -301,6 +301,18 @@ objectdef obj_HangerSale inherits obj_State
 				}
 				else
 				{
+					if 	${HangerIterator.Value.TypeID} == 28260 || \
+						${HangerIterator.Value.TypeID} == 30497 || \
+						${HangerIterator.Value.TypeID} == 18581 || \
+						${HangerIterator.Value.TypeID} == 4358 || \
+						${HangerIterator.Value.TypeID} == 2076 || \
+						${HangerIterator.Value.TypeID} == 25373 || \
+						${HangerIterator.Value.TypeID} == 21815 ||
+					{
+						echo Skipping: ${HangerIterator.Value.Name} - ${HangerIterator.Value.TypeID}
+						continue
+					}
+					echo ${HangerIterator.Value.Name} - ${HangerIterator.Value.TypeID}
 					This:QueueState["AddToSellIfAboveValue", 10, "${HangerIterator.Value.TypeID}, ${HangerIterator.Value.PortionSize}, \"${HangerIterator.Value.Name.Escape}\", ${HangerIterator.Value.Quantity}"]
 				}
 				ItemCount:Inc
