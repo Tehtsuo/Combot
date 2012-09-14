@@ -66,10 +66,43 @@ objectdef obj_Security inherits obj_State
 		EVE:GetLocalPilots[Pilots]
 		Profiling:EndTrack
 		Pilots:GetIterator[Pilot_Iterator]
+
+		variable int MyAllianceID
+		variable int MyCorpID
+		if ${Me.Corp.ID} == -1
+		{
+			MyCorpID:Set[0]
+			MyAllianceID:Set[0]
+		}
+		else
+		{
+			MyCorpID:Set[${Me.Corp.ID}]
+			if  ${Me.AllianceID} == -1
+			{
+				MyAllianceID:Set[0]
+			}
+			else
+			{
+				MyAllianceID:Set[${Me.AllianceID}]
+			}
+		}
+		
 		
 		if ${Pilot_Iterator:First(exists)}
 		do
 		{
+			if ${MyCorpID} == ${Pilot_Iterator.Value.CorpID} && !${Config.Security.CorpFlee}
+			{
+				continue
+			}
+			if ${MyAllianceID} == ${Pilot_Iterator.Value.AllianceID} && !${Config.Security.AllianceFlee}
+			{
+				continue
+			}
+			if ${Me.Fleet.IsMember[${Pilot_Iterator.Value.CharID}]} && !${Config.Security.FleetFlee}
+			{
+				continue
+			}
 		
 			if ${Config.Security.MeToPilot} && ${Pilot_Iterator.Value.Standing.MeToPilot} < ${Config.Security.MeToPilot_Value}
 			{
@@ -133,30 +166,11 @@ objectdef obj_Security inherits obj_State
 		{
 			variable index:entity Threats
 			variable iterator Threat
-			variable int MyAllianceID
-			variable int MyCorpID
 
 			Me:GetTargetedBy[Threats]
 			Threats:RemoveByQuery[${LavishScript.CreateQuery[IsPC]}, FALSE]
 			Threats:Collapse
 			Threats:GetIterator[Threat]
-			if ${Me.Corp.ID} == -1
-			{
-				MyCorpID:Set[0]
-				MyAllianceID:Set[0]
-			}
-			else
-			{
-				MyCorpID:Set[${Me.Corp.ID}]
-				if  ${Me.AllianceID} == -1
-				{
-					MyAllianceID:Set[0]
-				}
-				else
-				{
-					MyAllianceID:Set[${Me.AllianceID}]
-				}
-			}
 			
 			if ${Threat:First(exists)}
 			do
