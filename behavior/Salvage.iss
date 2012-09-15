@@ -317,6 +317,13 @@ objectdef obj_Salvage inherits obj_State
 		{
 			UI:Update["obj_Salvage", "Pocket has NPCs - Jumping Clear", "g"]
 			LootCans:Disable
+			Wrecks.AutoLock:Set[FALSE]
+			
+			if {Entity[GroupID == GROUP_ASTEROIDBELT](exists)} && {Entity[GroupID == GROUP_ASTEROIDBELT].Distance} < WARP_RANGE
+			{
+				return TRUE
+			}
+
 			if ${Dedicated}
 			{
 				HoldOffPlayer:Insert[${BookmarkCreator}]
@@ -327,7 +334,6 @@ objectdef obj_Salvage inherits obj_State
 				This:QueueState["RefreshBookmarks", 3000]
 				This:QueueState["CheckBookmarks"]
 			}
-			Wrecks.AutoLock:Set[FALSE]
 			return TRUE
 		}
 
