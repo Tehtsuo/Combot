@@ -196,7 +196,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<Item Value='Miner'>Miner</Item>
 								<Item Value='Hauler'>Hauler</Item>
 								<Item Value='Salvage'>Dedicated Salvager</Item>
-								<Item Value='HangerSale'>Hanger Sale</Item>
+								<Item Value='HangarSale'>Hangar Sale</Item>
 							</Items>
 							<OnLoad>
 								This.ItemByValue[${Script[ComBot].VariableScope.Config.Common.ComBot_Mode}]:Select
