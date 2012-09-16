@@ -319,7 +319,7 @@ objectdef obj_Salvage inherits obj_State
 			LootCans:Disable
 			Wrecks.AutoLock:Set[FALSE]
 			
-			if {Entity[GroupID == GROUP_ASTEROIDBELT](exists)} && {Entity[GroupID == GROUP_ASTEROIDBELT].Distance} < WARP_RANGE
+			if ${Entity[GroupID == GROUP_ASTEROIDBELT](exists)} && ${Entity[GroupID == GROUP_ASTEROIDBELT].Distance} < WARP_RANGE
 			{
 				return TRUE
 			}
