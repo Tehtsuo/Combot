@@ -91,7 +91,7 @@ objectdef obj_Security inherits obj_State
 		if ${Pilot_Iterator:First(exists)}
 		do
 		{
-			if ${MyCorpID} == ${Pilot_Iterator.Value.CorpID} && !${Config.Security.CorpFlee}
+			if ${MyCorpID} == ${Pilot_Iterator.Value.Corp.ID} && !${Config.Security.CorpFlee}
 			{
 				continue
 			}
@@ -175,7 +175,7 @@ objectdef obj_Security inherits obj_State
 			if ${Threat:First(exists)}
 			do
 			{
-				if ${MyCorpID} == ${Threat.Value.CorpID} && !${Config.Security.CorpFlee}
+				if ${MyCorpID} == ${Threat.Value.Corp.ID} && !${Config.Security.CorpFlee}
 				{
 					continue
 				}
