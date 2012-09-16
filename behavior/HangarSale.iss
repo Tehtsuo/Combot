@@ -241,6 +241,7 @@ objectdef obj_HangarSale inherits obj_State
 	
 	member:bool CheckHangar()
 	{
+		UI:Update["obj_HangarSale", "Beginning to list sell orders", "g"]
 		HangarItems:Clear
 		Me:GetHangarItems[HangarItems]
 		HangarItems:GetIterator[HangarIterator]
@@ -277,6 +278,7 @@ objectdef obj_HangarSale inherits obj_State
 		variable int ItemCount = 0
 		variable string TypeIDs = ""
 		variable string Seperator = ""
+		variable int TimeToNextRun
 		if ${HangarIterator:Next(exists)}
 		{
 			if  ${HangarIterator.Value.TypeID} == 28260 || \
