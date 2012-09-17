@@ -241,6 +241,7 @@ objectdef obj_HangarSale inherits obj_State
 	
 	member:bool CheckHangar()
 	{
+		variable int TimeToNextRun
 		UI:Update["obj_HangarSale", "Beginning to list sell orders", "g"]
 		HangarItems:Clear
 		Me:GetHangarItems[HangarItems]
@@ -249,9 +250,24 @@ objectdef obj_HangarSale inherits obj_State
 		if ${HangarIterator:First(exists)} && ${Config.Sell}
 		{
 			This.RandomDelta:Set[100]
-			if ${CurrentSellOrders} > ${This.MaxOrders}
+			if ${CurrentSellOrders} >= ${This.MaxOrders}
 			{
-				return TRUE
+				TimeToNextRun:Set[${Math.Calc[60000 * ${Math.Rand[11]} + 1800000]}]
+				UI:Update["obj_HangarSale", "Operations complete - Beginning again in ${Math.Calc[${TimeToNextRun} / 60000]} minutes", "o"]
+				MineralNames:Clear
+				MineralNames:Set[34, "Tritanium"]
+				MineralNames:Set[35, "Pyerite"]
+				MineralNames:Set[36, "Mexallon"]
+				MineralNames:Set[37, "Isogen"]
+				MineralNames:Set[38, "Nocxium"]
+				MineralNames:Set[39, "Zydrine"]
+				MineralNames:Set[40, "Megacyte"]
+				This:QueueState["Idle", ${TimeToNextRun}]
+				
+				This:QueueState["UpdateCurrentOrderCount"]
+				This:QueueState["CheckOrders"]
+				This:QueueState["OpenHangar"]
+				This:QueueState["CheckHangar"]				return TRUE
 			}
 			if  ${HangarIterator.Value.TypeID} == 28260 || \
 				${HangarIterator.Value.TypeID} == 30497 || \
@@ -293,7 +309,7 @@ objectdef obj_HangarSale inherits obj_State
 			{
 				return FALSE
 			}
-			if ${CurrentSellOrders} > ${This.MaxOrders}
+			if ${CurrentSellOrders} >= ${This.MaxOrders}
 			{
 				TimeToNextRun:Set[${Math.Calc[60000 * ${Math.Rand[11]} + 1800000]}]
 				UI:Update["obj_HangarSale", "Operations complete - Beginning again in ${Math.Calc[${TimeToNextRun} / 60000]} minutes", "o"]
@@ -305,7 +321,6 @@ objectdef obj_HangarSale inherits obj_State
 				MineralNames:Set[38, "Nocxium"]
 				MineralNames:Set[39, "Zydrine"]
 				MineralNames:Set[40, "Megacyte"]
-				This:QueueState["MoveRefinesToContainer"]
 				This:QueueState["Idle", ${TimeToNextRun}]
 				
 				This:QueueState["UpdateCurrentOrderCount"]
@@ -330,7 +345,6 @@ objectdef obj_HangarSale inherits obj_State
 			MineralNames:Set[38, "Nocxium"]
 			MineralNames:Set[39, "Zydrine"]
 			MineralNames:Set[40, "Megacyte"]
-			This:QueueState["MoveRefinesToContainer"]
 			This:QueueState["Idle", ${TimeToNextRun}]
 			
 			This:QueueState["UpdateCurrentOrderCount"]
