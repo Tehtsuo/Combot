@@ -263,6 +263,24 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						</OnSelect>
 					</listbox>
 
+					<Checkbox name='SalvageYellow'> 
+						<X>34%</X> 
+						<Y>10%</Y> 
+						<Width>32%</Width> 
+						<Height>3%</Height> 
+						<Alignment>Center</Alignment>
+						<Text>Salvage all wrecks - including ones you don't own</Text>
+						<OnLoad>
+							if ${Script[ComBot].VariableScope.Salvage.Config.SalvageYellow}
+							{
+								This:SetChecked
+							}
+						</OnLoad>
+						<OnLeftClick>
+							Script[ComBot].VariableScope.Salvage.Config:SetSalvageYellow[${This.Checked}]
+						</OnLeftClick>
+					</Checkbox>
+					
 					<Checkbox name='BeltPatrol'> 
 						<X>34%</X> 
 						<Y>1%</Y> 
@@ -278,6 +296,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							else
 							{
 								UIElement[BeltPatrolBookmark@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Hide
+								UIElement[SalvageYellow@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Hide
 							}
 						</OnLoad>
 						<OnLeftClick>
@@ -285,11 +304,13 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							if ${This.Checked}
 							{
 								UIElement[BeltPatrolBookmark@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Show
+								UIElement[SalvageYellow@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Show
 							}
 							else
 							{
 								UIElement[BeltPatrolBookmark@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Hide
 								UIElement[BeltPatrolBookmarkList@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Hide
+								UIElement[SalvageYellow@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Hide
 							}
 						</OnLeftClick>
 					</Checkbox>

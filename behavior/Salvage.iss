@@ -53,6 +53,7 @@ objectdef obj_Configuration_Salvager
 	Setting(string, Dropoff, SetDropoff)
 	Setting(string, Dropoff_Type, SetDropoff_Type)
 	Setting(bool, BeltPatrolEnabled, SetBeltPatrolEnabled)
+	Setting(bool, SalvageYellow, SetSalvageYellow)
 	Setting(string, BeltPatrol, SetBeltPatrol)
 }
 
@@ -278,6 +279,16 @@ objectdef obj_Salvage inherits obj_State
 	
 	member:bool InitialUpdate()
 	{
+		Wrecks:ClearQueryString
+		if ${Config.SalvageYellow}
+		{
+			Wrecks:AddQueryString["(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && !IsAbandoned && !IsMoribund"]
+		}
+		else
+		{
+			Wrecks:AddQueryString["(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && HaveLootRights && !IsAbandoned && !IsMoribund"]
+		}
+	
 		Wrecks:RequestUpdate
 		return TRUE
 	}
@@ -376,7 +387,6 @@ objectdef obj_Salvage inherits obj_State
 			Ship.ModuleList_SensorBoost:Activate
 		}
 		
-		
 		Wrecks.TargetList:GetIterator[TargetIterator]
 		if ${TargetIterator:First(exists)}
 		{
@@ -385,17 +395,24 @@ objectdef obj_Salvage inherits obj_State
 			{
 				if ${TargetIterator.Value.ID(exists)}
 				{
-					if ${TargetIterator.Value.Distance} > ${Ship.ModuleList_TractorBeams.Range} || ${TargetIterator.Value.Distance} > ${MyShip.MaxTargetRange}
+					if 	${TargetIterator.Value.Distance} > ${Ship.ModuleList_TractorBeams.Range} ||\
+						${TargetIterator.Value.Distance} > ${MyShip.MaxTargetRange}
 					{
 						Move:Approach[${TargetIterator.Value.ID}]
 						return FALSE
 					}
-					
+					if 	${TargetIterator.Value.Distance} > LOOT_RANGE &&\
+						!${TargetIterator.Value.HaveLootRights}
+					{
+						Move:Approach[${TargetIterator.Value.ID}]
+						return FALSE
+					}
 					if  !${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]} &&\
 						${TargetIterator.Value.Distance} < ${Ship.ModuleList_TractorBeams.Range} &&\
 						${TargetIterator.Value.Distance} > LOOT_RANGE &&\
 						${Ship.ModuleList_TractorBeams.InactiveCount} > 0 &&\
-						${TargetIterator.Value.IsLockedTarget}
+						${TargetIterator.Value.IsLockedTarget} &&\
+						${TargetIterator.Value.HaveLootRights}
 					{
 						UI:Update["obj_Salvage", "Activating tractor beam - ${TargetIterator.Value.Name}", "g"]
 						Ship.ModuleList_TractorBeams:Activate[${TargetIterator.Value.ID}]
@@ -405,7 +422,8 @@ objectdef obj_Salvage inherits obj_State
 						${TargetIterator.Value.Distance} < ${Ship.ModuleList_TractorBeams.Range} &&\
 						${TargetIterator.Value.Distance} > LOOT_RANGE &&\
 						${TargetIterator.Value.IsLockedTarget} &&\
-						${ReactivateTractor}
+						${ReactivateTractor} &&\
+						${TargetIterator.Value.HaveLootRights}
 					{
 						UI:Update["obj_Salvage", "Reactivating tractor beam - ${TargetIterator.Value.Name}", "g"]
 						Ship.ModuleList_TractorBeams:Reactivate[${ClosestTractorKey}, ${TargetIterator.Value.ID}]
@@ -770,7 +788,14 @@ objectdef obj_LootCans inherits obj_State
 			Entity[(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && IsAbandoned]:UnlockTarget
 		}
 		
-		EVE:QueryEntities[Targets, "(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && HaveLootRights && !IsWreckEmpty && Distance<LOOT_RANGE && !IsAbandoned"]
+		if ${Salvage.Config.SalvageYellow}
+		{
+			EVE:QueryEntities[Targets, "(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && !IsWreckEmpty && Distance<LOOT_RANGE && !IsAbandoned"]
+		}
+		else
+		{
+			EVE:QueryEntities[Targets, "(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && HaveLootRights && !IsWreckEmpty && Distance<LOOT_RANGE && !IsAbandoned"]
+		}
 		Targets:GetIterator[TargetIterator]
 		if ${TargetIterator:First(exists)} && ${EVEWindow[ByName, Inventory](exists)}
 		{
