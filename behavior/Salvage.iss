@@ -54,6 +54,7 @@ objectdef obj_Configuration_Salvager
 	Setting(string, Dropoff_Type, SetDropoff_Type)
 	Setting(bool, BeltPatrolEnabled, SetBeltPatrolEnabled)
 	Setting(bool, SalvageYellow, SetSalvageYellow)
+	Setting(bool, AvoidShips, SetAvoidShips)
 	Setting(string, BeltPatrol, SetBeltPatrol)
 }
 
@@ -322,6 +323,33 @@ objectdef obj_Salvage inherits obj_State
 		{
 			FullHold:Set[${NonDedicatedFullPercent}]
 			NPCRun:Set[${NonDedicatedNPCRun}]
+		}
+		
+		if ${Config.AvoidShips}
+		{
+			variable index:entity Ships
+			EVE:QueryEntities[Ships, "CategoryID == CATEGORYID_SHIP && !IsFleetMember"]
+			echo ${Ships.Used}
+			if 	${Entity[GroupID == GROUP_ASTEROIDBELT](exists)} &&\
+				${Entity[GroupID == GROUP_ASTEROIDBELT].Distance} < WARP_RANGE &&\
+				${Ships.Used} > 1
+			{
+				UI:Update["obj_Salvage", "There's another ship in this belt, warping to next", "g"]
+				LootCans:Disable
+				Wrecks.AutoLock:Set[FALSE]
+				This:Clear
+				This:QueueState["MoveToBelt"]
+				This:QueueState["Traveling"]
+				This:QueueState["Log", 10, "Salvaging in belt"]
+				This:QueueState["InitialUpdate", 100]
+				This:QueueState["Updated", 100]
+				This:QueueState["SalvageWrecks", 500, "${Me.CharID}"]
+				This:QueueState["ClearAlreadySalvaged", 100]
+				This:QueueState["RefreshBookmarks", 3000]
+				This:QueueState["OpenCargoHold", 500]
+				This:QueueState["CheckCargoHold", 500]
+				return TRUE
+			}
 		}
 		
 		if ${Targets.NPC} && ${NPCRun}
