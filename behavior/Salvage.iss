@@ -321,6 +321,17 @@ objectdef obj_Salvage inherits obj_State
 			
 			if ${Entity[GroupID == GROUP_ASTEROIDBELT](exists)} && ${Entity[GroupID == GROUP_ASTEROIDBELT].Distance} < WARP_RANGE
 			{
+				This:Clear
+				This:QueueState["MoveToBelt"]
+				This:QueueState["Traveling"]
+				This:QueueState["Log", 10, "Salvaging in belt"]
+				This:QueueState["InitialUpdate", 100]
+				This:QueueState["Updated", 100]
+				This:QueueState["SalvageWrecks", 500, "${Me.CharID}"]
+				This:QueueState["ClearAlreadySalvaged", 100]
+				This:QueueState["RefreshBookmarks", 3000]
+				This:QueueState["OpenCargoHold", 500]
+				This:QueueState["CheckCargoHold", 500]
 				return TRUE
 			}
 
