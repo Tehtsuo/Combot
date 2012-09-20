@@ -28,10 +28,19 @@ objectdef obj_ComBotUI
 	variable int PulseMsgBoxIntervalInMilliSeconds = 15000
 	variable queue:string ConsoleBuffer
 	variable bool Reloaded = FALSE
+	variable string LogFile
 
 
 	method Initialize()
 	{
+		if ${EVEExtension.Character.Length}
+		{
+			This.LogFile:Set["./config/logs/${EVEExtension.Character}/${Time.Month}.${Time.Day}.${Time.Year}-${Time.Hour}.${Time.Minute}-${Script.RunningTime}.log"]
+		}
+		else
+		{
+			This.LogFile:Set["./config/logs/${Me.Name}/${Time.Month}.${Time.Day}.${Time.Year}-${Time.Hour}.${Time.Minute}-${Script.RunningTime}.log"]
+		}
 		ui -load interface/ComBotGUI.xml
 		This:Update["ComBot", "ComBot  Copyright © 2012  Tehtsuo and Vendan", "o"]
 		This:Update["ComBot", "This program comes with ABSOLUTELY NO WARRANTY", "o"]
@@ -90,12 +99,13 @@ objectdef obj_ComBotUI
 		while ${This.ConsoleBuffer.Peek(exists)}
 		{
 			UIElement[StatusConsole@Status@ComBotTab@ComBot]:Echo[${This.ConsoleBuffer.Peek.Escape}]
+			This:Log[${This.ConsoleBuffer.Peek.Escape}]
 			This.ConsoleBuffer:Dequeue
 		}
 	}
 	
 	
-	method Update(string CallingModule, string StatusMessage, string Color="w")
+	method Update(string CallingModule, string StatusMessage, string Color="w", bool Censor=FALSE)
 	{
 		variable string MSG
 		variable string MSGRemainder
@@ -125,6 +135,11 @@ objectdef obj_ComBotUI
 			{
 				UIElement[StatusConsole@Status@ComBotTab@ComBot]:Echo["${MSG.Escape}"]
 				UIElement[StatusConsole@Status@ComBotTab@ComBot]:Echo["-                 \a${Color}${MSGRemainder.Escape}"]
+				if !${Censor}
+				{
+					This:Log["${MSG.Escape}"]
+					This:Log["-                 \a${Color}${MSGRemainder.Escape}"]
+				}
 			}
 			else
 			{
@@ -137,14 +152,20 @@ objectdef obj_ComBotUI
 			if ${This.Reloaded}
 			{
 				UIElement[StatusConsole@Status@ComBotTab@ComBot]:Echo["${MSG.Escape}"]
+				if !${Censor}
+				{
+					This:Log["${MSG.Escape}"]
+				}
 			}
 			else
 			{
 				This.ConsoleBuffer:Queue["${MSG}"]
 			}
 		}
-
 	}
-
-
+	
+	method Log(string Msg)
+	{
+			redirect -append "${This.LogFile}" echo ${Msg}
+	}
 }
