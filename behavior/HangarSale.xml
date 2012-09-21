@@ -57,7 +57,12 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					<Height>20</Height>
 					<Text>Close</Text>
 					<OnLeftClick>
-						ui -unload "&filepath;/HangerSale"
+						if !${EVE.Bookmark[${Script[ComBot].VariableScope.HangarSale.Config.SellSystem}](exists)}
+						{
+							Script[ComBot].VariableScope.UI:Update["obj_HangarSale", "Unable to verify Sell System bookmark", "r"]
+						}
+						Script[ComBot].VariableScope.HangarSale.LocalUI:Stop
+						ui -unload "&filepath;/HangarSale"
 					</OnLeftClick>
 				</button>
 			</Children>
@@ -82,10 +87,61 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Text>HangarSale is a full-functioned item sales system.  It uses API calls from EVE-Central to determine if the sale of an item would be more profitable than refining the item based on your refinery skill and station standing.  It can then check your current sell orders to ensure they have not been undercut and update orders if necessary.  Finally, any remaining order slots can be filled with the highest sellable items which are more profitable than refining.</Text>
 					</Text>						 
 
+					<Text name='SellSystemTitle'> 
+						<X>1%</X> 
+						<Y>10%</Y> 
+						<Width>32%</Width> 
+						<Height>2%</Height> 
+						<Alignment>Center</Alignment>
+						<Text>Sell System Bookmark</Text>
+					</Text>						 
+					<Textentry Name="SellSystem">
+						<BackgroundColor>FF000000</BackgroundColor>
+						<Border>1</Border>
+						<BorderColor>FFFFFFFF</BorderColor>
+						<X>1%</X>
+						<Y>12%</Y>
+						<Width>32%</Width>
+						<Height>3%</Height>
+						<OnLoad>
+							This:SetText[${Script[ComBot].VariableScope.HangarSale.Config.SellSystem}]
+						</OnLoad>
+						<OnChange>
+							if ${This.Text.Length}
+							{
+								Script[ComBot].VariableScope.HangarSale.Config:SetSellSystem[${This.Text}]
+							}
+							else
+							{
+								Script[ComBot].VariableScope.HangarSale.Config:SetSellSystem[\"\"]
+							}
+							UIElement[SellSystemList@ComBot_HangarSale_Frame@ComBot_HangarSale]:Show
+							Script[ComBot].VariableScope.HangarSale.LocalUI:Start
+						</OnChange>
+					</Textentry>
+					<listbox Name="SellSystemList">
+						<BackgroundColor>FF000000</BackgroundColor>
+						<Border>1</Border>
+						<BorderColor>FFFFFFFF</BorderColor>
+						<X>1%</X>
+						<Y>15%</Y>
+						<Width>32%</Width>
+						<Height>30%</Height>
+						<OnLoad>
+							This:SetZOrder[alwaysontop]
+							This:Hide
+						</OnLoad>
+						<OnSelect>
+							UIElement[SellSystem@ComBot_HangarSale_Frame@ComBot_HangarSale]:SetText[${This.SelectedItem.Text}]
+							Script[ComBot].VariableScope.HangarSale.Config:SetSellSystem[${This.SelectedItem.Text}]
+							Script[ComBot].VariableScope.HangarSale.LocalUI:Stop
+							This:Hide
+						</OnSelect>
+					</listbox>
 					<Text name='obj_HangarSale_PriceModeTitle'> 
 						<X>1%</X> 
 						<Y>20%</Y> 
-						<Width>30%</Width> 
+						<Width>32%</Width> 
 						<Height>2%</Height> 
 						<Alignment>Center</Alignment>
 						<Text>Price Mode</Text>
@@ -93,7 +149,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					<ComboBox name='obj_HangarSale_PriceMode'> 
 						<X>1%</X> 
 						<Y>22%</Y> 
-						<Width>30%</Width> 
+						<Width>32%</Width> 
 						<Height>3%</Height> 
 						<Items>
 							<Item>Undercut Average</Item>
@@ -101,153 +157,110 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							<Item>Match Highest Buyout</Item>
 						</Items>
 						<OnLoad>
-							This.ItemByText[${Script[ComBot].VariableScope.HangerSale.Config.PriceMode}]:Select
+							This.ItemByText[${Script[ComBot].VariableScope.HangarSale.Config.PriceMode}]:Select
 						</OnLoad>
 						<OnSelect>
-							Script[ComBot].VariableScope.HangerSale.Config:SetPriceMode[${This.SelectedItem.Text}]
+							Script[ComBot].VariableScope.HangarSale.Config:SetPriceMode[${This.SelectedItem.Text}]
 						</OnSelect>
 					</ComboBox>						 
 					<Checkbox name='obj_HangarSale_RePrice'>
 						<X>1%</X>
 						<Y>30%</Y>
-						<Width>30%</Width> 
+						<Width>32%</Width> 
 						<Height>20</Height> 
 						<Text>Re-price active sell orders</Text>
 							<OnLoad>
-							if ${Script[ComBot].VariableScope.HangerSale.Config.RePrice}
+							if ${Script[ComBot].VariableScope.HangarSale.Config.RePrice}
 							{
 								This:SetChecked
 							}
 						</OnLoad>
 						<OnLeftClick>
-							Script[ComBot].VariableScope.HangerSale.Config:SetRePrice[${This.Checked}]
+							Script[ComBot].VariableScope.HangarSale.Config:SetRePrice[${This.Checked}]
 						</OnLeftClick>
 					</Checkbox>
 					<Checkbox name='obj_HangarSale_Sell'>
 						<X>1%</X>
 						<Y>33%</Y>
-						<Width>30%</Width> 
+						<Width>32%</Width> 
 						<Height>20</Height> 
 						<Text>Place new sell orders</Text>
 						<OnLoad>
-							if ${Script[ComBot].VariableScope.HangerSale.Config.Sell}
+							if ${Script[ComBot].VariableScope.HangarSale.Config.Sell}
 							{
 								This:SetChecked
 							}
 						</OnLoad>
 						<OnLeftClick>
-							Script[ComBot].VariableScope.HangerSale.Config:SetSell[${This.Checked}]
+							Script[ComBot].VariableScope.HangarSale.Config:SetSell[${This.Checked}]
 						</OnLeftClick>
 					</Checkbox>
 					<Text name='obj_HangarSale_UndercutPercentTitle'> 
-						<X>35%</X> 
+						<X>34%</X> 
 						<Y>20%</Y> 
-						<Width>30%</Width> 
+						<Width>32%</Width> 
 						<Height>2%</Height> 
 						<Alignment>Center</Alignment>
 						<OnLoad>
-							This:SetText[Undercut %: ${Script[ComBot].VariableScope.HangerSale.Config.UndercutPercent}]
+							This:SetText[Undercut %: ${Script[ComBot].VariableScope.HangarSale.Config.UndercutPercent}]
 						</OnLoad>
 					</Text>						 
 					<Slider name='obj_HangarSale_UndercutPercent'> 
-						<X>35%</X> 
+						<X>34%</X> 
 						<Y>22%</Y> 
-						<Width>30%</Width> 
+						<Width>32%</Width> 
 						<Height>3%</Height> 
 						<Border>1</Border>
 						<Range>100</Range>
 						<OnLoad>
-							This:SetValue[${Script[ComBot].VariableScope.HangerSale.Config.UndercutPercent}]
+							This:SetValue[${Script[ComBot].VariableScope.HangarSale.Config.UndercutPercent}]
 						</OnLoad>
 						<OnChange>
-							UIElement[obj_HangarSale_UndercutPercentTitle@ComBot_HangarSale_Frame@ComBot_HangarSale]:SetText[Undercut %: ${Script[ComBot].VariableScope.HangerSale.Config.UndercutPercent}]
-							Script[ComBot].VariableScope.HangerSale.Config:SetUndercutPercent[${This.Value}]
+							UIElement[obj_HangarSale_UndercutPercentTitle@ComBot_HangarSale_Frame@ComBot_HangarSale]:SetText[Undercut %: ${Script[ComBot].VariableScope.HangarSale.Config.UndercutPercent}]
+							Script[ComBot].VariableScope.HangarSale.Config:SetUndercutPercent[${This.Value}]
 						</OnChange>
 					</Slider>						 
 					<Text name='obj_HangarSale_UndercutValueTitle'> 
-						<X>68%</X> 
+						<X>67%</X> 
 						<Y>20%</Y> 
-						<Width>30%</Width> 
+						<Width>32%</Width> 
 						<Height>2%</Height> 
 						<Alignment>Center</Alignment>
 						<OnLoad>
-							This:SetText[Undercut Value: ${Script[ComBot].VariableScope.ComBot.ISK_To_Str[${Script[ComBot].VariableScope.HangerSale.Config.UndercutValue}]}]
+							This:SetText[Undercut Value: ${Script[ComBot].VariableScope.ComBot.ISK_To_Str[${Script[ComBot].VariableScope.HangarSale.Config.UndercutValue}]}]
 						</OnLoad>
 					</Text>						 
 					<Slider name='obj_HangarSale_UndercutValue'> 
-						<X>68%</X> 
+						<X>67%</X> 
 						<Y>22%</Y> 
-						<Width>30%</Width> 
+						<Width>32%</Width> 
 						<Height>3%</Height> 
 						<Border>1</Border>
 						<Range>1000</Range>
 						<OnLoad>
-							This:SetValue[${Script[ComBot].VariableScope.HangerSale.Config.UndercutValue}]
+							This:SetValue[${Script[ComBot].VariableScope.HangarSale.Config.UndercutValue}]
 						</OnLoad>
 						<OnChange>
-							Script[ComBot].VariableScope.HangerSale.Config:SetUndercutValue[${This.Value}]
-							UIElement[obj_HangarSale_UndercutValueTitle@ComBot_HangarSale_Frame@ComBot_HangarSale]:SetText[Undercut Value: ${Script[ComBot].VariableScope.ComBot.ISK_To_Str[${Script[ComBot].VariableScope.HangerSale.Config.UndercutValue}]}]
+							Script[ComBot].VariableScope.HangarSale.Config:SetUndercutValue[${This.Value}]
+							UIElement[obj_HangarSale_UndercutValueTitle@ComBot_HangarSale_Frame@ComBot_HangarSale]:SetText[Undercut Value: ${Script[ComBot].VariableScope.ComBot.ISK_To_Str[${Script[ComBot].VariableScope.HangarSale.Config.UndercutValue}]}]
 						</OnChange>
 					</Slider>						 
-
-					<Checkbox name='MoveRefines'> 
-						<X>1%</X> 
-						<Y>60%</Y> 
-						<Width>36%</Width> 
-						<Height>3%</Height> 
-						<Text>Move items marked for refining</Text>
+					<Checkbox name='MoveRefine'>
+						<X>1%</X>
+						<Y>36%</Y>
+						<Width>32%</Width> 
+						<Height>20</Height> 
+						<Text>Move items to be refined to active ship</Text>
 						<OnLoad>
-							if ${Script[ComBot].VariableScope.HangerSale.Config.MoveRefines}
+							if ${Script[ComBot].VariableScope.HangarSale.Config.MoveRefine}
 							{
 								This:SetChecked
 							}
 						</OnLoad>
 						<OnLeftClick>
-							Script[ComBot].VariableScope.HangerSale.Config:SetMoveRefines[${This.Checked}]
+							Script[ComBot].VariableScope.HangarSale.Config:SetMoveRefine[${This.Checked}]
 						</OnLeftClick>
-					</Checkbox>						 
-					<listbox Name="MoveRefinesTarget">
-						<BackgroundColor>FF000000</BackgroundColor>
-						<Border>1</Border>
-						<BorderColor>FFFFFFFF</BorderColor>
-						<X>1%</X>
-						<Y>63%</Y>
-						<Width>36%</Width>
-						<Height>20%</Height>
-						<OnLoad>
-							variable index:string Names
-							variable index:int64 IDs
-							variable iterator NameIterator
-							
-							variable index:item StationCargo
-							variable iterator CargoIterator
-							
-							EVEWindow[ByName, Inventory]:GetChildren[Names,IDs]
-							Me.Station:GetHangarItems[StationCargo]
-							IDs:GetIterator[NameIterator]
-							StationCargo:GetIterator[CargoIterator]
-
-							if ${NameIterator:First(exists)}
-								do
-								{	
-									if ${CargoIterator:First(exists)}
-									do
-									{
-										if ${CargoIterator.Value.ID} == ${NameIterator.Value}
-											This:AddItem[${CargoIterator.Value.Name}, ${CargoIterator.Value.ID}]
-									}
-									while ${CargoIterator:Next(exists)}
-									
-									
-								}
-								while ${NameIterator:Next(exists)}
-							This.ItemByValue[${Script[ComBot].VariableScope.HangerSale.Config.MoveRefinesTarget}]:Select
-						</OnLoad>
-						<OnSelect>
-							Script[ComBot].VariableScope.HangerSale.Config:SetMoveRefinesTarget[${This.SelectedItem.Value}]
-						</OnSelect>
-					</listbox>
-
+					</Checkbox>
 				</Children>
 			</Frame>
 		</Children>

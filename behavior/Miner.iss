@@ -602,6 +602,12 @@ objectdef obj_Miner inherits obj_State
 	member:bool Mine()
 	{
 		Profiling:StartTrack["Miner_Mine"]
+		if ${Me.ToEntity.Mode} == 3
+		{
+			Profiling:EndTrack
+			return FALSE
+		}
+		
 		This:Clear
 		This:QueueState["OpenCargoHold", 10]
 
@@ -612,12 +618,6 @@ objectdef obj_Miner inherits obj_State
 			This:QueueState["Mine"]
 			Profiling:EndTrack
 			return TRUE
-		}
-		
-		if ${Me.ToEntity.Mode} == 3
-		{
-			Profiling:EndTrack
-			return FALSE
 		}
 		
 		variable int MaxTarget = ${MyShip.MaxLockedTargets}
@@ -840,6 +840,9 @@ objectdef obj_Miner inherits obj_State
 			return TRUE
 		}
 		Asteroids:RequestUpdate
+		
+		echo ${Asteroids.TargetList.Count} roids in range and not excluded
+		
 		variable iterator Roid
 		Asteroids.LockedTargetList:GetIterator[Roid]
 		
