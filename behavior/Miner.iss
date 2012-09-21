@@ -617,6 +617,8 @@ objectdef obj_Miner inherits obj_State
 		if ${Me.ToEntity.Mode} == 3
 		{
 			Profiling:EndTrack
+			This:Clear
+			This:QueueState["Mine"]
 			return FALSE
 		}
 		
