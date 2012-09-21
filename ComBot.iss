@@ -51,7 +51,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 #include behavior/Salvage.iss
 #include behavior/Miner.iss
 #include behavior/Hauler.iss
-#include behavior/HangerSale.iss
+#include behavior/HangarSale.iss
 #include behavior/Combat.iss
 
 
@@ -113,7 +113,7 @@ function main(string Character="")
 	declarevariable Miner obj_Miner script
 	declarevariable Hauler obj_Hauler script
 	declarevariable Combat obj_Combat script
-	declarevariable HangerSale obj_HangerSale script
+	declarevariable HangarSale obj_HangarSale script
 	
 	UI:Update["ComBot", "Module initialization complete", "y"]
 	
