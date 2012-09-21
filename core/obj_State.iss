@@ -123,6 +123,7 @@ objectdef obj_State
 							IsIdle:Set[TRUE]
 						}
 						CurState:Set[${States.Peek.Name}, ${States.Peek.Frequency}, "${States.Peek.Args.Escape}"]
+						UI:Log["${This(type)} State Change: ${States.Peek.Name}"]
 						UIElement[${QueueListbox}].OrderedItem[1]:Remove
 						States:Dequeue
 					}
@@ -141,6 +142,7 @@ objectdef obj_State
 			if ${This.${CurState.Name}[${CurState.Args}]}
 			{
 				CurState:Set[${States.Peek.Name}, ${States.Peek.Frequency}, "${States.Peek.Args.Escape}"]
+				UI:Log["${This(type)} State Change: ${States.Peek.Name}"]
 				UIElement[${QueueListbox}].OrderedItem[1]:Remove
 				States:Dequeue
 			}
@@ -224,6 +226,8 @@ objectdef obj_State
 	{
 		return TRUE
 	}
+	
+	
 	
 	method Flee()
 	{
