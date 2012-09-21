@@ -682,6 +682,8 @@ objectdef obj_Miner inherits obj_State
 				{
 					Move:Approach[${Orca}, LOOT_RANGE]
 					Profiling:EndTrack
+					This:Clear
+					This:QueueState["Mine"]
 					return FALSE
 				}
 				else
@@ -695,12 +697,16 @@ objectdef obj_Miner inherits obj_State
 								UI:Update["obj_Miner", "Opening ${Config.Container_Name}", "g"]
 								Entity[${Orca}]:Open
 								Profiling:EndTrack
+								This:Clear
+								This:QueueState["Mine"]
 								return FALSE
 							}
 							if !${EVEWindow[ByItemID, ${Orca}](exists)}
 							{
 								EVEWindow[ByName, Inventory]:MakeChildActive[${Orca}]
 								Profiling:EndTrack
+								This:Clear
+								This:QueueState["Mine"]
 								return FALSE
 							}
 							;UI:Update["obj_Miner", "Unloading to ${Config.Container_Name}", "g"]
@@ -722,12 +728,16 @@ objectdef obj_Miner inherits obj_State
 								UI:Update["obj_Miner", "Opening ${Config.Container_Name}", "g"]
 								Entity[${Orca}]:Open
 								Profiling:EndTrack
+								This:Clear
+								This:QueueState["Mine"]
 								return FALSE
 							}
 							if !${EVEWindow[ByItemID, ${Orca}](exists)}
 							{
 								EVEWindow[ByName, Inventory]:MakeChildActive[${Orca}]
 								Profiling:EndTrack
+								This:Clear
+								This:QueueState["Mine"]
 								return FALSE
 							}
 							;UI:Update["obj_Miner", "Unloading to ${Config.Container_Name}", "g"]
@@ -827,6 +837,8 @@ objectdef obj_Miner inherits obj_State
 			return TRUE
 		}
 		Profiling:EndTrack
+		This:Clear
+		This:QueueState["Mine"]
 		return FALSE
 	}
 
