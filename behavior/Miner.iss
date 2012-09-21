@@ -602,6 +602,12 @@ objectdef obj_Miner inherits obj_State
 	member:bool Mine()
 	{
 		Profiling:StartTrack["Miner_Mine"]
+		if ${Me.ToEntity.Mode} == 3
+		{
+			Profiling:EndTrack
+			return FALSE
+		}
+		
 		This:Clear
 		This:QueueState["OpenCargoHold", 10]
 
@@ -612,14 +618,6 @@ objectdef obj_Miner inherits obj_State
 			This:QueueState["Mine"]
 			Profiling:EndTrack
 			return TRUE
-		}
-		
-		if ${Me.ToEntity.Mode} == 3
-		{
-			Profiling:EndTrack
-			This:Clear
-			This:QueueState["Mine"]
-			return FALSE
 		}
 		
 		variable int MaxTarget = ${MyShip.MaxLockedTargets}
