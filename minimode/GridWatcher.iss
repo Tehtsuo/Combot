@@ -49,6 +49,8 @@ objectdef obj_Configuration_GridWatcher
 objectdef obj_GridWatcher inherits obj_State
 {
 	variable obj_Configuration_GridWatcher Config
+	variable collection:int LastDetection
+	
 	method Initialize()
 	{
 		This[parent]:Initialize
@@ -74,13 +76,18 @@ objectdef obj_GridWatcher inherits obj_State
 		}
 		variable iterator EntityNames
 		This.Config.CommonRef.FindSet[Names]:GetSettingIterator[EntityNames]
+		
 		if ${EntityNames:First(exists)}
 		{
 			do
 			{
-				if ${Entity[Name =- "${EntityNames.Value.Name}"](exists)}
+				if ${LastDetection.Element[${EntityNames.Value.Name}]} < ${LavishScript.RunningTime}
 				{
-					UI:Update["obj_GridWatcher", "${Entity[Name =- "${EntityNames.Value.Name}"].Name} Found"]
+					if ${Entity[Name =- "${EntityNames.Value.Name}"](exists)}
+					{
+						uplink speak "${Entity[Name =- "${EntityNames.Value.Name}"].Name} Found"
+						LastDetection:Set[${EntityNames.Value.Name}, ${Math.Calc[${LavishScript.RunningTime}+30000]}]
+					}
 				}
 			}
 			while ${EntityNames:Next(exists)}

@@ -749,6 +749,45 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							<Width>100%</Width>
 							<Font template='Gauge.Font' />
 						</Text>
+					</Tab>
+					
+					<Tab Name='MiniMode'>
+						<frame name='MiniModeFillerFrame'>
+							<BackgroundColor>FF000000</BackgroundColor>
+							<Border>1</Border>
+							<BorderColor>FFFFFFFF</BorderColor>
+							<X>0</X>
+							<Y>0</Y>
+							<Height>100%</Height>
+							<Width>100%</Width>
+							<OnLoad>
+								This:SetLeftClickThru[TRUE]
+							</OnLoad>
+						</frame>	
+						<Button name="GridWatcherConfig">
+							<Font template='Button.Font' />
+							<BackgroundColor>FF000000</BackgroundColor>
+							<X>1%</X>
+							<Y>1%</Y>
+							<Width>98%</Width>
+							<Height>9%</Height>
+							<Text>GridWatcher Config</Text>
+							<OnLeftClick>
+								timedcommand 0 "ui -load \"${Script[ComBot].CurrentDirectory}/minimode/GridWatcher.xml\""
+							</OnLeftClick>
+						</Button>
+						<Button name="GridWatcherStart">
+							<Font template='Button.Font' />
+							<BackgroundColor>FF000000</BackgroundColor>
+							<X>1%</X>
+							<Y>11%</Y>
+							<Width>98%</Width>
+							<Height>9%</Height>
+							<Text>GridWatcher Start</Text>
+							<OnLeftClick>
+								Script[ComBot].VariableScope.GridWatcher:Start
+							</OnLeftClick>
+						</Button>
 					</Tab>					
 				</Tabs>
 				<OnSelect>
