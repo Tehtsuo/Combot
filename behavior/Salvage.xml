@@ -275,9 +275,11 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							{
 								This:SetChecked
 							}
+							This:SetZOrder[movetop]
 						</OnLoad>
 						<OnLeftClick>
 							Script[ComBot].VariableScope.Salvage.Config:SetSalvageYellow[${This.Checked}]
+							This:SetZOrder[movetop]
 						</OnLeftClick>
 					</Checkbox>
 					
@@ -293,9 +295,11 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							{
 								This:SetChecked
 							}
+							This:SetZOrder[movetop]
 						</OnLoad>
 						<OnLeftClick>
 							Script[ComBot].VariableScope.Salvage.Config:SetAvoidShips[${This.Checked}]
+							This:SetZOrder[movetop]
 						</OnLeftClick>
 					</Checkbox>
 					
@@ -317,6 +321,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								UIElement[SalvageYellow@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Hide
 								UIElement[AvoidShips@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Hide
 							}
+							This:SetZOrder[movetop]
 						</OnLoad>
 						<OnLeftClick>
 							Script[ComBot].VariableScope.Salvage.Config:SetBeltPatrolEnabled[${This.Checked}]
@@ -333,6 +338,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								UIElement[SalvageYellow@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Hide
 								UIElement[AvoidShips@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Hide
 							}
+							This:SetZOrder[movetop]
 						</OnLeftClick>
 					</Checkbox>
 				</Children>
