@@ -853,7 +853,7 @@ objectdef obj_Miner inherits obj_State
 		}
 		Asteroids:RequestUpdate
 		
-		echo ${Asteroids.TargetList.Count} roids in range and not excluded
+		
 		
 		variable iterator Roid
 		Asteroids.LockedTargetList:GetIterator[Roid]

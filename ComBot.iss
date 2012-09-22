@@ -54,6 +54,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 #include behavior/HangarSale.iss
 #include behavior/Combat.iss
 
+#include minimode/GridWatcher.iss
+
 
 function atexit()
 {
@@ -114,6 +116,8 @@ function main(string Character="")
 	declarevariable Hauler obj_Hauler script
 	declarevariable Combat obj_Combat script
 	declarevariable HangarSale obj_HangarSale script
+	
+	declarevariable GridWatcher obj_GridWatcher script
 	
 	UI:Update["ComBot", "Module initialization complete", "y"]
 	
