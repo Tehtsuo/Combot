@@ -55,6 +55,7 @@ objectdef obj_GridWatcher inherits obj_State
 	{
 		This[parent]:Initialize
 		PulseFrequency:Set[1000]
+		Dynamic:AddMiniMode["GridWatcher", "GridWatcher", FALSE]
 	}
 	
 	method Start()
