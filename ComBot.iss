@@ -47,6 +47,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 #include core/obj_Delay.iss
 #include core/obj_Fleet.iss
 #include core/obj_Login.iss
+#include core/obj_Dynamic.iss
 
 #include behavior/Salvage.iss
 #include behavior/Miner.iss
@@ -54,6 +55,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 #include behavior/HangarSale.iss
 #include behavior/Combat.iss
 
+#include temp/minimodeincludes.iss
 
 function atexit()
 {
@@ -108,12 +110,17 @@ function main(string Character="")
 	declarevariable Defense obj_Defense script
 	declarevariable Delay obj_Delay script
 	declarevariable Fleets obj_Fleet script
-
+	declarevariable Dynamic obj_Dynamic script
+	
 	declarevariable Salvage obj_Salvage script
 	declarevariable Miner obj_Miner script
 	declarevariable Hauler obj_Hauler script
 	declarevariable Combat obj_Combat script
 	declarevariable HangarSale obj_HangarSale script
+	
+	#include temp/minimodedeclares.iss
+	
+	Dynamic:PopulateMiniModes
 	
 	UI:Update["ComBot", "Module initialization complete", "y"]
 	
