@@ -19,7 +19,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-objectdef obj_GridWatcher
+objectdef obj_LogiTracker
 {
 	
 }
