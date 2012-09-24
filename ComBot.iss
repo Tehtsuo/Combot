@@ -49,11 +49,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 #include core/obj_Login.iss
 #include core/obj_Dynamic.iss
 
-#include behavior/Salvage.iss
-#include behavior/Miner.iss
-#include behavior/Hauler.iss
-#include behavior/HangarSale.iss
-#include behavior/Combat.iss
+#include temp/behaviorincludes.iss
 
 #include temp/minimodeincludes.iss
 
@@ -112,14 +108,11 @@ function main(string Character="")
 	declarevariable Fleets obj_Fleet script
 	declarevariable Dynamic obj_Dynamic script
 	
-	declarevariable Salvage obj_Salvage script
-	declarevariable Miner obj_Miner script
-	declarevariable Hauler obj_Hauler script
-	declarevariable Combat obj_Combat script
-	declarevariable HangarSale obj_HangarSale script
+	#include temp/behaviordeclares.iss
 	
 	#include temp/minimodedeclares.iss
 	
+	Dynamic:PopulateBehaviors
 	Dynamic:PopulateMiniModes
 	
 	UI:Update["ComBot", "Module initialization complete", "y"]

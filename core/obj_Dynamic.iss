@@ -132,6 +132,26 @@ objectdef obj_Dynamic
 		}
 	}
 	
+	method PopulateBehaviors()
+	{
+		variable iterator BehaviorIterator
+		Behaviors:GetIterator[BehaviorIterator]
+		
+		UIElement[ComBot_Mode@Status@ComBotTab@ComBot]:ClearItems
+		
+		if ${BehaviorIterator:First(exists)}
+		{
+			do
+			{
+				UIElement[ComBot_Mode@Status@ComBotTab@ComBot]:AddItem[${BehaviorIterator.Value.DisplayName.Escape}, ${BehaviorIterator.Value.Name.Escape}]
+			}
+			while ${BehaviorIterator:Next(exists)}
+		}
+		
+		UIElement[ComBot_Mode@Status@ComBotTab@ComBot].ItemByValue[${Script[ComBot].VariableScope.Config.Common.ComBot_Mode}]:Select
+		
+	}
+	
 	method ActivateMiniMode(string name)
 	{
 		This.Config:AddMiniMode[${name.Escape}]
