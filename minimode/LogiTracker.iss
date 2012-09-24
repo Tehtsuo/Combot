@@ -22,8 +22,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 objectdef obj_LogiTracker inherits obj_State
 {
 	
-	variable IPCCollection:IPCCollection:int Health = "LogiTracker"
-	variable IPCCollection:int MyHealth
+	variable IPCCollection:IPCCollection:float Health = "LogiTracker"
+	variable IPCCollection:float MyHealth
 	
 	method Initialize()
 	{
@@ -52,29 +52,29 @@ objectdef obj_LogiTracker inherits obj_State
 		{
 			return FALSE
 		}
-		if !${MyShip.Shield.Equal[${MyHealth.Element["Shield"]}]}
+		if !${MyShip.Shield.Precision[3].Equal[${MyHealth.Element["Shield"]}]}
 		{
-			MyHealth:Set["Shield", ${MyShip.Shield}]
+			MyHealth:Set["Shield", ${MyShip.Shield.Precision[3]}]
 		}
-		if !${MyShip.MaxShield.Equal[${MyHealth.Element["MaxShield"]}]}
+		if !${MyShip.MaxShield.Precision[3].Equal[${MyHealth.Element["MaxShield"]}]}
 		{
-			MyHealth:Set["MaxShield", ${MyShip.MaxShield}]
+			MyHealth:Set["MaxShield", ${MyShip.MaxShield.Precision[3]}]
 		}
-		if !${MyShip.Armor.Equal[${MyHealth.Element["Armor"]}]}
+		if !${MyShip.Armor.Precision[3].Equal[${MyHealth.Element["Armor"]}]}
 		{
-			MyHealth:Set["Armor", ${MyShip.Armor}]
+			MyHealth:Set["Armor", ${MyShip.Armor.Precision[3]}]
 		}
-		if !${MyShip.MaxArmor.Equal[${MyHealth.Element["MaxArmor"]}]}
+		if !${MyShip.MaxArmor.Precision[3].Equal[${MyHealth.Element["MaxArmor"]}]}
 		{
-			MyHealth:Set["MaxArmor", ${MyShip.MaxArmor}]
+			MyHealth:Set["MaxArmor", ${MyShip.MaxArmor.Precision[3]}]
 		}
-		if !${MyShip.Structure.Equal[${MyHealth.Element["Structure"]}]}
+		if !${MyShip.Structure.Precision[3].Equal[${MyHealth.Element["Structure"]}]}
 		{
-			MyHealth:Set["Structure", ${MyShip.Structure}]
+			MyHealth:Set["Structure", ${MyShip.Structure.Precision[3]}]
 		}
-		if !${MyShip.MaxStructure.Equal[${MyHealth.Element["MaxStructure"]}]}
+		if !${MyShip.MaxStructure.Precision[3].Equal[${MyHealth.Element["MaxStructure"]}]}
 		{
-			MyHealth:Set["MaxStructure", ${MyShip.MaxStructure}]
+			MyHealth:Set["MaxStructure", ${MyShip.MaxStructure.Precision[3]}]
 		}
 		
 		
