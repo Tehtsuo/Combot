@@ -19,7 +19,59 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-objectdef obj_LogiTracker
+objectdef obj_EntityHealth
+{
+	variable float64 Shield
+	variable float64 MaxShield
+	variable float64 Armor
+	variable float64 MaxArmor
+	variable float64 Hull
+	variable float64 MaxHull
+	method Initialize(float64 argShield, float64 argMaxShield, float64 argArmor, float64 argMaxArmor, float64 argHull, float64 argMaxHull)
+	{
+		Shield:Set[${argShield}]
+		MaxShield:Set[${argMaxShield}]
+		Armor:Set[${argArmor}]
+		MaxArmor:Set[${argMaxArmor}]
+		Hull:Set[${argHull}]
+		MaxHull:Set[${argMaxHull}]
+	}
+	
+}
+
+objectdef obj_LogiTracker inherits obj_State
 {
 	
+	variable IPCCollection:obj_EntityHealth Health
+	
+	method Initialize()
+	{
+		This[parent]:Initialize
+		PulseFrequency:Set[500]
+		Dynamic:AddMiniMode["LogiTracker", "LogiTracker", FALSE]
+	}
+	
+	method Start()
+	{
+		UI:Update["obj_LogiTracker", "Starting LogiTracker", "g"]
+		This:QueueState["LogiTrack"]
+	}
+	
+	method Stop()
+	{
+		This:Clear
+		UI:Update["obj_LogiTracker", "Stopping LogiTracker", "g"]
+	}
+	
+	member:bool LogiTrack()
+	{
+		if !${Client.InSpace} || ${Me.ToEntity.Mode} == 3
+		{
+			return FALSE
+		}
+		
+		echo ${MyShip.ID}, ${MyShip.Shield}, ${MyShip.MaxShield}, ${MyShip.Armor}, ${MyShip.MaxArmor}, ${MyShip.Structure}, ${MyShip.MaxStructure}
+		
+		return FALSE
+	}
 }

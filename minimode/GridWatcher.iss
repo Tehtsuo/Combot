@@ -60,13 +60,14 @@ objectdef obj_GridWatcher inherits obj_State
 	
 	method Start()
 	{
-		UI:Update["obj_GridWatcher", "Starting Grid Watch"]
+		UI:Update["obj_GridWatcher", "Starting Grid Watch", "g"]
 		This:QueueState["WatchGrid"]
 	}
 	
 	method Stop()
 	{
 		This:Clear
+		UI:Update["obj_GridWatcher", "Stopping Grid Watch", "g"]
 	}
 	
 	member:bool WatchGrid()

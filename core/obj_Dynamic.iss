@@ -121,6 +121,7 @@ objectdef obj_Dynamic
 				if ${This.Config.EnabledMiniModes.FindSetting[${MiniModeIterator.Value.Name}](exists)}
 				{
 					UIElement[MiniMode_Active@MiniMode@ComBotTab@ComBot]:AddItem[${MiniModeIterator.Value.DisplayName.Escape}, ${MiniModeIterator.Value.Name.Escape}]
+					${MiniModeIterator.Value.Name}:Start
 				}
 				else
 				{
