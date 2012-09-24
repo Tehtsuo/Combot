@@ -19,36 +19,19 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-objectdef obj_EntityHealth
-{
-	variable float64 Shield
-	variable float64 MaxShield
-	variable float64 Armor
-	variable float64 MaxArmor
-	variable float64 Hull
-	variable float64 MaxHull
-	method Initialize(float64 argShield, float64 argMaxShield, float64 argArmor, float64 argMaxArmor, float64 argHull, float64 argMaxHull)
-	{
-		Shield:Set[${argShield}]
-		MaxShield:Set[${argMaxShield}]
-		Armor:Set[${argArmor}]
-		MaxArmor:Set[${argMaxArmor}]
-		Hull:Set[${argHull}]
-		MaxHull:Set[${argMaxHull}]
-	}
-	
-}
-
 objectdef obj_LogiTracker inherits obj_State
 {
 	
-	variable IPCCollection:obj_EntityHealth Health
+	variable IPCCollection:IPCCollection:int Health = "LogiTracker"
+	variable IPCCollection:int MyHealth
 	
 	method Initialize()
 	{
 		This[parent]:Initialize
 		PulseFrequency:Set[500]
 		Dynamic:AddMiniMode["LogiTracker", "LogiTracker", FALSE]
+		Health:Set[${MyShip.ID}, "LogiTracker_${MyShip.ID}"]
+		MyHealth:Set["LogiTracker_${MyShip.ID}"]
 	}
 	
 	method Start()
@@ -69,8 +52,31 @@ objectdef obj_LogiTracker inherits obj_State
 		{
 			return FALSE
 		}
+		if ${MyShip.Shield.NotEqual[${MyHealth.Element["Shield"]}]}
+		{
+			MyHealth:Set["Shield", ${MyShip.Shield}]
+		}
+		if ${MyShip.MaxShield.NotEqual[${MyHealth.Element["MaxShield"]}]}
+		{
+			MyHealth:Set["MaxShield", ${MyShip.MaxShield}]
+		}
+		if ${MyShip.Armor.NotEqual[${MyHealth.Element["Armor"]}]}
+		{
+			MyHealth:Set["Armor", ${MyShip.Armor}]
+		}
+		if ${MyShip.MaxArmor.NotEqual[${MyHealth.Element["MaxArmor"]}]}
+		{
+			MyHealth:Set["MaxArmor", ${MyShip.MaxArmor}]
+		}
+		if ${MyShip.Structure.NotEqual[${MyHealth.Element["Structure"]}]}
+		{
+			MyHealth:Set["Structure", ${MyShip.Structure}]
+		}
+		if ${MyShip.MaxStructure.NotEqual[${MyHealth.Element["MaxStructure"]}]}
+		{
+			MyHealth:Set["MaxStructure", ${MyShip.MaxStructure}]
+		}
 		
-		echo ${MyShip.ID}, ${MyShip.Shield}, ${MyShip.MaxShield}, ${MyShip.Armor}, ${MyShip.MaxArmor}, ${MyShip.Structure}, ${MyShip.MaxStructure}
 		
 		return FALSE
 	}
