@@ -80,7 +80,7 @@ objectdef obj_Salvage inherits obj_State
 	{
 		This[parent]:Initialize
 		Wrecks:AddQueryString["(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && HaveLootRights && !IsAbandoned && !IsMoribund"]
-		Dynamic:AddBehavior["Salvager", "Dedicated Salvager", FALSE]
+		Dynamic:AddBehavior["Salvage", "Dedicated Salvager", FALSE]
 	}
 
 	method Start()
