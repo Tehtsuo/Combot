@@ -52,27 +52,27 @@ objectdef obj_LogiTracker inherits obj_State
 		{
 			return FALSE
 		}
-		if ${MyShip.Shield.NotEqual[${MyHealth.Element["Shield"]}]}
+		if !${MyShip.Shield.Equal[${MyHealth.Element["Shield"]}]}
 		{
 			MyHealth:Set["Shield", ${MyShip.Shield}]
 		}
-		if ${MyShip.MaxShield.NotEqual[${MyHealth.Element["MaxShield"]}]}
+		if !${MyShip.MaxShield.Equal[${MyHealth.Element["MaxShield"]}]}
 		{
 			MyHealth:Set["MaxShield", ${MyShip.MaxShield}]
 		}
-		if ${MyShip.Armor.NotEqual[${MyHealth.Element["Armor"]}]}
+		if !${MyShip.Armor.Equal[${MyHealth.Element["Armor"]}]}
 		{
 			MyHealth:Set["Armor", ${MyShip.Armor}]
 		}
-		if ${MyShip.MaxArmor.NotEqual[${MyHealth.Element["MaxArmor"]}]}
+		if !${MyShip.MaxArmor.Equal[${MyHealth.Element["MaxArmor"]}]}
 		{
 			MyHealth:Set["MaxArmor", ${MyShip.MaxArmor}]
 		}
-		if ${MyShip.Structure.NotEqual[${MyHealth.Element["Structure"]}]}
+		if !${MyShip.Structure.Equal[${MyHealth.Element["Structure"]}]}
 		{
 			MyHealth:Set["Structure", ${MyShip.Structure}]
 		}
-		if ${MyShip.MaxStructure.NotEqual[${MyHealth.Element["MaxStructure"]}]}
+		if !${MyShip.MaxStructure.Equal[${MyHealth.Element["MaxStructure"]}]}
 		{
 			MyHealth:Set["MaxStructure", ${MyShip.MaxStructure}]
 		}
