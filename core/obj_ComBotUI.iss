@@ -35,11 +35,13 @@ objectdef obj_ComBotUI
 	{
 		if ${EVEExtension.Character.Length}
 		{
-			This.LogFile:Set["./config/logs/${EVEExtension.Character}/${Time.Month}.${Time.Day}.${Time.Year}-${Time.Hour}.${Time.Minute}-${Script.RunningTime}.log"]
+			This.LogFile:Set["./config/logs/${EVEExtension.Character}/${Time.Month}.${Time.Day}.${Time.Year}-${Time.Hour}.${Time.Minute}-${Time.Timestamp}.log"]
+			mkdir "./config/logs/${EVEExtension.Character}"
 		}
 		else
 		{
-			This.LogFile:Set["./config/logs/${Me.Name}/${Time.Month}.${Time.Day}.${Time.Year}-${Time.Hour}.${Time.Minute}-${Script.RunningTime}.log"]
+			This.LogFile:Set["./config/logs/${Me.Name}/${Time.Month}.${Time.Day}.${Time.Year}-${Time.Hour}.${Time.Minute}-${Time.Timestamp}.log"]
+			mkdir "./config/logs/${Me.Name}"
 		}
 		ui -load interface/ComBotGUI.xml
 		This:Update["ComBot", "ComBot  Copyright © 2012  Tehtsuo and Vendan", "o"]
@@ -166,6 +168,6 @@ objectdef obj_ComBotUI
 	
 	method Log(string Msg)
 	{
-			redirect -append "${This.LogFile}" echo ${Msg}
+			redirect -append "${This.LogFile}" echo "[${Time.Hour}:${Time.Minute}:${Time.Second}] ${Msg.Escape}"
 	}
 }
