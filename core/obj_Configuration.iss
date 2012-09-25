@@ -137,6 +137,7 @@ objectdef obj_Configuration_Common
 	Setting(int64, CharID, SetCharID)
 	Setting(string, Account, SetAccount)
 	Setting(string, Password, SetPassword)
+	Setting(bool, Verbose, SetVerbose)
 }
 
 

@@ -166,8 +166,18 @@ objectdef obj_ComBotUI
 		}
 	}
 	
-	method Log(string Msg)
+	method Log(string Msg, bool Verbose=FALSE)
 	{
+		if !${Verbose}
+		{
 			redirect -append "${This.LogFile}" echo "[${Time.Hour}:${Time.Minute}:${Time.Second}] ${Msg.Escape}"
+		}
+		else
+		{
+			if ${Config.Common.Verbose}
+			{
+				redirect -append "${This.LogFile}" echo "[${Time.Hour}:${Time.Minute}:${Time.Second}] ${Msg.Escape}"
+			}
+		}
 	}
 }
