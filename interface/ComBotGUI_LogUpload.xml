@@ -52,8 +52,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 		<Border>0</Border>
 		<X>200</X>
 		<Y>300</Y>
-		<Width>500</Width>
-		<Height>400</Height>
+		<Width>600</Width>
+		<Height>100</Height>
 		<TitleBar>
 			<Width>100%</Width>
 			<Height>20</Height>
@@ -93,34 +93,34 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					<Text name='NameTitle'>
 						<X>1%</X>
 						<Y>1%</Y>
-						<Width>99%</Width>
-						<Height>5%</Height>
+						<Width>98%</Width>
+						<Height>24%</Height>
 						<Text>IRC/Forum name (Not your EVE account name!)</Text>
 					</Text>
 					<Textentry name="Name">
 						<X>1%</X>
-						<Y>5%</Y>
-						<Width>99%</Width>
-						<Height>5%</Height>
+						<Y>25%</Y>
+						<Width>98%</Width>
+						<Height>24%</Height>
 					</Textentry>
 					<Text name='DescriptionTitle'>
 						<X>1%</X>
-						<Y>10%</Y>
+						<Y>50%</Y>
 						<Width>99%</Width>
-						<Height>5%</Height>
+						<Height>24%</Height>
 						<Text>Description of the problem you are reporting</Text>
 					</Text>
-					<Textedit name="Description">
+					<Textentry name="Description">
 						<X>1%</X>
-						<Y>15%</Y>
-						<Width>99%</Width>
-						<Height>75%</Height>
-					</Textedit>
+						<Y>75%</Y>
+						<Width>98%</Width>
+						<Height>24%</Height>
+					</Textentry>
 					
 					<Button name="Upload">
 						<X>1%</X>
 						<Y>92%</Y>
-						<Width>99%</Width>
+						<Width>98%</Width>
 						<Height>7%</Height>
 						<Text>Upload</Text>
 						<OnLeftClick>
