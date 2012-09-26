@@ -124,7 +124,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Height>19%</Height>
 						<Text>Upload</Text>
 						<OnLeftClick>
-							httpget -postparam username "${UIElement[Name@ComBot_LogUpload_Frame@ComBot_LogUpload].Text.Escape}" -postparam semantic "${Script[ComBot].VariableScope.Config.Common.ComBot_Mode.Escape}" -postparam description "${UIElement[Description@ComBot_LogUpload_Frame@ComBot_LogUpload].Text.Escape}" -postfile filename "${Script[ComBot].CurrentDirectory.Escape}${Script[ComBot].VariableScope.UI.LogFile.Escape}" http://combot.vendaria.net/logs/upload
+							httpget -postparam username "${UIElement[Name@ComBot_LogUpload_Frame@ComBot_LogUpload].Text.Escape}" -postparam semantic "${Script[ComBot].VariableScope.Config.Common.ComBot_Mode.Escape}" -postparam description "${UIElement[Description@ComBot_LogUpload_Frame@ComBot_LogUpload].Text.Escape}" -postfile logfile "${Script[ComBot].VariableScope.UI.LogFile.Escape}" http://combot.vendaria.net/logs/upload
 							ui -unload "&filepath;/ComBotGUI_LogUpload"
 						</OnLeftClick>
 					</Button>
