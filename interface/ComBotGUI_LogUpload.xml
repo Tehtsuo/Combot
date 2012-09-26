@@ -52,7 +52,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 		<Border>0</Border>
 		<X>200</X>
 		<Y>300</Y>
-		<Width>400</Width>
+		<Width>450</Width>
 		<Height>300</Height>
 		<TitleBar>
 			<Width>100%</Width>
@@ -110,12 +110,12 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Height>3%</Height>
 						<Text>Description of the problem you are reporting</Text>
 					</Text>
-					<Textentry name="Description">
+					<Textedit name="Description">
 						<X>1%</X>
 						<Y>15%</Y>
 						<Width>99%</Width>
 						<Height>75%</Height>
-					</Textentry>
+					</Textedit>
 					
 					<Button name="Upload">
 						<X>1%</X>

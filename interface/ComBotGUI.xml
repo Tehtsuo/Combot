@@ -557,8 +557,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							<Height>90%</Height>
 						</listbox>
 						<Checkbox name='Verbose'>
-							<X>42%</X>
-							<Y>5%</Y>
+							<X>41%</X>
+							<Y>10%</Y>
 							<Width>60%</Width> 
 							<Height>5%</Height> 
 							<Text>Verbose logging</Text>
@@ -576,10 +576,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							<Font template='Button.Font' />
 							<BackgroundColor>FF000000</BackgroundColor>
 							<X>40%</X>
-							<Y>15%</Y>
+							<Y>20%</Y>
 							<Width>60%</Width>
 							<Height>6%</Height>
-							<Text>Security Settings</Text>
+							<Text>Upload logs</Text>
 							<OnLeftClick>
 								timedcommand 0 "ui -load \"&filepath;/ComBotGUI_LogUpload.xml\""
 							</OnLeftClick>
