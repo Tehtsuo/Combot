@@ -52,8 +52,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 		<Border>0</Border>
 		<X>200</X>
 		<Y>300</Y>
-		<Width>450</Width>
-		<Height>300</Height>
+		<Width>500</Width>
+		<Height>400</Height>
 		<TitleBar>
 			<Width>100%</Width>
 			<Height>20</Height>
@@ -94,7 +94,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<X>1%</X>
 						<Y>1%</Y>
 						<Width>99%</Width>
-						<Height>3%</Height>
+						<Height>5%</Height>
 						<Text>IRC/Forum name (Not your EVE account name!)</Text>
 					</Text>
 					<Textentry name="Name">
@@ -107,7 +107,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<X>1%</X>
 						<Y>10%</Y>
 						<Width>99%</Width>
-						<Height>3%</Height>
+						<Height>5%</Height>
 						<Text>Description of the problem you are reporting</Text>
 					</Text>
 					<Textedit name="Description">
@@ -124,7 +124,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Height>7%</Height>
 						<Text>Upload</Text>
 						<OnLeftClick>
-							httpget -postparam username ${UIElement[Name@ComBot_LogUpload_Frame@ComBot_LogUpload].Text} -postparam semantic ${Script[ComBot].VariableScope.Config.Common.ComBot_Mode} -postparam description ${UIElement[Description@ComBot_LogUpload_Frame@ComBot_LogUpload].Text} -postfile filename ${Script[ComBot].VariableScope.Config.UI.LogFile} http://combot.vendaria.net/logs/upload
+							httpget -postparam username ${UIElement[Name@ComBot_LogUpload_Frame@ComBot_LogUpload].Text} -postparam semantic ${Script[ComBot].VariableScope.Config.Common.ComBot_Mode} -postparam description TestDescription -postfile filename ${Script[ComBot].VariableScope.Config.UI.LogFile} http://combot.vendaria.net/logs/upload
 							ui -unload "&filepath;/ComBotGUI_LogUpload"
 						</OnLeftClick>
 					</Button>
