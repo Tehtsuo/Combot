@@ -92,7 +92,6 @@ function main(string Character="")
 	declarevariable Profiling obj_Profiling script
 	declarevariable Client obj_Client script
 	declarevariable Move obj_Move script
-	declarevariable InstaWarp obj_InstaWarp script
 	declarevariable Ship obj_Ship script
 	declarevariable Cargo obj_Cargo script
 	declarevariable Security obj_Security script
