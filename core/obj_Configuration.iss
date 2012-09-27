@@ -48,7 +48,8 @@ objectdef obj_Configuration_BaseConfig
 
 		if !${CONFIG_PATH.FileExists["${CONFIG_PATH}/${CONFIG_FILE}"]}
 		{
-			UI:Update["obj_Configuration", "Configuration file is ${CONFIG_FILE}", "g"]
+			UI:Update["obj_Configuration", "Configuration file is ${CONFIG_FILE}", "g", TRUE]
+			UI:Log["Redacted:  obj_Configuration - Configuration file is XXXXXXX"]
 			LavishSettings[ComBotSettings]:Import["${CONFIG_PATH}/${CONFIG_FILE}"]
 		}
 
