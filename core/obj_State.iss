@@ -109,6 +109,7 @@ objectdef obj_State
 
 	method Pulse()
 	{
+		variable bool ReportIdle=TRUE
 		if !${IndependentPulse}
 		{
 			if ${LavishScript.RunningTime} >= ${This.NextPulse}
@@ -121,8 +122,13 @@ objectdef obj_State
 						{
 							This:QueueState["Idle", 100];
 							IsIdle:Set[TRUE]
+							ReportIdle:Set[FALSE]
 						}
 						CurState:Set[${States.Peek.Name}, ${States.Peek.Frequency}, "${States.Peek.Args.Escape}"]
+						if ${ReportIdle}
+						{
+							UI:Log["${This(type)} State Change: ${States.Peek.Name}", TRUE]
+						}
 						UIElement[${QueueListbox}].OrderedItem[1]:Remove
 						States:Dequeue
 					}
@@ -136,11 +142,16 @@ objectdef obj_State
 			{
 				This:QueueState["Idle", 100];
 				IsIdle:Set[TRUE]
+				ReportIdle:Set[FALSE]
 			}
 			
 			if ${This.${CurState.Name}[${CurState.Args}]}
 			{
 				CurState:Set[${States.Peek.Name}, ${States.Peek.Frequency}, "${States.Peek.Args.Escape}"]
+				if ${ReportIdle}
+				{
+					UI:Log["${This(type)} State Change: ${States.Peek.Name}", TRUE]
+				}
 				UIElement[${QueueListbox}].OrderedItem[1]:Remove
 				States:Dequeue
 			}
@@ -224,6 +235,8 @@ objectdef obj_State
 	{
 		return TRUE
 	}
+	
+	
 	
 	method Flee()
 	{

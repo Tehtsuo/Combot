@@ -547,23 +547,34 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							<Width>40%</Width>
 							<Height>90%</Height>
 						</listbox>
-						<Text name='DebugGuage1_Text'>
-							<X>40%</X>
-							<Y>5%</Y>
-							<Height>3%</Height>
-							<Width>60%</Width>
-							<Alignment>Center</Alignment>
-							<Text>Cargo Hold</Text>
-						</Text>
-						<gauge name='DebugGuage1'>
+						<Checkbox name='Verbose'>
 							<X>41%</X>
 							<Y>10%</Y>
-							<Height>10%</Height>
-							<Width>58%</Width>
+							<Width>60%</Width> 
+							<Height>5%</Height> 
+							<Text>Verbose logging</Text>
 							<OnLoad>
-								This:SetLeftClickThru[TRUE]
+								if ${Script[ComBot].VariableScope.Config.Common.Verbose}
+								{
+									This:SetChecked
+								}
 							</OnLoad>
-						</gauge>
+							<OnLeftClick>
+								Script[ComBot].VariableScope.Config.Common:SetVerbose[${This.Checked}]
+							</OnLeftClick>
+						</Checkbox>
+						<button	Name='Upload'>
+							<Font template='Button.Font' />
+							<BackgroundColor>FF000000</BackgroundColor>
+							<X>40%</X>
+							<Y>20%</Y>
+							<Width>60%</Width>
+							<Height>6%</Height>
+							<Text>Upload logs</Text>
+							<OnLeftClick>
+								timedcommand 0 "ui -load \"&filepath;/ComBotGUI_LogUpload.xml\""
+							</OnLeftClick>
+						</button>		
 					</Tab>
 					
 
