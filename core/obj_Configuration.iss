@@ -127,7 +127,6 @@ objectdef obj_Configuration_Common
 
 	Setting(string, ComBot_Mode, SetComBot_Mode)
 	Setting(bool, AutoStart, SetAutoStart)
-	Setting(bool, WarpPulse, SetWarpPulse)
 	Setting(bool, Propulsion, SetPropulsion)
 	Setting(int, Propulsion_Threshold, SetPropulsion_Threshold)
 	Setting(bool, AlwaysShieldBoost, SetAlwaysShieldBoost)
