@@ -86,21 +86,22 @@ objectdef obj_BeltPatrol inherits obj_State
 	}
 
 	
-member:bool BeltPatrol()
-{
-	if !${Client.InSpace}
+	member:bool BeltPatrol()
 	{
-		This:QueueState["Undock"]
+		if !${Client.InSpace}
+		{
+			This:QueueState["Undock"]
+			This:QueueState["MoveToBelt"]
+			This:QueueState["Traveling"]
+			This:QueueState["BeltPatrol"]
+			return TRUE
+		}
+
 		This:QueueState["MoveToBelt"]
 		This:QueueState["Traveling"]
+		This:QueueState["InitialUpdate"]
+		This:QueueState["Updated"]
 		This:QueueState["BeltPatrol"]
 		return TRUE
-	}
-
-	This:QueueState["MoveToBelt"]
-	This:QueueState["Traveling"]
-	This:QueueState["InitialUpdate"]
-	This:QueueState["Updated"]
-	This:QueueState["BeltPatrol"]
-	return TRUE
-} 
+	} 
+}
