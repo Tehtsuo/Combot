@@ -41,28 +41,8 @@ objectdef obj_Defense inherits obj_State
 			Profiling:EndTrack
 			return FALSE
 		}
-		if ${Ship.ModuleList_Regen_Shield.InactiveCount} && (${MyShip.ShieldPct} < 95 || ${Config.Common.AlwaysShieldBoost})
-		{
-			Ship.ModuleList_Regen_Shield:ActivateCount[${Ship.ModuleList_Regen_Shield.InactiveCount}]
-		}
-		if ${Ship.ModuleList_Regen_Shield.ActiveCount} && ${MyShip.ShieldPct} > 95 && !${Config.Common.AlwaysShieldBoost}
-		{
-			Ship.ModuleList_Regen_Shield:DeactivateCount[${Ship.ModuleList_Regen_Shield.ActiveCount}]
-		}
 		
-		if ${Ship.ModuleList_ActiveResists.Count}
-		{
-			Ship.ModuleList_ActiveResists:ActivateCount[${Ship.ModuleList_ActiveResists.Count}]
-		}
-		if ${Ship.ModuleList_ActiveResists.Count}
-		{
-			Ship.ModuleList_ActiveResists:ActivateCount[${Ship.ModuleList_ActiveResists.Count}]
-		}
 
-		if ${Ship.ModuleList_GangLinks.ActiveCount} < ${Ship.ModuleList_GangLinks.Count} && ${Me.ToEntity.Mode} != 3
-		{
-			Ship.ModuleList_GangLinks:ActivateCount[${Math.Calc[${Ship.ModuleList_GangLinks.Count} - ${Ship.ModuleList_GangLinks.ActiveCount}]}]
-		}
 		
 		Profiling:EndTrack
 		return FALSE	
