@@ -43,15 +43,22 @@ objectdef obj_Configuration_AutoModule
 		BaseConfig.BaseRef:AddSet[${This.SetName}]
 		This.CommonRef:AddSetting[ActiveHardeners, TRUE]
 		This.CommonRef:AddSetting[ActiveShieldBoost, 95]
+		This.CommonRef:AddSetting[ActiveArmorRepair, 95]
 		This.CommonRef:AddSetting[Cloak, TRUE]
+		This.CommonRef:AddSetting[GangLink, TRUE]
+		This.CommonRef:AddSetting[SensorBoosters, TRUE]
+		This.CommonRef:AddSetting[TrackingComputers, TRUE]
 	}
 
 	Setting(bool, ActiveHardeners, SetActiveHardeners)
 	Setting(bool, ShieldBoost, SetShieldBoost)
 	Setting(int, ActiveShieldBoost, SetActiveShieldBoost)
 	Setting(bool, ArmorRepair, SetArmorRepair)
+	Setting(int, ActiveArmorRepair, SetActiveArmorRepair)
 	Setting(bool, Cloak, SetCloak)
 	Setting(bool, GangLink, SetGangLink)
+	Setting(bool, SensorBoosters, SetSensorBoosters)
+	Setting(bool, TrackingComputers, SetTrackingComputers)
 	
 }
 
@@ -90,15 +97,6 @@ objectdef obj_AutoModule inherits obj_State
 		{
 			Ship.ModuleList_Cloaks:Activate
 		}
-		if ${Ship.ModuleList_ActiveResists.Count} && ${Config.ActiveHardeners}
-		{
-			Ship.ModuleList_ActiveResists:ActivateCount[${Ship.ModuleList_ActiveResists.Count}]
-		}
-
-		if ${Ship.ModuleList_GangLinks.ActiveCount} < ${Ship.ModuleList_GangLinks.Count} && ${Me.ToEntity.Mode} != 3 && ${Config.GangLink}
-		{
-			Ship.ModuleList_GangLinks:ActivateCount[${Math.Calc[${Ship.ModuleList_GangLinks.Count} - ${Ship.ModuleList_GangLinks.ActiveCount}]}]
-		}
 
 		if ${Ship.ModuleList_Regen_Shield.InactiveCount} && (${MyShip.ShieldPct} < ${Config.ActiveShieldBoost} || ${Config.ShieldBoost})
 		{
@@ -109,11 +107,35 @@ objectdef obj_AutoModule inherits obj_State
 			Ship.ModuleList_Regen_Shield:DeactivateCount[${Ship.ModuleList_Regen_Shield.ActiveCount}]
 		}
 		
-		
-		if ${Ship.Repair_Armor.InactiveCount} && ${Config.ArmorRepair}
+		if ${Ship.ModuleList_Repair_Armor.InactiveCount} && (${MyShip.ArmorPct} < ${Config.ActiveArmorRepair} || ${Config.ArmorRepair})
 		{
-			Ship.Repair_Armor:ActivateCount[${Ship.Repair_Armor.InactiveCount}]
+			Ship.ModuleList_Repair_Armor:ActivateCount[${Ship.ModuleList_Repair_Armor.InactiveCount}]
 		}
+		if ${Ship.ModuleList_Repair_Armor.ActiveCount} && ${MyShip.ArmorPct} > ${Config.ActiveArmorRepair} && !${Config.ArmorRepair}
+		{
+			Ship.ModuleList_Repair_Armor:DeactivateCount[${Ship.ModuleList_Repair_Armor.ActiveCount}]
+		}
+		
+		if ${Ship.ModuleList_ActiveResists.Count} && ${Config.ActiveHardeners}
+		{
+			Ship.ModuleList_ActiveResists:ActivateCount[${Ship.ModuleList_ActiveResists.Count}]
+		}
+		
+		if ${Ship.ModuleList_GangLinks.ActiveCount} < ${Ship.ModuleList_GangLinks.Count} && ${Me.ToEntity.Mode} != 3 && ${Config.GangLink}
+		{
+			Ship.ModuleList_GangLinks:ActivateCount[${Math.Calc[${Ship.ModuleList_GangLinks.Count} - ${Ship.ModuleList_GangLinks.ActiveCount}]}]
+		}
+
+		if ${Ship.ModuleList_SensorBoost.ActiveCount} < ${Ship.ModuleList_SensorBoost.Count} && ${Config.SensorBoosters}
+		{
+			Ship.ModuleList_SensorBoost:ActivateCount[${Math.Calc[${Ship.ModuleList_SensorBoost.Count} - ${Ship.ModuleList_SensorBoost.ActiveCount}]}]
+		}
+		
+		if ${Ship.ModuleList_TrackingComputer.ActiveCount} < ${Ship.ModuleList_TrackingComputer.Count} && ${Config.TrackingComputers}
+		{
+			Ship.ModuleList_TrackingComputer:ActivateCount[${Math.Calc[${Ship.ModuleList_TrackingComputer.Count} - ${Ship.ModuleList_TrackingComputer.ActiveCount}]}]
+		}
+
 		
 		return FALSE
 	}

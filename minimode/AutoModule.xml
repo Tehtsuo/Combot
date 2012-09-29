@@ -121,7 +121,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Text>If above is false, run shield boosters if shields drop below ${Script[ComBot].VariableScope.AutoModule.Config.ActiveShieldBoost}%</Text>
 					</Text>
 					<Slider name='ActiveShieldBoost'> 
-						<X>40%</X> 
+						<X>41%</X> 
 						<Y>27%</Y> 
 						<Width>30%</Width> 
 						<Height>4%</Height> 
@@ -131,16 +131,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						</OnLoad>
 						<OnChange>
 							Script[ComBot].VariableScope.AutoModule.Config:SetActiveShieldBoost[${This.Value}]
-							;UIElement[obj_Hauler_ThresholdTitle@Hauler_Frame@ComBot_Hauler]:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Hauler.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Hauler.Config.Threshold} * .01 * ${MyShip.CargoCapacity}].Round} m3]
 						</OnChange>
 					</Slider>						 
-					<Text name='ActiveShieldBoostText'>
-						<X>10%</X>
-						<Y>28%</Y>
-						<Width>30%</Width> 
-						<Height>3%</Height> 
-						<Text>If above is false, run shield boosters if shields drop below</Text>
-					</Text>
 					<Checkbox name='ArmorRepair'>
 						<X>1%</X>
 						<Y>32%</Y>
@@ -157,9 +149,29 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							Script[ComBot].VariableScope.AutoModule.Config:SetArmorRepair[${This.Checked}]
 						</OnLeftClick>
 					</Checkbox>
-					<Checkbox name='Cloaks'>
+					<Text name='ActiveArmorRepairText'>
 						<X>1%</X>
 						<Y>36%</Y>
+						<Width>40%</Width> 
+						<Height>3%</Height> 
+						<Text>If above is false, run armor repairers if armor drops below ${Script[ComBot].VariableScope.AutoModule.Config.ActiveArmorRepair}%</Text>
+					</Text>
+					<Slider name='ActiveArmorRepair'> 
+						<X>41%</X> 
+						<Y>35%</Y> 
+						<Width>30%</Width> 
+						<Height>4%</Height> 
+						<Border>1</Border>
+						<OnLoad>
+							This:SetValue[${Script[ComBot].VariableScope.AutoModule.Config.ActiveArmorRepair}]
+						</OnLoad>
+						<OnChange>
+							Script[ComBot].VariableScope.AutoModule.Config:SetActiveArmorRepair[${This.Value}]
+						</OnChange>
+					</Slider>						 
+					<Checkbox name='Cloaks'>
+						<X>1%</X>
+						<Y>40%</Y>
 						<Width>30%</Width> 
 						<Height>3%</Height> 
 						<Text>Cloaking Defices</Text>
@@ -175,7 +187,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					</Checkbox>
 					<Checkbox name='GangLinks'>
 						<X>1%</X>
-						<Y>40%</Y>
+						<Y>44%</Y>
 						<Width>30%</Width> 
 						<Height>3%</Height> 
 						<Text>Gang Links</Text>
@@ -187,6 +199,54 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						</OnLoad>
 						<OnLeftClick>
 							Script[ComBot].VariableScope.AutoModule.Config:SetGangLink[${This.Checked}]
+						</OnLeftClick>
+					</Checkbox>
+					<Checkbox name='GangLinks'>
+						<X>1%</X>
+						<Y>44%</Y>
+						<Width>30%</Width> 
+						<Height>3%</Height> 
+						<Text>Gang Links</Text>
+						<OnLoad>
+							if ${Script[ComBot].VariableScope.AutoModule.Config.GangLink}
+							{
+								This:SetChecked
+							}
+						</OnLoad>
+						<OnLeftClick>
+							Script[ComBot].VariableScope.AutoModule.Config:SetGangLink[${This.Checked}]
+						</OnLeftClick>
+					</Checkbox>
+					<Checkbox name='SensorBoosters'>
+						<X>1%</X>
+						<Y>48%</Y>
+						<Width>30%</Width> 
+						<Height>3%</Height> 
+						<Text>Sensor Boosters</Text>
+						<OnLoad>
+							if ${Script[ComBot].VariableScope.AutoModule.Config.SensorBoosters}
+							{
+								This:SetChecked
+							}
+						</OnLoad>
+						<OnLeftClick>
+							Script[ComBot].VariableScope.AutoModule.Config:SetSensorBoosters[${This.Checked}]
+						</OnLeftClick>
+					</Checkbox>
+					<Checkbox name='TrackingComputers'>
+						<X>1%</X>
+						<Y>52%</Y>
+						<Width>30%</Width> 
+						<Height>3%</Height> 
+						<Text>Tracking Computers</Text>
+						<OnLoad>
+							if ${Script[ComBot].VariableScope.AutoModule.Config.TrackingComputers}
+							{
+								This:SetChecked
+							}
+						</OnLoad>
+						<OnLeftClick>
+							Script[ComBot].VariableScope.AutoModule.Config:SetTrackingComputers[${This.Checked}]
 						</OnLeftClick>
 					</Checkbox>
 					

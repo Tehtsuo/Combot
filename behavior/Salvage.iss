@@ -411,11 +411,6 @@ objectdef obj_Salvage inherits obj_State
 		Wrecks:RequestUpdate
 		
 		
-		if ${Wrecks.TargetList.Used} > 0
-		{
-			Ship.ModuleList_SensorBoost:Activate
-		}
-		
 		Wrecks.TargetList:GetIterator[TargetIterator]
 		if ${TargetIterator:First(exists)}
 		{
