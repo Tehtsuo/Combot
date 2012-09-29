@@ -121,10 +121,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Text>If above is false, run shield boosters if shields drop below ${Script[ComBot].VariableScope.AutoModule.Config.ActiveShieldBoost}%</Text>
 					</Text>
 					<Slider name='ActiveShieldBoost'> 
-						<X>30%</X> 
-						<Y>28%</Y> 
+						<X>35%</X> 
+						<Y>26%</Y> 
 						<Width>30%</Width> 
-						<Height>5%</Height> 
+						<Height>4%</Height> 
 						<Border>1</Border>
 						<OnLoad>
 							This:SetValue[${Script[ComBot].VariableScope.AutoModule.Config.ActiveShieldBoost}]
