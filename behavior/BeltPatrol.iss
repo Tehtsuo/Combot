@@ -22,7 +22,7 @@ along with ComBot. If not, see <http://www.gnu.org/licenses/>.
 objectdef obj_BeltPatrol inherits obj_State
 {
 
-	variabe index:entity Belts
+	variable index:entity Belts
 
 	method Initialize()
 	{
