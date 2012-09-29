@@ -26,15 +26,11 @@ objectdef obj_BeltPatrol inherits obj_State
 
 	method Initialize()
 	{
-	This[parent]:Initialize
-	LavishScript:RegisterEvent[ComBot_Orca_InBelt]
-	PulseFrequency:Set[500]
-	Rats.LockOutOfRange:Set[FALSE]
+		This[parent]:Initialize
+		PulseFrequency:Set[500]
+		Dynamic:AddBehavior["BeltPatrol", "Belt Patrol", FALSE]
 	}
 
-	method Shutdown()
-	{
-	}
 
 	method Start()
 	{
