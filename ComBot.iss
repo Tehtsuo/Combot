@@ -42,7 +42,6 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 #include core/obj_AgentDialog.iss
 #include core/obj_TargetList.iss
 #include core/obj_Drones.iss
-#include core/obj_Defense.iss
 #include core/obj_Profiling.iss
 #include core/obj_Delay.iss
 #include core/obj_Fleet.iss
@@ -102,7 +101,6 @@ function main(string Character="")
 	declarevariable AgentDialog obj_AgentDialog script
 	declarevariable Drones obj_Drones script
 	declarevariable Jetcan obj_Jetcan script
-	declarevariable Defense obj_Defense script
 	declarevariable Delay obj_Delay script
 	declarevariable Fleets obj_Fleet script
 	declarevariable Dynamic obj_Dynamic script
