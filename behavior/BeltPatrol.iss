@@ -95,8 +95,6 @@ objectdef obj_BeltPatrol inherits obj_State
 
 		This:QueueState["MoveToBelt"]
 		This:QueueState["Traveling"]
-		This:QueueState["InitialUpdate"]
-		This:QueueState["Updated"]
 		This:QueueState["BeltPatrol"]
 		return TRUE
 	} 
