@@ -176,16 +176,7 @@ objectdef obj_Ratter inherits obj_State
 			return TRUE
 		}
 		
-		variable int MaxTarget = ${MyShip.MaxLockedTargets}
-		if ${Me.MaxLockedTargets} < ${MaxTarget}
-		{
-			MaxTarget:Set[${Me.MaxLockedTargets}]
-		}
-		Rats.MinLockCount:Set[${Math.Calc[${MaxTarget}-2]}]
-		Rats.MaxRange:Set[300000]
-		Rats.AutoLock:Set[TRUE]
-		Rats.AutoRelock:Set[TRUE]		
-		Rats:RequestUpdate
+		return FALSE
 	}
 	
 
