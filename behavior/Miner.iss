@@ -157,6 +157,9 @@ objectdef obj_Miner inherits obj_State
 		Event[ComBot_Orca_InBelt]:AttachAtom[This:OrcaInBelt]
 		PulseFrequency:Set[500]
 		Asteroids.LockOutOfRange:Set[FALSE]
+		Asteroids:SetIPCExclusion["MiningTargets"]
+		Asteroids.ForceLockExclusion:Set[TRUE]
+		Dynamic:AddBehavior["Miner", "Miner", FALSE]
 	}
 
 	method Shutdown()
@@ -181,6 +184,7 @@ objectdef obj_Miner inherits obj_State
 	method Stop()
 	{
 		This:DeactivateStateQueueDisplay
+		Asteroids:ClearExclusions
 		This:Clear
 	}
 	
@@ -244,6 +248,7 @@ objectdef obj_Miner inherits obj_State
 					}
 					UI:Update["obj_Miner", "Warping to ${Local[${Config.Container_Name}].ToFleetMember.ToPilot.Name}", "g"]
 					Local[${Config.Container_Name}].ToFleetMember:WarpTo
+					Asteroids:ClearExclusions
 					Client:Wait[5000]
 					This:Clear
 					Asteroids.LockedTargetList:Clear
@@ -275,7 +280,9 @@ objectdef obj_Miner inherits obj_State
 				if ${Drones.DronesInSpace}
 				{
 					Drones:Recall
-					return FALSE
+					This:InsertState["CheckCargoHold"]
+					This:InsertState["Idle", 5000]
+					return TRUE
 				}
 				UI:Update["obj_Miner", "Unload trip required", "g"]
 				if ${Config.OrcaMode}
@@ -285,6 +292,7 @@ objectdef obj_Miner inherits obj_State
 				Bookmarks:StoreLocation
 				This:Clear
 				Asteroids.LockedTargetList:Clear
+				Asteroids:ClearExclusions
 				Move:Bookmark[${Config.Dropoff}]
 				This:QueueState["Traveling", 1000]
 				This:QueueState["Mine"]
@@ -313,7 +321,9 @@ objectdef obj_Miner inherits obj_State
 				if ${Drones.DronesInSpace}
 				{
 					Drones:Recall
-					return FALSE
+					This:InsertState["CheckCargoHold"]
+					This:InsertState["Idle", 5000]
+					return TRUE
 				}
 				UI:Update["obj_Miner", "Unload trip required", "g"]
 				if ${Client.InSpace}
@@ -326,6 +336,7 @@ objectdef obj_Miner inherits obj_State
 				}
 				This:Clear
 				Asteroids.LockedTargetList:Clear
+				Asteroids:ClearExclusions
 				Move:Bookmark[${Config.Dropoff}]
 				This:QueueState["Traveling", 1000]
 				This:QueueState["PrepOffload", 1000]
@@ -592,6 +603,12 @@ objectdef obj_Miner inherits obj_State
 	member:bool Mine()
 	{
 		Profiling:StartTrack["Miner_Mine"]
+		if ${Me.ToEntity.Mode} == 3
+		{
+			Profiling:EndTrack
+			return FALSE
+		}
+		
 		This:Clear
 		This:QueueState["OpenCargoHold", 10]
 
@@ -602,12 +619,6 @@ objectdef obj_Miner inherits obj_State
 			This:QueueState["Mine"]
 			Profiling:EndTrack
 			return TRUE
-		}
-		
-		if ${Me.ToEntity.Mode} == 3
-		{
-			Profiling:EndTrack
-			return FALSE
 		}
 		
 		variable int MaxTarget = ${MyShip.MaxLockedTargets}
@@ -672,6 +683,8 @@ objectdef obj_Miner inherits obj_State
 				{
 					Move:Approach[${Orca}, LOOT_RANGE]
 					Profiling:EndTrack
+					This:Clear
+					This:QueueState["Mine"]
 					return FALSE
 				}
 				else
@@ -685,12 +698,16 @@ objectdef obj_Miner inherits obj_State
 								UI:Update["obj_Miner", "Opening ${Config.Container_Name}", "g"]
 								Entity[${Orca}]:Open
 								Profiling:EndTrack
+								This:Clear
+								This:QueueState["Mine"]
 								return FALSE
 							}
 							if !${EVEWindow[ByItemID, ${Orca}](exists)}
 							{
 								EVEWindow[ByName, Inventory]:MakeChildActive[${Orca}]
 								Profiling:EndTrack
+								This:Clear
+								This:QueueState["Mine"]
 								return FALSE
 							}
 							;UI:Update["obj_Miner", "Unloading to ${Config.Container_Name}", "g"]
@@ -712,12 +729,16 @@ objectdef obj_Miner inherits obj_State
 								UI:Update["obj_Miner", "Opening ${Config.Container_Name}", "g"]
 								Entity[${Orca}]:Open
 								Profiling:EndTrack
+								This:Clear
+								This:QueueState["Mine"]
 								return FALSE
 							}
 							if !${EVEWindow[ByItemID, ${Orca}](exists)}
 							{
 								EVEWindow[ByName, Inventory]:MakeChildActive[${Orca}]
 								Profiling:EndTrack
+								This:Clear
+								This:QueueState["Mine"]
 								return FALSE
 							}
 							;UI:Update["obj_Miner", "Unloading to ${Config.Container_Name}", "g"]
@@ -817,6 +838,8 @@ objectdef obj_Miner inherits obj_State
 			return TRUE
 		}
 		Profiling:EndTrack
+		This:Clear
+		This:QueueState["Mine"]
 		return FALSE
 	}
 
@@ -830,6 +853,9 @@ objectdef obj_Miner inherits obj_State
 			return TRUE
 		}
 		Asteroids:RequestUpdate
+		
+		
+		
 		variable iterator Roid
 		Asteroids.LockedTargetList:GetIterator[Roid]
 		

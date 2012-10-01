@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ISUI>
+
+<!--
+
+ComBot  Copyright © 2012  Tehtsuo and Vendan
+
+This file is part of ComBot.
+
+ComBot is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ComBot is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+
+	<template name='Information.Font'>	
+		<Name>Terminal</Name>
+		<Size>8</Size>
+		<Color>FFFFFFFF</Color>
+	</template>	
+
+	<window name='ComBot_AutoModule'>
+		<Visible>1</Visible>
+		<BackGroundColor></BackGroundColor>
+		<Border>0</Border>
+		<X>200</X>
+		<Y>300</Y>
+		<Width>800</Width>
+		<Height>600</Height>
+		<TitleBar>
+			<Width>100%</Width>
+			<Height>20</Height>
+			<Border>0</Border>
+			<BackgroundColor>FF000000</BackgroundColor>
+			<Children>
+				<Text name='ComBot_AutoModule_TitleBar_Title'>
+					<X>0</X>
+					<Y>3</Y>
+					<Width>100%</Width>
+					<Height>20</Height>
+					<Alignment>Center</Alignment>
+					<Text>AutoModule Configuration</Text>
+				</Text>
+				<button	Name='Close'>
+					<X>r40</X>
+					<Y>0</Y>
+					<Width>40</Width>
+					<Height>20</Height>
+					<Text>Close</Text>
+					<OnLeftClick>
+						ui -unload "&filepath;/AutoModule"
+					</OnLeftClick>
+				</button>
+			</Children>
+		</TitleBar>
+		<Children name="ComBot_AutoModule_Children">
+			<Frame name="ComBot_AutoModule_Frame">
+				<X>0</X>
+				<Y>5</Y>
+				<Width>100%</Width>
+				<Height>100%</Height>
+				<BackgroundColor>FF000000</BackgroundColor>
+				<Border>1</Border>
+				<BorderColor>FFFFFFFF</BorderColor>
+				<Children name="ComBot_AutoModule_Frame_Children">
+					<Text name='obj_GridWatcherInformation'> 
+						<Font template='Information.Font' />
+						<X>1%</X> 
+						<Y>1%</Y> 
+						<Width>98%</Width> 
+						<Height>18%</Height> 
+						<Wrap />
+						<Text>AutoModule is a MiniMode to manage modules.  The modules selected below will be automatically turned on whenever they are able to be enabled.  This MiniMode should rarely be turned off, as it includes active hardeners.</Text>
+					</Text>
+					<Checkbox name='ActiveHardeners'>
+						<X>1%</X>
+						<Y>20%</Y>
+						<Width>30%</Width> 
+						<Height>3%</Height> 
+						<Text>Active Hardeners</Text>
+						<OnLoad>
+							if ${Script[ComBot].VariableScope.AutoModule.Config.ActiveHardeners}
+							{
+								This:SetChecked
+							}
+						</OnLoad>
+						<OnLeftClick>
+							Script[ComBot].VariableScope.AutoModule.Config:SetActiveHardeners[${This.Checked}]
+						</OnLeftClick>
+					</Checkbox>
+					<Checkbox name='ShieldBoost'>
+						<X>1%</X>
+						<Y>24%</Y>
+						<Width>30%</Width> 
+						<Height>3%</Height> 
+						<Text>Always run shield boosters</Text>
+						<OnLoad>
+							if ${Script[ComBot].VariableScope.AutoModule.Config.ShieldBoost}
+							{
+								This:SetChecked
+							}
+						</OnLoad>
+						<OnLeftClick>
+							Script[ComBot].VariableScope.AutoModule.Config:SetShieldBoost[${This.Checked}]
+						</OnLeftClick>
+					</Checkbox>
+					<Text name='ActiveShieldBoostText'>
+						<X>1%</X>
+						<Y>28%</Y>
+						<Width>40%</Width> 
+						<Height>3%</Height> 
+						<Text>If above is false, run shield boosters if shields drop below ${Script[ComBot].VariableScope.AutoModule.Config.ActiveShieldBoost}%</Text>
+					</Text>
+					<Slider name='ActiveShieldBoost'> 
+						<X>41%</X> 
+						<Y>27%</Y> 
+						<Width>30%</Width> 
+						<Height>4%</Height> 
+						<Border>1</Border>
+						<OnLoad>
+							This:SetValue[${Script[ComBot].VariableScope.AutoModule.Config.ActiveShieldBoost}]
+						</OnLoad>
+						<OnChange>
+							Script[ComBot].VariableScope.AutoModule.Config:SetActiveShieldBoost[${This.Value}]
+						</OnChange>
+					</Slider>						 
+					<Checkbox name='ArmorRepair'>
+						<X>1%</X>
+						<Y>32%</Y>
+						<Width>30%</Width> 
+						<Height>3%</Height> 
+						<Text>Armor Repairers</Text>
+						<OnLoad>
+							if ${Script[ComBot].VariableScope.AutoModule.Config.ArmorRepair}
+							{
+								This:SetChecked
+							}
+						</OnLoad>
+						<OnLeftClick>
+							Script[ComBot].VariableScope.AutoModule.Config:SetArmorRepair[${This.Checked}]
+						</OnLeftClick>
+					</Checkbox>
+					<Text name='ActiveArmorRepairText'>
+						<X>1%</X>
+						<Y>36%</Y>
+						<Width>40%</Width> 
+						<Height>3%</Height> 
+						<Text>If above is false, run armor repairers if armor drops below ${Script[ComBot].VariableScope.AutoModule.Config.ActiveArmorRepair}%</Text>
+					</Text>
+					<Slider name='ActiveArmorRepair'> 
+						<X>41%</X> 
+						<Y>35%</Y> 
+						<Width>30%</Width> 
+						<Height>4%</Height> 
+						<Border>1</Border>
+						<OnLoad>
+							This:SetValue[${Script[ComBot].VariableScope.AutoModule.Config.ActiveArmorRepair}]
+						</OnLoad>
+						<OnChange>
+							Script[ComBot].VariableScope.AutoModule.Config:SetActiveArmorRepair[${This.Value}]
+						</OnChange>
+					</Slider>						 
+					<Checkbox name='Cloaks'>
+						<X>1%</X>
+						<Y>40%</Y>
+						<Width>30%</Width> 
+						<Height>3%</Height> 
+						<Text>Cloaking Devices</Text>
+						<OnLoad>
+							if ${Script[ComBot].VariableScope.AutoModule.Config.Cloak}
+							{
+								This:SetChecked
+							}
+						</OnLoad>
+						<OnLeftClick>
+							Script[ComBot].VariableScope.AutoModule.Config:SetCloak[${This.Checked}]
+						</OnLeftClick>
+					</Checkbox>
+					<Checkbox name='GangLinks'>
+						<X>1%</X>
+						<Y>44%</Y>
+						<Width>30%</Width> 
+						<Height>3%</Height> 
+						<Text>Gang Links</Text>
+						<OnLoad>
+							if ${Script[ComBot].VariableScope.AutoModule.Config.GangLink}
+							{
+								This:SetChecked
+							}
+						</OnLoad>
+						<OnLeftClick>
+							Script[ComBot].VariableScope.AutoModule.Config:SetGangLink[${This.Checked}]
+						</OnLeftClick>
+					</Checkbox>
+					<Checkbox name='SensorBoosters'>
+						<X>1%</X>
+						<Y>48%</Y>
+						<Width>30%</Width> 
+						<Height>3%</Height> 
+						<Text>Sensor Boosters</Text>
+						<OnLoad>
+							if ${Script[ComBot].VariableScope.AutoModule.Config.SensorBoosters}
+							{
+								This:SetChecked
+							}
+						</OnLoad>
+						<OnLeftClick>
+							Script[ComBot].VariableScope.AutoModule.Config:SetSensorBoosters[${This.Checked}]
+						</OnLeftClick>
+					</Checkbox>
+					<Checkbox name='TrackingComputers'>
+						<X>1%</X>
+						<Y>52%</Y>
+						<Width>30%</Width> 
+						<Height>3%</Height> 
+						<Text>Tracking Computers</Text>
+						<OnLoad>
+							if ${Script[ComBot].VariableScope.AutoModule.Config.TrackingComputers}
+							{
+								This:SetChecked
+							}
+						</OnLoad>
+						<OnLeftClick>
+							Script[ComBot].VariableScope.AutoModule.Config:SetTrackingComputers[${This.Checked}]
+						</OnLeftClick>
+					</Checkbox>
+					
+				</Children>
+			</Frame>
+		</Children>
+	</window>
+	
+</ISUI>

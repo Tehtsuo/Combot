@@ -19,106 +19,78 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-objectdef obj_Ship
+objectdef obj_Ship inherits obj_State
 {
-	variable int NextPulse = ${Math.Calc[${LavishScript.RunningTime} + ${PulseIntervalInMilliseconds} + ${Math.Rand[500]}]}
-	variable int PulseIntervalInMilliseconds = 2000
-	
-
 	variable int RetryUpdateModuleList=1
 	
-	
 	variable index:string ModuleLists
-	variable index:module ModuleList
-	variable obj_ModuleList ModuleList_ArmorProjectors
-	variable obj_ModuleList ModuleList_ShieldTransporters
-	variable obj_ModuleList ModuleList_MiningLaser
-	variable obj_ModuleList ModuleList_Weapon
-	variable obj_ModuleList ModuleList_ECCM
-	variable obj_ModuleList ModuleList_ActiveResists
-	variable obj_ModuleList ModuleList_Regen_Shield
-	variable obj_ModuleList ModuleList_Repair_Armor
-	variable obj_ModuleList ModuleList_Repair_Hull
-	variable obj_ModuleList ModuleList_AB_MWD
-	variable obj_ModuleList ModuleList_Passive
-	variable obj_ModuleList ModuleList_Salvagers
-	variable obj_ModuleList ModuleList_TractorBeams
-	variable obj_ModuleList ModuleList_Cloaks
-	variable obj_ModuleList ModuleList_StasisWeb
-	variable obj_ModuleList ModuleList_SensorBoost
-	variable obj_ModuleList ModuleList_TargetPainter
-	variable obj_ModuleList ModuleList_TrackingComputer
-	variable obj_ModuleList ModuleList_GangLinks
+	variable collection:uint ModuleQueries
 
-	method Initialize()
+	method Initialize(int64 ID)
 	{
-		Event[ISXEVE_onFrame]:AttachAtom[This:Pulse]
-		ModuleLists:Insert[ArmorProjectors]
-		ModuleLists:Insert[ShieldTransporters]
-		ModuleLists:Insert[MiningLaser]
-		ModuleLists:Insert[Weapon]
-		ModuleLists:Insert[ECCM]
-		ModuleLists:Insert[ActiveResists]
-		ModuleLists:Insert[Regen_Shield]
-		ModuleLists:Insert[Repair_Armor]
-		ModuleLists:Insert[Repair_Hull]
-		ModuleLists:Insert[AB_MWD]
-		ModuleLists:Insert[Passive]
-		ModuleLists:Insert[Salvagers]
-		ModuleLists:Insert[TractorBeams]
-		ModuleLists:Insert[Cloaks]
-		ModuleLists:Insert[StasisWeb]
-		ModuleLists:Insert[SensorBoost]
-		ModuleLists:Insert[TargetPainter]
-		ModuleLists:Insert[TrackingComputer]
-		ModuleLists:Insert[GangLinks]
+		This[parent]:Initialize
+		This.NonGameTiedPulse:Set[TRUE]
+		This:AddModuleList[ArmorProjectors, "ToItem.GroupID = GROUP_ARMOR_PROJECTOR"]
+		This:AddModuleList[ShieldTransporters, "ToItem.GroupID = GROUP_SHIELD_TRANSPORTERS"]
+		This:AddModuleList[MiningLaser, "ToItem.GroupID = GROUP_MININGLASER || ToItem.GroupID = GROUP_STRIPMINER || ToItem.GroupID = GROUP_FREQUENCYMININGLASER"]
+		This:AddModuleList[Weapon, "ToItem.GroupID = GROUP_ENERGYWEAPON || ToItem.GroupID = GROUP_PROJECTILEWEAPON || ToItem.GroupID = GROUP_HYBRIDWEAPON || ToItem.GroupID = GROUP_MISSILELAUNCHER || ToItem.GroupID = GROUP_MISSILELAUNCHERASSAULT || ToItem.GroupID = GROUP_MISSILELAUNCHERBOMB || ToItem.GroupID = GROUP_MISSILELAUNCHERCITADEL || ToItem.GroupID = GROUP_MISSILELAUNCHERCRUISE || ToItem.GroupID = GROUP_MISSILELAUNCHERDEFENDER || ToItem.GroupID = GROUP_MISSILELAUNCHERHEAVY || ToItem.GroupID = GROUP_MISSILELAUNCHERHEAVYASSAULT || ToItem.GroupID = GROUP_MISSILELAUNCHERROCKET || ToItem.GroupID = GROUP_MISSILELAUNCHERSIEGE || ToItem.GroupID = GROUP_MISSILELAUNCHERSNOWBALL || ToItem.GroupID = GROUP_MISSILELAUNCHERSTANDARD"]
+		This:AddModuleList[ECCM, "ToItem.GroupID = GROUP_ECCM"]
+		This:AddModuleList[ActiveResists, "ToItem.GroupID = GROUP_DAMAGE_CONTROL || ToItem.GroupID = GROUP_SHIELD_HARDENER || ToItem.GroupID = GROUP_ARMOR_HARDENERS || ToItem.GroupID = GROUP_ARMOR_RESISTANCE_SHIFT_HARDENER"]
+		This:AddModuleList[Regen_Shield, "ToItem.GroupID = GROUP_SHIELD_BOOSTER"]
+		This:AddModuleList[Repair_Armor, "ToItem.GroupID = GROUP_ARMOR_REPAIRERS"]
+		This:AddModuleList[Repair_Hull, "ToItem.GroupID = NONE"]
+		This:AddModuleList[AB_MWD, "ToItem.GroupID = GROUP_AFTERBURNER"]
+		This:AddModuleList[Passive, "!IsActivatable"]
+		This:AddModuleList[Salvagers, "(ToItem.GroupID = GROUP_DATA_MINER && ToItem.TypeID = TYPE_SALVAGER) || ToItem.GroupID = GROUP_SALVAGER"]
+		This:AddModuleList[TractorBeams, "ToItem.GroupID = GROUP_TRACTOR_BEAM"]
+		This:AddModuleList[Cloaks, "ToItem.GroupID = GROUP_CLOAKING_DEVICE"]
+		This:AddModuleList[StasisWeb, "ToItem.GroupID = GROUP_STASIS_WEB"]
+		This:AddModuleList[SensorBoost, "ToItem.GroupID = GROUP_SENSORBOOSTER"]
+		This:AddModuleList[TargetPainter, "ToItem.GroupID = GROUP_TARGETPAINTER"]
+		This:AddModuleList[TrackingComputer, "ToItem.GroupID = GROUP_TRACKINGCOMPUTER"]
+		This:AddModuleList[GangLinks, "ToItem.GroupID = GROUP_GANGLINK"]
+		This:AddModuleList[EnergyTransfer, "ToItem.GroupID = GROUP_ENERGY_TRANSFER"]
+		This:Clear
+		This:QueueState["WaitForSpace"]
+		This:QueueState["UpdateModules"]
 	}
-
-	method Shutdown()
+	
+	method AddModuleList(string Name, string QueryString)
 	{
-		Event[ISXEVE_onFrame]:DetachAtom[This:Pulse]
-	}	
-
-	method Pulse()
+		This.ModuleLists:Insert[${Name}]
+		This.ModuleQueries:Set[${This.ModuleLists.Used}, ${LavishScript.CreateQuery[${QueryString.Escape}]}]
+		declarevariable ModuleList_${Name} obj_ModuleList object
+		This:Clear
+		This:QueueState["WaitForSpace"]
+		This:QueueState["UpdateModules"]
+	}
+	
+	member:bool WaitForSpace()
 	{
-	    if ${LavishScript.RunningTime} >= ${This.NextPulse}
+		if ${Client.InSpace}
 		{
-			if !${Me.InStation} && ${Client.InSpace}
-			{
-				if ${RetryUpdateModuleList} == 10
-				{
-					UI:Update["obj_Ship", "UpdateModuleList - No modules found. Pausing.", "r"]
-					UI:Update["obj_Ship", "UpdateModuleList - If this ship has slots, you must have at least one module equipped, of any type.", "r"]
-					RetryUpdateModuleList:Set[0]
-					EVEBot:Pause
-				}
-
-				if ${RetryUpdateModuleList} > 0
-				{
-					This:UpdateModuleList
-				}
-			}
-			
-				
-    		This.NextPulse:Set[${Math.Calc[${LavishScript.RunningTime} + ${PulseIntervalInMilliseconds} + ${Math.Rand[500]}]}]
+			return TRUE
 		}
+		return FALSE
 	}	
 	
-	
-	method UpdateModuleList()
+	member:bool UpdateModules()
 	{
 		variable iterator List
+		variable index:module ModuleList
 		ModuleLists:GetIterator[List]
+		
+		UI:Update["obj_Ship", "Update Called"]
 
 		if !${Client.InSpace}
 		{
-			UI:Update["obj_Ship", "UpdateModuleList called while in station", "o"]
+			UI:Update["obj_Ship", "UpdateModules called while in station", "o"]
 			RetryUpdateModuleList:Set[1]
 			return
 		}
 
 		/* build module lists */
-		This.ModuleList:Clear
+		ModuleList:Clear
 
 		if ${List:First(exists)}
 			do
@@ -127,128 +99,43 @@ objectdef obj_Ship
 			}
 			while ${List:Next(exists)}		
 
-		Me.Ship:GetModules[This.ModuleList]
+		Me.Ship:GetModules[ModuleList]
 
-		if !${This.ModuleList.Used} && ${Me.Ship.HighSlots} > 0
+		if !${ModuleList.Used} && ${Me.Ship.HighSlots} > 0
 		{
 			UI:Update["obj_Ship", "UpdateModuleList - No modules found. Retrying in a few seconds", "o"]
 			UI:Update["obj_Ship", "If this ship has slots, you must have at least one module equipped, of any type.", "o"]
 			RetryUpdateModuleList:Inc
-			return
+			if ${RetryUpdateModuleList} >= 10
+			{
+				return TRUE
+			}
+			return FALSE
 		}
 		RetryUpdateModuleList:Set[0]
 		
 		variable iterator ModuleIter
 		
-		This.ModuleList:GetIterator[ModuleIter]
+		ModuleList:GetIterator[ModuleIter]
 		if ${ModuleIter:First(exists)}
 		do
 		{
-			variable int GroupID
-			GroupID:Set[${ModuleIter.Value.ToItem.GroupID}]
-			variable int TypeID
-			TypeID:Set[${ModuleIter.Value.ToItem.TypeID}]
-			
 			if !${ModuleIter.Value(exists)}
 			{
 				UI:Update["obj_Ship", "UpdateModuleList - Null module found. Retrying in a few seconds.", "o"]
 				RetryUpdateModuleList:Inc
-				return
+				return FALSE
 			}
-			
-			if !${ModuleIter.Value.IsActivatable}
+			if ${List:First(exists)}
 			{
-				This.ModuleList_Passive:Insert[${ModuleIter.Value.ID}]
-				continue
-			}
-			
-			if ${ModuleIter.Value.MiningAmount(exists)}
-			{
-				This.ModuleList_MiningLaser:Insert[${ModuleIter.Value.ID}]
-				continue
-			}
-			
-			
-			switch ${GroupID}
-			{
-				case GROUP_SHIELD_TRANSPORTER
-					This.ModuleList_ShieldTransporters:Insert[${ModuleIter.Value.ID}]
-					break
-				case GROUP_ARMOR_PROJECTOR
-					This.ModuleList_ArmorProjectors:Insert[${ModuleIter.Value.ID}]
-					break
-				case GROUP_DAMAGE_CONTROL
-				case GROUP_SHIELD_HARDENER
-				case GROUP_ARMOR_HARDENERS
-				case GROUP_ARMOR_RESISTANCE_SHIFT_HARDENER
-					This.ModuleList_ActiveResists:Insert[${ModuleIter.Value.ID}]
-					break
-				case GROUP_ENERGYWEAPON
-				case GROUP_PROJECTILEWEAPON
-				case GROUP_HYBRIDWEAPON
-				case GROUP_MISSILELAUNCHER
-				case GROUP_MISSILELAUNCHERASSAULT
-				case GROUP_MISSILELAUNCHERBOMB
-				case GROUP_MISSILELAUNCHERCITADEL
-				case GROUP_MISSILELAUNCHERCRUISE
-				case GROUP_MISSILELAUNCHERDEFENDER
-				case GROUP_MISSILELAUNCHERHEAVY
-				case GROUP_MISSILELAUNCHERHEAVYASSAULT
-				case GROUP_MISSILELAUNCHERROCKET
-				case GROUP_MISSILELAUNCHERSIEGE
-				case GROUP_MISSILELAUNCHERSNOWBALL
-				case GROUP_MISSILELAUNCHERSTANDARD
-					This.ModuleList_Weapon:Insert[${ModuleIter.Value.ID}]
-					break
-				case GROUP_ECCM
-					This.ModuleList_ECCM:Insert[${ModuleIter.Value.ID}]
-					break
-				case GROUP_FREQUENCY_MINING_LASER
-					break
-				case GROUP_SHIELD_BOOSTER
-					This.ModuleList_Regen_Shield:Insert[${ModuleIter.Value.ID}]
-					break
-				case GROUP_AFTERBURNER
-					This.ModuleList_AB_MWD:Insert[${ModuleIter.Value.ID}]
-					break
-				case GROUP_ARMOR_REPAIRERS
-					This.ModuleList_Repair_Armor:Insert[${ModuleIter.Value.ID}]
-					break
-				case GROUP_DATA_MINER
-					if ${TypeID} == TYPE_SALVAGER
+				do
+				{
+					if ${LavishScript.QueryEvaluate[${This.ModuleQueries.Element[${List.Key}]}, ModuleIter.Value]}
 					{
-						This.ModuleList_Salvagers:Insert[${ModuleIter.Value.ID}]
+						ModuleList_${List.Value}:Insert[${ModuleIter.Value.ID}]
 					}
-					break
-				case GROUP_SALVAGER
-					This.ModuleList_Salvagers:Insert[${ModuleIter.Value.ID}]
-					break
-				case GROUP_TRACTOR_BEAM
-					This.ModuleList_TractorBeams:Insert[${ModuleIter.Value.ID}]
-					break
-				case NONE
-					This.ModuleList_Repair_Hull:Insert[${ModuleIter.Value.ID}]
-					break
-				case GROUP_CLOAKING_DEVICE
-					This.ModuleList_Cloaks:Insert[${ModuleIter.Value.ID}]
-					break
-				case GROUP_STASIS_WEB
-					This.ModuleList_StasisWeb:Insert[${ModuleIter.Value.ID}]
-					break
-				case GROUP_SENSORBOOSTER
-					This.ModuleList_SensorBoost:Insert[${ModuleIter.Value.ID}]
-					break
-				case GROUP_TARGETPAINTER
-					This.ModuleList_TargetPainter:Insert[${ModuleIter.Value.ID}]
-					break
-				case GROUP_TRACKINGCOMPUTER
-					This.ModuleList_TrackingComputer:Insert[${ModuleIter.Value.ID}]
-					break
-				case GROUP_GANGLINK
-					This.ModuleList_GangLinks:Insert[${ModuleIter.Value.ID}]
-					break
-				default
-					break
+				}
+				while ${List:Next(exists)}
 			}
 		}
 		while ${ModuleIter:Next(exists)}
@@ -275,6 +162,19 @@ objectdef obj_Ship
 		{
 			UI:Update["obj_Ship", "Warning: More than 1 Afterburner or MWD was detected, I will only use the first one.", "o"]
 		}
+		This:QueueState["WaitForStation"]
+		This:QueueState["WaitForSpace"]
+		This:QueueState["UpdateModules"]
+		return TRUE
+	}
+	
+	member:bool WaitForStation()
+	{
+		if ${Me.InStation}
+		{
+			return TRUE
+		}
+		return FALSE
 	}
 	
 }

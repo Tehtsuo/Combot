@@ -3,7 +3,7 @@
 
 <!--
 
-ComBot  Copyright Â© 2012  Tehtsuo and Vendan
+ComBot  Copyright © 2012  Tehtsuo and Vendan
 
 This file is part of ComBot.
 
@@ -46,28 +46,40 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 		<Bold />
 	</template>	
 
-	<window name='ComBot_NewFleet'>
+	<window name='ComBot_MiniMode'>
 		<Visible>1</Visible>
 		<BackGroundColor></BackGroundColor>
 		<Border>0</Border>
 		<X>200</X>
 		<Y>300</Y>
-		<Width>400</Width>
-		<Height>80</Height>
+		<Width>800</Width>
+		<Height>600</Height>
 		<TitleBar>
 			<Width>100%</Width>
 			<Height>20</Height>
 			<Border>0</Border>
-			<BackgroundColor>FF888888</BackgroundColor>
+			<BackgroundColor>FF000000</BackgroundColor>
 			<Children>
-				<Text name='ComBot_TitleBar_Title'>
-					<Alignment>Center</Alignment>
+				<Text name='ComBot_MiniMode_TitleBar_Title'>
 					<X>0</X>
 					<Y>3</Y>
 					<Width>100%</Width>
 					<Height>20</Height>
-					<Text>New Fleet</Text>
+					<Alignment>Center</Alignment>
+					<Text>MiniMode Only Configuration</Text>
 				</Text>
+				<button	Name='Help'>
+					<Font template='Button.Font' />
+					<BackgroundColor>FF000000</BackgroundColor>
+					<X>r80</X>
+					<Y>0</Y>
+					<Width>40</Width>
+					<Height>20</Height>
+					<Text>Help</Text>
+					<OnLeftClick>
+						timedcommand 0 "OSExecute http://eve.isxgames.com/wiki/index.php?title=ComBot_MiniMode"
+					</OnLeftClick>
+				</button>
 				<button	Name='Close'>
 					<X>r40</X>
 					<Y>0</Y>
@@ -75,13 +87,13 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					<Height>20</Height>
 					<Text>Close</Text>
 					<OnLeftClick>
-						ui -unload "&filepath;/ComBotGUI_NewFleet"
+						ui -unload "&filepath;/MiniMode"
 					</OnLeftClick>
 				</button>
 			</Children>
 		</TitleBar>
-		<Children name="ComBot_NewFleet_Children">
-			<Frame name="ComBot_NewFleet_Frame">
+		<Children name="ComBot_MiniMode_Children">
+			<Frame name="ComBot_MiniMode_Frame">
 				<X>0</X>
 				<Y>5</Y>
 				<Width>100%</Width>
@@ -89,35 +101,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 				<BackgroundColor>FF000000</BackgroundColor>
 				<Border>1</Border>
 				<BorderColor>FFFFFFFF</BorderColor>
-				<Children name="ComBot_NewFleet_Frame_Children">
-					<Textentry name="FleetName">
-						<X>1%</X>
-						<Y>30%</Y>
-						<Width>60%</Width>
-						<Height>40%</Height>
-					</Textentry>
-					<Button name="Save">
-						<X>62%</X>
-						<Y>20%</Y>
-						<Width>36%</Width>
-						<Height>30%</Height>
-						<Text>Save</Text>
-						<OnLeftClick>
-							Script[ComBot].VariableScope.Fleets:SaveFleet["${UIElement[FleetName@ComBot_NewFleet_Frame@ComBot_NewFleet].Text.Escape.Escape}"]
-							ui -unload "&filepath;/ComBotGUI_NewFleet"
-						</OnLeftClick>
-					</Button>
-					<Button name="Broadcast">
-						<X>62%</X>
-						<Y>50%</Y>
-						<Width>36%</Width>
-						<Height>30%</Height>
-						<Text>Broadcast Save</Text>
-						<OnLeftClick>
-							relay all Script[ComBot].VariableScope.Fleets:SaveFleet["${UIElement[FleetName@ComBot_NewFleet_Frame@ComBot_NewFleet].Text.Escape.Escape}"]
-							ui -unload "&filepath;/ComBotGUI_NewFleet"
-						</OnLeftClick>
-					</Button>
+				<Children name="ComBot_MiniMode_Frame_Children">
+
 				</Children>
 			</Frame>
 		</Children>

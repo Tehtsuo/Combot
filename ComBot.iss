@@ -42,19 +42,15 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 #include core/obj_AgentDialog.iss
 #include core/obj_TargetList.iss
 #include core/obj_Drones.iss
-#include core/obj_Defense.iss
 #include core/obj_Profiling.iss
 #include core/obj_Delay.iss
 #include core/obj_Fleet.iss
 #include core/obj_Login.iss
+#include core/obj_Dynamic.iss
 
-#include behavior/Salvage.iss
-#include behavior/Miner.iss
-#include behavior/Hauler.iss
-#include behavior/HangerSale.iss
-#include behavior/Ratter.iss
-#include behavior/Combat.iss
+#include temp/behaviorincludes.iss
 
+#include temp/minimodeincludes.iss
 
 function atexit()
 {
@@ -95,7 +91,6 @@ function main(string Character="")
 	declarevariable Profiling obj_Profiling script
 	declarevariable Client obj_Client script
 	declarevariable Move obj_Move script
-	declarevariable InstaWarp obj_InstaWarp script
 	declarevariable Ship obj_Ship script
 	declarevariable Cargo obj_Cargo script
 	declarevariable Security obj_Security script
@@ -106,16 +101,16 @@ function main(string Character="")
 	declarevariable AgentDialog obj_AgentDialog script
 	declarevariable Drones obj_Drones script
 	declarevariable Jetcan obj_Jetcan script
-	declarevariable Defense obj_Defense script
 	declarevariable Delay obj_Delay script
 	declarevariable Fleets obj_Fleet script
-
-	declarevariable Salvage obj_Salvage script
-	declarevariable Miner obj_Miner script
-	declarevariable Hauler obj_Hauler script
-	declarevariable Ratter obj_Ratter script
-	declarevariable Combat obj_Combat script
-	declarevariable HangerSale obj_HangerSale script
+	declarevariable Dynamic obj_Dynamic script
+	
+	#include temp/behaviordeclares.iss
+	
+	#include temp/minimodedeclares.iss
+	
+	Dynamic:PopulateBehaviors
+	Dynamic:PopulateMiniModes
 	
 	UI:Update["ComBot", "Module initialization complete", "y"]
 	

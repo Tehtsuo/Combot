@@ -48,7 +48,8 @@ objectdef obj_Configuration_BaseConfig
 
 		if !${CONFIG_PATH.FileExists["${CONFIG_PATH}/${CONFIG_FILE}"]}
 		{
-			UI:Update["obj_Configuration", "Configuration file is ${CONFIG_FILE}", "g"]
+			UI:Update["obj_Configuration", "Configuration file is ${CONFIG_FILE}", "g", TRUE]
+			UI:Log["Redacted:  obj_Configuration - Configuration file is XXXXXXX"]
 			LavishSettings[ComBotSettings]:Import["${CONFIG_PATH}/${CONFIG_FILE}"]
 		}
 
@@ -126,7 +127,6 @@ objectdef obj_Configuration_Common
 
 	Setting(string, ComBot_Mode, SetComBot_Mode)
 	Setting(bool, AutoStart, SetAutoStart)
-	Setting(bool, WarpPulse, SetWarpPulse)
 	Setting(bool, Propulsion, SetPropulsion)
 	Setting(int, Propulsion_Threshold, SetPropulsion_Threshold)
 	Setting(bool, AlwaysShieldBoost, SetAlwaysShieldBoost)
@@ -137,6 +137,7 @@ objectdef obj_Configuration_Common
 	Setting(int64, CharID, SetCharID)
 	Setting(string, Account, SetAccount)
 	Setting(string, Password, SetPassword)
+	Setting(bool, Verbose, SetVerbose)
 }
 
 
@@ -222,6 +223,10 @@ objectdef obj_Configuration_Fleets
 	
 	member:obj_Configuration_Fleet GetFleet(string FleetID)
 	{
+		if !${This.CommonRef.FindSet[Fleets](exists)}
+		{
+			This.CommonRef:AddSet[Fleets]
+		}
 		if !${This.CommonRef.FindSet[Fleets].FindSet[${FleetID}](exists)}
 		{
 			echo Adding Fleet: ${FleetID}

@@ -79,11 +79,13 @@ objectdef obj_Login inherits obj_State
 
 		if ${Me(exists)} && ${MyShip(exists)} && (${Me.InSpace} || ${Me.InStation})
 		{
+			echo Returning True because ship found
 			return TRUE
 		}
 		
 		if ${CharSelect(exists)}
 		{
+			echo Returning True because charselect found
 			return TRUE
 		}
 		
@@ -108,9 +110,11 @@ objectdef obj_Login inherits obj_State
 		
 		if !${Login.ServerStatus.Find["OK"](exists)}
 		{
-			UI:Update["obj_Login", "Server not up.  Trying again in 10 seconds", "-o"]		
-			This:InsertState["Idle", 10000]
+			UI:Update["obj_Login", "Server not up.  Trying again in 10 seconds", "-o"]
+			This:Clear
+			This:QueueState["Idle", 10000]
 			This:QueueState["Login"]
+			This:QueueState["SelectCharacter"]
 			return TRUE
 		}
 		
@@ -131,8 +135,10 @@ objectdef obj_Login inherits obj_State
 		{
 			UI:Update["obj_Login", "Server is cranky, trying again in 10 seconds", "g"]
 			Press Esc
-			This:InsertState["Idle", 10000]
+			This:Clear
+			This:QueueState["Idle", 10000]
 			This:QueueState["Login"]
+			This:QueueState["SelectCharacter"]
 			return TRUE
 			
 		}
@@ -141,8 +147,10 @@ objectdef obj_Login inherits obj_State
 		Login:SetPassword[${Config.Common.Password}]
 		Login:Connect
 		UI:Update["obj_Login", "Login command sent", "g"]
-		This:InsertState["Idle", 20000]
+		This:Clear
+		This:QueueState["Idle", 20000]
 		This:QueueState["Login"]
+		This:QueueState["SelectCharacter"]
 		return TRUE
 	}
 	
@@ -162,7 +170,8 @@ objectdef obj_Login inherits obj_State
 		{
 			UI:Update["obj_Login", "System may be congested, waiting 10 seconds", "g"]
 			Press Esc
-			This:InsertState["Idle", 10000]
+			This:Clear
+			This:QueueState["Idle", 10000]
 			This:QueueState["SelectCharacter"]
 			return TRUE
 		}
@@ -186,7 +195,8 @@ objectdef obj_Login inherits obj_State
 
 		CharSelect:ClickCharacter[${Config.Common.CharID}]
 		UI:Update["obj_Login", "Character select command sent", "g"]
-		This:InsertState["Idle", 20000]
+		This:Clear
+		This:QueueState["Idle", 20000]
 		This:QueueState["SelectCharacter"]
 		return TRUE
 	}

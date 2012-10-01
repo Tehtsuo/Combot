@@ -176,6 +176,14 @@ objectdef obj_Module inherits obj_State
 	
 	member:float Range()
 	{
+		if ${MyShip.Module[${ModuleID}].TransferRange(exists)}
+		{
+			return ${MyShip.Module[${ModuleID}].TransferRange}
+		}
+		if ${MyShip.Module[${ModuleID}].ShieldTransferRange(exists)}
+		{
+			return ${MyShip.Module[${ModuleID}].ShieldTransferRange}
+		}
 		if ${MyShip.Module[${ModuleID}].OptimalRange(exists)}
 		{
 			return ${MyShip.Module[${ModuleID}].OptimalRange}
