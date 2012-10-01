@@ -147,9 +147,13 @@ objectdef obj_ComBotUI
 			}
 			else
 			{
-				This.ConsoleBuffer:Queue["${MSG}"]
-				This.ConsoleBuffer:Queue["-                 \a${Color}${MSGRemainder.Escape}"]
+				if !${Censor}
+				{
+					This.ConsoleBuffer:Queue["${MSG}"]
+					This.ConsoleBuffer:Queue["-                 \a${Color}${MSGRemainder.Escape}"]
+				}
 			}
+
 		}
 		else
 		{
@@ -163,7 +167,10 @@ objectdef obj_ComBotUI
 			}
 			else
 			{
+				if !${Censor}
+				{
 				This.ConsoleBuffer:Queue["${MSG}"]
+				}
 			}
 		}
 	}
