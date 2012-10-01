@@ -277,7 +277,8 @@ objectdef obj_HangarSale inherits obj_State
 				${HangarIterator.Value.TypeID} == 4358 || \
 				${HangarIterator.Value.TypeID} == 2076 || \
 				${HangarIterator.Value.TypeID} == 25373 || \
-				${HangarIterator.Value.TypeID} == 21815
+				${HangarIterator.Value.TypeID} == 21815 || \
+				${HangarIterator.Value.TypeID} == 2083
 			{
 				This:QueueState["CheckItem", 100]
 			}
@@ -307,7 +308,8 @@ objectdef obj_HangarSale inherits obj_State
 				${HangarIterator.Value.TypeID} == 25373 || \
 				${HangarIterator.Value.TypeID} == 21815 || \
 				${HangarIterator.Value.GroupID} == GROUP_SECURECARGOCONTAINER || \
-				${HangarIterator.Value.GroupID} == GROUP_AUDITLOGSECURECONTAINER
+				${HangarIterator.Value.GroupID} == GROUP_AUDITLOGSECURECONTAINER || \
+				${HangarIterator.Value.TypeID} == 2083
 			{
 				return FALSE
 			}
