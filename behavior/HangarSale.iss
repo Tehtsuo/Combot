@@ -205,6 +205,7 @@ objectdef obj_HangarSale inherits obj_State
 			SystemID:Set[${EVE.Bookmark[${Config.SellSystem]}].SolarSystemID}]
 		}
 		
+		UI:Log["GetURL http://api.eve-central.com/api/marketstat?${TypeIDQuery}"]
 		GetURL http://api.eve-central.com/api/marketstat?${TypeIDQuery}&usesystem=${SystemID}
 		This:InsertState["WaitForPrice", 100]
 		return TRUE
