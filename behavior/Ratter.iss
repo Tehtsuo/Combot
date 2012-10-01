@@ -66,6 +66,7 @@ objectdef obj_Ratter inherits obj_State
 		LavishScript:RegisterEvent[ComBot_Orca_InBelt]
 		PulseFrequency:Set[500]
 		Rats.LockOutOfRange:Set[FALSE]
+		Dynamic:AddBehavior["Ratter", "Belt Ratter", FALSE]
 	}
 
 	method Shutdown()
@@ -75,9 +76,8 @@ objectdef obj_Ratter inherits obj_State
 	method Start()
 	{
 		This:PopulateTargetList
-		Drones:RemainDocked
+		Drones:StayDeployed
 		Drones:Aggressive
-		Drones.PrioritizeFrigates:Set[TRUE]
 		UI:Update["obj_Ratter", "Started", "g"]
 		This:AssignStateQueueDisplay[DebugStateList@Debug@ComBotTab@ComBot]
 		if ${This.IsIdle}
