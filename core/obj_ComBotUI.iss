@@ -36,11 +36,13 @@ objectdef obj_ComBotUI
 		if ${EVEExtension.Character.Length}
 		{
 			This.LogFile:Set["./config/logs/${EVEExtension.Character}/${Time.Month}.${Time.Day}.${Time.Year}-${Time.Hour}.${Time.Minute}-${Time.Timestamp}.log"]
+			mkdir "./config/logs"
 			mkdir "./config/logs/${EVEExtension.Character}"
 		}
 		else
 		{
 			This.LogFile:Set["./config/logs/${Me.Name}/${Time.Month}.${Time.Day}.${Time.Year}-${Time.Hour}.${Time.Minute}-${Time.Timestamp}.log"]
+			mkdir "./config/logs"
 			mkdir "./config/logs/${Me.Name}"
 		}
 		ui -load interface/ComBotGUI.xml
