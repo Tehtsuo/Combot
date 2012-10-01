@@ -224,6 +224,7 @@ objectdef obj_Security inherits obj_State
 		UI:Update["obj_Security", "Flee triggered!", "r"]
 		UI:Update["obj_Security", "${Message}", "r"]
 		Event[ComBot_Flee]:Execute[]
+		Move.Traveling:Set[FALSE]
 		return TRUE
 	}
 	
