@@ -196,4 +196,9 @@ objectdef obj_Drones inherits obj_State
 		Profiling:EndTrack
 		return FALSE
 	}
+
+	method Flee()
+	{
+		; This flee is here as an override to keep obj_Security from clearing the queue
+	}
 }

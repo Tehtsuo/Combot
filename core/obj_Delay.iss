@@ -90,4 +90,9 @@ objectdef obj_Delay inherits obj_State
 			return TRUE
 		}
 	}
+	
+	method Flee()
+	{
+		; This flee is here as an override to keep obj_Security from clearing the queue
+	}
 }

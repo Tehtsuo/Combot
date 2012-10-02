@@ -565,4 +565,9 @@ objectdef obj_TargetList inherits obj_State
 			while ${EntityIterator:Next(exists)}
 		}
 	}
+	
+	method Flee()
+	{
+		; This flee is here as an override to keep obj_Security from clearing the queue
+	}
 }
