@@ -123,6 +123,9 @@ objectdef obj_Configuration_Common
 		This.CommonRef:AddSetting[ComBot_Mode,Salvager]
 		This.CommonRef:AddSetting[AlwaysShieldBoost, FALSE]
 		This.CommonRef:AddSetting[ActiveTab,Status]
+		This.CommonRef:AddSetting[Account,""]
+		This.CommonRef:AddSetting[Password,""]
+		This.CommonRef:AddSetting[LogUser,""]
 	}
 
 	Setting(string, ComBot_Mode, SetComBot_Mode)
@@ -138,6 +141,7 @@ objectdef obj_Configuration_Common
 	Setting(string, Account, SetAccount)
 	Setting(string, Password, SetPassword)
 	Setting(bool, Verbose, SetVerbose)
+	Setting(string, LogUser, SetLogUser)
 }
 
 

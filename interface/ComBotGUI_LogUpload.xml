@@ -102,6 +102,12 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Y>15%</Y>
 						<Width>98%</Width>
 						<Height>24%</Height>
+							<OnLoad>
+								This:SetText[${Script[ComBot].VariableScope.Config.Common.LogUser}]
+							</OnLoad>
+							<OnChange>
+								Script[ComBot].VariableScope.Config.Common:SetLogUser[${This.Text}]
+							</OnChange>
 					</Textentry>
 					<Text name='DescriptionTitle'>
 						<X>1%</X>
