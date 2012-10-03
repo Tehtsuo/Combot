@@ -246,7 +246,8 @@ objectdef obj_Miner inherits obj_State
 						Drones:Recall
 						return FALSE
 					}
-					UI:Update["obj_Miner", "Warping to ${Local[${Config.Container_Name}].ToFleetMember.ToPilot.Name}", "g"]
+					UI:Update["obj_Miner", "Warping to ${Local[${Config.Container_Name}].ToFleetMember.ToPilot.Name}", "g", TRUE]
+					UI:Log["Redacted:  obj_Miner - Warping to XXXXXXX (FleetMember)"]
 					Local[${Config.Container_Name}].ToFleetMember:WarpTo
 					Asteroids:ClearExclusions
 					Client:Wait[5000]
