@@ -75,11 +75,13 @@ objectdef obj_Salvage inherits obj_State
 	variable queue:entity BeltPatrol
 	
 	variable obj_TargetList Wrecks
-
+	variable obj_TargetList NPCs
+	
 	method Initialize()
 	{
 		This[parent]:Initialize
 		Wrecks:AddQueryString["(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && HaveLootRights && !IsAbandoned && !IsMoribund"]
+		NPCs:AddAllNPCs
 		Dynamic:AddBehavior["Salvage", "Dedicated Salvager", FALSE]
 	}
 
@@ -357,7 +359,7 @@ objectdef obj_Salvage inherits obj_State
 			}
 		}
 		
-		if ${Targets.NPC} && ${NPCRun}
+		if ${NPCs.TargetList.Used} && ${NPCRun}
 		{
 			UI:Update["obj_Salvage", "Pocket has NPCs - Jumping Clear", "g"]
 			LootCans:Disable
