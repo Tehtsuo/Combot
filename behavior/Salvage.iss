@@ -333,6 +333,8 @@ objectdef obj_Salvage inherits obj_State
 			NPCRun:Set[${NonDedicatedNPCRun}]
 		}
 		
+		NPCs:RequestUpdate
+		
 		if ${Config.AvoidShips}
 		{
 			variable index:entity Ships
