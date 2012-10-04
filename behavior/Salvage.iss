@@ -298,6 +298,7 @@ objectdef obj_Salvage inherits obj_State
 		}
 	
 		Wrecks:RequestUpdate
+		NPCs:RequestUpdate
 		return TRUE
 	}
 	
