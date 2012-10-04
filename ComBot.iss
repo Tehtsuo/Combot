@@ -37,7 +37,6 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 #include core/obj_Security.iss
 #include core/obj_Jetcan.iss
 #include core/obj_Bookmarks.iss
-#include core/obj_AgentDialog.iss
 #include core/obj_TargetList.iss
 #include core/obj_Drones.iss
 #include core/obj_Profiling.iss
