@@ -35,7 +35,6 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 #include core/obj_Ship.iss
 #include core/obj_Cargo.iss
 #include core/obj_Security.iss
-#include core/obj_Targets.iss
 #include core/obj_Agents.iss
 #include core/obj_Jetcan.iss
 #include core/obj_Bookmarks.iss
@@ -94,7 +93,6 @@ function main(string Character="")
 	declarevariable Ship obj_Ship script
 	declarevariable Cargo obj_Cargo script
 	declarevariable Security obj_Security script
-	declarevariable Targets obj_Targets script
 	declarevariable Bookmarks obj_Bookmarks script
 	declarevariable Agents obj_Agents script
 	declarevariable RefineData obj_Configuration_RefineData script
