@@ -418,8 +418,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									UIElement[obj_Hauler_Pickup_ContainerNameTitle@Hauler_Frame@ComBot_Hauler]:Show
 									UIElement[obj_Hauler_Pickup_ContainerName@Hauler_Frame@ComBot_Hauler]:Show
 									UIElement[PickupSubType@Hauler_Frame@ComBot_Hauler]:AddItem[Fleet Jetcan]
-									UIElement[PickupSubType@Hauler_Frame@ComBot_Hauler]:AddItem[Corporate Bookmark Jetcan]
-									UIElement[PickupSubType@Hauler_Frame@ComBot_Hauler]:AddItem[On-Demand Jetcan]
+									;UIElement[PickupSubType@Hauler_Frame@ComBot_Hauler]:AddItem[Corporate Bookmark Jetcan]
+									;UIElement[PickupSubType@Hauler_Frame@ComBot_Hauler]:AddItem[On-Demand Jetcan]
 									UIElement[PickupSubType@Hauler_Frame@ComBot_Hauler].ItemByText[${Script[ComBot].VariableScope.Hauler.Config.Pickup_SubType}]:Select
 									UIElement[PickupSubType@Hauler_Frame@ComBot_Hauler]:Show
 									UIElement[PickupSubTypeTitle@Hauler_Frame@ComBot_Hauler]:Show
@@ -457,8 +457,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									UIElement[obj_Hauler_Pickup_ContainerNameTitle@Hauler_Frame@ComBot_Hauler]:Show
 									UIElement[obj_Hauler_Pickup_ContainerName@Hauler_Frame@ComBot_Hauler]:Show
 									UIElement[PickupSubType@Hauler_Frame@ComBot_Hauler]:AddItem[Fleet Jetcan]
-									UIElement[PickupSubType@Hauler_Frame@ComBot_Hauler]:AddItem[Corporate Bookmark Jetcan]
-									UIElement[PickupSubType@Hauler_Frame@ComBot_Hauler]:AddItem[On-Demand Jetcan]
+									;UIElement[PickupSubType@Hauler_Frame@ComBot_Hauler]:AddItem[Corporate Bookmark Jetcan]
+									;UIElement[PickupSubType@Hauler_Frame@ComBot_Hauler]:AddItem[On-Demand Jetcan]
 									UIElement[PickupSubType@Hauler_Frame@ComBot_Hauler].ItemByText[${Script[ComBot].VariableScope.Hauler.Config.Pickup_SubType}]:Select
 									UIElement[PickupSubType@Hauler_Frame@ComBot_Hauler]:Show
 									UIElement[PickupSubTypeTitle@Hauler_Frame@ComBot_Hauler]:Show
