@@ -280,22 +280,6 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								This:SetText[${Script[ComBot].VariableScope.Config.Common.Propulsion_Threshold}% capacitor]
 							</OnLoad>
 						</Text>
-						<Checkbox name='AlwaysShieldBoost'>
-							<X>1%</X>
-							<Y>19%</Y>
-							<Width>48%</Width> 
-							<Height>6%</Height> 
-							<Text>Always Shield Boost</Text>
-							<OnLoad>
-								if ${Script[ComBot].VariableScope.Config.Common.AlwaysShieldBoost}
-								{
-									This:SetChecked
-								}
-							</OnLoad>
-							<OnLeftClick>
-								Script[ComBot].VariableScope.Config.Common:SetAlwaysShieldBoost[${This.Checked}]
-							</OnLeftClick>
-						</Checkbox>
 						<Checkbox name='Disable3D'>
 							<X>1%</X>
 							<Y>26%</Y>
