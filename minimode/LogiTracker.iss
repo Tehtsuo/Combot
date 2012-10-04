@@ -29,7 +29,7 @@ objectdef obj_LogiTracker inherits obj_State
 	{
 		This[parent]:Initialize
 		PulseFrequency:Set[500]
-		Dynamic:AddMiniMode["LogiTracker", "LogiTracker", FALSE]
+		;Dynamic:AddMiniMode["LogiTracker", "LogiTracker", FALSE]
 		Health:Set[${MyShip.ID}, "LogiTracker_${MyShip.ID}"]
 		MyHealth:Set["LogiTracker_${MyShip.ID}"]
 	}
