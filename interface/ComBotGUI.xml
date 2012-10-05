@@ -240,46 +240,6 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								This:SetLeftClickThru[TRUE]
 							</OnLoad>
 						</frame>					
-						<Checkbox name='Propulsion'>
-							<X>1%</X>
-							<Y>12%</Y>
-							<Width>48%</Width> 
-							<Height>6%</Height> 
-							<Text>Use AB/MWD for approaching objects if over</Text>
-							<OnLoad>
-								if ${Script[ComBot].VariableScope.Config.Common.Propulsion}
-								{
-									This:SetChecked
-								}
-							</OnLoad>
-							<OnLeftClick>
-								Script[ComBot].VariableScope.Config.Common:SetPropulsion[${This.Checked}]
-							</OnLeftClick>
-						</Checkbox>
-						<Slider name='Propulsion_Threshold'> 
-							<X>50%</X>
-							<Y>12%</Y>
-							<Width>20%</Width> 
-							<Height>6%</Height> 
-							<Border>1</Border>
-							<OnLoad>
-								This:SetRange[100]
-								This:SetValue[${Script[ComBot].VariableScope.Config.Common.Propulsion_Threshold}]
-							</OnLoad>
-							<OnChange>
-								Script[ComBot].VariableScope.Config.Common:SetPropulsion_Threshold[${This.Value}]
-								UIElement[Propulsion_Text@Settings@ComBotTab@ComBot]:SetText[${Script[ComBot].VariableScope.Config.Common.Propulsion_Threshold}% capacitor]
-							</OnChange>
-						</Slider>		
-						<Text name='Propulsion_Text'>
-							<X>72%</X>
-							<Y>13%</Y>
-							<Width>48%</Width> 
-							<Height>6%</Height> 
-							<OnLoad>
-								This:SetText[${Script[ComBot].VariableScope.Config.Common.Propulsion_Threshold}% capacitor]
-							</OnLoad>
-						</Text>
 						<Checkbox name='Disable3D'>
 							<X>1%</X>
 							<Y>26%</Y>
