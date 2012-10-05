@@ -127,8 +127,4 @@ objectdef obj_Profiling inherits obj_State
 		return FALSE
 	}
 
-	method Flee()
-	{
-		; This flee is here as an override to keep obj_Security from clearing the queue
-	}
 }

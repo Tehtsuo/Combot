@@ -198,9 +198,5 @@ objectdef obj_Module inherits obj_State
 	{
 		return "MyShip.Module[${ModuleID}]"
 	}
-	
-	method Flee()
-	{
-		; This flee is here as an override to keep obj_Security from clearing the queue
-	}
+
 }

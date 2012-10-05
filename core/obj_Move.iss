@@ -621,8 +621,4 @@ objectdef obj_Approach inherits obj_State
 		
 		return FALSE
 	}
-	
-	method Flee()
-	{
-	}	
 }

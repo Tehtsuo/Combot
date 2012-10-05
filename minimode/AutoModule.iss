@@ -140,7 +140,4 @@ objectdef obj_AutoModule inherits obj_State
 		return FALSE
 	}
 
-	method Flee()
-	{
-	}
 }

@@ -221,9 +221,19 @@ objectdef obj_Security inherits obj_State
 	
 	member:bool PrepFlee(string Message)
 	{
+		variable iterator Behaviors
 		UI:Update["obj_Security", "Flee triggered!", "r"]
 		UI:Update["obj_Security", "${Message}", "r"]
-		Event[ComBot_Flee]:Execute[]
+		Dynamic.Behaviors:GetIterator[Behaviors]
+		if ${Behaviors:First(exists)}
+		{
+			do
+			{
+				${Behaviors.Value.Name}:Clear
+			}
+			while ${Behaviors:Next(exists)}
+		}
+		Move:Clear
 		Move.Traveling:Set[FALSE]
 		return TRUE
 	}
@@ -295,9 +305,7 @@ objectdef obj_Security inherits obj_State
 		return FALSE
 	}	
 	
-	method Flee()
-	{
-	}
+
 }
 
 objectdef obj_SecurityUI inherits obj_State

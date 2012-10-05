@@ -67,7 +67,4 @@ objectdef obj_InstaWarp inherits obj_State
 		}
 	}
 
-	method Flee()
-	{
-	}
 }
