@@ -263,9 +263,11 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								{
 									This:SetChecked
 								}
+								This:SetZOrder[movetop]
 							</OnLoad>
 							<OnLeftClick>
 								Script[ComBot].VariableScope.Config.Common:SetDisable3D[${This.Checked}]
+								This:SetZOrder[movetop]
 							</OnLeftClick>
 						</Checkbox>
 						<Checkbox name='DisableUI'>
@@ -279,9 +281,11 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								{
 									This:SetChecked
 								}
+								This:SetZOrder[movetop]
 							</OnLoad>
 							<OnLeftClick>
 								Script[ComBot].VariableScope.Config.Common:SetDisableUI[${This.Checked}]
+								This:SetZOrder[movetop]
 							</OnLeftClick>
 						</Checkbox>
 						<Checkbox name='DisableTexture'>
@@ -295,9 +299,11 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								{
 									This:SetChecked
 								}
+								This:SetZOrder[movetop]
 							</OnLoad>
 							<OnLeftClick>
 								Script[ComBot].VariableScope.Config.Common:SetDisableTexture[${This.Checked}]
+								This:SetZOrder[movetop]
 							</OnLeftClick>
 						</Checkbox>
 						<button	Name='SecurityConfig'>
@@ -546,9 +552,11 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								{
 									This:SetChecked
 								}
+								This:SetZOrder[movetop]
 							</OnLoad>
 							<OnLeftClick>
 								Script[ComBot].VariableScope.Config.Common:SetVerbose[${This.Checked}]
+								This:SetZOrder[movetop]
 							</OnLeftClick>
 						</Checkbox>
 						<button	Name='Upload'>
