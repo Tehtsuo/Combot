@@ -254,7 +254,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						</frame>					
 						<Checkbox name='Disable3D'>
 							<X>1%</X>
-							<Y>40%</Y>
+							<Y>50%</Y>
 							<Width>48%</Width> 
 							<Height>6%</Height> 
 							<Text>Disable 3D Rendering</Text>
@@ -272,7 +272,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						</Checkbox>
 						<Checkbox name='DisableUI'>
 							<X>1%</X>
-							<Y>48%</Y>
+							<Y>58%</Y>
 							<Width>48%</Width> 
 							<Height>6%</Height> 
 							<Text>Disable User Interface</Text>
@@ -290,7 +290,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						</Checkbox>
 						<Checkbox name='DisableTexture'>
 							<X>1%</X>
-							<Y>56%</Y>
+							<Y>66%</Y>
 							<Width>48%</Width> 
 							<Height>6%</Height> 
 							<Text>Disable Texture Loading</Text>
@@ -310,7 +310,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							<Font template='Button.Font' />
 							<BackgroundColor>FF000000</BackgroundColor>
 							<X>1%</X>
-							<Y>25%</Y>
+							<Y>35%</Y>
 							<Width>98%</Width>
 							<Height>10%</Height>
 							<Text>Security Settings</Text>
@@ -325,7 +325,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							<BorderColor>FFFFFFFF</BorderColor>
 							<X>0%</X>
 							<Y>0%</Y>
-							<Height>19%</Height>
+							<Height>29%</Height>
 							<Width>100%</Width>
 							<OnLoad>
 								This:SetLeftClickThru[TRUE]
@@ -333,7 +333,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							<Children>
 								<Text name='AutoLoginLabel'>
 									<X>1%</X>
-									<Y>10%</Y>
+									<Y>5%</Y>
 									<Width>98%</Width> 
 									<Height>10%</Height> 
 									<Alignment>Center</Alignment>
@@ -341,17 +341,17 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								</Text>
 								<Text name='PasswordLabel'>
 									<X>51%</X>
-									<Y>40%</Y>
+									<Y>20%</Y>
 									<Width>48%</Width> 
-									<Height>30%</Height> 
+									<Height>20%</Height> 
 									<Alignment>Center</Alignment>
 									<Text>Password</Text>
 								</Text>
 								<Textentry name='Password'>
 									<X>51%</X>
-									<Y>60%</Y>
+									<Y>38%</Y>
 									<Width>48%</Width> 
-									<Height>35%</Height> 
+									<Height>25%</Height> 
 									<PasswordCharacter>*</PasswordCharacter>
 									<OnLoad>
 										This:SetText[${Script[ComBot].VariableScope.Config.Common.Password}]
@@ -362,7 +362,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								</Textentry>
 								<Text name='AccountLabel'>
 									<X>1%</X>
-									<Y>40%</Y>
+									<Y>20%</Y>
 									<Width>48%</Width> 
 									<Height>30%</Height> 
 									<Alignment>Center</Alignment>
@@ -370,9 +370,9 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								</Text>
 								<Textentry name='Account'>
 									<X>1%</X>
-									<Y>60%</Y>
+									<Y>38%</Y>
 									<Width>48%</Width> 
-									<Height>35%</Height> 
+									<Height>25%</Height> 
 									<OnLoad>
 										This:SetText[${Script[ComBot].VariableScope.Config.Common.Account}]
 									</OnLoad>
@@ -380,12 +380,32 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 										Script[ComBot].VariableScope.Config.Common:SetAccount[${This.Text}]
 									</OnChange>
 								</Textentry>
+								<button	Name='GenerateProfile'>
+									<Font template='Button.Font' />
+									<BackgroundColor>FF000000</BackgroundColor>
+									<X>1%</X>
+									<Y>70%</Y>
+									<Width>98%</Width>
+									<Height>25%</Height>
+									<Text>Generate Innerspace Profile</Text>
+									<OnLeftClick>
+										Uplink "SettingXML[GameConfiguration.XML].Set[${Game}].Set[Profiles]:AddSet[${Me.Name}]"
+										variable int KeyNumber
+										for (KeyNumber:Set[1]; ${KeyNumber} &lt;= ${Profile.Keys}; KeyNumber:Inc)
+										{
+											Uplink "SettingXML[GameConfiguration.XML].Set[${Game}].Set[Profiles].Set[${Me.Name}]:Set[${Profile.Key[${KeyNumber}].Escape}, ${Profile.GetString[${Profile.Key[${KeyNumber}]}].Escape}]"
+										}
+										Uplink "SettingXML[GameConfiguration.XML].Set[${Game}].Set[Profiles].Set[${Me.Name}]:AddSet[Startup Sequence]"
+										Uplink "SettingXML[GameConfiguration.XML].Set[${Game}].Set[Profiles].Set[${Me.Name}].Set[Startup Sequence]:Set[ComBot Launcher,run combot \"${Me.Name}\"]"
+										Uplink "SettingXML[GameConfiguration.XML]:Save"
+									</OnLeftClick>
+								</button>							
 							</Children>
 						</frame>								
 
 						<Text name='FleetSelectionLabel'>
 							<X>2%</X>
-							<Y>71%</Y>
+							<Y>81%</Y>
 							<Width>48%</Width> 
 							<Height>6%</Height> 
 							<Text>Fleet Management</Text>
@@ -393,7 +413,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<combobox Name="FleetSelection">
 							<BackgroundColor>FF000000</BackgroundColor>
 							<X>20%</X>
-							<Y>70%</Y>
+							<Y>80%</Y>
 							<Width>58%</Width>
 							<Height>6%</Height>
 							<OnLoad>
@@ -420,7 +440,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							<Font template='Button.Font' />
 							<BackgroundColor>FF000000</BackgroundColor>
 							<X>79%</X>
-							<Y>70%</Y>
+							<Y>80%</Y>
 							<Width>10%</Width>
 							<Height>6%</Height>
 							<Text>Save</Text>
@@ -432,7 +452,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							<Font template='Button.Font' />
 							<BackgroundColor>FF000000</BackgroundColor>
 							<X>89%</X>
-							<Y>70%</Y>
+							<Y>80%</Y>
 							<Width>10%</Width>
 							<Height>6%</Height>
 							<Text>Delete</Text>
