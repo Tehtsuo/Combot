@@ -331,18 +331,20 @@ objectdef obj_Fleet inherits obj_State
 								return TRUE
 							}
 						}
-						Squad.Value.FindSet[Members]:GetSetIterator[Member]
-						if ${Member:First(exists)}
-							do
-							{
-								if ${This.MoveMember[${Wing.Key}, ${Squad.Key}, ${Member.Key}]}
+						if ${Squad.Value.FindSet[Members](exists)}
+						{
+							Squad.Value.FindSet[Members]:GetSetIterator[Member]
+							if ${Member:First(exists)}
+								do
 								{
-									echo Member ${Member.Key} is supposed to be in Wing ${Wing.Key}, Squad ${Squad.Key}
-									return TRUE
+									if ${This.MoveMember[${Wing.Key}, ${Squad.Key}, ${Member.Key}]}
+									{
+										echo Member ${Member.Key} is supposed to be in Wing ${Wing.Key}, Squad ${Squad.Key}
+										return TRUE
+									}
 								}
-							}
-							while ${Member:Next(exists)}
-							
+								while ${Member:Next(exists)}
+						}
 						if ${Me.Fleet.Member[${Squad.Value.FindSetting[Booster]}](exists)}
 						{
 							if ${Me.Fleet.Member[${Squad.Value.FindSetting[Commander]}].Boosting} == 3 && ${Squad.Value.FindSetting[Booster]} != ${Squad.Value.FindSetting[Commander]}
