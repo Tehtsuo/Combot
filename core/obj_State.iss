@@ -153,6 +153,31 @@ objectdef obj_State
 				States:Dequeue
 			}
 		}
+		if !${This(type).Name.Find[UI]} && ${UIElement[ComBotTab@ComBot].SelectedTab.Name.Equal[Debug]}
+		{
+			if ${IsIdle}
+			{
+				if !${UIElement[IdleModuleList@Debug@ComBotTab@ComBot].ItemByText[${This(type)}](exists)}
+				{
+					UIElement[IdleModuleList@Debug@ComBotTab@ComBot]:AddItem[${This(type)}]
+				}
+				if ${UIElement[ActiveModuleList@Debug@ComBotTab@ComBot].ItemByText[${This(type)}](exists)}
+				{
+					UIElement[ActiveModuleList@Debug@ComBotTab@ComBot].ItemByText[${This(type)}]:Remove
+				}
+			}
+			else
+			{
+				if !${UIElement[ActiveModuleList@Debug@ComBotTab@ComBot].ItemByText[${This(type)}](exists)}
+				{
+					UIElement[ActiveModuleList@Debug@ComBotTab@ComBot]:AddItem[${This(type)}]
+				}
+				if ${UIElement[IdleModuleList@Debug@ComBotTab@ComBot].ItemByText[${This(type)}](exists)}
+				{
+					UIElement[IdleModuleList@Debug@ComBotTab@ComBot].ItemByText[${This(type)}]:Remove
+				}
+			}
+		}
 	}
 
 	method QueueState(string arg_Name, int arg_Frequency=-1, string arg_Args="")
