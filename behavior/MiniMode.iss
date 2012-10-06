@@ -25,7 +25,7 @@ objectdef obj_MiniMode inherits obj_State
 	method Initialize()
 	{
 		This[parent]:Initialize
-		Dynamic:AddBehavior["MiniMode", "MiniModes Only", FALSE]
+		DynamicAddBehavior("MiniMode", "MiniModes Only")
 	}
 
 	method Start()

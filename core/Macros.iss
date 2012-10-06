@@ -32,3 +32,11 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 		Config:Save
 	}
 #endmac
+
+#macro DynamicAddBehavior(name, displayname)
+	Dynamic:AddBehavior[name, displayname, ${String[_FILE_].Escape}]
+#endmac
+
+#macro DynamicAddMiniMode(name, displayname)
+	Dynamic:AddMiniMode[name, displayname, ${String[_FILE_].Escape}]
+#endmac

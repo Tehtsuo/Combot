@@ -128,7 +128,7 @@ objectdef obj_HangarSale inherits obj_State
 		This[parent]:Initialize
 		PulseFrequency:Set[1000]
 		Event[isxGames_onHTTPResponse]:AttachAtom[This:ParsePrice]
-		Dynamic:AddBehavior["HangarSale", "HangarSale", FALSE]
+		DynamicAddBehavior("HangarSale", "HangarSale")
 	}
 	
 	method Start()

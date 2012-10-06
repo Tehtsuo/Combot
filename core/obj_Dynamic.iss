@@ -81,12 +81,12 @@ objectdef obj_DynamicItem
 {
 	variable string Name
 	variable string DisplayName
-	variable bool ThirdParty
-	method Initialize(string argName, string argDisplayName, bool argThirdParty)
+	variable string ConfigPath
+	method Initialize(string argName, string argDisplayName, string argConfigPath)
 	{
 		Name:Set[${argName.Escape}]
 		DisplayName:Set[${argDisplayName.Escape}]
-		ThirdParty:Set[${argThirdParty}]
+		ConfigPath:Set[${argConfigPath.Escape}]
 	}
 }
 
@@ -96,14 +96,16 @@ objectdef obj_Dynamic
 	variable collection:obj_DynamicItem MiniModes
 	variable obj_Configuration_Dynamic Config
 	
-	method AddBehavior(string argName, string argDisplayName, bool argThirdParty = TRUE)
+	method AddBehavior(string argName, string argDisplayName, string argConfigPath)
 	{
-		Behaviors:Set[${argName.Escape}, ${argName.Escape}, ${argDisplayName.Escape}, ${argThirdParty}] 
+		variable file Behavior = ${argConfigPath.Escape}
+		Behaviors:Set[${argName.Escape}, ${argName.Escape}, ${argDisplayName.Escape}, ${Behavior.Path.Escape}] 
 	}
 	
-	method AddMiniMode(string argName, string argDisplayName, bool argThirdParty = TRUE)
+	method AddMiniMode(string argName, string argDisplayName, string argConfigPath)
 	{
-		MiniModes:Set[${argName.Escape}, ${argName.Escape}, ${argDisplayName.Escape}, ${argThirdParty}]
+		variable file MiniMode = ${argConfigPath.Escape}
+		MiniModes:Set[${argName.Escape}, ${argName.Escape}, ${argDisplayName.Escape}, ${MiniMode.Path.Escape}]
 	}
 	
 	method PopulateMiniModes()

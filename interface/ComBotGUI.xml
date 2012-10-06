@@ -218,7 +218,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							<Height>6%</Height>
 							<Text>Configuration</Text>
 							<OnLeftClick>
-								timedcommand 0 "ui -load \"${Script[ComBot].CurrentDirectory}/behavior/${Script[ComBot].VariableScope.Config.Common.ComBot_Mode}.xml\""
+								timedcommand 0 "ui -load \"${Script[ComBot].VariableScope.Dynamic.Behaviors[${Script[ComBot].VariableScope.Config.Common.ComBot_Mode}].ConfigPath}${Script[ComBot].VariableScope.Config.Common.ComBot_Mode}.xml\""
 							</OnLeftClick>
 						</button>
 						<Checkbox name='AutoStart'>
@@ -848,25 +848,11 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							<OnLeftClick>
 								if ${UIElement[MiniMode_Inactive@MiniMode@ComBotTab@ComBot].SelectedItems}
 								{
-									if ${Script[ComBot].VariableScope.Dynamic.MiniModes.Element[${UIElement[MiniMode_Inactive@MiniMode@ComBotTab@ComBot].SelectedItem.Value}].ThirdParty}
-									{
-										timedcommand 0 "ui -load \"${Script[ComBot].CurrentDirectory}/thirdparty/minimode/${UIElement[MiniMode_Inactive@MiniMode@ComBotTab@ComBot].SelectedItem.Value}.xml\""
-									}
-									else
-									{
-										timedcommand 0 "ui -load \"${Script[ComBot].CurrentDirectory}/minimode/${UIElement[MiniMode_Inactive@MiniMode@ComBotTab@ComBot].SelectedItem.Value}.xml\""
-									}
+									timedcommand 0 "ui -load \"${Script[ComBot].VariableScope.Dynamic.MiniModes[${UIElement[MiniMode_Inactive@MiniMode@ComBotTab@ComBot].SelectedItem.Value}].ConfigPath}${UIElement[MiniMode_Inactive@MiniMode@ComBotTab@ComBot].SelectedItem.Value}.xml\""
 								}
 								elseif ${UIElement[MiniMode_Active@MiniMode@ComBotTab@ComBot].SelectedItems}
 								{
-									if ${Script[ComBot].VariableScope.Dynamic.MiniModes.Element[${UIElement[MiniMode_Active@MiniMode@ComBotTab@ComBot].SelectedItem.Value}].ThirdParty}
-									{
-										timedcommand 0 "ui -load \"${Script[ComBot].CurrentDirectory}/thirdparty/minimode/${UIElement[MiniMode_Active@MiniMode@ComBotTab@ComBot].SelectedItem.Value}.xml\""
-									}
-									else
-									{
-										timedcommand 0 "ui -load \"${Script[ComBot].CurrentDirectory}/minimode/${UIElement[MiniMode_Active@MiniMode@ComBotTab@ComBot].SelectedItem.Value}.xml\""
-									}
+									timedcommand 0 "ui -load \"${Script[ComBot].VariableScope.Dynamic.MiniModes[${UIElement[MiniMode_Active@MiniMode@ComBotTab@ComBot].SelectedItem.Value}].ConfigPath}${UIElement[MiniMode_Active@MiniMode@ComBotTab@ComBot].SelectedItem.Value}.xml\""
 								}
 							</OnLeftClick>
 						</Button>

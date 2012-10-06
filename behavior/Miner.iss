@@ -159,7 +159,7 @@ objectdef obj_Miner inherits obj_State
 		Asteroids.LockOutOfRange:Set[FALSE]
 		Asteroids:SetIPCExclusion["MiningTargets"]
 		Asteroids.ForceLockExclusion:Set[TRUE]
-		Dynamic:AddBehavior["Miner", "Miner", FALSE]
+		DynamicAddBehavior("Miner", "Miner")
 	}
 
 	method Shutdown()

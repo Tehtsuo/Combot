@@ -70,7 +70,7 @@ objectdef obj_AutoThrust inherits obj_State
 		This[parent]:Initialize
 		PulseFrequency:Set[2000]
 		This.NonGameTiedPulse:Set[TRUE]
-		Dynamic:AddMiniMode["AutoThrust", "AutoThrust", FALSE]
+		DynamicAddMiniMode("AutoThrust", "AutoThrust")
 	}
 	
 	method Start()

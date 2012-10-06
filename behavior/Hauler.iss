@@ -85,7 +85,7 @@ objectdef obj_Hauler inherits obj_State
 		IR_Cans.ListOutOfRange:Set[FALSE]
 		OOR_Cans.MaxRange:Set[WARP_RANGE]
 		OOR_Cans.MinRange:Set[LOOT_RANGE]
-		Dynamic:AddBehavior["Hauler", "Hauler", FALSE]
+		DynamicAddBehavior("Hauler", "Hauler")
 	}
 
 	method Shutdown()
