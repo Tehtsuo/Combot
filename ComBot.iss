@@ -49,6 +49,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 #include temp/minimodeincludes.iss
 
+#include temp/thirdpartybehaviorincludes.iss
+
+#include temp/thirdpartyminimodeincludes.iss
+
 function atexit()
 {
 
@@ -103,6 +107,10 @@ function main(string Character="")
 	#include temp/behaviordeclares.iss
 	
 	#include temp/minimodedeclares.iss
+
+	#include temp/thirdpartybehaviordeclares.iss
+	
+	#include temp/thirdpartyminimodedeclares.iss
 	
 	Dynamic:PopulateBehaviors
 	Dynamic:PopulateMiniModes
