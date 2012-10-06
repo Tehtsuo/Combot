@@ -149,6 +149,21 @@ objectdef obj_Fleet inherits obj_State
 					echo Adding Squad Commander
 					Config.Fleets.GetFleet[${name.Escape}].GetWing[${Member.Value.WingID}].GetSquad[${Member.Value.SquadID}]:SetCommander[${Member.Value.ID}]
 				}
+				if ${Member.Value.Boosting} == 1
+				{
+					echo Adding Fleet Booster
+					Config.Fleets.GetFleet[${name.Escape}]:SetBooster[${Member.Value.ID}]
+				}
+				if ${Member.Value.Boosting} == 2
+				{
+					echo Adding Wing Booster
+					Config.Fleets.GetFleet[${name.Escape}].GetWing[${Member.Value.WingID}]:SetBooster[${Member.Value.ID}]
+				}
+				if ${Member.Value.Boosting} == 3
+				{
+					echo Adding Squad Booster
+					Config.Fleets.GetFleet[${name.Escape}].GetWing[${Member.Value.WingID}].GetSquad[${Member.Value.SquadID}]:SetBooster[${Member.Value.ID}]
+				}
 			}
 			while ${Member:Next(exists)}
 
@@ -267,6 +282,17 @@ objectdef obj_Fleet inherits obj_State
 		variable iterator Wing
 		variable iterator Squad
 		variable iterator Member
+		
+		if ${Me.Fleet.Member[${Config.Fleets.GetFleet[${Config.Fleets.Active}].Commander}](exists)}
+		{
+			if ${Me.Fleet.Member[${Config.Fleets.GetFleet[${Config.Fleets.Active}].Commander}].RoleID} != 1
+			{
+				echo ${Config.Fleets.GetFleet[${Config.Fleets.Active}].Commander} should be Fleet Commander
+				Me.Fleet.Member[${Config.Fleets.GetFleet[${Config.Fleets.Active}].Commander}]:MoveToFleetCommander
+				return TRUE
+			}
+		}
+		
 		Config.Fleets.GetFleet[${Config.Fleets.Active}].Wings:GetSetIterator[Wing]
 		if ${Wing:First(exists)}
 			do
@@ -276,6 +302,17 @@ objectdef obj_Fleet inherits obj_State
 					Me.Fleet:CreateWing
 					return TRUE
 				}
+				
+				if ${Me.Fleet.Member[${Wing.Value.FindSetting[Commander]}](exists)}
+				{
+					if ${Me.Fleet.Member[${Wing.Value.FindSetting[Commander]}].RoleID} != 2 || ${Me.Fleet.Member[${Wing.Value.FindSetting[Commander]}].WingID} != ${This.WingTranslation.Element[${Wing.Key}]}
+					{
+						echo ${Wing.Value.FindSetting[Commander]} should be Wing Commander
+						Me.Fleet.Member[${Wing.Value.FindSetting[Commander]}]:MoveToWingCommander[${This.WingTranslation.Element[${Wing.Key}]}]
+						return TRUE
+					}
+				}
+				
 				Wing.Value.FindSet[Squads]:GetSetIterator[Squad]
 				if ${Squad:First(exists)}
 					do
@@ -285,7 +322,15 @@ objectdef obj_Fleet inherits obj_State
 							Me.Fleet:CreateSquad[${This.WingTranslation.Element[${Wing.Key}]}]
 							return TRUE
 						}
-						
+						if ${Me.Fleet.Member[${Squad.Value.FindSetting[Commander]}](exists)}
+						{
+							if ${Me.Fleet.Member[${Squad.Value.FindSetting[Commander]}].RoleID} != 3 || ${Me.Fleet.Member[${Squad.Value.FindSetting[Commander]}].WingID} != ${This.WingTranslation.Element[${Wing.Key}]} || ${Me.Fleet.Member[${Squad.Value.FindSetting[Commander]}].SquadID} != ${This.SquadTranslation.Element[${Squad.Key}]}
+							{
+								echo ${Squad.Value.FindSetting[Commander]} should be Squad Commander
+								Me.Fleet.Member[${Squad.Value.FindSetting[Commander]}]:MoveToSquadCommander[${This.WingTranslation.Element[${Wing.Key}]}, ${This.SquadTranslation.Element[${Squad.Key}]}]
+								return TRUE
+							}
+						}
 						Squad.Value.FindSet[Members]:GetSetIterator[Member]
 						if ${Member:First(exists)}
 							do
@@ -297,11 +342,70 @@ objectdef obj_Fleet inherits obj_State
 								}
 							}
 							while ${Member:Next(exists)}
+							
+						if ${Me.Fleet.Member[${Squad.Value.FindSetting[Booster]}](exists)}
+						{
+							echo ${Squad.Value.FindSetting[Booster]} should be Squad Booster
+							if ${Me.Fleet.Member[${Squad.Value.FindSetting[Commander]}].Boosting} == 3 && ${Squad.Value.FindSetting[Booster]} != ${Squad.Value.FindSetting[Commander]}
+							{
+								Me.Fleet.Member[${Squad.Value.FindSetting[Commander]}]:SetBooster[0]
+								return TRUE
+							}
+							if ${Me.Fleet.Member[${Squad.Value.FindSetting[Booster]}].Boosting} != 3
+							{
+								if ${Me.Fleet.Member[${Squad.Value.FindSetting[Booster]}].Boosting} != 0
+								{
+									Me.Fleet.Member[${Squad.Value.FindSetting[Booster]}]:SetBooster[0]
+									return TRUE
+								}
+								Me.Fleet.Member[${Squad.Value.FindSetting[Booster]}]:SetBooster[3]
+								return TRUE
+							}
+						}
 					}
 					while ${Squad:Next(exists)}
+					
+				if ${Me.Fleet.Member[${Wing.Value.FindSetting[Booster]}](exists)}
+				{
+					echo ${Wing.Value.FindSetting[Booster]} should be Wing Booster
+					if ${Me.Fleet.Member[${Wing.Value.FindSetting[Commander]}].Boosting} == 2 && ${Wing.Value.FindSetting[Booster]} != ${Wing.Value.FindSetting[Commander]}
+					{
+						Me.Fleet.Member[${Wing.Value.FindSetting[Commander]}]:SetBooster[0]
+						return TRUE
+					}
+					if ${Me.Fleet.Member[${Wing.Value.FindSetting[Booster]}].Boosting} != 2
+					{
+						if ${Me.Fleet.Member[${Wing.Value.FindSetting[Booster]}].Boosting} != 0
+						{
+							Me.Fleet.Member[${Wing.Value.FindSetting[Booster]}]:SetBooster[0]
+							return TRUE
+						}
+						Me.Fleet.Member[${Wing.Value.FindSetting[Booster]}]:SetBooster[2]
+						return TRUE
+					}
+				}
 			}
 			while ${Wing:Next(exists)}
 		
+		if ${Me.Fleet.Member[${Config.Fleets.GetFleet[${Config.Fleets.Active}].Booster}](exists)}
+		{
+			echo ${Config.Fleets.GetFleet[${Config.Fleets.Active}].Booster} should be Fleet Booster
+			if ${Me.Fleet.Member[${Config.Fleets.GetFleet[${Config.Fleets.Active}].Commander}].Boosting} == 1 && ${Config.Fleets.GetFleet[${Config.Fleets.Active}].Booster} != ${Config.Fleets.GetFleet[${Config.Fleets.Active}].Commander}
+			{
+				Me.Fleet.Member[${Config.Fleets.GetFleet[${Config.Fleets.Active}].Commander}]:SetBooster[0]
+				return TRUE
+			}
+			if ${Me.Fleet.Member[${Config.Fleets.GetFleet[${Config.Fleets.Active}].Booster}].Boosting} != 1
+			{
+				if ${Me.Fleet.Member[${Config.Fleets.GetFleet[${Config.Fleets.Active}].Booster}].Boosting} != 0
+				{
+					Me.Fleet.Member[${Config.Fleets.GetFleet[${Config.Fleets.Active}].Booster}]:SetBooster[0]
+					return TRUE
+				}
+				Me.Fleet.Member[${Config.Fleets.GetFleet[${Config.Fleets.Active}].Booster}]:SetBooster[1]
+				return TRUE
+			}
+		}
 
 		return FALSE
 	}
