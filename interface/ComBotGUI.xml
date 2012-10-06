@@ -491,8 +491,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						</frame>					
 						<Text name='DebugStateListTitle'> 
 									<X>0%</X> 
-									<Y>5%</Y> 
-									<Width>40%</Width> 
+									<Y>2%</Y> 
+									<Width>100%</Width> 
 									<Height>5%</Height> 
 									<Alignment>Center</Alignment>
 									<Text>Pending States</Text>
@@ -502,16 +502,48 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							<BackgroundColor>FF000000</BackgroundColor>
 							<Border>1</Border>
 							<BorderColor>FFFFFFFF</BorderColor>
-							<X>00%</X>
-							<Y>10%</Y>
-							<Width>40%</Width>
-							<Height>90%</Height>
+							<X>1%</X>
+							<Y>6%</Y>
+							<Width>98%</Width>
+							<Height>58%</Height>
 						</listbox>
+						<Text name='NameTitle'>
+							<X>2%</X>
+							<Y>66%</Y>
+							<Width>98%</Width>
+							<Height>5%</Height>
+							<Text>IRC/Forum name (Not your EVE account name!)</Text>
+						</Text>
+						<Textentry name="Name">
+							<X>1%</X>
+							<Y>71%</Y>
+							<Width>98%</Width>
+							<Height>6%</Height>
+								<OnLoad>
+									This:SetText[${Script[ComBot].VariableScope.Config.Common.LogUser}]
+								</OnLoad>
+								<OnChange>
+									Script[ComBot].VariableScope.Config.Common:SetLogUser[${This.Text}]
+								</OnChange>
+						</Textentry>
+						<Text name='DescriptionTitle'>
+							<X>2%</X>
+							<Y>79%</Y>
+							<Width>99%</Width>
+							<Height>5%</Height>
+							<Text>Description of the problem you are reporting</Text>
+						</Text>
+						<Textentry name="Description">
+							<X>1%</X>
+							<Y>84%</Y>
+							<Width>98%</Width>
+							<Height>6%</Height>
+						</Textentry>
 						<Checkbox name='Verbose'>
-							<X>41%</X>
-							<Y>10%</Y>
+							<X>1%</X>
+							<Y>93%</Y>
 							<Width>60%</Width> 
-							<Height>5%</Height> 
+							<Height>6%</Height> 
 							<Text>Verbose logging</Text>
 							<OnLoad>
 								if ${Script[ComBot].VariableScope.Config.Common.Verbose}
@@ -526,13 +558,13 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<button	Name='Upload'>
 							<Font template='Button.Font' />
 							<BackgroundColor>FF000000</BackgroundColor>
-							<X>40%</X>
-							<Y>20%</Y>
-							<Width>60%</Width>
+							<X>22%</X>
+							<Y>93%</Y>
+							<Width>77%</Width>
 							<Height>6%</Height>
 							<Text>Upload logs</Text>
 							<OnLeftClick>
-								timedcommand 0 "ui -load \"&filepath;/ComBotGUI_LogUpload.xml\""
+								httpget -postparam username "${UIElement[Name@Debug@ComBotTab@ComBot].Text.Escape}" -postparam semantic "${Script[ComBot].VariableScope.Config.Common.ComBot_Mode.Escape}" -postparam description "${UIElement[Description@Debug@ComBotTab@ComBot].Text.Escape}" -postfile logfile "${Script[ComBot].CurrentDirectory.Replace[\\,/].Escape}${Script[ComBot].VariableScope.UI.LogFile.Right[-1].Escape}" http://combot.vendaria.net/logs/upload
 							</OnLeftClick>
 						</button>		
 					</Tab>
@@ -727,66 +759,109 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							</OnLoad>
 						</frame>	
 						
+						<Text name='MiniMode_Inactive_Title'>
+							<X>1%</X>
+							<Y>2%</Y>
+							<Width>39%</Width>
+							<Height>5%</Height>
+							<Alignment>Center</Alignment>
+							<Text>Disabled MiniModes</Text>
+						</Text>
 						<Listbox name="MiniMode_Inactive">
 							<X>1%</X>
-							<Y>10%</Y>
-							<Width>30%</Width>
-							<Height>50%</Height>
+							<Y>6%</Y>
+							<Width>39%</Width>
+							<Height>93%</Height>
+							<OnSelect>
+								if ${UIElement[MiniMode_Active@MiniMode@ComBotTab@ComBot].SelectedItems}
+								{
+									UIElement[MiniMode_Active@MiniMode@ComBotTab@ComBot].SelectedItem:Deselect
+								}
+							</OnSelect>
 						</Listbox>
 						
+						<Text name='MiniMode_Active_Title'>
+							<X>60%</X>
+							<Y>2%</Y>
+							<Width>39%</Width>
+							<Height>5%</Height>
+							<Alignment>Center</Alignment>
+							<Text>Enabled MiniModes</Text>
+						</Text>
 						<Listbox name="MiniMode_Active">
-							<X>41%</X>
-							<Y>10%</Y>
-							<Width>30%</Width>
-							<Height>50%</Height>
+							<X>60%</X>
+							<Y>6%</Y>
+							<Width>39%</Width>
+							<Height>93%</Height>
+							<OnSelect>
+								if ${UIElement[MiniMode_Inactive@MiniMode@ComBotTab@ComBot].SelectedItems}
+								{
+									UIElement[MiniMode_Inactive@MiniMode@ComBotTab@ComBot].SelectedItem:Deselect
+								}
+							</OnSelect>
 						</Listbox>
 						
 						<Button name="MiniMode_Activate">
 							<Font template='Button.Font' />
 							<BackgroundColor>FF000000</BackgroundColor>
-							<X>32%</X>
-							<Y>30%</Y>
-							<Width>8%</Width>
-							<Height>5%</Height>
-							<Text>Add</Text>
+							<X>40%</X>
+							<Y>40%</Y>
+							<Width>20%</Width>
+							<Height>10%</Height>
+							<Text>Enable/Disable</Text>
 							<OnLeftClick>
-								Script[ComBot].VariableScope.Dynamic:ActivateMiniMode[${UIElement[MiniMode_Inactive@MiniMode@ComBotTab@ComBot].SelectedItem.Value}]
-								UIElement[MiniMode_Active@MiniMode@ComBotTab@ComBot]:AddItem[${UIElement[MiniMode_Inactive@MiniMode@ComBotTab@ComBot].SelectedItem.Text}, ${UIElement[MiniMode_Inactive@MiniMode@ComBotTab@ComBot].SelectedItem.Value}]
-								UIElement[MiniMode_Inactive@MiniMode@ComBotTab@ComBot].SelectedItem:Remove
+								variable string ItemText
+								if ${UIElement[MiniMode_Inactive@MiniMode@ComBotTab@ComBot].SelectedItems}
+								{
+									ItemText:Set[${UIElement[MiniMode_Inactive@MiniMode@ComBotTab@ComBot].SelectedItem.Text}]
+									Script[ComBot].VariableScope.Dynamic:ActivateMiniMode[${UIElement[MiniMode_Inactive@MiniMode@ComBotTab@ComBot].SelectedItem.Value}]
+									UIElement[MiniMode_Active@MiniMode@ComBotTab@ComBot]:AddItem[${UIElement[MiniMode_Inactive@MiniMode@ComBotTab@ComBot].SelectedItem.Text}, ${UIElement[MiniMode_Inactive@MiniMode@ComBotTab@ComBot].SelectedItem.Value}]
+									UIElement[MiniMode_Inactive@MiniMode@ComBotTab@ComBot].SelectedItem:Remove
+									UIElement[MiniMode_Active@MiniMode@ComBotTab@ComBot].ItemByText[${ItemText}]:Select
+								}
+								elseif ${UIElement[MiniMode_Active@MiniMode@ComBotTab@ComBot].SelectedItems}
+								{
+									ItemText:Set[${UIElement[MiniMode_Active@MiniMode@ComBotTab@ComBot].SelectedItem.Text}]
+									Script[ComBot].VariableScope.Dynamic:DeactivateMiniMode[${UIElement[MiniMode_Active@MiniMode@ComBotTab@ComBot].SelectedItem.Value}]
+									UIElement[MiniMode_Inactive@MiniMode@ComBotTab@ComBot]:AddItem[${UIElement[MiniMode_Active@MiniMode@ComBotTab@ComBot].SelectedItem.Text}, ${UIElement[MiniMode_Active@MiniMode@ComBotTab@ComBot].SelectedItem.Value}]
+									UIElement[MiniMode_Active@MiniMode@ComBotTab@ComBot].SelectedItem:Remove
+									UIElement[MiniMode_Inactive@MiniMode@ComBotTab@ComBot].ItemByText[${ItemText}]:Select
+								}
+								echo Active ${UIElement[MiniMode_Active@MiniMode@ComBotTab@ComBot].SelectedItems} Inactive ${UIElement[MiniMode_Inactive@MiniMode@ComBotTab@ComBot].SelectedItems}
 							</OnLeftClick>
 						</Button>
 						
-						<Button name="MiniMode_Deactivate">
-							<Font template='Button.Font' />
-							<BackgroundColor>FF000000</BackgroundColor>
-							<X>32%</X>
-							<Y>35%</Y>
-							<Width>8%</Width>
-							<Height>5%</Height>
-							<Text>Rem</Text>
-							<OnLeftClick>
-								Script[ComBot].VariableScope.Dynamic:DeactivateMiniMode[${UIElement[MiniMode_Active@MiniMode@ComBotTab@ComBot].SelectedItem.Value}]
-								UIElement[MiniMode_Inactive@MiniMode@ComBotTab@ComBot]:AddItem[${UIElement[MiniMode_Active@MiniMode@ComBotTab@ComBot].SelectedItem.Text}, ${UIElement[MiniMode_Active@MiniMode@ComBotTab@ComBot].SelectedItem.Value}]
-								UIElement[MiniMode_Active@MiniMode@ComBotTab@ComBot].SelectedItem:Remove
-							</OnLeftClick>
-						</Button>
-						
+					
 						<Button name="MiniMode_Configure">
 							<Font template='Button.Font' />
 							<BackgroundColor>FF000000</BackgroundColor>
-							<X>41%</X>
-							<Y>60%</Y>
-							<Width>30%</Width>
-							<Height>5%</Height>
+							<X>40%</X>
+							<Y>50%</Y>
+							<Width>20%</Width>
+							<Height>10%</Height>
 							<Text>Config</Text>
 							<OnLeftClick>
-								if ${Script[ComBot].VariableScope.Dynamic.MiniModes.Element[${UIElement[MiniMode_Active@MiniMode@ComBotTab@ComBot].SelectedItem.Value}].ThirdParty}
+								if ${UIElement[MiniMode_Inactive@MiniMode@ComBotTab@ComBot].SelectedItems}
 								{
-									timedcommand 0 "ui -load \"${Script[ComBot].CurrentDirectory}/thirdparty/minimode/${UIElement[MiniMode_Active@MiniMode@ComBotTab@ComBot].SelectedItem.Value}.xml\""
+									if ${Script[ComBot].VariableScope.Dynamic.MiniModes.Element[${UIElement[MiniMode_Inactive@MiniMode@ComBotTab@ComBot].SelectedItem.Value}].ThirdParty}
+									{
+										timedcommand 0 "ui -load \"${Script[ComBot].CurrentDirectory}/thirdparty/minimode/${UIElement[MiniMode_Inactive@MiniMode@ComBotTab@ComBot].SelectedItem.Value}.xml\""
+									}
+									else
+									{
+										timedcommand 0 "ui -load \"${Script[ComBot].CurrentDirectory}/minimode/${UIElement[MiniMode_Inactive@MiniMode@ComBotTab@ComBot].SelectedItem.Value}.xml\""
+									}
 								}
-								else
+								elseif ${UIElement[MiniMode_Active@MiniMode@ComBotTab@ComBot].SelectedItems}
 								{
-									timedcommand 0 "ui -load \"${Script[ComBot].CurrentDirectory}/minimode/${UIElement[MiniMode_Active@MiniMode@ComBotTab@ComBot].SelectedItem.Value}.xml\""
+									if ${Script[ComBot].VariableScope.Dynamic.MiniModes.Element[${UIElement[MiniMode_Active@MiniMode@ComBotTab@ComBot].SelectedItem.Value}].ThirdParty}
+									{
+										timedcommand 0 "ui -load \"${Script[ComBot].CurrentDirectory}/thirdparty/minimode/${UIElement[MiniMode_Active@MiniMode@ComBotTab@ComBot].SelectedItem.Value}.xml\""
+									}
+									else
+									{
+										timedcommand 0 "ui -load \"${Script[ComBot].CurrentDirectory}/minimode/${UIElement[MiniMode_Active@MiniMode@ComBotTab@ComBot].SelectedItem.Value}.xml\""
+									}
 								}
 							</OnLeftClick>
 						</Button>
