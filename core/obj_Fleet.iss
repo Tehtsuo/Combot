@@ -335,9 +335,9 @@ objectdef obj_Fleet inherits obj_State
 						if ${Member:First(exists)}
 							do
 							{
-								echo Member ${Member.Key} is supposed to be in Wing ${Wing.Key}, Squad ${Squad.Key}
 								if ${This.MoveMember[${Wing.Key}, ${Squad.Key}, ${Member.Key}]}
 								{
+									echo Member ${Member.Key} is supposed to be in Wing ${Wing.Key}, Squad ${Squad.Key}
 									return TRUE
 								}
 							}
@@ -345,7 +345,6 @@ objectdef obj_Fleet inherits obj_State
 							
 						if ${Me.Fleet.Member[${Squad.Value.FindSetting[Booster]}](exists)}
 						{
-							echo ${Squad.Value.FindSetting[Booster]} should be Squad Booster
 							if ${Me.Fleet.Member[${Squad.Value.FindSetting[Commander]}].Boosting} == 3 && ${Squad.Value.FindSetting[Booster]} != ${Squad.Value.FindSetting[Commander]}
 							{
 								Me.Fleet.Member[${Squad.Value.FindSetting[Commander]}]:SetBooster[0]
@@ -358,6 +357,7 @@ objectdef obj_Fleet inherits obj_State
 									Me.Fleet.Member[${Squad.Value.FindSetting[Booster]}]:SetBooster[0]
 									return TRUE
 								}
+								echo ${Squad.Value.FindSetting[Booster]} should be Squad Booster
 								Me.Fleet.Member[${Squad.Value.FindSetting[Booster]}]:SetBooster[3]
 								return TRUE
 							}
@@ -367,7 +367,6 @@ objectdef obj_Fleet inherits obj_State
 					
 				if ${Me.Fleet.Member[${Wing.Value.FindSetting[Booster]}](exists)}
 				{
-					echo ${Wing.Value.FindSetting[Booster]} should be Wing Booster
 					if ${Me.Fleet.Member[${Wing.Value.FindSetting[Commander]}].Boosting} == 2 && ${Wing.Value.FindSetting[Booster]} != ${Wing.Value.FindSetting[Commander]}
 					{
 						Me.Fleet.Member[${Wing.Value.FindSetting[Commander]}]:SetBooster[0]
@@ -380,6 +379,7 @@ objectdef obj_Fleet inherits obj_State
 							Me.Fleet.Member[${Wing.Value.FindSetting[Booster]}]:SetBooster[0]
 							return TRUE
 						}
+						echo ${Wing.Value.FindSetting[Booster]} should be Wing Booster
 						Me.Fleet.Member[${Wing.Value.FindSetting[Booster]}]:SetBooster[2]
 						return TRUE
 					}
@@ -389,7 +389,6 @@ objectdef obj_Fleet inherits obj_State
 		
 		if ${Me.Fleet.Member[${Config.Fleets.GetFleet[${Config.Fleets.Active}].Booster}](exists)}
 		{
-			echo ${Config.Fleets.GetFleet[${Config.Fleets.Active}].Booster} should be Fleet Booster
 			if ${Me.Fleet.Member[${Config.Fleets.GetFleet[${Config.Fleets.Active}].Commander}].Boosting} == 1 && ${Config.Fleets.GetFleet[${Config.Fleets.Active}].Booster} != ${Config.Fleets.GetFleet[${Config.Fleets.Active}].Commander}
 			{
 				Me.Fleet.Member[${Config.Fleets.GetFleet[${Config.Fleets.Active}].Commander}]:SetBooster[0]
@@ -402,6 +401,7 @@ objectdef obj_Fleet inherits obj_State
 					Me.Fleet.Member[${Config.Fleets.GetFleet[${Config.Fleets.Active}].Booster}]:SetBooster[0]
 					return TRUE
 				}
+				echo ${Config.Fleets.GetFleet[${Config.Fleets.Active}].Booster} should be Fleet Booster
 				Me.Fleet.Member[${Config.Fleets.GetFleet[${Config.Fleets.Active}].Booster}]:SetBooster[1]
 				return TRUE
 			}
@@ -570,7 +570,7 @@ objectdef obj_Fleet inherits obj_State
 		if ${Buddy:First(exists)}
 			do
 			{
-				if ${Buddy.Value.CharID} == ${value}
+				if ${Buddy.Value.CharID} == ${value} && ${Buddy.Value.IsOnline}
 				{
 					Buddy.Value:InviteToFleet
 					return TRUE
