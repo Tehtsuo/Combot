@@ -168,7 +168,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							Script[ComBot].VariableScope.AutoThrust.Config:SetKeepAtRange_Threshold[${This.Value}]
 						</OnChange>
 					</Slider>							
-					<Checkbox name='Velocity'>
+<!--					<Checkbox name='Velocity'>
 						<X>1%</X>
 						<Y>40%</Y>
 						<Width>30%</Width> 
@@ -209,7 +209,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<OnChange>
 							Script[ComBot].VariableScope.AutoThrust.Config:SetVelocity_Threshold[${This.Value}]
 						</OnChange>
-					</Slider>							
+					</Slider>-->
 
 				</Children>
 			</Frame>
