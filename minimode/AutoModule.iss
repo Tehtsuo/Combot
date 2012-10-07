@@ -70,7 +70,7 @@ objectdef obj_AutoModule inherits obj_State
 	{
 		This[parent]:Initialize
 		This.NonGameTiedPulse:Set[TRUE]
-		Dynamic:AddMiniMode["AutoModule", "AutoModule", FALSE]
+		DynamicAddMiniMode("AutoModule", "AutoModule")
 	}
 	
 	method Start()
@@ -140,7 +140,4 @@ objectdef obj_AutoModule inherits obj_State
 		return FALSE
 	}
 
-	method Flee()
-	{
-	}
 }

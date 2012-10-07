@@ -128,7 +128,7 @@ objectdef obj_HangarSale inherits obj_State
 		This[parent]:Initialize
 		PulseFrequency:Set[1000]
 		Event[isxGames_onHTTPResponse]:AttachAtom[This:ParsePrice]
-		Dynamic:AddBehavior["HangarSale", "HangarSale", FALSE]
+		DynamicAddBehavior("HangarSale", "HangarSale")
 	}
 	
 	method Start()
@@ -205,6 +205,8 @@ objectdef obj_HangarSale inherits obj_State
 			SystemID:Set[${EVE.Bookmark[${Config.SellSystem]}].SolarSystemID}]
 		}
 		
+		UI:Log["GetURL http://api.eve-central.com/api/marketstat?${TypeIDQuery}"]
+		echo GetURL http://api.eve-central.com/api/marketstat?${TypeIDQuery}&usesystem=${SystemID}
 		GetURL http://api.eve-central.com/api/marketstat?${TypeIDQuery}&usesystem=${SystemID}
 		This:InsertState["WaitForPrice", 100]
 		return TRUE
@@ -214,7 +216,18 @@ objectdef obj_HangarSale inherits obj_State
 	{
 		if ${ResponseCode} >= 400
 		{
-			GetURL ${URL}
+			if ${This.States.Peek.Name.Equal[ProcessSell]}
+			{
+				This:Clear
+				This:QueueState["CheckItem", 0]
+				UI:Update["obj_HangarSale", "No response from EVE-Central API - Skipping item", "o"]
+			}
+			elseif ${This.States.Peek.Name.Equal[UpdateOrders]}
+			{
+				This:Clear
+				This:QueueState["UpdateOrders", 0]
+				UI:Update["obj_HangarSale", "No response from EVE-Central API - Skipping item", "o"]
+			}
 		}
 		else
 		{
@@ -237,6 +250,7 @@ objectdef obj_HangarSale inherits obj_State
 			PriceGot:Set[FALSE]
 			return TRUE
 		}
+
 		return FALSE
 	}
 	
@@ -251,40 +265,10 @@ objectdef obj_HangarSale inherits obj_State
 		if ${HangarIterator:First(exists)} && ${Config.Sell}
 		{
 			This.RandomDelta:Set[100]
-			if ${CurrentSellOrders} >= ${This.MaxOrders}
-			{
-				TimeToNextRun:Set[${Math.Calc[60000 * ${Math.Rand[11]} + 1800000]}]
-				UI:Update["obj_HangarSale", "Operations complete - Beginning again in ${Math.Calc[${TimeToNextRun} / 60000]} minutes", "o"]
-				MineralNames:Clear
-				MineralNames:Set[34, "Tritanium"]
-				MineralNames:Set[35, "Pyerite"]
-				MineralNames:Set[36, "Mexallon"]
-				MineralNames:Set[37, "Isogen"]
-				MineralNames:Set[38, "Nocxium"]
-				MineralNames:Set[39, "Zydrine"]
-				MineralNames:Set[40, "Megacyte"]
-				This:QueueState["Idle", ${TimeToNextRun}]
-				
-				This:QueueState["UpdateCurrentOrderCount"]
-				This:QueueState["CheckOrders"]
-				This:QueueState["OpenHangar"]
-				This:QueueState["CheckHangar"]				return TRUE
-			}
-			if  ${HangarIterator.Value.TypeID} == 28260 || \
-				${HangarIterator.Value.TypeID} == 30497 || \
-				${HangarIterator.Value.TypeID} == 18581 || \
-				${HangarIterator.Value.TypeID} == 4358 || \
-				${HangarIterator.Value.TypeID} == 2076 || \
-				${HangarIterator.Value.TypeID} == 25373 || \
-				${HangarIterator.Value.TypeID} == 21815
-			{
-				This:QueueState["CheckItem", 100]
-			}
-			else
-			{
-				This:QueueState["FetchPrice", 100, "${HangarIterator.Value.TypeID}"]
-				This:QueueState["ProcessSell", 100]
-			}
+
+			This:QueueState["FetchPrice", 100, "${HangarIterator.Value.TypeID}"]
+			This:QueueState["ProcessSell", 100]
+
 		}
 		
 		return TRUE
@@ -292,43 +276,17 @@ objectdef obj_HangarSale inherits obj_State
 		
 	member:bool CheckItem()
 	{
+		echo CheckItem
 		variable int ItemCount = 0
 		variable string TypeIDs = ""
 		variable string Seperator = ""
 		variable int TimeToNextRun
 		if ${HangarIterator:Next(exists)}
 		{
-			if  ${HangarIterator.Value.TypeID} == 28260 || \
-				${HangarIterator.Value.TypeID} == 30497 || \
-				${HangarIterator.Value.TypeID} == 18581 || \
-				${HangarIterator.Value.TypeID} == 4358 || \
-				${HangarIterator.Value.TypeID} == 2076 || \
-				${HangarIterator.Value.TypeID} == 25373 || \
-				${HangarIterator.Value.TypeID} == 21815 || \
-				${HangarIterator.Value.GroupID} == GROUP_SECURECARGOCONTAINER || \
+			if  ${HangarIterator.Value.GroupID} == GROUP_SECURECARGOCONTAINER || \
 				${HangarIterator.Value.GroupID} == GROUP_AUDITLOGSECURECONTAINER
 			{
 				return FALSE
-			}
-			if ${CurrentSellOrders} >= ${This.MaxOrders}
-			{
-				TimeToNextRun:Set[${Math.Calc[60000 * ${Math.Rand[11]} + 1800000]}]
-				UI:Update["obj_HangarSale", "Operations complete - Beginning again in ${Math.Calc[${TimeToNextRun} / 60000]} minutes", "o"]
-				MineralNames:Clear
-				MineralNames:Set[34, "Tritanium"]
-				MineralNames:Set[35, "Pyerite"]
-				MineralNames:Set[36, "Mexallon"]
-				MineralNames:Set[37, "Isogen"]
-				MineralNames:Set[38, "Nocxium"]
-				MineralNames:Set[39, "Zydrine"]
-				MineralNames:Set[40, "Megacyte"]
-				This:QueueState["Idle", ${TimeToNextRun}]
-				
-				This:QueueState["UpdateCurrentOrderCount"]
-				This:QueueState["CheckOrders"]
-				This:QueueState["OpenHangar"]
-				This:QueueState["CheckHangar"]
-				return TRUE
 			}
 
 			This:QueueState["FetchPrice", 100, "${HangarIterator.Value.TypeID}"]
@@ -371,7 +329,6 @@ objectdef obj_HangarSale inherits obj_State
 			return TRUE
 		}		
 		
-		
 		discount:Set[${Math.Calc[${SellPrices[${HangarIterator.Value.TypeID}].Min}*(${Config.UndercutPercent} * .01)]}]
 		if ${discount} > ${Config.UndercutValue}
 		{
@@ -383,10 +340,19 @@ objectdef obj_HangarSale inherits obj_State
 			if ${Config.PriceMode.Equal["Undercut Lowest"]} 
 			{
 				UI:Update["obj_HangarSale", "${HangarIterator.Value.Name}", "y"]
-				UI:Update["obj_HangarSale", "Selling \ar${HangarIterator.Value.Quantity}\ag at \ao${ComBot.ISK_To_Str[${sellLowestPrice}]}", "g"]
-				HangarIterator.Value:PlaceSellOrder[${sellLowestPrice}, ${HangarIterator.Value.Quantity}, 1]
-				This:QueueState["UpdateCurrentOrderCount"]
-				This:QueueState["CheckItem", 10000]
+				if ${CurrentSellOrders} >= ${This.MaxOrders}
+				{
+					UI:Update["obj_HangarSale", "No sell orders available - Skipping", "o"]
+					This:QueueState["UpdateCurrentOrderCount"]
+					This:QueueState["CheckItem", 0]
+				}
+				else
+				{
+					UI:Update["obj_HangarSale", "Selling \ar${HangarIterator.Value.Quantity}\ag at \ao${ComBot.ISK_To_Str[${sellLowestPrice}]}", "g"]
+					HangarIterator.Value:PlaceSellOrder[${sellLowestPrice}, ${HangarIterator.Value.Quantity}, 1]
+					This:QueueState["UpdateCurrentOrderCount"]
+					This:QueueState["CheckItem", 10000]
+				}
 				return TRUE
 			}
 		}
@@ -397,10 +363,19 @@ objectdef obj_HangarSale inherits obj_State
 			if ${Config.PriceMode.Equal["Match Highest Buyout"]} 
 			{
 				UI:Update["obj_HangarSale", "${HangarIterator.Value.Name}", "y"]
-				UI:Update["obj_HangarSale", "Selling \ar${HangarIterator.Value.Quantity}\ag at \ao${ComBot.ISK_To_Str[${sellBuyoutPrice}]}", "g"]
-				HangarIterator.Value:PlaceSellOrder[${sellBuyoutPrice}, ${HangarIterator.Value.Quantity}, 1]
-				This:QueueState["UpdateCurrentOrderCount"]
-				This:QueueState["CheckItem", 10000]
+				if ${CurrentSellOrders} >= ${This.MaxOrders}
+				{
+					UI:Update["obj_HangarSale", "No sell orders available - Skipping", "o"]
+					This:QueueState["UpdateCurrentOrderCount"]
+					This:QueueState["CheckItem", 0]
+				}
+				else
+				{
+					UI:Update["obj_HangarSale", "Selling \ar${HangarIterator.Value.Quantity}\ag at \ao${ComBot.ISK_To_Str[${sellBuyoutPrice}]}", "g"]
+					HangarIterator.Value:PlaceSellOrder[${sellBuyoutPrice}, ${HangarIterator.Value.Quantity}, 1]
+					This:QueueState["UpdateCurrentOrderCount"]
+					This:QueueState["CheckItem", 10000]
+				}
 				return TRUE
 			}
 		}
@@ -416,10 +391,19 @@ objectdef obj_HangarSale inherits obj_State
 			if ${Config.PriceMode.Equal["Undercut Average"]} 
 			{
 				UI:Update["obj_HangarSale", "${HangarIterator.Value.Name}", "y"]
-				UI:Update["obj_HangarSale", "Selling \ar${HangarIterator.Value.Quantity}\ag at \ao${ComBot.ISK_To_Str[${sellAveragePrice}]}", "g"]
-				HangarIterator.Value:PlaceSellOrder[${sellAveragePrice}, ${HangarIterator.Value.Quantity}, 1]
-				This:QueueState["UpdateCurrentOrderCount"]
-				This:QueueState["CheckItem", 10000]
+				if ${CurrentSellOrders} >= ${This.MaxOrders}
+				{
+					UI:Update["obj_HangarSale", "No sell orders available - Skipping", "o"]
+					This:QueueState["UpdateCurrentOrderCount"]
+					This:QueueState["CheckItem", 0]
+				}
+				else
+				{
+					UI:Update["obj_HangarSale", "Selling \ar${HangarIterator.Value.Quantity}\ag at \ao${ComBot.ISK_To_Str[${sellAveragePrice}]}", "g"]
+					HangarIterator.Value:PlaceSellOrder[${sellAveragePrice}, ${HangarIterator.Value.Quantity}, 1]
+					This:QueueState["UpdateCurrentOrderCount"]
+					This:QueueState["CheckItem", 10000]
+				}
 				return TRUE
 			}
 		}
@@ -441,150 +425,11 @@ objectdef obj_HangarSale inherits obj_State
 	}	
 
 	
-	member:bool ProcessSells()
-	{
-		variable index:item ItemList
-		variable iterator ItemIterator
-		variable int SellItem
-		variable int TimeToNextRun
-		echo ${CurrentSellOrders} >= ${This.MaxOrders}
-		
-		if ${CurrentSellOrders} >= ${This.MaxOrders}
-		{
-			TimeToNextRun:Set[${Math.Calc[60000 * ${Math.Rand[11]} + 1800000]}]
-			UI:Update["obj_HangarSale", "Operations complete - Beginning again in ${Math.Calc[${TimeToNextRun} / 60000]} minutes", "o"]
-			MineralNames:Clear
-			RemainingToProcess:Set[7]
-			MineralNames:Set[34, "Tritanium"]
-			MineralNames:Set[35, "Pyerite"]
-			MineralNames:Set[36, "Mexallon"]
-			MineralNames:Set[37, "Isogen"]
-			MineralNames:Set[38, "Nocxium"]
-			MineralNames:Set[39, "Zydrine"]
-			MineralNames:Set[40, "Megacyte"]
-			This:QueueState["MoveRefinesToContainer"]
-			This:QueueState["Idle", ${TimeToNextRun}]
-			This:QueueState["OpenHangar"]
-			This:QueueState["FetchPrice", 100, "34, 35"]
-			This:QueueState["FetchPrice", 100, "36, 37"]
-			This:QueueState["FetchPrice", 100, "38, 39"]
-			This:QueueState["FetchPrice", 100, "40"]
-			This:QueueState["CheckHangar"]			
-		
-			return TRUE
-		}
-		
-		SellItem:Set[${This.GetHighestSell}]
-		
-		if ${SellItem} == -1
-		{
-			TimeToNextRun:Set[${Math.Calc[60000 * ${Math.Rand[11]} + 1800000]}]
-			UI:Update["obj_HangarSale", "Operations complete - Beginning again in ${Math.Calc[${TimeToNextRun} / 60000]} minutes", "o"]
-			MineralNames:Clear
-			RemainingToProcess:Set[7]
-			MineralNames:Set[34, "Tritanium"]
-			MineralNames:Set[35, "Pyerite"]
-			MineralNames:Set[36, "Mexallon"]
-			MineralNames:Set[37, "Isogen"]
-			MineralNames:Set[38, "Nocxium"]
-			MineralNames:Set[39, "Zydrine"]
-			MineralNames:Set[40, "Megacyte"]
-			This:QueueState["MoveRefinesToContainer"]
-			This:QueueState["Idle", ${TimeToNextRun}]
-			This:QueueState["OpenHangar"]
-			This:QueueState["FetchPrice", 100, "34, 35"]
-			This:QueueState["FetchPrice", 100, "36, 37"]
-			This:QueueState["FetchPrice", 100, "38, 39"]
-			This:QueueState["FetchPrice", 100, "40"]
-			This:QueueState["CheckHangar"]			
-
-			return TRUE
-		}
-		
-		Me:GetHangarItems[ItemList]
-		ItemList:GetIterator[ItemIterator]
-		if ${ItemIterator:First(exists)}
-		{
-			do
-			{
-				if ${ItemIterator.Value.TypeID} == ${SellItem}
-				{
-					if ${ItemIterator.Value.IsRepackable}
-					{
-						ItemIterator.Value:Repackage
-						This:InsertState["ProcessSells", 10000]
-						This:InsertState["AcceptRepackage", 10000]
-						return TRUE
-					}
-					UI:Update["obj_HangarSale", "${ItemIterator.Value.Name}", "y"]
-					UI:Update["obj_HangarSale", "Selling \ar${ItemIterator.Value.Quantity}\ag at \ao${ComBot.ISK_To_Str[${SellItems.Element[${SellItem}]}]}", "g"]
-					ItemIterator.Value:PlaceSellOrder[${SellItems.Element[${SellItem}]}, ${ItemIterator.Value.Quantity}, 1]
-					CurrentSellOrders:Inc
-					SellItems:Erase[${SellItem}]
-					return FALSE
-				}
-			}
-			while ${ItemIterator:Next(exists)}
-		}
-			TimeToNextRun:Set[${Math.Calc[60000 * ${Math.Rand[11]} + 1800000]}]
-			UI:Update["obj_HangarSale", "Operations complete - Beginning again in ${Math.Calc[${TimeToNextRun} / 60000]} minutes", "o"]
-			MineralNames:Clear
-			RemainingToProcess:Set[7]
-			MineralNames:Set[34, "Tritanium"]
-			MineralNames:Set[35, "Pyerite"]
-			MineralNames:Set[36, "Mexallon"]
-			MineralNames:Set[37, "Isogen"]
-			MineralNames:Set[38, "Nocxium"]
-			MineralNames:Set[39, "Zydrine"]
-			MineralNames:Set[40, "Megacyte"]
-			This:QueueState["MoveRefinesToContainer"]
-			This:QueueState["Idle", ${TimeToNextRun}]
-			This:QueueState["OpenHangar"]
-			This:QueueState["FetchPrice", 100, "34, 35"]
-			This:QueueState["FetchPrice", 100, "36, 37"]
-			This:QueueState["FetchPrice", 100, "38, 39"]
-			This:QueueState["FetchPrice", 100, "40"]
-			This:QueueState["CheckHangar"]			
-
-		return TRUE
-	}
 	
 	member:bool AcceptRepackage()
 	{
 		EVEWindow[ByName, modal]:ClickButtonYes
 		return TRUE
-	}
-	
-	member:int GetHighestSell()
-	{
-		variable iterator SellIterator
-		variable float HighestPrice = 0
-		variable int HighestKey = -1
-		variable int Quantity
-		
-		SellItems:GetIterator[SellIterator]
-
-		variable index:item ItemList
-		variable iterator ItemIterator
-		
-		if ${SellIterator:First(exists)}
-		{
-			do
-			{
-				Me:GetHangarItems[ItemList]
-				ItemList:RemoveByQuery[${LavishScript.CreateQuery[TypeID != ${SellIterator.Key}]}]
-				ItemList:GetIterator[ItemIterator]
-				if ${ItemIterator:First(exists)}
-					Quantity:Set[${ItemIterator.Value.Quantity}]
-				if ${Math.Calc[${SellIterator.Value} * ${Quantity}]} > ${HighestPrice}
-				{
-					HighestPrice:Set[${Math.Calc[${SellIterator.Value} * ${Quantity}]}]
-					HighestKey:Set[${SellIterator.Key}]
-				}
-			}
-			while ${SellIterator:Next(exists)}
-		}
-		return ${HighestKey}
 	}
 	
 	member:int MaxOrders()
@@ -633,6 +478,8 @@ objectdef obj_HangarSale inherits obj_State
 		variable float discount
 		variable float sellPrice
 		variable int delay = 0
+		
+		echo UpdateOrders
 		
 		if !${BuyPrices[${MyOrderIterator.Value.TypeID}](exists)} || !${SellPrices[${MyOrderIterator.Value.TypeID}](exists)}
 		{

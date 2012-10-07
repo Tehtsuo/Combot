@@ -26,7 +26,8 @@ objectdef obj_Move inherits obj_State
 	variable bool Traveling=FALSE
 	
 	variable int Distance
-
+	
+	variable string SavedSpot = ""
 
 	method Initialize()
 	{
@@ -566,6 +567,39 @@ objectdef obj_Move inherits obj_State
 		ApproachModule:QueueState["CheckApproach", 1000, "${ID}, ${distance}"]
 	}
 
+	method SaveSpot()
+	{
+		UI:Update["obj_Move", "Storing current location", "y"]
+		This.SavedSpot:Set["Saved Spot ${EVETime.Time}"]
+		EVE:CreateBookmark["${This.SavedSpot}"]
+	}
+	
+	member:bool SavedSpotExists()
+	{
+		if ${This.SavedSpot.Length} > 0
+		{
+			return ${EVE.Bookmark["${This.SavedSpot}"](exists)}
+		}
+		return FALSE
+	}
+	
+	method RemoveSavedSpot()
+	{
+		if ${This.SavedSpotExists}
+		{
+			EVE.Bookmark["${This.SavedSpot}"]:Remove
+			SavedSpot:Set[""]
+		}
+	}
+	
+	method GotoSavedSpot()
+	{
+		if ${This.SavedSpotExists}
+		{
+			This:Bookmark["${This.SavedSpot}"]
+		}
+	}
+	
 }
 	
 objectdef obj_Approach inherits obj_State
@@ -621,8 +655,4 @@ objectdef obj_Approach inherits obj_State
 		
 		return FALSE
 	}
-	
-	method Flee()
-	{
-	}	
 }

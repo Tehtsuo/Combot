@@ -64,8 +64,6 @@ objectdef obj_State
 		CurState:Set["Idle", 100, ""]
 		IsIdle:Set[TRUE]
 		Event[ISXEVE_onFrame]:AttachAtom[This:Pulse]
-		LavishScript:RegisterEvent[ComBot_Flee]
-		Event[ComBot_Flee]:AttachAtom[This:Flee]
 	}
 	
 	method IndependentPulse()
@@ -78,7 +76,6 @@ objectdef obj_State
 	method Shutdown()
 	{
 		Event[ISXEVE_onFrame]:DetachAtom[This:Pulse]
-		Event[ComBot_Flee]:DetachAtom[This:Flee]
 	}
 	
 	method AssignStateQueueDisplay(string listbox)
@@ -154,6 +151,31 @@ objectdef obj_State
 				}
 				UIElement[${QueueListbox}].OrderedItem[1]:Remove
 				States:Dequeue
+			}
+		}
+		if !${This(type).Name.Find[UI]} && ${UIElement[ComBotTab@ComBot].SelectedTab.Name.Equal[Debug]}
+		{
+			if ${IsIdle}
+			{
+				if !${UIElement[IdleModuleList@Debug@ComBotTab@ComBot].ItemByText[${This(type)}](exists)}
+				{
+					UIElement[IdleModuleList@Debug@ComBotTab@ComBot]:AddItem[${This(type)}]
+				}
+				if ${UIElement[ActiveModuleList@Debug@ComBotTab@ComBot].ItemByText[${This(type)}](exists)}
+				{
+					UIElement[ActiveModuleList@Debug@ComBotTab@ComBot].ItemByText[${This(type)}]:Remove
+				}
+			}
+			else
+			{
+				if !${UIElement[ActiveModuleList@Debug@ComBotTab@ComBot].ItemByText[${This(type)}](exists)}
+				{
+					UIElement[ActiveModuleList@Debug@ComBotTab@ComBot]:AddItem[${This(type)}]
+				}
+				if ${UIElement[IdleModuleList@Debug@ComBotTab@ComBot].ItemByText[${This(type)}](exists)}
+				{
+					UIElement[IdleModuleList@Debug@ComBotTab@ComBot].ItemByText[${This(type)}]:Remove
+				}
 			}
 		}
 	}
@@ -237,12 +259,4 @@ objectdef obj_State
 	}
 	
 	
-	
-	method Flee()
-	{
-		States:Clear
-		CurState:Set["Idle", 100, ""]
-		UIElement[${QueueListbox}]:ClearItems
-		UIElement[${QueueListbox}]:AddItem[${CurState.Name}]
-	}
 }

@@ -198,4 +198,5 @@ objectdef obj_Module inherits obj_State
 	{
 		return "MyShip.Module[${ModuleID}]"
 	}
+
 }

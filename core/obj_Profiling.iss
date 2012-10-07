@@ -127,5 +127,4 @@ objectdef obj_Profiling inherits obj_State
 		return FALSE
 	}
 
-
 }

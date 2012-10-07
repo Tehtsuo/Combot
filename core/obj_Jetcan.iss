@@ -360,4 +360,5 @@ objectdef obj_Jetcan inherits obj_State
 		}
 		return TRUE
 	}
+
 }

@@ -90,4 +90,5 @@ objectdef obj_Delay inherits obj_State
 			return TRUE
 		}
 	}
+
 }

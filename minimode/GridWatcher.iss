@@ -42,6 +42,7 @@ objectdef obj_Configuration_GridWatcher
 	{
 		BaseConfig.BaseRef:AddSet[${This.SetName}]
 		This.CommonRef:AddSet["Names"]
+		This.CommonRef:AddSetting["Created", True]
 	}
 }
 
@@ -55,7 +56,7 @@ objectdef obj_GridWatcher inherits obj_State
 	{
 		This[parent]:Initialize
 		PulseFrequency:Set[1000]
-		Dynamic:AddMiniMode["GridWatcher", "GridWatcher", FALSE]
+		DynamicAddMiniMode("GridWatcher", "GridWatcher")
 	}
 	
 	method Start()

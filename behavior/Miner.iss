@@ -159,7 +159,7 @@ objectdef obj_Miner inherits obj_State
 		Asteroids.LockOutOfRange:Set[FALSE]
 		Asteroids:SetIPCExclusion["MiningTargets"]
 		Asteroids.ForceLockExclusion:Set[TRUE]
-		Dynamic:AddBehavior["Miner", "Miner", FALSE]
+		DynamicAddBehavior("Miner", "Miner")
 	}
 
 	method Shutdown()
@@ -246,7 +246,8 @@ objectdef obj_Miner inherits obj_State
 						Drones:Recall
 						return FALSE
 					}
-					UI:Update["obj_Miner", "Warping to ${Local[${Config.Container_Name}].ToFleetMember.ToPilot.Name}", "g"]
+					UI:Update["obj_Miner", "Warping to ${Local[${Config.Container_Name}].ToFleetMember.ToPilot.Name}", "g", TRUE]
+					UI:Log["Redacted:  obj_Miner - Warping to XXXXXXX (FleetMember)"]
 					Local[${Config.Container_Name}].ToFleetMember:WarpTo
 					Asteroids:ClearExclusions
 					Client:Wait[5000]
@@ -289,7 +290,7 @@ objectdef obj_Miner inherits obj_State
 				{
 					relay all -event ComBot_Orca_InBelt FALSE
 				}
-				Bookmarks:StoreLocation
+				Move:SaveSpot
 				This:Clear
 				Asteroids.LockedTargetList:Clear
 				Asteroids:ClearExclusions
@@ -328,7 +329,7 @@ objectdef obj_Miner inherits obj_State
 				UI:Update["obj_Miner", "Unload trip required", "g"]
 				if ${Client.InSpace}
 				{
-					Bookmarks:StoreLocation
+					Move:SaveSpot
 				}
 				if ${Config.OrcaMode}
 				{
@@ -501,18 +502,18 @@ objectdef obj_Miner inherits obj_State
 		return TRUE
 	}
 	
-	member:bool RemoveStoredBookmark()
+	member:bool RemoveSavedSpot()
 	{
-		Bookmarks:RemoveStoredLocation
+		Move:RemoveSavedSpot
 		return TRUE
 	}
 
 	member:bool MoveToBelt()
 	{
-		if ${Bookmarks.StoredLocationExists}
+		if ${Move.SavedSpotExists}
 		{
-			UI:Update["obj_Miner","Returning to last location (${Bookmarks.StoredLocation})", "g"]
-			Move:Bookmark["${Bookmarks.StoredLocation}"]
+			UI:Update["obj_Miner","Returning to last location (${Bookmarks.SavedSpot})", "g"]
+			Move:GotoSavedSpot
 			return TRUE
 		}
 	
@@ -795,7 +796,7 @@ objectdef obj_Miner inherits obj_State
 			This:QueueState["Traveling", 1000]
 			This:QueueState["MoveToBelt", 1000]
 			This:QueueState["Traveling", 1000]
-			This:QueueState["RemoveStoredBookmark", 1000]
+			This:QueueState["RemoveSavedSpot", 1000]
 			This:QueueState["Mine"]
 			Profiling:EndTrack
 			return TRUE
