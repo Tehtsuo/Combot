@@ -393,7 +393,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 										variable int KeyNumber
 										for (KeyNumber:Set[1]; ${KeyNumber} &lt;= ${Profile.Keys}; KeyNumber:Inc)
 										{
-											Uplink ${String["SettingXML[GameConfiguration.XML].Set[${Game}].Set[Profiles].Set[${Me.Name}]:Set[${Profile.Key[${KeyNumber}].Escape}, ${Profile.GetString[${Profile.Key[${KeyNumber}]}].Escape}]"].Escape}
+											Uplink "SettingXML[GameConfiguration.XML].Set[${Game}].Set[Profiles].Set[${Me.Name}]:Set[${Profile.Key[${KeyNumber}].Escape}, ${Profile.GetString[${Profile.Key[${KeyNumber}]}].Escape.Escape}]"
 										}
 										Uplink "SettingXML[GameConfiguration.XML].Set[${Game}].Set[Profiles].Set[${Me.Name}]:AddSet[Startup Sequence]"
 										Uplink "SettingXML[GameConfiguration.XML].Set[${Game}].Set[Profiles].Set[${Me.Name}].Set[Startup Sequence]:Set[ComBot Launcher,run combot \"${Me.Name}\"]"
