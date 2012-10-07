@@ -82,7 +82,6 @@ objectdef obj_AutoLogout inherits obj_State
 			This:QueueState["MoveToLogout"]
 			This:QueueState["Traveling"]
 			This:QueueState["Logout"]
-			This:QueueState["ConfirmLogout", 10000]
 			return TRUE
 		}
 		return FALSE
@@ -123,13 +122,7 @@ objectdef obj_AutoLogout inherits obj_State
 	
 	member:bool Logout()
 	{
-		EVE:Execute[CmdLogOff]
-		return TRUE
-	}
-	
-	member:bool ConfirmLogout()
-	{
-		EVEWindow[active]:ClickButtonYes
+		EVE:Execute[CmdQuitGame]
 		endscript combot
 	}
 }
