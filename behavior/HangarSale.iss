@@ -45,6 +45,7 @@ objectdef obj_Configuration_HangarSale
 		This.CommonRef:AddSetting[PriceMode,Undercut Lowest]
 		This.CommonRef:AddSetting[UndercutPercent,1]
 		This.CommonRef:AddSetting[UndercutValue,1000]
+		This.CommonRef:AddSetting[PriceMode,Active Ship]
 	}
 	
 	Setting(string, SellSystem, SetSellSystem)
@@ -54,7 +55,7 @@ objectdef obj_Configuration_HangarSale
 	Setting(bool, RePrice, SetRePrice)
 	Setting(bool, Sell, SetSell)
 	Setting(bool, MoveRefine, SetMoveRefine)
-	Setting(int64, MoveRefinesTarget, SetMoveRefinesTarget)
+	Setting(string, MoveRefineDestination, SetMoveRefineDestination)
 }
 
 objectdef obj_ItemInformation
@@ -703,6 +704,22 @@ objectdef obj_HangarSaleUI inherits obj_State
 			}
 			while ${BookmarkIterator:Next(exists)}
 
+		variable index:string ChildNames
+		variable index:int64 ChildIDs
+		variable iterator ChildID
+		
+		EVEWindow[ByName, Inventory]:GetChildren[ChildNames,ChildIDs]
+		ChildIDs:GetIterator[ChildID]
+		UIElement[MoveRefineDestination@ComBot_HangarSale_Frame@ComBot_HangarSale]:ClearItems
+		UIElement[MoveRefineDestination@ComBot_HangarSale_Frame@ComBot_HangarSale]:AddItem[Active Ship]
+		if ${ChildID:First(exists)}
+			do
+			{
+				echo Window:  ${EVEWindow[ByItemID,${ChildID.Value}].Name}
+				UIElement[MoveRefineDestination@ComBot_HangarSale_Frame@ComBot_HangarSale]:AddItem[${ChildID.Value}]
+			}
+			while ${ChildID:Next(exists)}
+		
 			
 		return FALSE
 	}

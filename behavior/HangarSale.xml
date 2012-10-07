@@ -246,11 +246,11 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						</OnChange>
 					</Slider>						 
 					<Checkbox name='MoveRefine'>
-						<X>1%</X>
-						<Y>36%</Y>
+						<X>34%</X>
+						<Y>30%</Y>
 						<Width>32%</Width> 
 						<Height>20</Height> 
-						<Text>Move items to be refined to active ship</Text>
+						<Text>Move items to be refined</Text>
 						<OnLoad>
 							if ${Script[ComBot].VariableScope.HangarSale.Config.MoveRefine}
 							{
@@ -261,6 +261,23 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							Script[ComBot].VariableScope.HangarSale.Config:SetMoveRefine[${This.Checked}]
 						</OnLeftClick>
 					</Checkbox>
+					<ComboBox name='MoveRefineDestination'> 
+						<X>34%</X> 
+						<Y>34%</Y> 
+						<Width>32%</Width> 
+						<Height>3%</Height> 
+						<Items>
+							<Item>Active Ship</Item>
+							<Item>Container</Item>
+						</Items>
+						<OnLoad>
+							This.ItemByText[${Script[ComBot].VariableScope.HangarSale.Config.MoveRefineDestination}]:Select
+							Script[ComBot].VariableScope.HangarSale.LocalUI:Start
+						</OnLoad>
+						<OnSelect>
+							Script[ComBot].VariableScope.HangarSale.Config:SetMoveRefineDestination[${This.SelectedItem.Text}]
+						</OnSelect>
+					</ComboBox>						 
 				</Children>
 			</Frame>
 		</Children>
