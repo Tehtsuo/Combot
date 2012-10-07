@@ -134,7 +134,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					<Height>20</Height>
 					<Text>Help</Text>
 					<OnLeftClick>
-						timedcommand 0 "OSExecute http://eve.isxgames.com/wiki/index.php?title=ComBot#Experimental_Installation"
+						timedcommand 0 "OSExecute http://combot.vendaria.net"
 					</OnLeftClick>
 				</button>
 				<button	Name='Run'>
