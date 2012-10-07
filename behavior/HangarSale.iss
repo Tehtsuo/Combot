@@ -278,7 +278,21 @@ objectdef obj_HangarSale inherits obj_State
 				${HangarIterator.Value.TypeID} == 2076 || \
 				${HangarIterator.Value.TypeID} == 25373 || \
 				${HangarIterator.Value.TypeID} == 21815 || \
-				${HangarIterator.Value.TypeID} == 2083
+				${HangarIterator.Value.TypeID} == 2083 || \
+				${HangarIterator.Value.TypeID} == 1373 || \
+				${HangarIterator.Value.TypeID} == 1374 || \
+				${HangarIterator.Value.TypeID} == 1375 || \
+				${HangarIterator.Value.TypeID} == 1376 || \
+				${HangarIterator.Value.TypeID} == 1377 || \
+				${HangarIterator.Value.TypeID} == 1378 || \
+				${HangarIterator.Value.TypeID} == 1379 || \
+				${HangarIterator.Value.TypeID} == 1380 || \
+				${HangarIterator.Value.TypeID} == 1381 || \
+				${HangarIterator.Value.TypeID} == 1382 || \
+				${HangarIterator.Value.TypeID} == 1383 || \
+				${HangarIterator.Value.TypeID} == 1384 || \
+				${HangarIterator.Value.TypeID} == 1385 || \
+				${HangarIterator.Value.TypeID} == 1386
 			{
 				This:QueueState["CheckItem", 100]
 			}
@@ -307,6 +321,21 @@ objectdef obj_HangarSale inherits obj_State
 				${HangarIterator.Value.TypeID} == 2076 || \
 				${HangarIterator.Value.TypeID} == 25373 || \
 				${HangarIterator.Value.TypeID} == 21815 || \
+				${HangarIterator.Value.TypeID} == 2083 || \
+				${HangarIterator.Value.TypeID} == 1373 || \
+				${HangarIterator.Value.TypeID} == 1374 || \
+				${HangarIterator.Value.TypeID} == 1375 || \
+				${HangarIterator.Value.TypeID} == 1376 || \
+				${HangarIterator.Value.TypeID} == 1377 || \
+				${HangarIterator.Value.TypeID} == 1378 || \
+				${HangarIterator.Value.TypeID} == 1379 || \
+				${HangarIterator.Value.TypeID} == 1380 || \
+				${HangarIterator.Value.TypeID} == 1381 || \
+				${HangarIterator.Value.TypeID} == 1382 || \
+				${HangarIterator.Value.TypeID} == 1383 || \
+				${HangarIterator.Value.TypeID} == 1384 || \
+				${HangarIterator.Value.TypeID} == 1385 || \
+				${HangarIterator.Value.TypeID} == 1386 || \
 				${HangarIterator.Value.GroupID} == GROUP_SECURECARGOCONTAINER || \
 				${HangarIterator.Value.GroupID} == GROUP_AUDITLOGSECURECONTAINER || \
 				${HangarIterator.Value.TypeID} == 2083
