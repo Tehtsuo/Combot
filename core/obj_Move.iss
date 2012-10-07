@@ -163,7 +163,7 @@ objectdef obj_Move inherits obj_State
 		This:QueueState["SystemMove", 2000, ${SystemID}]
 	}
 
-	method Object(int64 ID)
+	method Object(int64 ID, int Distance=0)
 	{
 		if ${This.Traveling}
 		{
@@ -173,7 +173,7 @@ objectdef obj_Move inherits obj_State
 		UI:Update["obj_Move", "Movement to object queued.  Destination: ${ID}", "g", TRUE]
 		UI:Log["Redacted:  obj_Move - Movement to object queued.  Destination: XXXXXXX"]
 		This.Traveling:Set[TRUE]
-		This:QueueState["ObjectMove", 2000, ${ID}]
+		This:QueueState["ObjectMove", 2000, "${ID},${Distance}"]
 	}	
 	
 	method Agent(string AgentName)
@@ -505,7 +505,7 @@ objectdef obj_Move inherits obj_State
 		return TRUE
 	}
 
-	member:bool ObjectMove(int64 ID)
+	member:bool ObjectMove(int64 ID, int Distance=0)
 	{
 
 		if ${Me.InStation}
@@ -534,7 +534,7 @@ objectdef obj_Move inherits obj_State
 		
 		if  ${Entity[${ID}].Distance} > WARP_RANGE
 		{
-			This:Warp[${ID}]
+			This:Warp[${ID}, ${Distance}]
 			return FALSE
 		}
 		
