@@ -78,6 +78,7 @@ objectdef obj_Ratter inherits obj_State
 		This:PopulateTargetList
 		Drones:StayDeployed
 		Drones:Aggressive
+		Drones.DroneTargets.MinLockCount:Set[5]
 		UI:Update["obj_Ratter", "Started", "g"]
 		This:AssignStateQueueDisplay[DebugStateList@Debug@ComBotTab@ComBot]
 		if ${This.IsIdle}
@@ -131,7 +132,7 @@ objectdef obj_Ratter inherits obj_State
 				EVE:QueryEntities[Belts, "GroupID = GROUP_ASTEROIDBELT"]
 			}
 
-			Move:Object[${Entity[${Belts[1].ID}]}]
+			Move:Object[${Entity[${Belts[1].ID}]}, 150000]
 			Belts:Remove[1]
 			Belts:Collapse
 			return TRUE
@@ -165,7 +166,7 @@ objectdef obj_Ratter inherits obj_State
 			return TRUE
 		}
 		
-		if !${Rats.TargetList.Used} && !${Drones.DronesInSpace} && !${Drones.DroneTargets.TargetList.Used}
+		if !${Drones.DronesInSpace} && !${Drones.DroneTargets.TargetList.Used}
 		{
 			echo ${Drones.DroneTargets.TargetList.Used} drone targets
 			This:QueueState["MoveToBelt"]
