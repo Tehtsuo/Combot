@@ -57,6 +57,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					<Height>20</Height>
 					<Text>Close</Text>
 					<OnLeftClick>
+						Script[ComBot].VariableScope.Salvage.LocalUI:Stop
 						ui -unload "&filepath;/AutoLogout"
 					</OnLeftClick>
 				</button>
@@ -81,26 +82,56 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Wrap />
 						<Text>AutoLogout is a MiniMode to automatically log you out at a specified time</Text>
 					</Text>
-					<Text name='obj_AutoLogout_Bookmark_Label'> 
+
+					<Text name='BookmarkTitle'> 
 						<Font template='Information.Font' />
 						<X>1%</X> 
 						<Y>20%</Y> 
 						<Width>20%</Width> 
 						<Height>3%</Height> 
 						<Text>Logout Bookmark</Text>
-					</Text>
-					<Textentry name='obj_AutoLogout_Bookmark'> 
+					</Text>						 
+					<Textentry Name="Bookmark">
 						<X>1%</X> 
 						<Y>23%</Y> 
 						<Width>20%</Width> 
 						<Height>3%</Height> 
 						<OnLoad>
-							This:SetText[${Script[Combot].VariableScope.AutoLogout.Config.Bookmark}]
+							This:SetText[${Script[ComBot].VariableScope.AutoLogout.Config.Bookmark}]
 						</OnLoad>
 						<OnChange>
-							Script[Combot].VariableScope.AutoLogout.Config:SetBookmark[${This.Text}]
+							if ${This.Text.Length}
+							{
+								Script[ComBot].VariableScope.AutoLogout.Config:SetBookmark[${This.Text}]
+							}
+							else
+							{
+								Script[ComBot].VariableScope.AutoLogout.Config:SetBookmark[\"\"]
+							}
+							UIElement[BookmarkList@ComBot_AutoLogout_Frame@ComBot_AutoLogout]:Show
+							Script[ComBot].VariableScope.AutoLogout.LocalUI:Start
 						</OnChange>
 					</Textentry>
+					<listbox Name="BookmarkList">
+						<BackgroundColor>FF000000</BackgroundColor>
+						<Border>1</Border>
+						<BorderColor>FFFFFFFF</BorderColor>
+						<X>1%</X>
+						<Y>13%</Y>
+						<Width>32%</Width>
+						<Height>30%</Height>
+						<OnLoad>
+							This:SetZOrder[alwaysontop]
+							This:Hide
+						</OnLoad>
+						<OnSelect>
+							UIElement[Bookmark@ComBot_AutoLogout_Frame@ComBot_AutoLogout]:SetText[${This.SelectedItem.Text}]
+							Script[ComBot].VariableScope.AutoLogout.Config:SetBookmark[${This.SelectedItem.Text}]
+							Script[ComBot].VariableScope.AutoLogout.LocalUI:Stop
+							This:Hide
+						</OnSelect>
+					</listbox>					
+					
 					<Text name='obj_AutoLogout_Hour_Label'> 
 						<Font template='Information.Font' />
 						<X>1%</X> 

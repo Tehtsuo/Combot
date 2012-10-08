@@ -54,6 +54,7 @@ objectdef obj_Configuration_AutoLogout
 objectdef obj_AutoLogout inherits obj_State
 {
 	variable obj_Configuration_AutoLogout Config
+	variable obj_AutoLogoutUI LocalUI
 	
 	method Initialize()
 	{
@@ -125,4 +126,55 @@ objectdef obj_AutoLogout inherits obj_State
 		EVE:Execute[CmdQuitGame]
 		endscript combot
 	}
+}
+
+
+objectdef obj_AutoLogoutUI inherits obj_State
+{
+
+
+	method Initialize()
+	{
+		This[parent]:Initialize
+		This.NonGameTiedPulse:Set[TRUE]
+	}
+	
+	method Start()
+	{
+		This:QueueState["UpdateBookmarkLists", 5]
+	}
+	
+	method Stop()
+	{
+		This:Clear
+	}
+
+	member:bool UpdateBookmarkLists()
+	{
+		variable index:bookmark Bookmarks
+		variable iterator BookmarkIterator
+
+		EVE:GetBookmarks[Bookmarks]
+		Bookmarks:GetIterator[BookmarkIterator]
+		
+
+		UIElement[BookmarkList@ComBot_AutoLogout_Frame@ComBot_AutoLogout]:ClearItems
+		if ${BookmarkIterator:First(exists)}
+			do
+			{	
+				if ${UIElement[Bookmark@ComBot_AutoLogout_Frame@ComBot_AutoLogout].Text.Length}
+				{
+					if ${BookmarkIterator.Value.Label.Left[${Salvage.Config.Dropoff.Length}].Equal[${AutoLogout.Config.Bookmark}]}
+						UIElement[BookmarkList@ComBot_AutoLogout_Frame@ComBot_AutoLogout]:AddItem[${BookmarkIterator.Value.Label.Escape}]
+				}
+				else
+				{
+					UIElement[BookmarkList@ComBot_AutoLogout_Frame@ComBot_AutoLogout]:AddItem[${BookmarkIterator.Value.Label.Escape}]
+				}
+			}
+			while ${BookmarkIterator:Next(exists)}
+
+		return FALSE
+	}
+
 }
