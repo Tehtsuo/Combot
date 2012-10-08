@@ -123,6 +123,7 @@ objectdef obj_Drones inherits obj_State
 			return FALSE
 		}
 		DroneTargets:RequestUpdate
+		UI:Log["Drone Targets: ${DroneTargets.LockedTargetList.Used} Drones in Bay: ${This.DronesInBay} Drones in Space: ${This.DronesInSpace}"]
 		if ${This.DronesInBay.Equal[0]} && ${This.DronesInSpace.Equal[0]}
 		{
 			return FALSE
