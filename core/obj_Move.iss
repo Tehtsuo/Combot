@@ -171,8 +171,8 @@ objectdef obj_Move inherits obj_State
 			return
 		}
 		
-		UI:Update["obj_Move", "Movement to object queued.  Destination: ${ID}", "g", TRUE]
-		UI:Log["Redacted:  obj_Move - Movement to object queued.  Destination: XXXXXXX"]
+		UI:Update["obj_Move", "Movement to ${Entity[${ID}].Name} queued.", "g", TRUE]
+		UI:Log["Redacted:  obj_Move - Movement to XXXXXXX queued."]
 		This.Traveling:Set[TRUE]
 		This:QueueState["ObjectMove", 2000, "${ID},${Distance}"]
 	}	
