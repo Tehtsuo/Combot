@@ -124,7 +124,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<Text>Pickup Bookmark</Text>
 							</Text>
 							<Textentry name='Pickup'> 
-								<X>1%</X> 
+								<X>34%</X> 
 								<Y>10%</Y> 
 								<Width>32%</Width> 
 								<Height>15%</Height> 
@@ -148,10 +148,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<BackgroundColor>FF000000</BackgroundColor>
 								<Border>1</Border>
 								<BorderColor>FFFFFFFF</BorderColor>
-								<X>1%</X>
-								<Y>36%</Y>
+								<X>34%</X>
+								<Y>25%</Y>
 								<Width>32%</Width>
-								<Height>17%</Height>
+								<Height>70%</Height>
 								<OnLoad>
 									This:SetZOrder[alwaysontop]
 									This:Hide
@@ -164,7 +164,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								</OnSelect>
 							</listbox>					
 
-						<Children>
+						</Children>
 					</Frame>
 						
 					<Text name='DropoffFrameTitle'> 
@@ -208,59 +208,58 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									UIElement[obj_Hauler_ThresholdTitle@Hauler_Frame@ComBot_Hauler]:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Hauler.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Hauler.Config.Threshold} * .01 * ${MyShip.CargoCapacity}].Round} m3]
 								</OnChange>
 							</Slider>						 
-						
+							<Text name='DropoffTitle'> 
+								<X>34%</X> 
+								<Y>3%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Dropoff Bookmark</Text>
+							</Text>
+							<Textentry name='Dropoff'> 
+								<X>34%</X> 
+								<Y>10%</Y> 
+								<Width>32%</Width> 
+								<Height>15%</Height> 
+								<OnLoad>
+									This:SetText[${Script[ComBot].VariableScope.Hauler.Config.Dropoff}]
+								</OnLoad>
+								<OnChange>
+									if ${This.Text.Length}
+									{
+										Script[ComBot].VariableScope.Hauler.Config:SetDropoff[${This.Text}]
+									}
+									else
+									{
+										Script[ComBot].VariableScope.Hauler.Config:SetDropoff[\"\"]
+									}
+									UIElement[DropoffList@Hauler_Frame@ComBot_Hauler]:Show
+									Script[ComBot].VariableScope.Hauler.LocalUI:Start
+								</OnChange>
+							</Textentry>
+							<listbox Name="DropoffList">
+								<BackgroundColor>FF000000</BackgroundColor>
+								<Border>1</Border>
+								<BorderColor>FFFFFFFF</BorderColor>
+								<X>34%</X>
+								<Y>25%</Y>
+								<Width>32%</Width>
+								<Height>70%</Height>
+								<OnLoad>
+									This:SetZOrder[alwaysontop]
+									This:Hide
+								</OnLoad>
+								<OnSelect>
+									UIElement[Dropoff@Hauler_Frame@ComBot_Hauler]:SetText[${This.SelectedItem.Text}]
+									Script[ComBot].VariableScope.Hauler.Config:SetDropoff[${This.SelectedItem.Text}]
+									This:Hide
+									Script[ComBot].VariableScope.Hauler.LocalUI:Stop
+								</OnSelect>
+							</listbox>
 						</Children>
 					</Frame>
 						
 					
-					<Text name='DropoffTitle'> 
-						<X>1%</X> 
-						<Y>1%</Y> 
-						<Width>32%</Width> 
-						<Height>2%</Height> 
-						<Alignment>Center</Alignment>
-						<Text>Dropoff Bookmark</Text>
-					</Text>
-					<Textentry name='Dropoff'> 
-						<X>1%</X> 
-						<Y>3%</Y> 
-						<Width>32%</Width> 
-						<Height>3%</Height> 
-						<OnLoad>
-							This:SetText[${Script[ComBot].VariableScope.Hauler.Config.Dropoff}]
-						</OnLoad>
-						<OnChange>
-							if ${This.Text.Length}
-							{
-								Script[ComBot].VariableScope.Hauler.Config:SetDropoff[${This.Text}]
-							}
-							else
-							{
-								Script[ComBot].VariableScope.Hauler.Config:SetDropoff[\"\"]
-							}
-							UIElement[DropoffList@Hauler_Frame@ComBot_Hauler]:Show
-							Script[ComBot].VariableScope.Hauler.LocalUI:Start
-						</OnChange>
-					</Textentry>
-					<listbox Name="DropoffList">
-						<BackgroundColor>FF000000</BackgroundColor>
-						<Border>1</Border>
-						<BorderColor>FFFFFFFF</BorderColor>
-						<X>1%</X>
-						<Y>6%</Y>
-						<Width>32%</Width>
-						<Height>17%</Height>
-						<OnLoad>
-							This:SetZOrder[alwaysontop]
-							This:Hide
-						</OnLoad>
-						<OnSelect>
-							UIElement[Dropoff@Hauler_Frame@ComBot_Hauler]:SetText[${This.SelectedItem.Text}]
-							Script[ComBot].VariableScope.Hauler.Config:SetDropoff[${This.SelectedItem.Text}]
-							This:Hide
-							Script[ComBot].VariableScope.Hauler.LocalUI:Stop
-						</OnSelect>
-					</listbox>
 					
 					<Text name='obj_Hauler_Dropoff_ContainerNameTitle'> 
 						<X>1%</X> 
