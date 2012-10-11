@@ -987,34 +987,34 @@ objectdef obj_MinerUI inherits obj_State
 		EVE:GetBookmarks[Bookmarks]
 		Bookmarks:GetIterator[BookmarkIterator]
 		
-		UIElement[MiningSystemList@Miner_Frame@ComBot_Miner]:ClearItems
+		UIElement[MiningSystemList@MiningFrame@Miner_Frame@ComBot_Miner]:ClearItems
 		if ${BookmarkIterator:First(exists)}
 			do
 			{	
-				if ${UIElement[MiningSystem@Miner_Frame@ComBot_Miner].Text.Length}
+				if ${UIElement[MiningSystem@MiningFrame@Miner_Frame@ComBot_Miner].Text.Length}
 				{
 					if ${BookmarkIterator.Value.Label.Left[${Miner.Config.MiningSystem.Length}].Equal[${Miner.Config.MiningSystem}]}
-						UIElement[MiningSystemList@Miner_Frame@ComBot_Miner]:AddItem[${BookmarkIterator.Value.Label.Escape}]
+						UIElement[MiningSystemList@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 				else
 				{
-					UIElement[MiningSystemList@Miner_Frame@ComBot_Miner]:AddItem[${BookmarkIterator.Value.Label.Escape}]
+					UIElement[MiningSystemList@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 			}
 			while ${BookmarkIterator:Next(exists)}
 
-		UIElement[DropoffList@Miner_Frame@ComBot_Miner]:ClearItems
+		UIElement[DropoffList@DropoffFrame@Miner_Frame@ComBot_Miner]:ClearItems
 		if ${BookmarkIterator:First(exists)}
 			do
 			{	
-				if ${UIElement[Dropoff@Miner_Frame@ComBot_Miner].Text.Length}
+				if ${UIElement[Dropoff@DropoffFrame@Miner_Frame@ComBot_Miner].Text.Length}
 				{
 					if ${BookmarkIterator.Value.Label.Left[${Miner.Config.Dropoff.Length}].Equal[${Miner.Config.Dropoff}]}
-						UIElement[DropoffList@Miner_Frame@ComBot_Miner]:AddItem[${BookmarkIterator.Value.Label.Escape}]
+						UIElement[DropoffList@DropoffFrame@Miner_Frame@ComBot_Miner]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 				else
 				{
-					UIElement[DropoffList@Miner_Frame@ComBot_Miner]:AddItem[${BookmarkIterator.Value.Label.Escape}]
+					UIElement[DropoffList@DropoffFrame@Miner_Frame@ComBot_Miner]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 			}
 			while ${BookmarkIterator:Next(exists)}
