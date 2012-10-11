@@ -114,10 +114,9 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 					<Text name='DropoffFrameTitle'> 
 						<X>1%</X> 
-						<Y>1%</Y> 
+						<Y>3%</Y> 
 						<Width>32%</Width> 
 						<Height>4%</Height> 
-						<Alignment>Center</Alignment>
 						<Text>Dropoff Configuration</Text>
 					</Text>
 					<Frame name="DropoffFrame">
@@ -498,147 +497,159 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						</Children>
 					</Frame>
 					
-		
-
-					<Text name='MiningSystemTitle'> 
-						<X>1%</X> 
-						<Y>40%</Y> 
-						<Width>32%</Width> 
-						<Height>2%</Height> 
-						<Alignment>Center</Alignment>
-						<Text>Mining System Bookmark</Text>
-					</Text>						 
-					<TextEntry name='MiningSystem'> 
-						<X>1%</X> 
-						<Y>42%</Y> 
-						<Width>32%</Width> 
-						<Height>3%</Height> 
-						<OnLoad>
-							This:SetText[${Script[ComBot].VariableScope.Miner.Config.MiningSystem}]
-						</OnLoad>
-						<OnChange>
-							if ${This.Text.Length}
-							{
-								Script[ComBot].VariableScope.Miner.Config:SetMiningSystem[${This.Text}]
-							}
-							else
-							{
-								Script[ComBot].VariableScope.Miner.Config:SetMiningSystem[\"\"]
-							}
-							UIElement[MiningSystemList@Miner_Frame@ComBot_Miner]:Show
-							Script[ComBot].VariableScope.Miner.LocalUI:Start
-						</OnChange>
-					</TextEntry>						 
-					<listbox Name="MiningSystemList">
+					<Frame name="MiningFrame">
+						<X>0%</X>
+						<Y>40%</Y>
+						<Width>100%</Width>
+						<Height>40%</Height>
 						<BackgroundColor>FF000000</BackgroundColor>
 						<Border>1</Border>
 						<BorderColor>FFFFFFFF</BorderColor>
-						<X>1%</X>
-						<Y>45%</Y>
-						<Width>32%</Width>
-						<Height>17%</Height>
-						<OnLoad>
-							This:SetZOrder[alwaysontop]
-							This:Hide
-						</OnLoad>
-						<OnSelect>
-							UIElement[MiningSystem@Miner_Frame@ComBot_Miner]:SetText[${This.SelectedItem.Text}]
-							Script[ComBot].VariableScope.Miner.Config:SetMiningSystem[${This.SelectedItem.Text}]
-							This:Hide
-							Script[ComBot].VariableScope.Miner.LocalUI:Stop
-						</OnSelect>
-					</listbox>
+						<Children>
+							<Text name='MiningSystemTitle'> 
+								<X>1%</X> 
+								<Y>3%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Mining System Bookmark</Text>
+							</Text>						 
+							<TextEntry name='MiningSystem'> 
+								<X>1%</X> 
+								<Y>10%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<OnLoad>
+									This:SetText[${Script[ComBot].VariableScope.Miner.Config.MiningSystem}]
+								</OnLoad>
+								<OnChange>
+									if ${This.Text.Length}
+									{
+										Script[ComBot].VariableScope.Miner.Config:SetMiningSystem[${This.Text}]
+									}
+									else
+									{
+										Script[ComBot].VariableScope.Miner.Config:SetMiningSystem[\"\"]
+									}
+									UIElement[MiningSystemList@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+									Script[ComBot].VariableScope.Miner.LocalUI:Start
+								</OnChange>
+							</TextEntry>						 
+							<listbox Name="MiningSystemList">
+								<BackgroundColor>FF000000</BackgroundColor>
+								<Border>1</Border>
+								<BorderColor>FFFFFFFF</BorderColor>
+								<X>1%</X>
+								<Y>20%</Y>
+								<Width>32%</Width>
+								<Height>70%</Height>
+								<OnLoad>
+									This:SetZOrder[alwaysontop]
+									This:Hide
+								</OnLoad>
+								<OnSelect>
+									UIElement[MiningSystem@MiningFrame@Miner_Frame@ComBot_Miner]:SetText[${This.SelectedItem.Text}]
+									Script[ComBot].VariableScope.Miner.Config:SetMiningSystem[${This.SelectedItem.Text}]
+									This:Hide
+									Script[ComBot].VariableScope.Miner.LocalUI:Stop
+								</OnSelect>
+							</listbox>
+							
+							<Text name='OrePrefixTitle'>
+								<X>1%</X>
+								<Y>40%</Y>
+								<Width>20%</Width> 
+								<Height>10%</Height> 
+								<Text>Belt Prefix:</Text>
+							</Text>
+							<Textentry name='OrePrefix'>
+								<X>13%</X>
+								<Y>40%</Y>
+								<Width>20%</Width> 
+								<Height>10%</Height> 
+								<OnLoad>
+									This:SetText[${Script[ComBot].VariableScope.Miner.Config.BeltPrefix}]
+								</OnLoad>
+								<OnChange>
+									if ${This.Text.Length} > 0
+									{
+										Script[ComBot].VariableScope.Miner.Config:SetBeltPrefix[${This.Text}]
+									}
+								</OnChange>
+							</Textentry>
+							
+							<Text name='IcePrefixTitle'>
+								<X>1%</X>
+								<Y>50%</Y>
+								<Width>20%</Width> 
+								<Height>10%</Height> 
+								<Text>Ice Belt Prefix:</Text>
+							</Text>
+							<Textentry name='IcePrefix'>
+								<X>13%</X>
+								<Y>50%</Y>
+								<Width>20%</Width> 
+								<Height>10%</Height> 
+								<OnLoad>
+									This:SetText[${Script[ComBot].VariableScope.Miner.Config.IceBeltPrefix}]
+								</OnLoad>
+								<OnChange>
+									if ${This.Text.Length} > 0
+									{
+										Script[ComBot].VariableScope.Miner.Config:SetIceBeltPrefix[${This.Text}]
+									}
+								</OnChange>
+							</Textentry>
+							
+							<Checkbox name='obj_MinerUseBookmarks'>
+								<X>1%</X>
+								<Y>30%</Y>
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Text>Use belt bookmarks</Text>
+								<OnLoad>
+									if ${Script[ComBot].VariableScope.Miner.Config.UseBookmarks}
+									{
+										This:SetChecked
+										UIElement[OrePrefixTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+										UIElement[OrePrefix@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+										UIElement[IcePrefixTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+										UIElement[IcePrefix@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+									}
+									else
+									{
+										UIElement[OrePrefixTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										UIElement[OrePrefix@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										UIElement[IcePrefixTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										UIElement[IcePrefix@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+									}
+									This:SetZOrder[movetop]
+								</OnLoad>
+								<OnLeftClick>
+									Script[ComBot].VariableScope.Miner.Config:SetUseBookmarks[${This.Checked}]
+									if ${This.Checked}
+									{
+										UIElement[OrePrefixTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+										UIElement[OrePrefix@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+										UIElement[IcePrefixTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+										UIElement[IcePrefix@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+									}
+									else
+									{
+										UIElement[OrePrefixTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										UIElement[OrePrefix@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										UIElement[IcePrefixTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										UIElement[IcePrefix@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+									}
+									This:SetZOrder[movetop]
+								</OnLeftClick>
+							</Checkbox>
+		
+						</Children>
+					</Frame>
+
 
 				
-					<Text name='OrePrefixTitle'>
-						<X>1%</X>
-						<Y>60%</Y>
-						<Width>20%</Width> 
-						<Height>2%</Height> 
-						<Text>Belt Prefix:</Text>
-					</Text>
-					<Textentry name='OrePrefix'>
-						<X>13%</X>
-						<Y>66%</Y>
-						<Width>20%</Width> 
-						<Height>3%</Height> 
-						<OnLoad>
-							This:SetText[${Script[ComBot].VariableScope.Miner.Config.BeltPrefix}]
-						</OnLoad>
-						<OnChange>
-							if ${This.Text.Length} > 0
-							{
-								Script[ComBot].VariableScope.Miner.Config:SetBeltPrefix[${This.Text}]
-							}
-						</OnChange>
-					</Textentry>
-					
-					<Text name='IcePrefixTitle'>
-						<X>1%</X>
-						<Y>70%</Y>
-						<Width>20%</Width> 
-						<Height>2%</Height> 
-						<Text>Ice Belt Prefix:</Text>
-					</Text>
-					<Textentry name='IcePrefix'>
-						<X>13%</X>
-						<Y>72%</Y>
-						<Width>20%</Width> 
-						<Height>3%</Height> 
-						<OnLoad>
-							This:SetText[${Script[ComBot].VariableScope.Miner.Config.IceBeltPrefix}]
-						</OnLoad>
-						<OnChange>
-							if ${This.Text.Length} > 0
-							{
-								Script[ComBot].VariableScope.Miner.Config:SetIceBeltPrefix[${This.Text}]
-							}
-						</OnChange>
-					</Textentry>
-					
-					<Checkbox name='obj_MinerUseBookmarks'>
-						<X>1%</X>
-						<Y>83%</Y>
-						<Width>20%</Width> 
-						<Height>3%</Height> 
-						<Text>Use belt bookmarks</Text>
-						<OnLoad>
-							if ${Script[ComBot].VariableScope.Miner.Config.UseBookmarks}
-							{
-								This:SetChecked
-								UIElement[OrePrefixTitle@Miner_Frame@ComBot_Miner]:Show
-								UIElement[OrePrefix@Miner_Frame@ComBot_Miner]:Show
-								UIElement[IcePrefixTitle@Miner_Frame@ComBot_Miner]:Show
-								UIElement[IcePrefix@Miner_Frame@ComBot_Miner]:Show
-							}
-							else
-							{
-								UIElement[OrePrefixTitle@Miner_Frame@ComBot_Miner]:Hide
-								UIElement[OrePrefix@Miner_Frame@ComBot_Miner]:Hide
-								UIElement[IcePrefixTitle@Miner_Frame@ComBot_Miner]:Hide
-								UIElement[IcePrefix@Miner_Frame@ComBot_Miner]:Hide
-							}
-							This:SetZOrder[movetop]
-						</OnLoad>
-						<OnLeftClick>
-							Script[ComBot].VariableScope.Miner.Config:SetUseBookmarks[${This.Checked}]
-							if ${This.Checked}
-							{
-								UIElement[OrePrefixTitle@Miner_Frame@ComBot_Miner]:Show
-								UIElement[OrePrefix@Miner_Frame@ComBot_Miner]:Show
-								UIElement[IcePrefixTitle@Miner_Frame@ComBot_Miner]:Show
-								UIElement[IcePrefix@Miner_Frame@ComBot_Miner]:Show
-							}
-							else
-							{
-								UIElement[OrePrefixTitle@Miner_Frame@ComBot_Miner]:Hide
-								UIElement[OrePrefix@Miner_Frame@ComBot_Miner]:Hide
-								UIElement[IcePrefixTitle@Miner_Frame@ComBot_Miner]:Hide
-								UIElement[IcePrefix@Miner_Frame@ComBot_Miner]:Hide
-							}
-							This:SetZOrder[movetop]
-						</OnLeftClick>
-					</Checkbox>
 					
 					<Text name='MaxLockTitle'> 
 						<X>34%</X> 
