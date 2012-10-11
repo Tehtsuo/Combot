@@ -372,7 +372,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					
 					<Text name='ThresholdTitle'> 
 						<X>67%</X> 
-						<Y>25%</Y> 
+						<Y>40%</Y> 
 						<Width>32%</Width> 
 						<Height>2%</Height> 
 						<Alignment>Center</Alignment>
@@ -396,7 +396,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					</Text>						 
 					<Slider name='Threshold'> 
 						<X>67%</X> 
-						<Y>27%</Y> 
+						<Y>42%</Y> 
 						<Width>32%</Width> 
 						<Height>5%</Height> 
 						<Border>1</Border>
@@ -427,7 +427,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 					<Text name='MiningSystemTitle'> 
 						<X>1%</X> 
-						<Y>7%</Y> 
+						<Y>40%</Y> 
 						<Width>32%</Width> 
 						<Height>2%</Height> 
 						<Alignment>Center</Alignment>
@@ -435,7 +435,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					</Text>						 
 					<TextEntry name='MiningSystem'> 
 						<X>1%</X> 
-						<Y>9%</Y> 
+						<Y>42%</Y> 
 						<Width>32%</Width> 
 						<Height>3%</Height> 
 						<OnLoad>
@@ -459,7 +459,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Border>1</Border>
 						<BorderColor>FFFFFFFF</BorderColor>
 						<X>1%</X>
-						<Y>12%</Y>
+						<Y>45%</Y>
 						<Width>32%</Width>
 						<Height>17%</Height>
 						<OnLoad>
@@ -477,14 +477,14 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 				
 					<Text name='OrePrefixTitle'>
 						<X>1%</X>
-						<Y>16.5%</Y>
+						<Y>60%</Y>
 						<Width>20%</Width> 
 						<Height>2%</Height> 
 						<Text>Belt Prefix:</Text>
 					</Text>
 					<Textentry name='OrePrefix'>
 						<X>13%</X>
-						<Y>16%</Y>
+						<Y>66%</Y>
 						<Width>20%</Width> 
 						<Height>3%</Height> 
 						<OnLoad>
@@ -500,14 +500,14 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					
 					<Text name='IcePrefixTitle'>
 						<X>1%</X>
-						<Y>20.5%</Y>
+						<Y>70%</Y>
 						<Width>20%</Width> 
 						<Height>2%</Height> 
 						<Text>Ice Belt Prefix:</Text>
 					</Text>
 					<Textentry name='IcePrefix'>
 						<X>13%</X>
-						<Y>20%</Y>
+						<Y>72%</Y>
 						<Width>20%</Width> 
 						<Height>3%</Height> 
 						<OnLoad>
@@ -523,7 +523,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					
 					<Checkbox name='obj_MinerUseBookmarks'>
 						<X>1%</X>
-						<Y>13%</Y>
+						<Y>83%</Y>
 						<Width>20%</Width> 
 						<Height>3%</Height> 
 						<Text>Use belt bookmarks</Text>
@@ -567,7 +567,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					
 					<Text name='MaxLockTitle'> 
 						<X>34%</X> 
-						<Y>25%</Y> 
+						<Y>35%</Y> 
 						<Width>32%</Width> 
 						<Height>2%</Height> 
 						<Alignment>Center</Alignment>
@@ -577,7 +577,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					</Text>						 
 					<Slider name='MaxLock'> 
 						<X>34%</X> 
-						<Y>27%</Y> 
+						<Y>37%</Y> 
 						<Width>32%</Width> 
 						<Height>5%</Height> 
 						<Border>1</Border>
@@ -593,7 +593,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					
 					<Checkbox name='obj_MinerOrcaMode'>
 						<X>1%</X>
-						<Y>28%</Y>
+						<Y>58%</Y>
 						<Width>32%</Width> 
 						<Height>3%</Height> 
 						<Text>Orca Mode</Text>
