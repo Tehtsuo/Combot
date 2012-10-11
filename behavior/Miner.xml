@@ -264,7 +264,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<Alignment>Center</Alignment>
 								<Text>Dropoff Type</Text>
 							</Text>
-							<Checkbox Name="DropoffType">
+							<Combobox Name="DropoffType">
 								<BackgroundColor>FF000000</BackgroundColor>
 								<Border>1</Border>
 								<BorderColor>FFFFFFFF</BorderColor>
@@ -366,7 +366,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									
 									
 								</OnSelect>
-							</Checkbox>
+							</Combobox>
 						</Children>
 					</Frame>
 					
