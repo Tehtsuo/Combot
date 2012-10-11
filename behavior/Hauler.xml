@@ -164,8 +164,111 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								</OnSelect>
 							</listbox>					
 
+							<Text name='PickupTypeTitle'> 
+								<X>1%</X> 
+								<Y>3%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Pickup Type</Text>
+							</Text>
+							<listbox Name="PickupType">
+								<BackgroundColor>FF000000</BackgroundColor>
+								<Border>1</Border>
+								<BorderColor>FFFFFFFF</BorderColor>
+								<X>1%</X>
+								<Y>10%</Y>
+								<Width>32%</Width>
+								<Height>85%</Height>
+								<Items>
+									<Item>Orca</Item>
+									<Item>Jetcan</Item>
+									<Item>Container</Item>
+									<Item>Personal Hangar</Item>
+									<Item>Corporation Hangar</Item>
+								</Items>
+								<OnLoad>
+									This.ItemByText[${Script[ComBot].VariableScope.Hauler.Config.Pickup_Type}]:Select
+									UIElement[PickupSubType@Hauler_Frame@ComBot_Hauler]:ClearItems
+
+									switch ${Script[ComBot].VariableScope.Hauler.Config.Pickup_Type}
+									{
+										case Container
+											UIElement[obj_Hauler_Pickup_ContainerNameTitle@Hauler_Frame@ComBot_Hauler]:SetText[Container Name]
+											UIElement[obj_Hauler_Pickup_ContainerNameTitle@Hauler_Frame@ComBot_Hauler]:Show
+											UIElement[obj_Hauler_Pickup_ContainerName@Hauler_Frame@ComBot_Hauler]:Show
+											UIElement[PickupSubType@Hauler_Frame@ComBot_Hauler]:Hide
+											UIElement[PickupSubTypeTitle@Hauler_Frame@ComBot_Hauler]:Hide
+											break
+										case Orca
+											UIElement[obj_Hauler_Pickup_ContainerNameTitle@Hauler_Frame@ComBot_Hauler]:SetText[Orca Pilot Name]
+											UIElement[obj_Hauler_Pickup_ContainerNameTitle@Hauler_Frame@ComBot_Hauler]:Show
+											UIElement[obj_Hauler_Pickup_ContainerName@Hauler_Frame@ComBot_Hauler]:Show
+											UIElement[PickupSubType@Hauler_Frame@ComBot_Hauler]:Hide
+											UIElement[PickupSubTypeTitle@Hauler_Frame@ComBot_Hauler]:Hide
+											break
+										case Jetcan
+											UIElement[obj_Hauler_Pickup_ContainerNameTitle@Hauler_Frame@ComBot_Hauler]:SetText[Jetcan Prefix]
+											UIElement[obj_Hauler_Pickup_ContainerNameTitle@Hauler_Frame@ComBot_Hauler]:Show
+											UIElement[obj_Hauler_Pickup_ContainerName@Hauler_Frame@ComBot_Hauler]:Show
+											UIElement[PickupSubType@Hauler_Frame@ComBot_Hauler]:AddItem[Fleet Jetcan]
+											;UIElement[PickupSubType@Hauler_Frame@ComBot_Hauler]:AddItem[Corporate Bookmark Jetcan]
+											;UIElement[PickupSubType@Hauler_Frame@ComBot_Hauler]:AddItem[On-Demand Jetcan]
+											UIElement[PickupSubType@Hauler_Frame@ComBot_Hauler].ItemByText[${Script[ComBot].VariableScope.Hauler.Config.Pickup_SubType}]:Select
+											UIElement[PickupSubType@Hauler_Frame@ComBot_Hauler]:Show
+											UIElement[PickupSubTypeTitle@Hauler_Frame@ComBot_Hauler]:Show
+											break
+										default
+											UIElement[obj_Hauler_Pickup_ContainerNameTitle@Hauler_Frame@ComBot_Hauler]:Hide
+											UIElement[obj_Hauler_Pickup_ContainerName@Hauler_Frame@ComBot_Hauler]:Hide
+											UIElement[PickupSubType@Hauler_Frame@ComBot_Hauler]:Hide
+											UIElement[PickupSubTypeTitle@Hauler_Frame@ComBot_Hauler]:Hide
+											break
+									}
+								</OnLoad>
+								<OnSelect>
+									Script[ComBot].VariableScope.Hauler.Config:SetPickup_Type[${This.SelectedItem.Text}]
+									UIElement[PickupSubType@Hauler_Frame@ComBot_Hauler]:ClearItems
+
+									switch ${Script[ComBot].VariableScope.Hauler.Config.Pickup_Type}
+									{
+										case Container
+											UIElement[obj_Hauler_Pickup_ContainerNameTitle@Hauler_Frame@ComBot_Hauler]:SetText[Container Name]
+											UIElement[obj_Hauler_Pickup_ContainerNameTitle@Hauler_Frame@ComBot_Hauler]:Show
+											UIElement[obj_Hauler_Pickup_ContainerName@Hauler_Frame@ComBot_Hauler]:Show
+											UIElement[PickupSubType@Hauler_Frame@ComBot_Hauler]:Hide
+											UIElement[PickupSubTypeTitle@Hauler_Frame@ComBot_Hauler]:Hide
+											break
+										case Orca
+											UIElement[obj_Hauler_Pickup_ContainerNameTitle@Hauler_Frame@ComBot_Hauler]:SetText[Orca Pilot Name]
+											UIElement[obj_Hauler_Pickup_ContainerNameTitle@Hauler_Frame@ComBot_Hauler]:Show
+											UIElement[obj_Hauler_Pickup_ContainerName@Hauler_Frame@ComBot_Hauler]:Show
+											UIElement[PickupSubType@Hauler_Frame@ComBot_Hauler]:Hide
+											UIElement[PickupSubTypeTitle@Hauler_Frame@ComBot_Hauler]:Hide
+											break
+										case Jetcan
+											UIElement[obj_Hauler_Pickup_ContainerNameTitle@Hauler_Frame@ComBot_Hauler]:SetText[Jetcan Prefix]
+											UIElement[obj_Hauler_Pickup_ContainerNameTitle@Hauler_Frame@ComBot_Hauler]:Show
+											UIElement[obj_Hauler_Pickup_ContainerName@Hauler_Frame@ComBot_Hauler]:Show
+											UIElement[PickupSubType@Hauler_Frame@ComBot_Hauler]:AddItem[Fleet Jetcan]
+											;UIElement[PickupSubType@Hauler_Frame@ComBot_Hauler]:AddItem[Corporate Bookmark Jetcan]
+											;UIElement[PickupSubType@Hauler_Frame@ComBot_Hauler]:AddItem[On-Demand Jetcan]
+											UIElement[PickupSubType@Hauler_Frame@ComBot_Hauler].ItemByText[${Script[ComBot].VariableScope.Hauler.Config.Pickup_SubType}]:Select
+											UIElement[PickupSubType@Hauler_Frame@ComBot_Hauler]:Show
+											UIElement[PickupSubTypeTitle@Hauler_Frame@ComBot_Hauler]:Show
+											break
+										default
+											UIElement[obj_Hauler_Pickup_ContainerNameTitle@Hauler_Frame@ComBot_Hauler]:Hide
+											UIElement[obj_Hauler_Pickup_ContainerName@Hauler_Frame@ComBot_Hauler]:Hide
+											UIElement[PickupSubType@Hauler_Frame@ComBot_Hauler]:Hide
+											UIElement[PickupSubTypeTitle@Hauler_Frame@ComBot_Hauler]:Hide
+											break
+									}
+								</OnSelect>
+							</listbox>
 						</Children>
 					</Frame>
+						
 						
 					<Text name='DropoffFrameTitle'> 
 						<X>1%</X> 
@@ -256,6 +359,57 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									Script[ComBot].VariableScope.Hauler.LocalUI:Stop
 								</OnSelect>
 							</listbox>
+							
+							<Text name='DropoffTypeTitle'> 
+								<X>1%</X> 
+								<Y>3%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Dropoff Type</Text>
+							</Text>
+							<listbox Name="DropoffType">
+								<BackgroundColor>FF000000</BackgroundColor>
+								<Border>1</Border>
+								<BorderColor>FFFFFFFF</BorderColor>
+								<X>1%</X>
+								<Y>10%</Y>
+								<Width>32%</Width>
+								<Height>85%</Height>
+								<Items>
+									<Item>Personal Hangar</Item>
+									<Item>Container</Item>
+									<Item>Corporation Folder 1</Item>
+									<Item>Corporation Folder 2</Item>
+									<Item>Corporation Folder 3</Item>
+									<Item>Corporation Folder 4</Item>
+									<Item>Corporation Folder 5</Item>
+									<Item>Corporation Folder 6</Item>
+									<Item>Corporation Folder 7</Item>
+								</Items>
+								<OnLoad>
+									This.ItemByText[${Script[ComBot].VariableScope.Hauler.Config.Dropoff_Type}]:Select
+									if !${Script[ComBot].VariableScope.Hauler.Config.Dropoff_Type.Equal[Container]}
+									{
+										UIElement[obj_Hauler_Dropoff_ContainerNameTitle@Hauler_Frame@ComBot_Hauler]:Hide
+										UIElement[obj_Hauler_Dropoff_ContainerName@Hauler_Frame@ComBot_Hauler]:Hide
+									}
+								</OnLoad>
+								<OnSelect>
+									Script[ComBot].VariableScope.Hauler.Config:SetDropoff_Type[${This.SelectedItem.Text}]
+									if !${Script[ComBot].VariableScope.Hauler.Config.Dropoff_Type.Equal[Container]}
+									{
+										UIElement[obj_Hauler_Dropoff_ContainerNameTitle@Hauler_Frame@ComBot_Hauler]:Hide
+										UIElement[obj_Hauler_Dropoff_ContainerName@Hauler_Frame@ComBot_Hauler]:Hide
+									}
+									else
+									{
+										UIElement[obj_Hauler_Dropoff_ContainerNameTitle@Hauler_Frame@ComBot_Hauler]:Show
+										UIElement[obj_Hauler_Dropoff_ContainerName@Hauler_Frame@ComBot_Hauler]:Show
+									}
+								</OnSelect>
+							</listbox>
+							
 						</Children>
 					</Frame>
 						
@@ -282,55 +436,6 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						</OnChange>
 					</TextEntry>
 					
-					<Text name='obj_Hauler_Dropoff_Type_Title'> 
-						<X>34%</X> 
-						<Y>1%</Y> 
-						<Width>32%</Width> 
-						<Height>2%</Height> 
-						<Alignment>Center</Alignment>
-						<Text>Dropoff Type</Text>
-					</Text>
-					<listbox Name="obj_Hauler_Dropoff_Type">
-						<BackgroundColor>FF000000</BackgroundColor>
-						<Border>1</Border>
-						<BorderColor>FFFFFFFF</BorderColor>
-						<X>34%</X>
-						<Y>3%</Y>
-						<Width>32%</Width>
-						<Height>26%</Height>
-						<Items>
-							<Item>Personal Hangar</Item>
-							<Item>Container</Item>
-							<Item>Corporation Folder 1</Item>
-							<Item>Corporation Folder 2</Item>
-							<Item>Corporation Folder 3</Item>
-							<Item>Corporation Folder 4</Item>
-							<Item>Corporation Folder 5</Item>
-							<Item>Corporation Folder 6</Item>
-							<Item>Corporation Folder 7</Item>
-						</Items>
-						<OnLoad>
-							This.ItemByText[${Script[ComBot].VariableScope.Hauler.Config.Dropoff_Type}]:Select
-							if !${Script[ComBot].VariableScope.Hauler.Config.Dropoff_Type.Equal[Container]}
-							{
-								UIElement[obj_Hauler_Dropoff_ContainerNameTitle@Hauler_Frame@ComBot_Hauler]:Hide
-								UIElement[obj_Hauler_Dropoff_ContainerName@Hauler_Frame@ComBot_Hauler]:Hide
-							}
-						</OnLoad>
-						<OnSelect>
-							Script[ComBot].VariableScope.Hauler.Config:SetDropoff_Type[${This.SelectedItem.Text}]
-							if !${Script[ComBot].VariableScope.Hauler.Config.Dropoff_Type.Equal[Container]}
-							{
-								UIElement[obj_Hauler_Dropoff_ContainerNameTitle@Hauler_Frame@ComBot_Hauler]:Hide
-								UIElement[obj_Hauler_Dropoff_ContainerName@Hauler_Frame@ComBot_Hauler]:Hide
-							}
-							else
-							{
-								UIElement[obj_Hauler_Dropoff_ContainerNameTitle@Hauler_Frame@ComBot_Hauler]:Show
-								UIElement[obj_Hauler_Dropoff_ContainerName@Hauler_Frame@ComBot_Hauler]:Show
-							}
-						</OnSelect>
-					</listbox>
 					
 					
 					<Text name='obj_Hauler_Pickup_ContainerNameTitle'> 
@@ -409,108 +514,6 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					</listbox>
 					
 					
-					<Text name='obj_Hauler_Pickup_Type_Title'> 
-						<X>34%</X> 
-						<Y>31%</Y> 
-						<Width>32%</Width> 
-						<Height>2%</Height> 
-						<Alignment>Center</Alignment>
-						<Text>Pickup Type</Text>
-					</Text>
-					<listbox Name="obj_Hauler_Pickup_Type">
-						<BackgroundColor>FF000000</BackgroundColor>
-						<Border>1</Border>
-						<BorderColor>FFFFFFFF</BorderColor>
-						<X>34%</X>
-						<Y>33%</Y>
-						<Width>32%</Width>
-						<Height>26%</Height>
-						<Items>
-							<Item>Orca</Item>
-							<Item>Jetcan</Item>
-							<Item>Container</Item>
-							<Item>Personal Hangar</Item>
-							<Item>Corporation Hangar</Item>
-						</Items>
-						<OnLoad>
-							This.ItemByText[${Script[ComBot].VariableScope.Hauler.Config.Pickup_Type}]:Select
-							UIElement[PickupSubType@Hauler_Frame@ComBot_Hauler]:ClearItems
-
-							switch ${Script[ComBot].VariableScope.Hauler.Config.Pickup_Type}
-							{
-								case Container
-									UIElement[obj_Hauler_Pickup_ContainerNameTitle@Hauler_Frame@ComBot_Hauler]:SetText[Container Name]
-									UIElement[obj_Hauler_Pickup_ContainerNameTitle@Hauler_Frame@ComBot_Hauler]:Show
-									UIElement[obj_Hauler_Pickup_ContainerName@Hauler_Frame@ComBot_Hauler]:Show
-									UIElement[PickupSubType@Hauler_Frame@ComBot_Hauler]:Hide
-									UIElement[PickupSubTypeTitle@Hauler_Frame@ComBot_Hauler]:Hide
-									break
-								case Orca
-									UIElement[obj_Hauler_Pickup_ContainerNameTitle@Hauler_Frame@ComBot_Hauler]:SetText[Orca Pilot Name]
-									UIElement[obj_Hauler_Pickup_ContainerNameTitle@Hauler_Frame@ComBot_Hauler]:Show
-									UIElement[obj_Hauler_Pickup_ContainerName@Hauler_Frame@ComBot_Hauler]:Show
-									UIElement[PickupSubType@Hauler_Frame@ComBot_Hauler]:Hide
-									UIElement[PickupSubTypeTitle@Hauler_Frame@ComBot_Hauler]:Hide
-									break
-								case Jetcan
-									UIElement[obj_Hauler_Pickup_ContainerNameTitle@Hauler_Frame@ComBot_Hauler]:SetText[Jetcan Prefix]
-									UIElement[obj_Hauler_Pickup_ContainerNameTitle@Hauler_Frame@ComBot_Hauler]:Show
-									UIElement[obj_Hauler_Pickup_ContainerName@Hauler_Frame@ComBot_Hauler]:Show
-									UIElement[PickupSubType@Hauler_Frame@ComBot_Hauler]:AddItem[Fleet Jetcan]
-									;UIElement[PickupSubType@Hauler_Frame@ComBot_Hauler]:AddItem[Corporate Bookmark Jetcan]
-									;UIElement[PickupSubType@Hauler_Frame@ComBot_Hauler]:AddItem[On-Demand Jetcan]
-									UIElement[PickupSubType@Hauler_Frame@ComBot_Hauler].ItemByText[${Script[ComBot].VariableScope.Hauler.Config.Pickup_SubType}]:Select
-									UIElement[PickupSubType@Hauler_Frame@ComBot_Hauler]:Show
-									UIElement[PickupSubTypeTitle@Hauler_Frame@ComBot_Hauler]:Show
-									break
-								default
-									UIElement[obj_Hauler_Pickup_ContainerNameTitle@Hauler_Frame@ComBot_Hauler]:Hide
-									UIElement[obj_Hauler_Pickup_ContainerName@Hauler_Frame@ComBot_Hauler]:Hide
-									UIElement[PickupSubType@Hauler_Frame@ComBot_Hauler]:Hide
-									UIElement[PickupSubTypeTitle@Hauler_Frame@ComBot_Hauler]:Hide
-									break
-							}
-						</OnLoad>
-						<OnSelect>
-							Script[ComBot].VariableScope.Hauler.Config:SetPickup_Type[${This.SelectedItem.Text}]
-							UIElement[PickupSubType@Hauler_Frame@ComBot_Hauler]:ClearItems
-
-							switch ${Script[ComBot].VariableScope.Hauler.Config.Pickup_Type}
-							{
-								case Container
-									UIElement[obj_Hauler_Pickup_ContainerNameTitle@Hauler_Frame@ComBot_Hauler]:SetText[Container Name]
-									UIElement[obj_Hauler_Pickup_ContainerNameTitle@Hauler_Frame@ComBot_Hauler]:Show
-									UIElement[obj_Hauler_Pickup_ContainerName@Hauler_Frame@ComBot_Hauler]:Show
-									UIElement[PickupSubType@Hauler_Frame@ComBot_Hauler]:Hide
-									UIElement[PickupSubTypeTitle@Hauler_Frame@ComBot_Hauler]:Hide
-									break
-								case Orca
-									UIElement[obj_Hauler_Pickup_ContainerNameTitle@Hauler_Frame@ComBot_Hauler]:SetText[Orca Pilot Name]
-									UIElement[obj_Hauler_Pickup_ContainerNameTitle@Hauler_Frame@ComBot_Hauler]:Show
-									UIElement[obj_Hauler_Pickup_ContainerName@Hauler_Frame@ComBot_Hauler]:Show
-									UIElement[PickupSubType@Hauler_Frame@ComBot_Hauler]:Hide
-									UIElement[PickupSubTypeTitle@Hauler_Frame@ComBot_Hauler]:Hide
-									break
-								case Jetcan
-									UIElement[obj_Hauler_Pickup_ContainerNameTitle@Hauler_Frame@ComBot_Hauler]:SetText[Jetcan Prefix]
-									UIElement[obj_Hauler_Pickup_ContainerNameTitle@Hauler_Frame@ComBot_Hauler]:Show
-									UIElement[obj_Hauler_Pickup_ContainerName@Hauler_Frame@ComBot_Hauler]:Show
-									UIElement[PickupSubType@Hauler_Frame@ComBot_Hauler]:AddItem[Fleet Jetcan]
-									;UIElement[PickupSubType@Hauler_Frame@ComBot_Hauler]:AddItem[Corporate Bookmark Jetcan]
-									;UIElement[PickupSubType@Hauler_Frame@ComBot_Hauler]:AddItem[On-Demand Jetcan]
-									UIElement[PickupSubType@Hauler_Frame@ComBot_Hauler].ItemByText[${Script[ComBot].VariableScope.Hauler.Config.Pickup_SubType}]:Select
-									UIElement[PickupSubType@Hauler_Frame@ComBot_Hauler]:Show
-									UIElement[PickupSubTypeTitle@Hauler_Frame@ComBot_Hauler]:Show
-									break
-								default
-									UIElement[obj_Hauler_Pickup_ContainerNameTitle@Hauler_Frame@ComBot_Hauler]:Hide
-									UIElement[obj_Hauler_Pickup_ContainerName@Hauler_Frame@ComBot_Hauler]:Hide
-									UIElement[PickupSubType@Hauler_Frame@ComBot_Hauler]:Hide
-									UIElement[PickupSubTypeTitle@Hauler_Frame@ComBot_Hauler]:Hide
-									break
-							}
-						</OnSelect>
-					</listbox>
 
 				</Children>
 			</Frame>
