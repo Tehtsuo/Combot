@@ -114,14 +114,14 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 					<Text name='DropoffFrameTitle'> 
 						<X>1%</X> 
-						<Y>3%</Y> 
+						<Y>2%</Y> 
 						<Width>32%</Width> 
 						<Height>4%</Height> 
 						<Text>Dropoff Configuration</Text>
 					</Text>
 					<Frame name="DropoffFrame">
 						<X>0%</X>
-						<Y>5%</Y>
+						<Y>4%</Y>
 						<Width>100%</Width>
 						<Height>30%</Height>
 						<BackgroundColor>FF000000</BackgroundColor>
@@ -534,16 +534,16 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					
 					<Text name='MiningFrameTitle'> 
 						<X>1%</X> 
-						<Y>38%</Y> 
+						<Y>36%</Y> 
 						<Width>32%</Width> 
 						<Height>4%</Height> 
 						<Text>Mining Configuration</Text>
 					</Text>
 					<Frame name="MiningFrame">
 						<X>0%</X>
-						<Y>40%</Y>
+						<Y>38%</Y>
 						<Width>100%</Width>
-						<Height>40%</Height>
+						<Height>41%</Height>
 						<BackgroundColor>FF000000</BackgroundColor>
 						<Border>1</Border>
 						<BorderColor>FFFFFFFF</BorderColor>
@@ -832,7 +832,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<X>67%</X>
 								<Y>7%</Y>
 								<Width>32%</Width>
-								<Height>91%</Height>
+								<Height>90%</Height>
 								<SelectMultiple>1</SelectMultiple>
 								<Sort>User</Sort>
 								<OnLeftClick>
