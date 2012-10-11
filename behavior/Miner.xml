@@ -557,7 +557,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							
 							<Text name='OrePrefixTitle'>
 								<X>1%</X>
-								<Y>40%</Y>
+								<Y>41%</Y>
 								<Width>20%</Width> 
 								<Height>10%</Height> 
 								<Text>Belt Prefix:</Text>
@@ -566,7 +566,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<X>13%</X>
 								<Y>40%</Y>
 								<Width>20%</Width> 
-								<Height>10%</Height> 
+								<Height>9%</Height> 
 								<OnLoad>
 									This:SetText[${Script[ComBot].VariableScope.Miner.Config.BeltPrefix}]
 								</OnLoad>
@@ -580,7 +580,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							
 							<Text name='IcePrefixTitle'>
 								<X>1%</X>
-								<Y>50%</Y>
+								<Y>51%</Y>
 								<Width>20%</Width> 
 								<Height>10%</Height> 
 								<Text>Ice Belt Prefix:</Text>
@@ -589,7 +589,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<X>13%</X>
 								<Y>50%</Y>
 								<Width>20%</Width> 
-								<Height>10%</Height> 
+								<Height>9%</Height> 
 								<OnLoad>
 									This:SetText[${Script[ComBot].VariableScope.Miner.Config.IceBeltPrefix}]
 								</OnLoad>
@@ -644,92 +644,94 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									This:SetZOrder[movetop]
 								</OnLeftClick>
 							</Checkbox>
-		
+							
+							<Text name='MaxLockTitle'> 
+								<X>34%</X> 
+								<Y>3%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Alignment>Center</Alignment>
+								<OnLoad>
+									This:SetText[Lock ${Script[ComBot].VariableScope.Miner.Config.MaxLaserLocks} targets for mining]
+								</OnLoad>
+							</Text>						 
+							<Slider name='MaxLock'> 
+								<X>34%</X> 
+								<Y>10%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Border>1</Border>
+								<OnLoad>
+									This:SetRange[10]
+									This:SetValue[${Script[ComBot].VariableScope.Miner.Config.MaxLaserLocks}]
+								</OnLoad>
+								<OnChange>
+									Script[ComBot].VariableScope.Miner.Config:SetMaxLaserLocks[${This.Value}]
+									UIElement[MaxLockTitle@MiningFrame@Miner_Frame@ComBot_Miner]:SetText[Lock ${Script[ComBot].VariableScope.Miner.Config.MaxLaserLocks} targets for mining]
+								</OnChange>
+							</Slider>						 
+
+							<Checkbox name='obj_MinerOrcaMode'>
+								<X>1%</X>
+								<Y>70%</Y>
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Text>Orca Mode</Text>
+									<OnLoad>
+									if ${Script[ComBot].VariableScope.Miner.Config.OrcaMode}
+									{
+										This:SetChecked
+										if ${This.Checked}
+										{
+											UIElement[MaxLockTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[MaxLock@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										}
+										else
+										{
+											UIElement[MaxLockTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[MaxLock@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+										}
+									}
+									This:SetZOrder[movetop]
+								</OnLoad>
+								<OnLeftClick>
+									Script[ComBot].VariableScope.Miner.Config:SetOrcaMode[${This.Checked}]
+									if ${This.Checked}
+									{
+										UIElement[MaxLockTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										UIElement[MaxLock@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+									}
+									else
+									{
+										UIElement[MaxLockTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+										UIElement[MaxLock@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+									}
+									if ${MyShip.HasOreHold}
+									{
+										if ${Script[ComBot].VariableScope.Miner.Config.OrcaMode}
+										{
+											UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[Corp Hangar Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${EVEWindow[ByName, Inventory].ChildCapacity[ShipCorpHangar]}].Round} m3]
+										}
+										else
+										{
+											UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[OreHold Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]}].Round} m3]
+										}
+									}
+									else
+									{
+										UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${MyShip.CargoCapacity}].Round} m3]
+									}
+									This:SetZOrder[movetop]
+								</OnLeftClick>
+							</Checkbox>
+							
 						</Children>
 					</Frame>
 
 
 				
 					
-					<Text name='MaxLockTitle'> 
-						<X>34%</X> 
-						<Y>35%</Y> 
-						<Width>32%</Width> 
-						<Height>2%</Height> 
-						<Alignment>Center</Alignment>
-						<OnLoad>
-							This:SetText[Lock ${Script[ComBot].VariableScope.Miner.Config.MaxLaserLocks} targets for mining]
-						</OnLoad>
-					</Text>						 
-					<Slider name='MaxLock'> 
-						<X>34%</X> 
-						<Y>37%</Y> 
-						<Width>32%</Width> 
-						<Height>5%</Height> 
-						<Border>1</Border>
-						<OnLoad>
-							This:SetRange[10]
-							This:SetValue[${Script[ComBot].VariableScope.Miner.Config.MaxLaserLocks}]
-						</OnLoad>
-						<OnChange>
-							Script[ComBot].VariableScope.Miner.Config:SetMaxLaserLocks[${This.Value}]
-							UIElement[MaxLockTitle@Miner_Frame@ComBot_Miner]:SetText[Lock ${Script[ComBot].VariableScope.Miner.Config.MaxLaserLocks} targets for mining]
-						</OnChange>
-					</Slider>						 
 					
-					<Checkbox name='obj_MinerOrcaMode'>
-						<X>1%</X>
-						<Y>58%</Y>
-						<Width>32%</Width> 
-						<Height>3%</Height> 
-						<Text>Orca Mode</Text>
-							<OnLoad>
-							if ${Script[ComBot].VariableScope.Miner.Config.OrcaMode}
-							{
-								This:SetChecked
-								if ${This.Checked}
-								{
-									UIElement[MaxLockTitle@Miner_Frame@ComBot_Miner]:Hide
-									UIElement[MaxLock@Miner_Frame@ComBot_Miner]:Hide
-								}
-								else
-								{
-									UIElement[MaxLockTitle@Miner_Frame@ComBot_Miner]:Show
-									UIElement[MaxLock@Miner_Frame@ComBot_Miner]:Show
-								}
-							}
-							This:SetZOrder[movetop]
-						</OnLoad>
-						<OnLeftClick>
-							Script[ComBot].VariableScope.Miner.Config:SetOrcaMode[${This.Checked}]
-							if ${This.Checked}
-							{
-								UIElement[MaxLockTitle@Miner_Frame@ComBot_Miner]:Hide
-								UIElement[MaxLock@Miner_Frame@ComBot_Miner]:Hide
-							}
-							else
-							{
-								UIElement[MaxLockTitle@Miner_Frame@ComBot_Miner]:Show
-								UIElement[MaxLock@Miner_Frame@ComBot_Miner]:Show
-							}
-							if ${MyShip.HasOreHold}
-							{
-								if ${Script[ComBot].VariableScope.Miner.Config.OrcaMode}
-								{
-									UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[Corp Hangar Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${EVEWindow[ByName, Inventory].ChildCapacity[ShipCorpHangar]}].Round} m3]
-								}
-								else
-								{
-									UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[OreHold Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]}].Round} m3]
-								}
-							}
-							else
-							{
-								UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${MyShip.CargoCapacity}].Round} m3]
-							}
-							This:SetZOrder[movetop]
-						</OnLeftClick>
-					</Checkbox>
 					
 					<Text name='obj_MinerOrePriorityTitle'> 
 						<X>67%</X> 
