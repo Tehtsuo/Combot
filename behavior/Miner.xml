@@ -726,8 +726,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							</Checkbox>
 
 							<Text name='OrePriorityTitle'> 
-								<X>1%</X> 
-								<Y>3%</Y> 
+								<X>67%</X> 
+								<Y>1%</Y> 
 								<Width>32%</Width> 
 								<Height>10%</Height> 
 								<Alignment>Center</Alignment>
@@ -738,9 +738,9 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<Border>1</Border>
 								<BorderColor>FFFFFFFF</BorderColor>
 								<X>67%</X>
-								<Y>5%</Y>
+								<Y>7%</Y>
 								<Width>32%</Width>
-								<Height>93%</Height>
+								<Height>91%</Height>
 								<SelectMultiple>1</SelectMultiple>
 								<Sort>User</Sort>
 								<OnLeftClick>
