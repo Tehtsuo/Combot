@@ -337,6 +337,12 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 										UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${MyShip.CargoCapacity}].Round} m3]
 									}
 								</OnChange>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[This field is used to determine when ComBot should perform a dropoff.]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[""]
+								</OnMouseExit>
 							</Slider>						 
 							
 							<Text name='DropoffTypeTitle'> 
@@ -515,9 +521,13 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											UIElement[Dropoff@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
 											break
 									}
-									
-									
 								</OnSelect>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[This field determines how ComBot should drop off ore after it is mined.]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[""]
+								</OnMouseExit>
 							</Listbox>
 						</Children>
 					</Frame>
@@ -1296,6 +1306,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<Y>5%</Y> 
 								<Width>90%</Width> 
 								<Height>90%</Height> 
+								<Wrap />
 							</Text>
 						</Children>
 					</Frame>
