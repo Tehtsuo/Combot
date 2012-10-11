@@ -508,7 +508,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Children>
 							<Text name='MiningSystemTitle'> 
 								<X>1%</X> 
-								<Y>3%</Y> 
+								<Y>1%</Y> 
 								<Width>32%</Width> 
 								<Height>10%</Height> 
 								<Alignment>Center</Alignment>
@@ -516,7 +516,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							</Text>						 
 							<TextEntry name='MiningSystem'> 
 								<X>1%</X> 
-								<Y>10%</Y> 
+								<Y>7%</Y> 
 								<Width>32%</Width> 
 								<Height>10%</Height> 
 								<OnLoad>
@@ -673,7 +673,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 							<Checkbox name='obj_MinerOrcaMode'>
 								<X>1%</X>
-								<Y>70%</Y>
+								<Y>30%</Y>
 								<Width>32%</Width> 
 								<Height>10%</Height> 
 								<Text>Orca Mode</Text>
