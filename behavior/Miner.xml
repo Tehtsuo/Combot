@@ -134,7 +134,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<X>34%</X> 
 								<Y>10%</Y> 
 								<Width>32%</Width> 
-								<Height>10%</Height> 
+								<Height>15%</Height> 
 								<OnLoad>
 									This:SetText[${Script[ComBot].VariableScope.Miner.Config.Dropoff}]
 								</OnLoad>
@@ -156,7 +156,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<Border>1</Border>
 								<BorderColor>FFFFFFFF</BorderColor>
 								<X>34%</X>
-								<Y>20%</Y>
+								<Y>25%</Y>
 								<Width>32%</Width>
 								<Height>70%</Height>
 								<OnLoad>
@@ -183,7 +183,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<X>34%</X> 
 								<Y>80%</Y> 
 								<Width>32%</Width> 
-								<Height>10%</Height> 
+								<Height>15%</Height> 
 								<OnLoad>
 									This:SetText[${Script[ComBot].VariableScope.Miner.Config.Container_Name}]
 								</OnLoad>
@@ -207,7 +207,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<X>67%</X>
 								<Y>10%</Y>
 								<Width>32%</Width>
-								<Height>80%</Height>
+								<Height>85%</Height>
 								<OnLoad>
 									switch ${Script[ComBot].VariableScope.Miner.Config.Dropoff_Type}
 									{
@@ -322,7 +322,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<X>1%</X>
 								<Y>10%</Y>
 								<Width>32%</Width>
-								<Height>80%</Height>
+								<Height>85%</Height>
 								<Items>
 									<Item>Personal Hangar</Item>
 									<Item>Orca</Item>
