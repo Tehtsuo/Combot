@@ -158,7 +158,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									Script[ComBot].VariableScope.Miner.LocalUI:Start
 								</OnChange>
 								<OnMouseEnter>
-									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[This field needs to contain the exact name of your dropoff location bookmark.  If you are delivering to a personal or corporate hangar in a station, the bookmark needs to be a station.  If you are delivering to a POS structure, the bookmark should be near the structure.]
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText["This field needs to contain the exact name of your dropoff location bookmark.  If you are delivering to a personal or corporate hangar in a station, the bookmark needs to be a station.  If you are delivering to a POS structure, the bookmark should be near the structure."]
 								</OnMouseEnter>
 								<OnMouseExit>
 									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[""]
@@ -183,7 +183,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									Script[ComBot].VariableScope.Miner.LocalUI:Stop
 								</OnSelect>
 								<OnMouseEnter>
-									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[This field needs to contain the exact name of your dropoff location bookmark.  If you are delivering to a personal or corporate hangar in a station, the bookmark needs to be a station.  If you are delivering to a POS structure, the bookmark should be near the structure.]
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText["This field needs to contain the exact name of your dropoff location bookmark.  If you are delivering to a personal or corporate hangar in a station, the bookmark needs to be a station.  If you are delivering to a POS structure, the bookmark should be near the structure."]
 								</OnMouseEnter>
 								<OnMouseExit>
 									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[""]
@@ -210,7 +210,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									Script[ComBot].VariableScope.Miner.Config:SetContainer_Name[${This.Text}]
 								</OnChange>
 								<OnMouseEnter>
-									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[This field is used to supply ComBot with an identifier for your dropoff location.  If you are delivering to an Orca, this needs to contain the name of the pilot flying your Orca.  If you are delivering to a Player Owned Station structure, this needs to contain the structure's name.  This field is also used to specify the prefix for corporate bookmarks created using the Corporate Jetcan mode.]
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText["This field is used to supply ComBot with an identifier for your dropoff location.  If you are delivering to an Orca, this needs to contain the name of the pilot flying your Orca.  If you are delivering to a Player Owned Station structure, this needs to contain the structure's name.  This field is also used to specify the prefix for corporate bookmarks created using the Corporate Jetcan mode."]
 								</OnMouseEnter>
 								<OnMouseExit>
 									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[""]
@@ -277,7 +277,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									}
 								</OnSelect>
 								<OnMouseEnter>
-									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[This field is used to further configure your dropoff type for types that have additional options, like Corporate Hangars and Jetcans.]
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText["This field is used to further configure your dropoff type for types that have additional options, like Corporate Hangars and Jetcans."]
 								</OnMouseEnter>
 								<OnMouseExit>
 									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[""]
@@ -338,7 +338,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									}
 								</OnChange>
 								<OnMouseEnter>
-									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[This field is used to determine when ComBot should perform a dropoff.]
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText["This field is used to determine when ComBot should perform a dropoff."]
 								</OnMouseEnter>
 								<OnMouseExit>
 									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[""]
@@ -523,7 +523,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									}
 								</OnSelect>
 								<OnMouseEnter>
-									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[This field determines how ComBot should drop off ore after it is mined.]
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText["This field determines how ComBot should drop off ore after it is mined."]
 								</OnMouseEnter>
 								<OnMouseExit>
 									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[""]
