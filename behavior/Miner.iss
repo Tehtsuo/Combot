@@ -956,7 +956,11 @@ objectdef obj_MinerUI inherits obj_State
 	
 	method Start()
 	{
-		This:QueueState["UpdateBookmarkLists", 5]
+		if ${This.IsIdle}
+		{
+			This:QueueState["OpenCargoHold"]
+			This:QueueState["UpdateBookmarkLists", 5]
+		}
 	}
 	
 	method Stop()
@@ -964,6 +968,17 @@ objectdef obj_MinerUI inherits obj_State
 		This:Clear
 	}
 
+	member:bool OpenCargoHold()
+	{
+		if !${EVEWindow[ByName, "Inventory"](exists)}
+		{
+			UI:Update["obj_Miner", "Opening inventory", "g"]
+			MyShip:OpenCargo[]
+			return FALSE
+		}
+		return TRUE
+	}
+	
 	member:bool UpdateBookmarkLists()
 	{
 		variable index:bookmark Bookmarks

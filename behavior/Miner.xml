@@ -267,6 +267,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<Height>10%</Height> 
 								<Alignment>Center</Alignment>
 								<OnLoad>
+									Script[ComBot].VariableScope.Miner.LocalUI:Start
 									if ${MyShip.HasOreHold}
 									{
 										if ${Script[ComBot].VariableScope.Miner.Config.OrcaMode}
@@ -499,7 +500,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					
 					<Text name='MiningFrameTitle'> 
 						<X>1%</X> 
-						<Y>37%</Y> 
+						<Y>38%</Y> 
 						<Width>32%</Width> 
 						<Height>4%</Height> 
 						<Text>Mining Configuration</Text>
@@ -680,7 +681,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 							<Checkbox name='obj_MinerOrcaMode'>
 								<X>1%</X>
-								<Y>30%</Y>
+								<Y>25%</Y>
 								<Width>32%</Width> 
 								<Height>10%</Height> 
 								<Text>Orca Mode</Text>
@@ -1250,14 +1251,30 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						</Children>
 					</Frame>
 
-
-				
-					
-					
-					
-
-
-					
+					<Text name='InformationFrameTitle'> 
+						<X>1%</X> 
+						<Y>85%</Y> 
+						<Width>32%</Width> 
+						<Height>4%</Height> 
+						<Text>Information</Text>
+					</Text>
+					<Frame name="InformationFrame">
+						<X>0%</X>
+						<Y>87%</Y>
+						<Width>100%</Width>
+						<Height>10%</Height>
+						<BackgroundColor>FF000000</BackgroundColor>
+						<Border>1</Border>
+						<BorderColor>FFFFFFFF</BorderColor>
+						<Children>
+							<Text name='Information'> 
+								<X>1%</X> 
+								<Y>1%</Y> 
+								<Width>98%</Width> 
+								<Height>98%</Height> 
+							</Text>
+						</Children>
+					</Frame>
 					
 				</Children>
 			</Frame>
