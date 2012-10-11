@@ -112,7 +112,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 				<BorderColor>FFFFFFFF</BorderColor>
 				<Children name="ComBot_Miner_Frame_Children">
 
-					<Frame name='DropoffFrame'>
+					<Frame>
 						<X>0</X>
 						<Y>0</Y>
 						<Width>100%</Width>
