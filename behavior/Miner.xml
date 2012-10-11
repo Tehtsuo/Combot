@@ -123,15 +123,15 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Children>
 						
 							<Text name='DropoffTitle'> 
-								<X>1%</X> 
-								<Y>5%</Y> 
+								<X>34%</X> 
+								<Y>3%</Y> 
 								<Width>32%</Width> 
 								<Height>10%</Height> 
 								<Alignment>Center</Alignment>
 								<Text>Dropoff Bookmark</Text>
 							</Text>
 							<Textentry name='Dropoff'> 
-								<X>1%</X> 
+								<X>34%</X> 
 								<Y>10%</Y> 
 								<Width>32%</Width> 
 								<Height>10%</Height> 
@@ -155,7 +155,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<BackgroundColor>FF000000</BackgroundColor>
 								<Border>1</Border>
 								<BorderColor>FFFFFFFF</BorderColor>
-								<X>1%</X>
+								<X>34%</X>
 								<Y>20%</Y>
 								<Width>32%</Width>
 								<Height>70%</Height>
@@ -173,7 +173,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							
 							<Text name='Dropoff_ContainerTitle'> 
 								<X>67%</X> 
-								<Y>85%</Y> 
+								<Y>83%</Y> 
 								<Width>32%</Width> 
 								<Height>10%</Height> 
 								<Alignment>Center</Alignment>
@@ -194,7 +194,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							
 							<Text name='DropoffSubTypeTitle'> 
 								<X>67%</X> 
-								<Y>5%</Y> 
+								<Y>3%</Y> 
 								<Width>32%</Width> 
 								<Height>10%</Height> 
 								<Alignment>Center</Alignment>
@@ -255,10 +255,64 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									}
 								</OnSelect>
 							</listbox>
+
+							<Text name='ThresholdTitle'> 
+								<X>34%</X> 
+								<Y>33%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Alignment>Center</Alignment>
+								<OnLoad>
+									if ${MyShip.HasOreHold}
+									{
+										if ${Script[ComBot].VariableScope.Miner.Config.OrcaMode}
+										{
+											This:SetText[Corp Hangar Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${EVEWindow[ByName, Inventory].ChildCapacity[ShipCorpHangar]}].Round} m3]
+										}
+										else
+										{
+											This:SetText[OreHold Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]}].Round} m3]
+										}
+									}
+									else
+									{
+										This:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${MyShip.CargoCapacity}].Round} m3]
+									}
+								</OnLoad>
+							</Text>						 
+							<Slider name='Threshold'> 
+								<X>34%</X> 
+								<Y>40%</Y> 
+								<Width>32%</Width> 
+								<Height>15%</Height> 
+								<Border>1</Border>
+								<OnLoad>
+									This:SetRange[100]
+									This:SetValue[${Script[ComBot].VariableScope.Miner.Config.Threshold}]
+								</OnLoad>
+								<OnChange>
+									Script[ComBot].VariableScope.Miner.Config:SetThreshold[${This.Value}]
+									if ${MyShip.HasOreHold}
+									{
+										if ${Script[ComBot].VariableScope.Miner.Config.OrcaMode}
+										{
+											UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[Corp Hangar Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${EVEWindow[ByName, Inventory].ChildCapacity[ShipCorpHangar]}].Round} m3]
+										}
+										else
+										{
+											UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[OreHold Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]}].Round} m3]
+										}
+									}
+									else
+									{
+										UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${MyShip.CargoCapacity}].Round} m3]
+									}
+								</OnChange>
+							</Slider>						 
 							
 							<Text name='DropoffTypeTitle'> 
-								<X>34%</X> 
-								<Y>5%</Y> 
+								<X>1%</X> 
+								<Y>3%</Y> 
 								<Width>32%</Width> 
 								<Height>10%</Height> 
 								<Alignment>Center</Alignment>
@@ -268,7 +322,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<BackgroundColor>FF000000</BackgroundColor>
 								<Border>1</Border>
 								<BorderColor>FFFFFFFF</BorderColor>
-								<X>34%</X>
+								<X>1%</X>
 								<Y>10%</Y>
 								<Width>32%</Width>
 								<Height>80%</Height>
@@ -398,59 +452,6 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									
 								</OnSelect>
 							</Listbox>
-							<Text name='ThresholdTitle'> 
-								<X>1%</X> 
-								<Y>30%</Y> 
-								<Width>32%</Width> 
-								<Height>15%</Height> 
-								<Alignment>Center</Alignment>
-								<OnLoad>
-									if ${MyShip.HasOreHold}
-									{
-										if ${Script[ComBot].VariableScope.Miner.Config.OrcaMode}
-										{
-											This:SetText[Corp Hangar Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${EVEWindow[ByName, Inventory].ChildCapacity[ShipCorpHangar]}].Round} m3]
-										}
-										else
-										{
-											This:SetText[OreHold Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]}].Round} m3]
-										}
-									}
-									else
-									{
-										This:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${MyShip.CargoCapacity}].Round} m3]
-									}
-								</OnLoad>
-							</Text>						 
-							<Slider name='Threshold'> 
-								<X>1%</X> 
-								<Y>40%</Y> 
-								<Width>32%</Width> 
-								<Height>20%</Height> 
-								<Border>1</Border>
-								<OnLoad>
-									This:SetRange[100]
-									This:SetValue[${Script[ComBot].VariableScope.Miner.Config.Threshold}]
-								</OnLoad>
-								<OnChange>
-									Script[ComBot].VariableScope.Miner.Config:SetThreshold[${This.Value}]
-									if ${MyShip.HasOreHold}
-									{
-										if ${Script[ComBot].VariableScope.Miner.Config.OrcaMode}
-										{
-											UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[Corp Hangar Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${EVEWindow[ByName, Inventory].ChildCapacity[ShipCorpHangar]}].Round} m3]
-										}
-										else
-										{
-											UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[OreHold Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]}].Round} m3]
-										}
-									}
-									else
-									{
-										UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${MyShip.CargoCapacity}].Round} m3]
-									}
-								</OnChange>
-							</Slider>						 
 						</Children>
 					</Frame>
 					
