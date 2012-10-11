@@ -213,8 +213,6 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									{
 										case Jetcan
 											This:AddItem[Fleet Jetcan]
-											This:AddItem[Corporate Bookmark Jetcan]
-											This:AddItem[On-Demand Jetcan]
 											break
 										case Corporation Folder
 											This:AddItem[Corporation Folder 1]
@@ -226,7 +224,6 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											This:AddItem[Corporation Folder 7]
 											break
 									}
-									echo Setting ${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType}
 									This.ItemByText["${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType}"]:Select
 									if ${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType.Equal[Corporate Bookmark Jetcan]}
 									{
@@ -339,7 +336,6 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									switch ${This.SelectedItem.Text}
 									{
 										case Jetcan
-											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:AddItem[Fleet Jetcan]
 											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner].ItemByText[${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType}]:Select
 											UIElement[DropoffSubTypeTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
 											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
@@ -375,13 +371,6 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											UIElement[DropoffList@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
 											break
 										case Corporation Folder
-											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 1]
-											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 2]
-											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 3]
-											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 4]
-											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 5]
-											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 6]
-											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 7]
 											UIElement[DropoffSubTypeTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
 											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
 											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner].ItemByText[${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType}]:Select
