@@ -126,15 +126,15 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<X>1%</X> 
 								<Y>1%</Y> 
 								<Width>32%</Width> 
-								<Height>2%</Height> 
+								<Height>10%</Height> 
 								<Alignment>Center</Alignment>
 								<Text>Dropoff Bookmark</Text>
 							</Text>
 							<Textentry name='Dropoff'> 
 								<X>1%</X> 
-								<Y>3%</Y> 
+								<Y>10%</Y> 
 								<Width>32%</Width> 
-								<Height>3%</Height> 
+								<Height>10%</Height> 
 								<OnLoad>
 									This:SetText[${Script[ComBot].VariableScope.Miner.Config.Dropoff}]
 								</OnLoad>
@@ -156,9 +156,9 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<Border>1</Border>
 								<BorderColor>FFFFFFFF</BorderColor>
 								<X>1%</X>
-								<Y>6%</Y>
+								<Y>20%</Y>
 								<Width>32%</Width>
-								<Height>17%</Height>
+								<Height>70%</Height>
 								<OnLoad>
 									This:SetZOrder[alwaysontop]
 									This:Hide
@@ -257,21 +257,21 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							</listbox>
 							
 							<Text name='DropoffTypeTitle'> 
-								<X>34%</X> 
-								<Y>1%</Y> 
+								<X>1%</X> 
+								<Y>30%</Y> 
 								<Width>32%</Width> 
-								<Height>2%</Height> 
+								<Height>10%</Height> 
 								<Alignment>Center</Alignment>
 								<Text>Dropoff Type</Text>
 							</Text>
-							<listbox Name="DropoffType">
+							<Checkbox Name="DropoffType">
 								<BackgroundColor>FF000000</BackgroundColor>
 								<Border>1</Border>
 								<BorderColor>FFFFFFFF</BorderColor>
-								<X>34%</X>
-								<Y>3%</Y>
+								<X>1%</X>
+								<Y>40%</Y>
 								<Width>32%</Width>
-								<Height>20%</Height>
+								<Height>10%</Height>
 								<Items>
 									<Item>Personal Hangar</Item>
 									<Item>Orca</Item>
@@ -366,7 +366,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									
 									
 								</OnSelect>
-							</listbox>
+							</Checkbox>
 						</Children>
 					</Frame>
 					
