@@ -99,31 +99,119 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 				<Border>1</Border>
 				<BorderColor>FFFFFFFF</BorderColor>
 				<Children name="Hauler_Frame_Children">
-					<Text name='obj_Hauler_ThresholdTitle'> 
-						<X>67%</X> 
-						<Y>1%</Y> 
+					<Text name='PickupFrameTitle'> 
+						<X>1%</X> 
+						<Y>2%</Y> 
 						<Width>32%</Width> 
-						<Height>2%</Height> 
-						<Alignment>Center</Alignment>
-						<OnLoad>
-							This:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Hauler.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Hauler.Config.Threshold} * .01 * ${MyShip.CargoCapacity}].Round} m3]
-						</OnLoad>
-					</Text>						 
-					<Slider name='obj_Hauler_Threshold'> 
-						<X>67%</X> 
-						<Y>3%</Y> 
-						<Width>32%</Width> 
-						<Height>5%</Height> 
+						<Height>4%</Height> 
+						<Text>Pickup Configuration</Text>
+					</Text>
+					<Frame name="PickupoffFrame">
+						<X>0%</X>
+						<Y>4%</Y>
+						<Width>100%</Width>
+						<Height>30%</Height>
+						<BackgroundColor>FF000000</BackgroundColor>
 						<Border>1</Border>
-						<OnLoad>
-							This:SetRange[100]
-							This:SetValue[${Script[ComBot].VariableScope.Hauler.Config.Threshold}]
-						</OnLoad>
-						<OnChange>
-							Script[ComBot].VariableScope.Hauler.Config:SetThreshold[${This.Value}]
-							UIElement[obj_Hauler_ThresholdTitle@Hauler_Frame@ComBot_Hauler]:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Hauler.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Hauler.Config.Threshold} * .01 * ${MyShip.CargoCapacity}].Round} m3]
-						</OnChange>
-					</Slider>						 
+						<BorderColor>FFFFFFFF</BorderColor>
+						<Children>
+							<Text name='PickupTitle'> 
+								<X>34%</X> 
+								<Y>3%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Pickup Bookmark</Text>
+							</Text>
+							<Textentry name='Pickup'> 
+								<X>1%</X> 
+								<Y>10%</Y> 
+								<Width>32%</Width> 
+								<Height>15%</Height> 
+								<OnLoad>
+									This:SetText[${Script[ComBot].VariableScope.Hauler.Config.Pickup}]
+								</OnLoad>
+								<OnChange>
+									if ${This.Text.Length}
+									{
+										Script[ComBot].VariableScope.Hauler.Config:SetPickup[${This.Text}]
+									}
+									else
+									{
+										Script[ComBot].VariableScope.Hauler.Config:SetPickup[\"\"]
+									}
+									UIElement[PickupList@Hauler_Frame@ComBot_Hauler]:Show
+									Script[ComBot].VariableScope.Hauler.LocalUI:Start
+								</OnChange>
+							</Textentry>
+							<listbox Name="PickupList">
+								<BackgroundColor>FF000000</BackgroundColor>
+								<Border>1</Border>
+								<BorderColor>FFFFFFFF</BorderColor>
+								<X>1%</X>
+								<Y>36%</Y>
+								<Width>32%</Width>
+								<Height>17%</Height>
+								<OnLoad>
+									This:SetZOrder[alwaysontop]
+									This:Hide
+								</OnLoad>
+								<OnSelect>
+									UIElement[Pickup@Hauler_Frame@ComBot_Hauler]:SetText[${This.SelectedItem.Text}]
+									Script[ComBot].VariableScope.Hauler.Config:SetPickup[${This.SelectedItem.Text}]
+									This:Hide
+									Script[ComBot].VariableScope.Hauler.LocalUI:Stop
+								</OnSelect>
+							</listbox>					
+
+						<Children>
+					</Frame>
+						
+					<Text name='DropoffFrameTitle'> 
+						<X>1%</X> 
+						<Y>36%</Y> 
+						<Width>32%</Width> 
+						<Height>4%</Height> 
+						<Text>Dropoff Configuration</Text>
+					</Text>
+					<Frame name="DropoffFrame">
+						<X>0%</X>
+						<Y>38%</Y>
+						<Width>100%</Width>
+						<Height>30%</Height>
+						<BackgroundColor>FF000000</BackgroundColor>
+						<Border>1</Border>
+						<BorderColor>FFFFFFFF</BorderColor>
+						<Children>
+							<Text name='obj_Hauler_ThresholdTitle'> 
+								<X>34%</X> 
+								<Y>33%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Alignment>Center</Alignment>
+								<OnLoad>
+									This:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Hauler.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Hauler.Config.Threshold} * .01 * ${MyShip.CargoCapacity}].Round} m3]
+								</OnLoad>
+							</Text>						 
+							<Slider name='obj_Hauler_Threshold'> 
+								<X>34%</X> 
+								<Y>40%</Y> 
+								<Width>32%</Width> 
+								<Height>15%</Height> 
+								<Border>1</Border>
+								<OnLoad>
+									This:SetRange[100]
+									This:SetValue[${Script[ComBot].VariableScope.Hauler.Config.Threshold}]
+								</OnLoad>
+								<OnChange>
+									Script[ComBot].VariableScope.Hauler.Config:SetThreshold[${This.Value}]
+									UIElement[obj_Hauler_ThresholdTitle@Hauler_Frame@ComBot_Hauler]:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Hauler.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Hauler.Config.Threshold} * .01 * ${MyShip.CargoCapacity}].Round} m3]
+								</OnChange>
+							</Slider>						 
+						
+						</Children>
+					</Frame>
+						
 					
 					<Text name='DropoffTitle'> 
 						<X>1%</X> 
@@ -245,54 +333,6 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						</OnSelect>
 					</listbox>
 					
-					<Text name='PickupTitle'> 
-						<X>1%</X> 
-						<Y>31%</Y> 
-						<Width>32%</Width> 
-						<Height>2%</Height> 
-						<Alignment>Center</Alignment>
-						<Text>Pickup Bookmark</Text>
-					</Text>
-					<Textentry name='Pickup'> 
-						<X>1%</X> 
-						<Y>33%</Y> 
-						<Width>32%</Width> 
-						<Height>3%</Height> 
-						<OnLoad>
-							This:SetText[${Script[ComBot].VariableScope.Hauler.Config.Pickup}]
-						</OnLoad>
-						<OnChange>
-							if ${This.Text.Length}
-							{
-								Script[ComBot].VariableScope.Hauler.Config:SetPickup[${This.Text}]
-							}
-							else
-							{
-								Script[ComBot].VariableScope.Hauler.Config:SetPickup[\"\"]
-							}
-							UIElement[PickupList@Hauler_Frame@ComBot_Hauler]:Show
-							Script[ComBot].VariableScope.Hauler.LocalUI:Start
-						</OnChange>
-					</Textentry>
-					<listbox Name="PickupList">
-						<BackgroundColor>FF000000</BackgroundColor>
-						<Border>1</Border>
-						<BorderColor>FFFFFFFF</BorderColor>
-						<X>1%</X>
-						<Y>36%</Y>
-						<Width>32%</Width>
-						<Height>17%</Height>
-						<OnLoad>
-							This:SetZOrder[alwaysontop]
-							This:Hide
-						</OnLoad>
-						<OnSelect>
-							UIElement[Pickup@Hauler_Frame@ComBot_Hauler]:SetText[${This.SelectedItem.Text}]
-							Script[ComBot].VariableScope.Hauler.Config:SetPickup[${This.SelectedItem.Text}]
-							This:Hide
-							Script[ComBot].VariableScope.Hauler.LocalUI:Stop
-						</OnSelect>
-					</listbox>					
 					
 					<Text name='obj_Hauler_Pickup_ContainerNameTitle'> 
 						<X>1%</X> 
