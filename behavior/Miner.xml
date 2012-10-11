@@ -342,7 +342,6 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											UIElement[Threshold@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
 											UIElement[DropoffTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
 											UIElement[Dropoff@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
-											UIElement[DropoffList@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
 											break
 										case Orca
 											UIElement[Dropoff_Container@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
@@ -412,7 +411,6 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											UIElement[Threshold@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
 											UIElement[DropoffTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
 											UIElement[Dropoff@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
-											UIElement[DropoffList@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
 											break
 										case Orca
 											UIElement[Dropoff_Container@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
