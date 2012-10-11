@@ -725,14 +725,22 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								</OnLeftClick>
 							</Checkbox>
 
+							<Text name='OrePriorityTitle'> 
+								<X>1%</X> 
+								<Y>3%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Ore Priority</Text>
+							</Text>						 
 							<listbox Name="obj_MinerOrePriority">
 								<BackgroundColor>FF000000</BackgroundColor>
 								<Border>1</Border>
 								<BorderColor>FFFFFFFF</BorderColor>
 								<X>67%</X>
-								<Y>0%</Y>
+								<Y>5%</Y>
 								<Width>32%</Width>
-								<Height>100%</Height>
+								<Height>93%</Height>
 								<SelectMultiple>1</SelectMultiple>
 								<Sort>User</Sort>
 								<OnLeftClick>
@@ -870,6 +878,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 										
 										if ${This.Checked}
 										{
+											UIElement[OrePriorityTitle@MiningFrame@Miner_Frame@ComBot_Miner]:SetText[Ice Priority]
 											variable collection:bool MineOre
 											variable iterator iter
 											Ores:Set[${LavishSettings[ComBotSettings].FindSet[${Me.Name}].FindSet[Miner].FindSet[ICE_Types]}]
@@ -951,6 +960,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 										}
 										else
 										{
+											UIElement[OrePriorityTitle@MiningFrame@Miner_Frame@ComBot_Miner]:SetText[Ore Priority]
 											Ores:Set[${LavishSettings[ComBotSettings].FindSet[${Me.Name}].FindSet[Miner].FindSet[Ore_Types]}]
 											if ${Ores(exists)}
 											{
@@ -1055,6 +1065,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 										if ${This.Checked}
 										{
+											UIElement[OrePriorityTitle@MiningFrame@Miner_Frame@ComBot_Miner]:SetText[Ice Priority]
 											Ores:Set[${LavishSettings[ComBotSettings].FindSet[${Me.Name}].FindSet[Miner].FindSet[ICE_Types]}]
 											if ${Ores(exists)}
 											{
@@ -1133,6 +1144,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 										}
 										else
 										{
+											UIElement[OrePriorityTitle@MiningFrame@Miner_Frame@ComBot_Miner]:SetText[Ore Priority]
 											Ores:Set[${LavishSettings[ComBotSettings].FindSet[${Me.Name}].FindSet[Miner].FindSet[Ore_Types]}]
 											if ${Ores(exists)}
 											{
