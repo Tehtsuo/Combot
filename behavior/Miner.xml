@@ -497,6 +497,13 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						</Children>
 					</Frame>
 					
+					<Text name='MiningFrameTitle'> 
+						<X>1%</X> 
+						<Y>37%</Y> 
+						<Width>32%</Width> 
+						<Height>4%</Height> 
+						<Text>Mining Configuration</Text>
+					</Text>
 					<Frame name="MiningFrame">
 						<X>0%</X>
 						<Y>40%</Y>
@@ -557,14 +564,14 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							
 							<Text name='OrePrefixTitle'>
 								<X>1%</X>
-								<Y>42%</Y>
+								<Y>52%</Y>
 								<Width>20%</Width> 
 								<Height>10%</Height> 
 								<Text>Belt Prefix:</Text>
 							</Text>
 							<Textentry name='OrePrefix'>
 								<X>13%</X>
-								<Y>40%</Y>
+								<Y>50%</Y>
 								<Width>20%</Width> 
 								<Height>9%</Height> 
 								<OnLoad>
@@ -580,14 +587,14 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							
 							<Text name='IcePrefixTitle'>
 								<X>1%</X>
-								<Y>52%</Y>
+								<Y>62%</Y>
 								<Width>20%</Width> 
 								<Height>10%</Height> 
 								<Text>Ice Belt Prefix:</Text>
 							</Text>
 							<Textentry name='IcePrefix'>
 								<X>13%</X>
-								<Y>50%</Y>
+								<Y>60%</Y>
 								<Width>20%</Width> 
 								<Height>9%</Height> 
 								<OnLoad>
@@ -603,7 +610,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							
 							<Checkbox name='obj_MinerUseBookmarks'>
 								<X>1%</X>
-								<Y>30%</Y>
+								<Y>40%</Y>
 								<Width>32%</Width> 
 								<Height>10%</Height> 
 								<Text>Use belt bookmarks</Text>
