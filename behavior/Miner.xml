@@ -157,6 +157,12 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									UIElement[DropoffList@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
 									Script[ComBot].VariableScope.Miner.LocalUI:Start
 								</OnChange>
+								<OnMouseEnter>
+									UIElement[DropoffList@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[This field needs to contain the exact name of your dropoff location bookmark.  If you are delivering to a personal or corporate hangar in a station, the bookmark needs to be a station.  If you are delivering to a POS structure, the bookmark should be near the structure.]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[DropoffList@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[""]
+								</OnMouseExit>
 							</Textentry>
 							<listbox Name="DropoffList">
 								<BackgroundColor>FF000000</BackgroundColor>
@@ -176,6 +182,12 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									This:Hide
 									Script[ComBot].VariableScope.Miner.LocalUI:Stop
 								</OnSelect>
+								<OnMouseEnter>
+									UIElement[DropoffList@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[This field needs to contain the exact name of your dropoff location bookmark.  If you are delivering to a personal or corporate hangar in a station, the bookmark needs to be a station.  If you are delivering to a POS structure, the bookmark should be near the structure.]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[DropoffList@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[""]
+								</OnMouseExit>
 							</listbox>
 							
 							<Text name='Dropoff_ContainerTitle'> 
@@ -1253,16 +1265,16 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 					<Text name='InformationFrameTitle'> 
 						<X>1%</X> 
-						<Y>85%</Y> 
+						<Y>80%</Y> 
 						<Width>32%</Width> 
 						<Height>4%</Height> 
 						<Text>Information</Text>
 					</Text>
 					<Frame name="InformationFrame">
 						<X>0%</X>
-						<Y>87%</Y>
+						<Y>82%</Y>
 						<Width>100%</Width>
-						<Height>10%</Height>
+						<Height>18%</Height>
 						<BackgroundColor>FF000000</BackgroundColor>
 						<Border>1</Border>
 						<BorderColor>FFFFFFFF</BorderColor>
