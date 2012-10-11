@@ -355,6 +355,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								default
 									UIElement[Dropoff_Container@Miner_Frame@ComBot_Miner]:Hide
 									UIElement[Dropoff_ContainerTitle@Miner_Frame@ComBot_Miner]:Hide
+									UIElement[DropoffSubTypeTitle@Miner_Frame@ComBot_Miner]:Hide
+									UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:Hide
 							}
 						</OnLoad>
 						<OnSelect>
