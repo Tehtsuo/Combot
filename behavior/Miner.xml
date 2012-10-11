@@ -118,6 +118,9 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Width>32%</Width> 
 						<Height>4%</Height> 
 						<Text>Dropoff Configuration</Text>
+						<OnLoad>
+							This.Font:SetColor[FFFFFF00]
+						</OnLoad>
 					</Text>
 					<Frame name="DropoffFrame">
 						<X>0%</X>
@@ -538,6 +541,9 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Width>32%</Width> 
 						<Height>4%</Height> 
 						<Text>Mining Configuration</Text>
+						<OnLoad>
+							This.Font:SetColor[FFFFFF00]
+						</OnLoad>
 					</Text>
 					<Frame name="MiningFrame">
 						<X>0%</X>
@@ -1353,6 +1359,9 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Width>32%</Width> 
 						<Height>4%</Height> 
 						<Text>Information</Text>
+						<OnLoad>
+							This.Font:SetColor[FFFFFF00]
+						</OnLoad>
 					</Text>
 					<Frame name="InformationFrame">
 						<X>0%</X>
