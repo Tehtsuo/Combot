@@ -126,7 +126,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<X>1%</X> 
 								<Y>1%</Y> 
 								<Width>32%</Width> 
-								<Height>10%</Height> 
+								<Height>15%</Height> 
 								<Alignment>Center</Alignment>
 								<Text>Dropoff Bookmark</Text>
 							</Text>
@@ -260,7 +260,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<X>34%</X> 
 								<Y>1%</Y> 
 								<Width>32%</Width> 
-								<Height>10%</Height> 
+								<Height>15%</Height> 
 								<Alignment>Center</Alignment>
 								<Text>Dropoff Type</Text>
 							</Text>
@@ -269,9 +269,9 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<Border>1</Border>
 								<BorderColor>FFFFFFFF</BorderColor>
 								<X>34%</X>
-								<Y>20%</Y>
+								<Y>10%</Y>
 								<Width>32%</Width>
-								<Height>70%</Height>
+								<Height>80%</Height>
 								<Items>
 									<Item>Personal Hangar</Item>
 									<Item>Orca</Item>
@@ -371,7 +371,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<X>1%</X> 
 								<Y>30%</Y> 
 								<Width>32%</Width> 
-								<Height>10%</Height> 
+								<Height>15%</Height> 
 								<Alignment>Center</Alignment>
 								<OnLoad>
 									if ${MyShip.HasOreHold}
@@ -395,7 +395,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<X>1%</X> 
 								<Y>40%</Y> 
 								<Width>32%</Width> 
-								<Height>10%</Height> 
+								<Height>20%</Height> 
 								<Border>1</Border>
 								<OnLoad>
 									This:SetRange[100]
