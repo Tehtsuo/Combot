@@ -344,17 +344,6 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											UIElement[Dropoff@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
 											UIElement[DropoffList@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
 											break
-										case Jetcan
-											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner].ItemByText[${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType}]:Select
-											UIElement[DropoffSubTypeTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
-											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
-											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner].ItemByText[${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType}]:Select
-											UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
-											UIElement[Threshold@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
-											UIElement[DropoffTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
-											UIElement[Dropoff@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
-											UIElement[DropoffList@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
-											break
 										case Orca
 											UIElement[Dropoff_Container@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
 											UIElement[Dropoff_ContainerTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[Orca Name]
@@ -378,6 +367,26 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											UIElement[DropoffTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
 											UIElement[Dropoff@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
 											break
+										case Jetcan
+											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner].ItemByText[${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType}]:Select
+											UIElement[DropoffSubTypeTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner].ItemByText[${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType}]:Select
+											UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[Threshold@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[DropoffTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[Dropoff@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[DropoffList@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											break
+										case No Dropoff
+											UIElement[DropoffSubTypeTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[Threshold@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[DropoffTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[Dropoff@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[DropoffList@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											break
 										case Corporation Folder
 											UIElement[DropoffSubTypeTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
 											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
@@ -389,25 +398,6 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											UIElement[DropoffTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
 											UIElement[Dropoff@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
 											break
-										case No Dropoff
-											UIElement[DropoffSubTypeTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
-											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
-											UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
-											UIElement[Threshold@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
-											UIElement[DropoffTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
-											UIElement[Dropoff@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
-											UIElement[DropoffList@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
-											break
-										default
-											UIElement[Dropoff_Container@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
-											UIElement[Dropoff_ContainerTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
-											UIElement[DropoffSubTypeTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
-											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
-											UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
-											UIElement[Threshold@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
-											UIElement[DropoffTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
-											UIElement[Dropoff@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
-											UIElement[DropoffList@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
 									}
 								</OnLoad>
 								<OnSelect>
@@ -424,18 +414,6 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											UIElement[Dropoff@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
 											UIElement[DropoffList@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
 											break
-										case Jetcan
-											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:AddItem[Fleet Jetcan]
-											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner].ItemByText[${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType}]:Select
-											UIElement[DropoffSubTypeTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
-											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
-											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner].ItemByText[${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType}]:Select
-											UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
-											UIElement[Threshold@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
-											UIElement[DropoffTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
-											UIElement[Dropoff@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
-											UIElement[DropoffList@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
-											break
 										case Orca
 											UIElement[Dropoff_Container@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
 											UIElement[Dropoff_ContainerTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[Orca Name]
@@ -458,6 +436,27 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											UIElement[Threshold@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
 											UIElement[DropoffTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
 											UIElement[Dropoff@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											break
+										case Jetcan
+											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:AddItem[Fleet Jetcan]
+											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner].ItemByText[${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType}]:Select
+											UIElement[DropoffSubTypeTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner].ItemByText[${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType}]:Select
+											UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[Threshold@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[DropoffTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[Dropoff@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[DropoffList@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											break
+										case No Dropoff
+											UIElement[DropoffSubTypeTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[Threshold@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[DropoffTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[Dropoff@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[DropoffList@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
 											break
 										case Corporation Folder
 											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 1]
@@ -477,25 +476,6 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											UIElement[DropoffTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
 											UIElement[Dropoff@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
 											break
-										case No Dropoff
-											UIElement[DropoffSubTypeTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
-											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
-											UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
-											UIElement[Threshold@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
-											UIElement[DropoffTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
-											UIElement[Dropoff@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
-											UIElement[DropoffList@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
-											break
-										default
-											UIElement[Dropoff_Container@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
-											UIElement[Dropoff_ContainerTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
-											UIElement[DropoffSubTypeTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
-											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
-											UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
-											UIElement[Threshold@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
-											UIElement[DropoffTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
-											UIElement[Dropoff@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
-											UIElement[DropoffList@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
 									}
 									
 									
