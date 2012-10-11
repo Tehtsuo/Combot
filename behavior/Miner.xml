@@ -158,10 +158,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									Script[ComBot].VariableScope.Miner.LocalUI:Start
 								</OnChange>
 								<OnMouseEnter>
-									UIElement[DropoffList@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[This field needs to contain the exact name of your dropoff location bookmark.  If you are delivering to a personal or corporate hangar in a station, the bookmark needs to be a station.  If you are delivering to a POS structure, the bookmark should be near the structure.]
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[This field needs to contain the exact name of your dropoff location bookmark.  If you are delivering to a personal or corporate hangar in a station, the bookmark needs to be a station.  If you are delivering to a POS structure, the bookmark should be near the structure.]
 								</OnMouseEnter>
 								<OnMouseExit>
-									UIElement[DropoffList@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[""]
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[""]
 								</OnMouseExit>
 							</Textentry>
 							<listbox Name="DropoffList">
@@ -183,10 +183,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									Script[ComBot].VariableScope.Miner.LocalUI:Stop
 								</OnSelect>
 								<OnMouseEnter>
-									UIElement[DropoffList@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[This field needs to contain the exact name of your dropoff location bookmark.  If you are delivering to a personal or corporate hangar in a station, the bookmark needs to be a station.  If you are delivering to a POS structure, the bookmark should be near the structure.]
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[This field needs to contain the exact name of your dropoff location bookmark.  If you are delivering to a personal or corporate hangar in a station, the bookmark needs to be a station.  If you are delivering to a POS structure, the bookmark should be near the structure.]
 								</OnMouseEnter>
 								<OnMouseExit>
-									UIElement[DropoffList@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[""]
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[""]
 								</OnMouseExit>
 							</listbox>
 							
