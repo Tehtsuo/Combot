@@ -96,7 +96,6 @@ objectdef obj_AutoThrust inherits obj_State
 			return FALSE
 		}
 		
-		echo Mode - ${Me.ToEntity.Mode}: ${Me.ToEntity.FollowRange}
 
 		if 	${Config.Approach}
 		{
@@ -123,7 +122,6 @@ objectdef obj_AutoThrust inherits obj_State
 			echo ${Me.ToEntity.Mode}
 			if 	${Me.ToEntity.Mode} == 4
 			{
-				echo Disable TurnOff
 				TurnOff:Set[FALSE]
 			}
 		}
@@ -143,6 +141,7 @@ objectdef obj_AutoThrust inherits obj_State
 		}
 		if 	${Config.Velocity}
 		{
+			echo ${Me.ToEntity.Velocity}
 			
 			if 	${Ship.ModuleList_AB_MWD.ActiveCount} &&\
 				${MyShip.CapacitorPct} <= ${Config.Velocity_Threshold}
@@ -197,9 +196,10 @@ objectdef obj_AutoThrust inherits obj_State
 				Ship.ModuleList_AB_MWD:Activate
 				return FALSE
 		}
-		; if 	${Config.Velocity} &&\
-			; !${Ship.ModuleList_AB_MWD.ActiveCount} &&\
-			; ${MyShip.CapacitorPct} > ${Config.Velocity_Threshold} &&\
+		
+		;if 	${Config.Velocity} &&\
+			;!${Ship.ModuleList_AB_MWD.ActiveCount} &&\
+			;${MyShip.CapacitorPct} > ${Config.Velocity_Threshold} &&\
 			; ${Math.Calc[${Me.ToEntity.Velocity} / ${Me.ToEntity.MaxVelocity}]} > ${Math.Calc[${Config.Velocity_Trigger} * .01]}
 		; {
 				; Ship.ModuleList_AB_MWD:Activate
