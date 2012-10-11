@@ -342,6 +342,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											UIElement[Threshold@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
 											UIElement[DropoffTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
 											UIElement[Dropoff@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[Dropoff_Container@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[Dropoff_ContainerTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
 											break
 										case Orca
 											UIElement[Dropoff_Container@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
@@ -385,6 +387,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											UIElement[DropoffTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
 											UIElement[Dropoff@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
 											UIElement[DropoffList@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[Dropoff_Container@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[Dropoff_ContainerTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
 											break
 										case Corporation Folder
 											UIElement[DropoffSubTypeTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
@@ -411,6 +415,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											UIElement[Threshold@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
 											UIElement[DropoffTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
 											UIElement[Dropoff@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[Dropoff_Container@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[Dropoff_ContainerTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
 											break
 										case Orca
 											UIElement[Dropoff_Container@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
@@ -455,6 +461,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											UIElement[DropoffTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
 											UIElement[Dropoff@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
 											UIElement[DropoffList@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[Dropoff_Container@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[Dropoff_ContainerTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
 											break
 										case Corporation Folder
 											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 1]
