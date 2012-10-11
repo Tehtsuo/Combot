@@ -209,6 +209,12 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<OnChange>
 									Script[ComBot].VariableScope.Miner.Config:SetContainer_Name[${This.Text}]
 								</OnChange>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[This field is used to supply ComBot with an identifier for your dropoff location.  If you are delivering to an Orca, this needs to contain the name of the pilot flying your Orca.  If you are delivering to a Player Owned Station structure, this needs to contain the structure's name.  This field is also used to specify the prefix for corporate bookmarks created using the Corporate Jetcan mode.]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[""]
+								</OnMouseExit>
 							</TextEntry>
 							
 							<Text name='DropoffSubTypeTitle'> 
@@ -270,6 +276,12 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 										UIElement[Dropoff_ContainerTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
 									}
 								</OnSelect>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[This field is used to further configure your dropoff type for types that have additional options, like Corporate Hangars and Jetcans.]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[""]
+								</OnMouseExit>
 							</listbox>
 
 							<Text name='ThresholdTitle'> 
@@ -1280,10 +1292,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<BorderColor>FFFFFFFF</BorderColor>
 						<Children>
 							<Text name='Information'> 
-								<X>1%</X> 
-								<Y>1%</Y> 
-								<Width>98%</Width> 
-								<Height>98%</Height> 
+								<X>5%</X> 
+								<Y>5%</Y> 
+								<Width>90%</Width> 
+								<Height>90%</Height> 
 							</Text>
 						</Children>
 					</Frame>
