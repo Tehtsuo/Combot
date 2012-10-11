@@ -173,7 +173,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							
 							<Text name='Dropoff_ContainerTitle'> 
 								<X>34%</X> 
-								<Y>63%</Y> 
+								<Y>73%</Y> 
 								<Width>32%</Width> 
 								<Height>10%</Height> 
 								<Alignment>Center</Alignment>
@@ -181,7 +181,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							</Text>
 							<TextEntry name='Dropoff_Container'> 
 								<X>34%</X> 
-								<Y>70%</Y> 
+								<Y>80%</Y> 
 								<Width>32%</Width> 
 								<Height>10%</Height> 
 								<OnLoad>
