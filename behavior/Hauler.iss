@@ -42,8 +42,8 @@ objectdef obj_Configuration_Hauler
 	{
 		BaseConfig.BaseRef:AddSet[${This.SetName}]
 
-		This.CommonRef:AddSetting[DropoffContainerName,""]
-		This.CommonRef:AddSetting[PickupContainerName,""]
+		This.CommonRef:AddSetting[DropoffContainer,""]
+		This.CommonRef:AddSetting[PickupContainer,""]
 		This.CommonRef:AddSetting[Dropoff,""]
 		This.CommonRef:AddSetting[Pickup,""]
 		
@@ -55,8 +55,8 @@ objectdef obj_Configuration_Hauler
 	Setting(string, Pickup, SetPickup)
 	Setting(string, DropoffType, SetDropoffType)
 	Setting(string, PickupType, SetPickupType)
-	Setting(string, DropoffContainerName, SetDropoffContainerName)
-	Setting(string, PickupContainerName, SetPickupContainerName)
+	Setting(string, DropoffContainer, SetDropoffContainer)
+	Setting(string, PickupContainer, SetPickupContainer)
 	Setting(int, Threshold, SetThreshold)	
 	
 }
