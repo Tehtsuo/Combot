@@ -113,259 +113,261 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 				<Children name="ComBot_Miner_Frame_Children">
 
 					<Frame name='DropoffFrame'>
-					<X>0</X>
-					<Y>0</Y>
-					<Width>100%</Width>
-					<Height>30%</Height>
-					<BackgroundColor>FF000000</BackgroundColor>
-					<Border>1</Border>
-					<BorderColor>FFFFFFFF</BorderColor>
-					
-						<Text name='DropoffTitle'> 
-							<X>1%</X> 
-							<Y>1%</Y> 
-							<Width>32%</Width> 
-							<Height>2%</Height> 
-							<Alignment>Center</Alignment>
-							<Text>Dropoff Bookmark</Text>
-						</Text>
-						<Textentry name='Dropoff'> 
-							<X>1%</X> 
-							<Y>3%</Y> 
-							<Width>32%</Width> 
-							<Height>3%</Height> 
-							<OnLoad>
-								This:SetText[${Script[ComBot].VariableScope.Miner.Config.Dropoff}]
-							</OnLoad>
-							<OnChange>
-								if ${This.Text.Length}
-								{
-									Script[ComBot].VariableScope.Miner.Config:SetDropoff[${This.Text}]
-								}
-								else
-								{
-									Script[ComBot].VariableScope.Miner.Config:SetDropoff[\"\"]
-								}
-								UIElement[DropoffList@Miner_Frame@ComBot_Miner]:Show
-								Script[ComBot].VariableScope.Miner.LocalUI:Start
-							</OnChange>
-						</Textentry>
-						<listbox Name="DropoffList">
-							<BackgroundColor>FF000000</BackgroundColor>
-							<Border>1</Border>
-							<BorderColor>FFFFFFFF</BorderColor>
-							<X>1%</X>
-							<Y>6%</Y>
-							<Width>32%</Width>
-							<Height>17%</Height>
-							<OnLoad>
-								This:SetZOrder[alwaysontop]
-								This:Hide
-							</OnLoad>
-							<OnSelect>
-								UIElement[Dropoff@Miner_Frame@ComBot_Miner]:SetText[${This.SelectedItem.Text}]
-								Script[ComBot].VariableScope.Miner.Config:SetDropoff[${This.SelectedItem.Text}]
-								This:Hide
-								Script[ComBot].VariableScope.Miner.LocalUI:Stop
-							</OnSelect>
-						</listbox>
+						<X>0</X>
+						<Y>0</Y>
+						<Width>100%</Width>
+						<Height>30%</Height>
+						<BackgroundColor>FF000000</BackgroundColor>
+						<Border>1</Border>
+						<BorderColor>FFFFFFFF</BorderColor>
+						<Children>
 						
-						<Text name='Dropoff_ContainerTitle'> 
-							<X>67%</X> 
-							<Y>18%</Y> 
-							<Width>32%</Width> 
-							<Height>2%</Height> 
-							<Alignment>Center</Alignment>
-							<Text>Container Name</Text>
-						</Text>
-						<TextEntry name='Dropoff_Container'> 
-							<X>67%</X> 
-							<Y>20%</Y> 
-							<Width>32%</Width> 
-							<Height>3%</Height> 
-							<OnLoad>
-								This:SetText[${Script[ComBot].VariableScope.Miner.Config.Container_Name}]
-							</OnLoad>
-							<OnChange>
-								Script[ComBot].VariableScope.Miner.Config:SetContainer_Name[${This.Text}]
-							</OnChange>
-						</TextEntry>
-						
-						<Text name='DropoffSubTypeTitle'> 
-							<X>67%</X> 
-							<Y>1%</Y> 
-							<Width>32%</Width> 
-							<Height>2%</Height> 
-							<Alignment>Center</Alignment>
-							<Text>Dropoff Sub-Type</Text>
-						</Text>
-						<listbox Name="DropoffSubType">
-							<BackgroundColor>FF000000</BackgroundColor>
-							<Border>1</Border>
-							<BorderColor>FFFFFFFF</BorderColor>
-							<X>67%</X>
-							<Y>3%</Y>
-							<Width>32%</Width>
-							<Height>15%</Height>
-							<OnLoad>
-								switch ${Script[ComBot].VariableScope.Miner.Config.Dropoff_Type}
-								{
-									case Jetcan
-										This:AddItem[Fleet Jetcan]
-										This:AddItem[Corporate Bookmark Jetcan]
-										This:AddItem[On-Demand Jetcan]
-										break
-									case Corporation Folder
-										This:AddItem[Corporation Folder 1]
-										This:AddItem[Corporation Folder 2]
-										This:AddItem[Corporation Folder 3]
-										This:AddItem[Corporation Folder 4]
-										This:AddItem[Corporation Folder 5]
-										This:AddItem[Corporation Folder 6]
-										This:AddItem[Corporation Folder 7]
-										break
-								}
-								echo Setting ${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType}
-								This.ItemByText["${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType}"]:Select
-								if ${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType.Equal[Corporate Bookmark Jetcan]}
-								{
-									UIElement[Dropoff_Container@Miner_Frame@ComBot_Miner]:Show
-									UIElement[Dropoff_ContainerTitle@Miner_Frame@ComBot_Miner]:Show
-									UIElement[Dropoff_ContainerTitle@Miner_Frame@ComBot_Miner]:SetText[Jetcan Bookmark Prefix]
-								}
-								else
-								{
-									UIElement[Dropoff_Container@Miner_Frame@ComBot_Miner]:Hide
-									UIElement[Dropoff_ContainerTitle@Miner_Frame@ComBot_Miner]:Hide
-								}
-							</OnLoad>
-							<OnSelect>
-								Script[ComBot].VariableScope.Miner.Config:SetDropoff_SubType[${This.SelectedItem.Text}]
-								if ${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType.Equal[Corporate Bookmark Jetcan]}
-								{
-									UIElement[Dropoff_Container@Miner_Frame@ComBot_Miner]:Show
-									UIElement[Dropoff_ContainerTitle@Miner_Frame@ComBot_Miner]:Show
-									UIElement[Dropoff_ContainerTitle@Miner_Frame@ComBot_Miner]:SetText[Jetcan Bookmark Prefix]
-								}
-								else
-								{
-									UIElement[Dropoff_Container@Miner_Frame@ComBot_Miner]:Hide
-									UIElement[Dropoff_ContainerTitle@Miner_Frame@ComBot_Miner]:Hide
-								}
-							</OnSelect>
-						</listbox>
-						
-						<Text name='DropoffTypeTitle'> 
-							<X>34%</X> 
-							<Y>1%</Y> 
-							<Width>32%</Width> 
-							<Height>2%</Height> 
-							<Alignment>Center</Alignment>
-							<Text>Dropoff Type</Text>
-						</Text>
-						<listbox Name="DropoffType">
-							<BackgroundColor>FF000000</BackgroundColor>
-							<Border>1</Border>
-							<BorderColor>FFFFFFFF</BorderColor>
-							<X>34%</X>
-							<Y>3%</Y>
-							<Width>32%</Width>
-							<Height>20%</Height>
-							<Items>
-								<Item>Personal Hangar</Item>
-								<Item>Orca</Item>
-								<Item>Container</Item>
-								<Item>Jetcan</Item>
-								<Item>No Dropoff</Item>
-								<Item>Corporation Folder</Item>
-							</Items>
-							<OnLoad>
-								This.ItemByText[${Script[ComBot].VariableScope.Miner.Config.Dropoff_Type}]:Select
-								switch ${This.SelectedItem.Text}
-								{
-									case Jetcan
-										UIElement[DropoffSubType@Miner_Frame@ComBot_Miner].ItemByText[${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType}]:Select
-										UIElement[DropoffSubTypeTitle@Miner_Frame@ComBot_Miner]:Show
-										UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:Show
-										UIElement[DropoffSubType@Miner_Frame@ComBot_Miner].ItemByText[${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType}]:Select
-										break
-									case Orca
+							<Text name='DropoffTitle'> 
+								<X>1%</X> 
+								<Y>1%</Y> 
+								<Width>32%</Width> 
+								<Height>2%</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Dropoff Bookmark</Text>
+							</Text>
+							<Textentry name='Dropoff'> 
+								<X>1%</X> 
+								<Y>3%</Y> 
+								<Width>32%</Width> 
+								<Height>3%</Height> 
+								<OnLoad>
+									This:SetText[${Script[ComBot].VariableScope.Miner.Config.Dropoff}]
+								</OnLoad>
+								<OnChange>
+									if ${This.Text.Length}
+									{
+										Script[ComBot].VariableScope.Miner.Config:SetDropoff[${This.Text}]
+									}
+									else
+									{
+										Script[ComBot].VariableScope.Miner.Config:SetDropoff[\"\"]
+									}
+									UIElement[DropoffList@Miner_Frame@ComBot_Miner]:Show
+									Script[ComBot].VariableScope.Miner.LocalUI:Start
+								</OnChange>
+							</Textentry>
+							<listbox Name="DropoffList">
+								<BackgroundColor>FF000000</BackgroundColor>
+								<Border>1</Border>
+								<BorderColor>FFFFFFFF</BorderColor>
+								<X>1%</X>
+								<Y>6%</Y>
+								<Width>32%</Width>
+								<Height>17%</Height>
+								<OnLoad>
+									This:SetZOrder[alwaysontop]
+									This:Hide
+								</OnLoad>
+								<OnSelect>
+									UIElement[Dropoff@Miner_Frame@ComBot_Miner]:SetText[${This.SelectedItem.Text}]
+									Script[ComBot].VariableScope.Miner.Config:SetDropoff[${This.SelectedItem.Text}]
+									This:Hide
+									Script[ComBot].VariableScope.Miner.LocalUI:Stop
+								</OnSelect>
+							</listbox>
+							
+							<Text name='Dropoff_ContainerTitle'> 
+								<X>67%</X> 
+								<Y>18%</Y> 
+								<Width>32%</Width> 
+								<Height>2%</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Container Name</Text>
+							</Text>
+							<TextEntry name='Dropoff_Container'> 
+								<X>67%</X> 
+								<Y>20%</Y> 
+								<Width>32%</Width> 
+								<Height>3%</Height> 
+								<OnLoad>
+									This:SetText[${Script[ComBot].VariableScope.Miner.Config.Container_Name}]
+								</OnLoad>
+								<OnChange>
+									Script[ComBot].VariableScope.Miner.Config:SetContainer_Name[${This.Text}]
+								</OnChange>
+							</TextEntry>
+							
+							<Text name='DropoffSubTypeTitle'> 
+								<X>67%</X> 
+								<Y>1%</Y> 
+								<Width>32%</Width> 
+								<Height>2%</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Dropoff Sub-Type</Text>
+							</Text>
+							<listbox Name="DropoffSubType">
+								<BackgroundColor>FF000000</BackgroundColor>
+								<Border>1</Border>
+								<BorderColor>FFFFFFFF</BorderColor>
+								<X>67%</X>
+								<Y>3%</Y>
+								<Width>32%</Width>
+								<Height>15%</Height>
+								<OnLoad>
+									switch ${Script[ComBot].VariableScope.Miner.Config.Dropoff_Type}
+									{
+										case Jetcan
+											This:AddItem[Fleet Jetcan]
+											This:AddItem[Corporate Bookmark Jetcan]
+											This:AddItem[On-Demand Jetcan]
+											break
+										case Corporation Folder
+											This:AddItem[Corporation Folder 1]
+											This:AddItem[Corporation Folder 2]
+											This:AddItem[Corporation Folder 3]
+											This:AddItem[Corporation Folder 4]
+											This:AddItem[Corporation Folder 5]
+											This:AddItem[Corporation Folder 6]
+											This:AddItem[Corporation Folder 7]
+											break
+									}
+									echo Setting ${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType}
+									This.ItemByText["${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType}"]:Select
+									if ${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType.Equal[Corporate Bookmark Jetcan]}
+									{
 										UIElement[Dropoff_Container@Miner_Frame@ComBot_Miner]:Show
-										UIElement[Dropoff_ContainerTitle@Miner_Frame@ComBot_Miner]:SetText[Orca Name]
 										UIElement[Dropoff_ContainerTitle@Miner_Frame@ComBot_Miner]:Show
-										UIElement[DropoffSubTypeTitle@Miner_Frame@ComBot_Miner]:Hide
-										UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:Hide
-										break
-									case Container
-										UIElement[Dropoff_Container@Miner_Frame@ComBot_Miner]:Show
-										UIElement[Dropoff_ContainerTitle@Miner_Frame@ComBot_Miner]:SetText[Container Name]
-										UIElement[Dropoff_ContainerTitle@Miner_Frame@ComBot_Miner]:Show
-										UIElement[DropoffSubTypeTitle@Miner_Frame@ComBot_Miner]:Hide
-										UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:Hide
-										break
-									case Corporation Folder
-										UIElement[DropoffSubTypeTitle@Miner_Frame@ComBot_Miner]:Show
-										UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:Show
-										UIElement[DropoffSubType@Miner_Frame@ComBot_Miner].ItemByText[${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType}]:Select
-									default
+										UIElement[Dropoff_ContainerTitle@Miner_Frame@ComBot_Miner]:SetText[Jetcan Bookmark Prefix]
+									}
+									else
+									{
 										UIElement[Dropoff_Container@Miner_Frame@ComBot_Miner]:Hide
 										UIElement[Dropoff_ContainerTitle@Miner_Frame@ComBot_Miner]:Hide
-										UIElement[DropoffSubTypeTitle@Miner_Frame@ComBot_Miner]:Hide
-										UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:Hide
-								}
-							</OnLoad>
-							<OnSelect>
-								Script[ComBot].VariableScope.Miner.Config:SetDropoff_Type[${This.SelectedItem.Text}]
-								UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:ClearItems
-								switch ${This.SelectedItem.Text}
-								{
-									case Jetcan
-										UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:AddItem[Fleet Jetcan]
-										UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:AddItem[Corporate Bookmark Jetcan]
-										UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:AddItem[On-Demand Jetcan]
-										UIElement[DropoffSubType@Miner_Frame@ComBot_Miner].ItemByText[${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType}]:Select
-										UIElement[DropoffSubTypeTitle@Miner_Frame@ComBot_Miner]:Show
-										UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:Show
-										break
-									case Orca
+									}
+								</OnLoad>
+								<OnSelect>
+									Script[ComBot].VariableScope.Miner.Config:SetDropoff_SubType[${This.SelectedItem.Text}]
+									if ${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType.Equal[Corporate Bookmark Jetcan]}
+									{
 										UIElement[Dropoff_Container@Miner_Frame@ComBot_Miner]:Show
-										UIElement[Dropoff_ContainerTitle@Miner_Frame@ComBot_Miner]:SetText[Orca Name]
 										UIElement[Dropoff_ContainerTitle@Miner_Frame@ComBot_Miner]:Show
-										UIElement[DropoffSubTypeTitle@Miner_Frame@ComBot_Miner]:Hide
-										UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:Hide
-										break
-									case Container
-										UIElement[Dropoff_Container@Miner_Frame@ComBot_Miner]:Show
-										UIElement[Dropoff_ContainerTitle@Miner_Frame@ComBot_Miner]:SetText[Container Name]
-										UIElement[Dropoff_ContainerTitle@Miner_Frame@ComBot_Miner]:Show
-										UIElement[DropoffSubTypeTitle@Miner_Frame@ComBot_Miner]:Hide
-										UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:Hide
-										break
-									case Corporation Folder
-										UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 1]
-										UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 2]
-										UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 3]
-										UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 4]
-										UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 5]
-										UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 6]
-										UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 7]
+										UIElement[Dropoff_ContainerTitle@Miner_Frame@ComBot_Miner]:SetText[Jetcan Bookmark Prefix]
+									}
+									else
+									{
 										UIElement[Dropoff_Container@Miner_Frame@ComBot_Miner]:Hide
 										UIElement[Dropoff_ContainerTitle@Miner_Frame@ComBot_Miner]:Hide
-										UIElement[DropoffSubTypeTitle@Miner_Frame@ComBot_Miner]:Show
-										UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:Show
-										break
-									case No Dropoff
-										UIElement[DropoffSubTypeTitle@Miner_Frame@ComBot_Miner]:Hide
-										UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:Hide
-										break
-									default
-										UIElement[Dropoff_Container@Miner_Frame@ComBot_Miner]:Hide
-										UIElement[Dropoff_ContainerTitle@Miner_Frame@ComBot_Miner]:Hide
-								}
-								
-								
-							</OnSelect>
-						</listbox>
+									}
+								</OnSelect>
+							</listbox>
+							
+							<Text name='DropoffTypeTitle'> 
+								<X>34%</X> 
+								<Y>1%</Y> 
+								<Width>32%</Width> 
+								<Height>2%</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Dropoff Type</Text>
+							</Text>
+							<listbox Name="DropoffType">
+								<BackgroundColor>FF000000</BackgroundColor>
+								<Border>1</Border>
+								<BorderColor>FFFFFFFF</BorderColor>
+								<X>34%</X>
+								<Y>3%</Y>
+								<Width>32%</Width>
+								<Height>20%</Height>
+								<Items>
+									<Item>Personal Hangar</Item>
+									<Item>Orca</Item>
+									<Item>Container</Item>
+									<Item>Jetcan</Item>
+									<Item>No Dropoff</Item>
+									<Item>Corporation Folder</Item>
+								</Items>
+								<OnLoad>
+									This.ItemByText[${Script[ComBot].VariableScope.Miner.Config.Dropoff_Type}]:Select
+									switch ${This.SelectedItem.Text}
+									{
+										case Jetcan
+											UIElement[DropoffSubType@Miner_Frame@ComBot_Miner].ItemByText[${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType}]:Select
+											UIElement[DropoffSubTypeTitle@Miner_Frame@ComBot_Miner]:Show
+											UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:Show
+											UIElement[DropoffSubType@Miner_Frame@ComBot_Miner].ItemByText[${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType}]:Select
+											break
+										case Orca
+											UIElement[Dropoff_Container@Miner_Frame@ComBot_Miner]:Show
+											UIElement[Dropoff_ContainerTitle@Miner_Frame@ComBot_Miner]:SetText[Orca Name]
+											UIElement[Dropoff_ContainerTitle@Miner_Frame@ComBot_Miner]:Show
+											UIElement[DropoffSubTypeTitle@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:Hide
+											break
+										case Container
+											UIElement[Dropoff_Container@Miner_Frame@ComBot_Miner]:Show
+											UIElement[Dropoff_ContainerTitle@Miner_Frame@ComBot_Miner]:SetText[Container Name]
+											UIElement[Dropoff_ContainerTitle@Miner_Frame@ComBot_Miner]:Show
+											UIElement[DropoffSubTypeTitle@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:Hide
+											break
+										case Corporation Folder
+											UIElement[DropoffSubTypeTitle@Miner_Frame@ComBot_Miner]:Show
+											UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:Show
+											UIElement[DropoffSubType@Miner_Frame@ComBot_Miner].ItemByText[${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType}]:Select
+										default
+											UIElement[Dropoff_Container@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[Dropoff_ContainerTitle@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[DropoffSubTypeTitle@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:Hide
+									}
+								</OnLoad>
+								<OnSelect>
+									Script[ComBot].VariableScope.Miner.Config:SetDropoff_Type[${This.SelectedItem.Text}]
+									UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:ClearItems
+									switch ${This.SelectedItem.Text}
+									{
+										case Jetcan
+											UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:AddItem[Fleet Jetcan]
+											UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:AddItem[Corporate Bookmark Jetcan]
+											UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:AddItem[On-Demand Jetcan]
+											UIElement[DropoffSubType@Miner_Frame@ComBot_Miner].ItemByText[${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType}]:Select
+											UIElement[DropoffSubTypeTitle@Miner_Frame@ComBot_Miner]:Show
+											UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:Show
+											break
+										case Orca
+											UIElement[Dropoff_Container@Miner_Frame@ComBot_Miner]:Show
+											UIElement[Dropoff_ContainerTitle@Miner_Frame@ComBot_Miner]:SetText[Orca Name]
+											UIElement[Dropoff_ContainerTitle@Miner_Frame@ComBot_Miner]:Show
+											UIElement[DropoffSubTypeTitle@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:Hide
+											break
+										case Container
+											UIElement[Dropoff_Container@Miner_Frame@ComBot_Miner]:Show
+											UIElement[Dropoff_ContainerTitle@Miner_Frame@ComBot_Miner]:SetText[Container Name]
+											UIElement[Dropoff_ContainerTitle@Miner_Frame@ComBot_Miner]:Show
+											UIElement[DropoffSubTypeTitle@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:Hide
+											break
+										case Corporation Folder
+											UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 1]
+											UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 2]
+											UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 3]
+											UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 4]
+											UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 5]
+											UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 6]
+											UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 7]
+											UIElement[Dropoff_Container@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[Dropoff_ContainerTitle@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[DropoffSubTypeTitle@Miner_Frame@ComBot_Miner]:Show
+											UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:Show
+											break
+										case No Dropoff
+											UIElement[DropoffSubTypeTitle@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:Hide
+											break
+										default
+											UIElement[Dropoff_Container@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[Dropoff_ContainerTitle@Miner_Frame@ComBot_Miner]:Hide
+									}
+									
+									
+								</OnSelect>
+							</listbox>
+						</Children>
 					</Frame>
 					
 					<Text name='ThresholdTitle'> 
@@ -421,11 +423,6 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							}
 						</OnChange>
 					</Slider>						 
-
-
-
-					
-
 		
 
 					<Text name='MiningSystemTitle'> 
