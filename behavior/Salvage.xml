@@ -154,10 +154,16 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<OnChange>
 									Script[ComBot].VariableScope.Salvage.Config:SetPrefix[${This.Text}]
 								</OnChange>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText["This field is to specify the prefix to use for your salvage bookmarks.  Any bookmark which starts with this prefix will be used as a salvage location."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText[""]
+								</OnMouseExit>
 							</Textentry>			
 							<Checkbox name='SalvageYellow'> 
 								<X>34%</X> 
-								<Y>30%</Y> 
+								<Y>50%</Y> 
 								<Width>32%</Width> 
 								<Height>9%</Height> 
 								<Text>Salvage all wrecks - including ones you don't own</Text>
@@ -172,10 +178,16 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									Script[ComBot].VariableScope.Salvage.Config:SetSalvageYellow[${This.Checked}]
 									This:SetZOrder[movetop]
 								</OnLeftClick>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText["When this option is checked, ComBot will salvage wrecks which do not belong to you or your corporation."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText[""]
+								</OnMouseExit>
 							</Checkbox>
 							<Checkbox name='AvoidShips'> 
 								<X>34%</X> 
-								<Y>40%</Y> 
+								<Y>60%</Y> 
 								<Width>32%</Width> 
 								<Height>9%</Height> 
 								<Text>Don't salvage when any non-fleet ships are on grid</Text>
@@ -190,13 +202,19 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									Script[ComBot].VariableScope.Salvage.Config:SetAvoidShips[${This.Checked}]
 									This:SetZOrder[movetop]
 								</OnLeftClick>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText["When this option is checked, ComBot will skip a belt if there are non-fleet ships present."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText[""]
+								</OnMouseExit>
 							</Checkbox>
 							<Textentry Name="BeltPatrolBookmark">
 								<BackgroundColor>FF000000</BackgroundColor>
 								<Border>1</Border>
 								<BorderColor>FFFFFFFF</BorderColor>
 								<X>34%</X>
-								<Y>10%</Y>
+								<Y>30%</Y>
 								<Width>32%</Width>
 								<Height>15%</Height>
 								<OnLoad>
@@ -214,15 +232,21 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									UIElement[BeltPatrolBookmarkList@SalvageFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Show
 									Script[ComBot].VariableScope.Salvage.LocalUI:Start
 								</OnChange>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText["This field needs to contain the exact name of a bookmark in the system in which you would like to belt salvage when no salvage prefix bookmarks are available."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText[""]
+								</OnMouseExit>
 							</Textentry>
 							<listbox Name="BeltPatrolBookmarkList">
 								<BackgroundColor>FF000000</BackgroundColor>
 								<Border>1</Border>
 								<BorderColor>FFFFFFFF</BorderColor>
 								<X>34%</X>
-								<Y>25%</Y>
+								<Y>45%</Y>
 								<Width>32%</Width>
-								<Height>70%</Height>
+								<Height>50%</Height>
 								<OnLoad>
 									This:Hide
 								</OnLoad>
@@ -232,10 +256,16 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									Script[ComBot].VariableScope.Salvage.LocalUI:Stop
 									This:Hide
 								</OnSelect>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText["This field needs to contain the exact name of a bookmark in the system in which you would like to belt salvage when no salvage prefix bookmarks are available."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText[""]
+								</OnMouseExit>
 							</listbox>
 							<Checkbox name='BeltPatrol'> 
 								<X>34%</X> 
-								<Y>3%</Y> 
+								<Y>10%</Y> 
 								<Width>32%</Width> 
 								<Height>10%</Height> 
 								<Alignment>Center</Alignment>
@@ -247,7 +277,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									}
 									else
 									{
-										UIElement[BeltPatrol@SalvageFrameBookmark@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Hide
+										UIElement[BeltPatrolBookmark@SalvageFrameBookmark@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Hide
 										UIElement[SalvageYellow@SalvageFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Hide
 										UIElement[AvoidShips@SalvageFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Hide
 									}
@@ -263,13 +293,19 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									}
 									else
 									{
-										UIElement[BeltPatrolBookmar@SalvageFramek@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Hide
+										UIElement[BeltPatrolBookmark@SalvageFramek@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Hide
 										UIElement[BeltPatrolBookmarkList@SalvageFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Hide
 										UIElement[SalvageYellow@SalvageFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Hide
 										UIElement[AvoidShips@SalvageFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Hide
 									}
 									This:SetZOrder[movetop]
 								</OnLeftClick>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText["Enable this option if you would like ComBot to cycle through belts salvaging when there are no salvage prefix bookmarks available."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText[""]
+								</OnMouseExit>
 							</Checkbox>
 
 						</Children>
@@ -325,6 +361,12 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									UIElement[DropoffList@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Show
 									Script[ComBot].VariableScope.Salvage.LocalUI:Start
 								</OnChange>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText["This field needs to contain the exact bookmark for the station in which you would like to drop off salvage loot."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText[""]
+								</OnMouseExit>
 							</Textentry>
 							<listbox Name="DropoffList">
 								<BackgroundColor>FF000000</BackgroundColor>
@@ -344,6 +386,12 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									Script[ComBot].VariableScope.Salvage.LocalUI:Stop
 									This:Hide
 								</OnSelect>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText["This field needs to contain the exact bookmark for the station in which you would like to drop off salvage loot."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText[""]
+								</OnMouseExit>
 							</listbox>
 							<Text name='DropoffTypeTitle'> 
 								<X>1%</X> 
@@ -377,6 +425,12 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<OnSelect>
 									Script[ComBot].VariableScope.Salvage.Config:SetDropoff_Type[${This.SelectedItem.Text}]
 								</OnSelect>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText["Use this field to configure where you would like ComBot to unload salvage loot."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText[""]
+								</OnMouseExit>
 							</listbox>
 				
 						</Children>
