@@ -277,7 +277,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									}
 									else
 									{
-										UIElement[BeltPatrolBookmark@SalvageFrameBookmark@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Hide
+										UIElement[BeltPatrolBookmark@SalvageFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Hide
 										UIElement[SalvageYellow@SalvageFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Hide
 										UIElement[AvoidShips@SalvageFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Hide
 									}
@@ -293,7 +293,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									}
 									else
 									{
-										UIElement[BeltPatrolBookmark@SalvageFramek@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Hide
+										UIElement[BeltPatrolBookmark@SalvageFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Hide
 										UIElement[BeltPatrolBookmarkList@SalvageFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Hide
 										UIElement[SalvageYellow@SalvageFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Hide
 										UIElement[AvoidShips@SalvageFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Hide
