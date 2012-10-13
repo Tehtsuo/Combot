@@ -478,6 +478,7 @@ objectdef obj_TargetList inherits obj_State
 		}
 		Profiling:StartTrack["TargetList_ManageLocks"]
 		variable iterator EntityIterator
+		variable bool NeedLock = FALSE
 		variable int MaxTarget = ${MyShip.MaxLockedTargets}
 		if ${Me.MaxLockedTargets} < ${MyShip.MaxLockedTargets}
 		{
