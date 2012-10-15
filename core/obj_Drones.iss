@@ -21,69 +21,138 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 objectdef obj_Drones inherits obj_State
 {
-	variable obj_TargetList DroneTargets
-	variable int64 CurrentTarget = -1
-	variable bool DronesRemainDocked = FALSE
-	variable bool DronesOut = FALSE
-	
 	method Initialize()
 	{
 		This[parent]:Initialize
-		PulseFrequency:Set[1000]
-		This:QueueState["DroneControl"]
-		DroneTargets.MaxRange:Set[${Me.DroneControlDistance}]
-		DroneTargets.AutoLock:Set[TRUE]
-		DroneTargets.AutoRelock:Set[TRUE]
-		DroneTargets:SetIPCName["DroneTargets"]
-		
-		variable index:activedrone ActiveDrones
-		Me:GetActiveDrones[ActiveDrones]
-		if ${ActiveDrones.Used}
-		{
-			DronesOut:Set[TRUE]
-		}
-	}
-	
-	method Defensive()
-	{
-		DroneTargets:ClearQueryString
-		DroneTargets:AddTargetingMe
-	}
-	
-	method Aggressive()
-	{
-		DroneTargets:ClearQueryString
-		DroneTargets:AddTargetingMe
-		DroneTargets:AddAllNPCs
+		PulseFrequency:Set[250]
 	}
 
-	method Passive()
-	{
-		DroneTargets:ClearQueryString
-	}
-
-	method RemainDocked()
-	{
-		DronesRemainDocked:Set[TRUE]
-	}
-
-	method StayDeployed()
-	{
-		DronesRemainDocked:Set[FALSE]
-	}
-
-	method Recall()
+	method RecallAll()
 	{		
 		UI:Update["obj_Drone", "Recalling Drones", "g"]
 		EVE:Execute[CmdDronesReturnToBay]
 		DronesOut:Set[FALSE]
 	}
 
-	method Deploy()
+	method Deploy(string TypeQuery, int Count=1)
 	{
-		UI:Update["obj_Drone", "Deploying Drones", "g"]
-		MyShip:LaunchAllDrones
-		DronesOut:Set[TRUE]
+		variable index:item DroneBayDrones
+		variable index:int64 DronesToLaunch
+		variable iterator DroneIterator
+		variable int Selected = 0
+		MyShip:GetDrones[DroneBayDrones]
+		DroneBayDrones:RemoveByQuery[${LavishScript.CreateQuery[${TypeQuery}]}, FALSE]
+		DroneBayDrones:Collapse[]
+		DroneBayDrones:GetIterator[DroneIterator]
+		if ${DroneIterator:First(exists)}
+		{
+			do
+			{
+				if ${Selected} >= ${Count}
+				{
+					break
+				}
+				DronesToLaunch:Insert[${DroneIterator.Value.ID}]
+				Selected:Inc
+			}
+			while ${DroneIterator:Next(exists)}
+		}
+		EVE:LaunchDrones[DronesToLaunch]
+	}
+	
+	method Recall(string TypeQuery, int Count=1)
+	{
+		variable index:activedrone ActiveDrones
+		variable index:int64 DronesToRecall
+		variable iterator DroneIterator
+		variable int Selected = 0
+		Me:GetActiveDrones[ActiveDrones]
+		ActiveDrones:RemoveByQuery[${LavishScript.CreateQuery[${TypeQuery}]}, FALSE]
+		ActiveDrones:Collapse[]
+		ActiveDrones:GetIterator[DroneIterator]
+		if ${DroneIterator:First(exists)}
+		{
+			do
+			{
+				if ${Selected} >= ${Count}
+				{
+					break
+				}
+				DronesToRecall:Insert[${DroneIterator.Value.ID}]
+				Selected:Inc
+			}
+			while ${DroneIterator:Next(exists)}
+		}
+		EVE:DronesReturnToDroneBay[DronesToRecall]
+	}
+	
+	member:int GetTargeting(int64 TargetID)
+	{
+		variable index:activedrone ActiveDrones
+		variable iterator DroneIterator
+		variable int Targeting = 0
+		Me:GetActiveDrones[ActiveDrones]
+		ActiveDrones:GetIterator[DroneIterator]
+		if ${DroneIterator:First(exists)}
+		{
+			do
+			{
+				if ${DroneIterator.Value.Target.ID.Equal[${TargetID}]}
+				{
+					Targeting:Inc
+				}
+			}
+			while ${DroneIterator:Next(exists)}
+		}
+		return ${Targeting}
+	}
+	
+	method Engage(string TypeQuery, int64 TargetID, int Count = 1)
+	{
+		if ${Entity[${TargetID}].IsLockedTarget}
+		{
+			This:QueueState["SwitchTarget", -1, ${TargetID}]
+			This:QueueState["EngageTarget", -1, "${TypeQuery.Escape}, ${TargetID}, ${Count}"]
+		}
+	}
+	
+	member:bool SwitchTarget(int64 TargetID)
+	{
+		if ${Entity[${TargetID}].IsLockedTarget}
+		{
+			Entity[${TargetID}]:MakeActiveTarget
+		}
+		return TRUE
+	}
+	
+	member:bool EngageTarget(string TypeQuery, int64 TargetID, int Count = 1)
+	{
+		if ${Entity[${TargetID}].IsLockedTarget} && ${Entity[${TargetID}].IsActiveTarget}
+		{
+			variable index:activedrone ActiveDrones
+			variable index:int64 DronesToEngage
+			variable iterator DroneIterator
+			variable int Selected = 0
+			Me:GetActiveDrones[ActiveDrones]
+			ActiveDrones:RemoveByQuery[${LavishScript.CreateQuery[${TypeQuery}]}, FALSE]
+			ActiveDrones:Collapse[]
+			ActiveDrones:GetIterator[DroneIterator]
+			if ${DroneIterator:First(exists)}
+			{
+				do
+				{
+					if ${Selected} >= ${Count}
+					{
+						break
+					}
+					DronesToEngage:Insert[${DroneIterator.Value.ID}]
+					Selected:Inc
+				}
+				while ${DroneIterator:Next(exists)}
+			}
+			EVE:DronesEngageMyTarget[DronesToEngage]
+		}
+		return TRUE
 	}
 	
 	member:int DronesInSpace()
@@ -100,101 +169,6 @@ objectdef obj_Drones inherits obj_State
 		return ${Drones.Used}
 	}
 	
-	member:bool DroneControl()
-	{
-		Profiling:StartTrack["Drones_DroneControl"]
-		variable index:activedrone drones
-		variable iterator droneIterator
-		variable index:int64 droneIDs
-		variable iterator TargetIterator
-		
-		if !${Client.InSpace}
-		{
-			Profiling:EndTrack
-			return FALSE
-		}
-		if ${Me.ToEntity.Mode} == 3
-		{
-			if ${DronesOut}
-			{
-				This:Recall
-			}
-			Profiling:EndTrack
-			return FALSE
-		}
-		DroneTargets:RequestUpdate
-		if ${This.DronesInBay.Equal[0]} && ${This.DronesInSpace.Equal[0]}
-		{
-			return FALSE
-		}
-		
-		Me:GetActiveDrones[drones]
-		
-		DroneTargets.LockedTargetList:GetIterator[TargetIterator]
-		
-		
-		if !${Entity[${CurrentTarget}](exists)} || !${Entity[${CurrentTarget}].IsLockedTarget}
-		{
-			CurrentTarget:Set[-1]
-		}
-		
-		if ${TargetIterator:First(exists)}
-		{
-			if ${This.DronesInSpace.Equal[0]}
-			{
-				This:Deploy
-				Profiling:EndTrack
-				return FALSE
-			}
-			do
-			{
-				if ${CurrentTarget.Equal[-1]} && ${TargetIterator.Value.Distance} < ${Me.DroneControlDistance}
-				{
-					CurrentTarget:Set[${TargetIterator.Value.ID}]
-					Profiling:EndTrack
-					return FALSE
-				}
-				if ${CurrentTarget.Equal[${TargetIterator.Value.ID}]}
-				{
-					drones:GetIterator[droneIterator]
-					if ${droneIterator:First(exists)}
-					{
-						do
-						{
-							if !${droneIterator.Value.Target.ID.Equal[${CurrentTarget}]}
-							{
-								droneIDs:Insert[${droneIterator.Value.ID}]
-							}
-						}
-						while ${droneIterator:Next(exists)}
-					}
-					if ${droneIDs.Used}>0
-					{
-						if !${TargetIterator.Value.IsActiveTarget}
-						{
-							TargetIterator.Value:MakeActiveTarget
-							return FALSE
-						}
-						EVE:DronesEngageMyTarget[droneIDs]
-						Profiling:EndTrack
-						return FALSE
-					}
-				}
-			}
-			while ${TargetIterator:Next(exists)}
-		}
-		else
-		{
-			if !${This.DronesInSpace.Equal[0]}
-			{
-				This:Recall
-				This:QueueState["Idle", 5000]
-				This:QueueState["DroneControl"]
-				return TRUE
-			}
-		}
-		Profiling:EndTrack
-		return FALSE
-	}
+	
 
 }
