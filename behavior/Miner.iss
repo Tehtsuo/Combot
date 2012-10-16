@@ -241,7 +241,7 @@ objectdef obj_Miner inherits obj_State
 				{
 					if ${Drones.DronesInSpace}
 					{
-						Drones:Recall
+						Drones:Recall["", 5]
 						return FALSE
 					}
 					UI:Update["obj_Miner", "Warping to ${Local[${Config.Container_Name}].ToFleetMember.ToPilot.Name}", "g", TRUE]
@@ -278,7 +278,7 @@ objectdef obj_Miner inherits obj_State
 				
 				if ${Drones.DronesInSpace}
 				{
-					Drones:Recall
+					Drones:Recall["", 5]
 					This:InsertState["CheckCargoHold"]
 					This:InsertState["Idle", 5000]
 					return TRUE
@@ -319,7 +319,7 @@ objectdef obj_Miner inherits obj_State
 
 				if ${Drones.DronesInSpace}
 				{
-					Drones:Recall
+					Drones:Recall["", 5]
 					This:InsertState["CheckCargoHold"]
 					This:InsertState["Idle", 5000]
 					return TRUE
@@ -789,7 +789,7 @@ objectdef obj_Miner inherits obj_State
 			{
 				relay all -event ComBot_Orca_InBelt FALSE
 			}
-			Drones:Recall
+			Drones:Recall["", 5]
 			UI:Update["obj_Miner", "No asteroids found, moving to a new belt", "g"]
 			This:QueueState["CheckCargoHold", 1000]
 			This:QueueState["GoToMiningSystem", 1000]
