@@ -184,8 +184,6 @@ objectdef obj_Miner inherits obj_State
 	method Start()
 	{
 		This:PopulateTargetList
-		Drones:RemainDocked
-		Drones:Defensive
 		UI:Update["obj_Miner", "Started", "g"]
 		This:AssignStateQueueDisplay[DebugStateList@Debug@ComBotTab@ComBot]
 		if ${This.IsIdle}
