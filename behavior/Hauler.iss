@@ -96,8 +96,6 @@ objectdef obj_Hauler inherits obj_State
 	method Start()
 	{
 		UI:Update["obj_Hauler", "Started", "g"]
-		Drones:RemainDocked
-		Drones:Defensive
 		This:AssignStateQueueDisplay[DebugStateList@Debug@ComBotTab@ComBot]
 		if ${This.IsIdle}
 		{
