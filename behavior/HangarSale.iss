@@ -209,7 +209,7 @@ objectdef obj_HangarSale inherits obj_State
 		UI:Log["GetURL http://api.eve-central.com/api/marketstat?${TypeIDQuery}"]
 		echo GetURL http://api.eve-central.com/api/marketstat?${TypeIDQuery}&usesystem=${SystemID}
 		GetURL http://api.eve-central.com/api/marketstat?${TypeIDQuery}&usesystem=${SystemID}
-		This:InsertState["WaitForPrice", 100]
+		This:InsertState["WaitForPrice", 10]
 		return TRUE
 	}
 	
@@ -468,8 +468,8 @@ objectdef obj_HangarSale inherits obj_State
 			if ${MyOrderIterator:First(exists)} && ${Config.RePrice}
 			{
 				This.RandomDelta:Set[100]
-				This:InsertState["UpdateOrders", 100]
-				This:InsertState["FetchPrice", 100, "${MyOrderIterator.Value.TypeID}"]
+				This:InsertState["UpdateOrders", 0]
+				This:InsertState["FetchPrice", 0, "${MyOrderIterator.Value.TypeID}"]
 			}
 			return TRUE
 	}
@@ -503,8 +503,8 @@ objectdef obj_HangarSale inherits obj_State
 			UI:Update["obj_HangarSale", "Skipping buy order - ${MyOrderIterator.Value.Name}", "o"]
 			if ${MyOrderIterator:Next(exists)}
 			{
-				This:InsertState["UpdateOrders"]
-				This:InsertState["FetchPrice", 100, "${MyOrderIterator.Value.TypeID}"]
+				This:InsertState["UpdateOrders", 0]
+				This:InsertState["FetchPrice", 0, "${MyOrderIterator.Value.TypeID}"]
 				return TRUE
 			}
 			else
@@ -574,7 +574,7 @@ objectdef obj_HangarSale inherits obj_State
 		if ${MyOrderIterator:Next(exists)}
 		{
 			This:InsertState["UpdateOrders", ${delay}]
-			This:InsertState["FetchPrice", 100, "${MyOrderIterator.Value.TypeID}"]
+			This:InsertState["FetchPrice", 0, "${MyOrderIterator.Value.TypeID}"]
 			return TRUE
 		}
 		return TRUE
