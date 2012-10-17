@@ -20,6 +20,34 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
+objectdef obj_Base_Configuration
+{
+	variable string SetName = ""
+
+	method Initialize(string name)
+	{
+		SetName:Set[${name}]
+		if !${BaseConfig.BaseRef.FindSet[${This.SetName}](exists)}
+		{
+			UI:Update["obj_Configuration", " ${This.SetName} settings missing - initializing", "o"]
+			This:Set_Default_Values[]
+		}
+		UI:Update["obj_Configuration", " ${This.SetName}: Initialized", "-g"]
+	}
+
+	member:settingsetref CommonRef()
+	{
+		return ${BaseConfig.BaseRef.FindSet[${This.SetName}]}
+	}
+	
+	method Set_Default_Values()
+	{
+		
+	}
+
+}
+
+
 objectdef obj_Configuration_BaseConfig
 {
 	variable string CONFIG_FILE = "${Me.Name} Config.xml"
