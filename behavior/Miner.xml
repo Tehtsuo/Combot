@@ -755,74 +755,6 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								</OnMouseExit>
 							</Slider>						 
 
-							<Checkbox name='obj_MinerOrcaMode'>
-								<X>1%</X>
-								<Y>25%</Y>
-								<Width>32%</Width> 
-								<Height>10%</Height> 
-								<Text>Orca Mode</Text>
-									<OnLoad>
-									if ${Script[ComBot].VariableScope.Miner.Config.OrcaMode}
-									{
-										This:SetChecked
-										if ${This.Checked}
-										{
-											UIElement[MaxLockTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
-											UIElement[MaxLock@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
-											UIElement[OrePriorityTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
-											UIElement[OrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
-										}
-										else
-										{
-											UIElement[MaxLockTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Show
-											UIElement[MaxLock@MiningFrame@Miner_Frame@ComBot_Miner]:Show
-											UIElement[OrePriorityTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Show
-											UIElement[OrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:Show
-										}
-									}
-									This:SetZOrder[movetop]
-								</OnLoad>
-								<OnLeftClick>
-									Script[ComBot].VariableScope.Miner.Config:SetOrcaMode[${This.Checked}]
-									if ${This.Checked}
-									{
-										UIElement[MaxLockTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
-										UIElement[MaxLock@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
-										UIElement[OrePriorityTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
-										UIElement[OrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
-									}
-									else
-									{
-										UIElement[MaxLockTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Show
-										UIElement[MaxLock@MiningFrame@Miner_Frame@ComBot_Miner]:Show
-										UIElement[OrePriorityTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Show
-										UIElement[OrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:Show
-									}
-									if ${MyShip.HasOreHold}
-									{
-										if ${Script[ComBot].VariableScope.Miner.Config.OrcaMode}
-										{
-											UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[Corp Hangar Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${EVEWindow[ByName, Inventory].ChildCapacity[ShipCorpHangar]}].Round} m3]
-										}
-										else
-										{
-											UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[OreHold Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]}].Round} m3]
-										}
-									}
-									else
-									{
-										UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${MyShip.CargoCapacity}].Round} m3]
-									}
-									This:SetZOrder[movetop]
-								</OnLeftClick>
-								<OnMouseEnter>
-									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText["When checked, this changes how the Miner module behaves.  Instead of mining asteroids, ComBot will simply attempt to keep within 8km (10km for ice mining) of the nearest asteroid.  It will still follow the same behavior for dropoffs as it would if it were configured as a normal miner."]
-								</OnMouseEnter>
-								<OnMouseExit>
-									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[""]
-								</OnMouseExit>
-							</Checkbox>
-
 							<Text name='OrePriorityTitle'> 
 								<X>67%</X> 
 								<Y>1%</Y> 
@@ -1345,6 +1277,70 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								</OnLeftClick>
 								<OnMouseEnter>
 									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText["This toggles ice mining mode on or off.  The ore priority list will change to correspond."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[""]
+								</OnMouseExit>
+							</Checkbox>							
+
+							<Checkbox name='obj_MinerOrcaMode'>
+								<X>1%</X>
+								<Y>25%</Y>
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Text>Orca Mode</Text>
+									<OnLoad>
+									if ${Script[ComBot].VariableScope.Miner.Config.OrcaMode}
+									{
+										This:SetChecked
+										if ${This.Checked}
+										{
+											UIElement[MaxLockTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[MaxLock@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[OrePriorityTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										}
+										else
+										{
+											UIElement[MaxLockTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[MaxLock@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[OrePriorityTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+										}
+									}
+									This:SetZOrder[movetop]
+								</OnLoad>
+								<OnLeftClick>
+									Script[ComBot].VariableScope.Miner.Config:SetOrcaMode[${This.Checked}]
+									if ${This.Checked}
+									{
+										UIElement[MaxLockTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										UIElement[MaxLock@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+									}
+									else
+									{
+										UIElement[MaxLockTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+										UIElement[MaxLock@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+									}
+									if ${MyShip.HasOreHold}
+									{
+										if ${Script[ComBot].VariableScope.Miner.Config.OrcaMode}
+										{
+											UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[Corp Hangar Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${EVEWindow[ByName, Inventory].ChildCapacity[ShipCorpHangar]}].Round} m3]
+										}
+										else
+										{
+											UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[OreHold Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]}].Round} m3]
+										}
+									}
+									else
+									{
+										UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${MyShip.CargoCapacity}].Round} m3]
+									}
+									This:SetZOrder[movetop]
+								</OnLeftClick>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText["When checked, this changes how the Miner module behaves.  Instead of mining asteroids, ComBot will simply attempt to keep within 8km (10km for ice mining) of the nearest asteroid.  It will still follow the same behavior for dropoffs as it would if it were configured as a normal miner."]
 								</OnMouseEnter>
 								<OnMouseExit>
 									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[""]
