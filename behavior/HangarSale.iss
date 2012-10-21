@@ -687,18 +687,18 @@ objectdef obj_HangarSaleUI inherits obj_State
 		Bookmarks:GetIterator[BookmarkIterator]
 		
 
-		UIElement[SellSystemList@ComBot_HangarSale_Frame@ComBot_HangarSale]:ClearItems
+		UIElement[SellSystemList@SellingFrame@ComBot_HangarSale_Frame@ComBot_HangarSale]:ClearItems
 		if ${BookmarkIterator:First(exists)}
 			do
 			{	
-				if ${UIElement[SellSystem@ComBot_HangarSale_Frame@ComBot_HangarSale].Text.Length}
+				if ${UIElement[SellSystem@SellingFrame@ComBot_HangarSale_Frame@ComBot_HangarSale].Text.Length}
 				{
 					if ${BookmarkIterator.Value.Label.Left[${HangarSale.Config.SellSystem.Length}].Equal[${HangarSale.Config.SellSystem}]}
-						UIElement[SellSystemList@ComBot_HangarSale_Frame@ComBot_HangarSale]:AddItem[${BookmarkIterator.Value.Label.Escape}]
+						UIElement[SellSystemList@SellingFrame@ComBot_HangarSale_Frame@ComBot_HangarSale]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 				else
 				{
-					UIElement[SellSystemList@ComBot_HangarSale_Frame@ComBot_HangarSale]:AddItem[${BookmarkIterator.Value.Label.Escape}]
+					UIElement[SellSystemList@SellingFrame@ComBot_HangarSale_Frame@ComBot_HangarSale]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 			}
 			while ${BookmarkIterator:Next(exists)}
