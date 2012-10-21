@@ -45,7 +45,7 @@ objectdef obj_Module
 	
 	member:bool IsActiveOn(int64 checkTarget)
 	{
-		return ${ModuleBaseModules[${ModuleID}].IsActiveOn[${checkTarget}]
+		return ${ModuleBaseModules[${ModuleID}].IsActiveOn[${checkTarget}]}
 	}
 	
 	method Deactivate()
