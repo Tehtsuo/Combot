@@ -356,7 +356,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText["This field needs to contain the exact name of your pickup bookmark.  The bookmark can be a station if you are picking up from a personal hangar or corporate hangar, or a location if you are picking up from a Player Owned Station structure.  If you are picking up from an Orca or Jetcan, the bookmark needs to be any bookmark in the system where your fleet is mining."]
 								</OnMouseEnter>
 								<OnMouseExit>
-									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[""]
+									UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText[""]
 								</OnMouseExit>
 							</Textentry>
 							<listbox Name="PickupList">
