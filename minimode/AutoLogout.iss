@@ -59,6 +59,7 @@ objectdef obj_AutoLogout inherits obj_State
 	method Initialize()
 	{
 		This[parent]:Initialize
+		This.NonGameTiedPulse:Set[TRUE]
 		PulseFrequency:Set[500]
 		DynamicAddMiniMode("AutoLogout", "AutoLogout")
 	}
@@ -79,7 +80,6 @@ objectdef obj_AutoLogout inherits obj_State
 	{
 		if ${Time.Hour} == ${Config.Hour} && ${Time.Minute} == ${Config.Minute}
 		{
-			This:QueueState["PrepForMove"]
 			This:QueueState["MoveToLogout"]
 			This:QueueState["Traveling"]
 			This:QueueState["Logout"]
@@ -88,7 +88,15 @@ objectdef obj_AutoLogout inherits obj_State
 		return FALSE
 	}
 	
-	member:bool PrepForMove()
+	method LogoutNow()
+	{
+		This:Clear
+		This:QueueState["MoveToLogout"]
+		This:QueueState["Traveling"]
+		This:QueueState["Logout"]
+	}
+	
+	member:bool MoveToLogout()
 	{
 		variable iterator Behaviors
 		UI:Update["obj_AutoLogout", "Logout time!", "r"]
@@ -103,11 +111,6 @@ objectdef obj_AutoLogout inherits obj_State
 		}
 		Move:Clear
 		Move.Traveling:Set[FALSE]
-		return TRUE
-	}
-	
-	member:bool MoveToLogout()
-	{
 		Move:Bookmark[${Config.Bookmark}]
 		return TRUE
 	}
@@ -158,22 +161,23 @@ objectdef obj_AutoLogoutUI inherits obj_State
 		Bookmarks:GetIterator[BookmarkIterator]
 		
 
-		UIElement[BookmarkList@ComBot_AutoLogout_Frame@ComBot_AutoLogout]:ClearItems
+		UIElement[BookmarkList@AutoLogoutFrame@ComBot_AutoLogout_Frame@ComBot_AutoLogout]:ClearItems
 		if ${BookmarkIterator:First(exists)}
 			do
 			{	
-				if ${UIElement[Bookmark@ComBot_AutoLogout_Frame@ComBot_AutoLogout].Text.Length}
+				if ${UIElement[Bookmark@AutoLogoutFrame@ComBot_AutoLogout_Frame@ComBot_AutoLogout].Text.Length}
 				{
-					if ${BookmarkIterator.Value.Label.Left[${Salvage.Config.Dropoff.Length}].Equal[${AutoLogout.Config.Bookmark}]}
-						UIElement[BookmarkList@ComBot_AutoLogout_Frame@ComBot_AutoLogout]:AddItem[${BookmarkIterator.Value.Label.Escape}]
+					if ${BookmarkIterator.Value.Label.Left[${AutoLogout.Config.Bookmark.Length}].Equal[${AutoLogout.Config.Bookmark}]}
+						UIElement[BookmarkList@AutoLogoutFrame@ComBot_AutoLogout_Frame@ComBot_AutoLogout]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 				else
 				{
-					UIElement[BookmarkList@ComBot_AutoLogout_Frame@ComBot_AutoLogout]:AddItem[${BookmarkIterator.Value.Label.Escape}]
+					UIElement[BookmarkList@AutoLogoutFrame@ComBot_AutoLogout_Frame@ComBot_AutoLogout]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 			}
 			while ${BookmarkIterator:Next(exists)}
-
+			
+			
 		return FALSE
 	}
 
