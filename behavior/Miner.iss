@@ -806,13 +806,21 @@ objectdef obj_Miner inherits obj_State
 		{
 			relay all -event ComBot_Orca_InBelt TRUE
 			relay all -event ComBot_Orca_Cargo ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipCorpHangar]}
-			if ${Config.IceMining}
+			if ${Asteroids.TargetList.Used} > 0
 			{
-				Move:Approach[${Entity[CategoryID==CATEGORYID_ORE]}, 10000]
+				if ${Config.IceMining}
+				{
+					Move:Approach[${Asteroids.TargetList[0].ID}, 10000]
+				}
+				else
+				{
+					Move:Approach[${Asteroids.TargetList[0].ID}, 8000]
+				}
 			}
 			else
 			{
-				Move:Approach[${Entity[CategoryID==CATEGORYID_ORE]}, 8000]
+				Asteroids:RequestUpdate
+				return FALSE
 			}
 		}
 		else
