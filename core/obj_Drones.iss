@@ -19,6 +19,65 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
+objectdef obj_Configuration_DroneData
+{
+	variable string SetName = "Drone Data"
+
+	variable filepath CONFIG_PATH = "${Script.CurrentDirectory}/data"
+	variable string CONFIG_FILE = "DroneData.xml"
+	variable settingsetref BaseRef
+
+	method Initialize()
+	{
+		LavishSettings[RefineData]:Clear
+		LavishSettings:AddSet[RefineData]
+		LavishSettings[RefineData]:AddSet[${Me.Name}]
+
+		if ${CONFIG_PATH.FileExists["${CONFIG_FILE}"]}
+		{
+			LavishSettings[RefineData]:Import["${CONFIG_PATH}/${CONFIG_FILE}"]
+		}
+		BaseRef:Set[${LavishSettings[RefineData].FindSet[Refines]}]
+
+		UI:Update["obj_Configuration", " ${This.SetName}: Initialized", "-g"]
+	}
+
+	method Shutdown()
+	{
+		LavishSettings[RefineData]:Clear
+	}
+	
+	member:int Tritanium(int ID)
+	{
+		return ${This.BaseRef.FindSet["${ID}"].FindSetting["34"]}
+	}
+	member:int Pyerite(int ID)
+	{
+		return ${This.BaseRef.FindSet["${ID}"].FindSetting["35"]}
+	}
+	member:int Mexallon(int ID)
+	{
+		return ${This.BaseRef.FindSet["${ID}"].FindSetting["36"]}
+	}
+	member:int Isogen(int ID)
+	{
+		return ${This.BaseRef.FindSet["${ID}"].FindSetting["37"]}
+	}
+	member:int Nocxium(int ID)
+	{
+		return ${This.BaseRef.FindSet["${ID}"].FindSetting["38"]}
+	}
+	member:int Zydrine(int ID)
+	{
+		return ${This.BaseRef.FindSet["${ID}"].FindSetting["39"]}
+	}
+	member:int Megacyte(int ID)
+	{
+		return ${This.BaseRef.FindSet["${ID}"].FindSetting["40"]}
+	}
+}
+
+
 objectdef obj_Drones inherits obj_State
 {
 	method Initialize()
@@ -114,6 +173,16 @@ objectdef obj_Drones inherits obj_State
 			This:QueueState["SwitchTarget", -1, ${TargetID}]
 			This:QueueState["EngageTarget", -1, "${TypeQuery.Escape}, ${TargetID}, ${Count}"]
 		}
+	}
+	
+	member:int InactiveDroneCount(string TypeQuery)
+	{
+		variable index:item DroneBayDrones
+		variable index:int64 DronesToLaunch
+		MyShip:GetDrones[DroneBayDrones]
+		DroneBayDrones:RemoveByQuery[${LavishScript.CreateQuery[${TypeQuery}]}, FALSE]
+		DroneBayDrones:Collapse[]
+		return ${DroneBayDrones.Used}
 	}
 	
 	member:bool SwitchTarget(int64 TargetID)
