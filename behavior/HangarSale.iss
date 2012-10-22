@@ -54,6 +54,7 @@ objectdef obj_Configuration_HangarSale
 	Setting(bool, RePrice, SetRePrice)
 	Setting(bool, Sell, SetSell)
 	Setting(bool, MoveRefine, SetMoveRefine)
+	Setting(bool, Logout, SetLogout)
 	Setting(int64, MoveRefinesTarget, SetMoveRefinesTarget)
 }
 
@@ -294,6 +295,12 @@ objectdef obj_HangarSale inherits obj_State
 		}
 		else
 		{
+			if ${Config.Logout}
+			{
+				This:Clear
+				AutoLogout:StationaryLogoutNow
+			}
+		
 			TimeToNextRun:Set[${Math.Calc[60000 * ${Math.Rand[11]} + 1800000]}]
 			UI:Update["obj_HangarSale", "Operations complete - Beginning again in ${Math.Calc[${TimeToNextRun} / 60000]} minutes", "o"]
 			MineralNames:Clear

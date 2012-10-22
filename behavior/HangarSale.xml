@@ -227,6 +227,28 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									UIElement[Information@InformationFrame@ComBot_HangarSale_Frame@ComBot_HangarSale]:SetText[""]
 								</OnMouseExit>
 							</Checkbox>
+							<Checkbox name='Logout'>
+								<X>34%</X>
+								<Y>60%</Y>
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Text>Log out after one cycle</Text>
+								<OnLoad>
+									if ${Script[ComBot].VariableScope.HangarSale.Config.Logout}
+									{
+										This:SetChecked
+									}
+								</OnLoad>
+								<OnLeftClick>
+									Script[ComBot].VariableScope.HangarSale.Config:SetLogout[${This.Checked}]
+								</OnLeftClick>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@ComBot_HangarSale_Frame@ComBot_HangarSale]:SetText["When this is checked, ComBot will log out of the game after performing one cycle."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@ComBot_HangarSale_Frame@ComBot_HangarSale]:SetText[""]
+								</OnMouseExit>
+							</Checkbox>
 							
 							<Text name='obj_HangarSale_UndercutPercentTitle'> 
 								<X>67%</X> 
