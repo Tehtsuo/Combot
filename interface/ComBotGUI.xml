@@ -564,7 +564,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Checkbox name='Verbose'>
 							<X>1%</X>
 							<Y>93%</Y>
-							<Width>60%</Width> 
+							<Width>20%</Width> 
 							<Height>6%</Height> 
 							<Text>Verbose logging</Text>
 							<OnLoad>
