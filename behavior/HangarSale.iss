@@ -45,12 +45,14 @@ objectdef obj_Configuration_HangarSale
 		This.CommonRef:AddSetting[PriceMode,Undercut Lowest]
 		This.CommonRef:AddSetting[UndercutPercent,1]
 		This.CommonRef:AddSetting[UndercutValue,1000]
+		This.CommonRef:AddSetting[Duration,1]
 	}
 	
 	Setting(string, SellSystem, SetSellSystem)
 	Setting(string, PriceMode, SetPriceMode)
 	Setting(int, UndercutPercent, SetUndercutPercent)
 	Setting(int, UndercutValue, SetUndercutValue)
+	Setting(int, Duration, SetDuration)
 	Setting(bool, RePrice, SetRePrice)
 	Setting(bool, Sell, SetSell)
 	Setting(bool, MoveRefine, SetMoveRefine)
@@ -356,7 +358,7 @@ objectdef obj_HangarSale inherits obj_State
 				else
 				{
 					UI:Update["obj_HangarSale", "Selling \ar${HangarIterator.Value.Quantity}\ag at \ao${ComBot.ISK_To_Str[${sellLowestPrice}]}", "g"]
-					HangarIterator.Value:PlaceSellOrder[${sellLowestPrice}, ${HangarIterator.Value.Quantity}, 1]
+					HangarIterator.Value:PlaceSellOrder[${sellLowestPrice}, ${HangarIterator.Value.Quantity}, ${Config.Duration}]
 					This:QueueState["UpdateCurrentOrderCount"]
 					This:QueueState["CheckItem", 10000]
 				}
@@ -379,7 +381,7 @@ objectdef obj_HangarSale inherits obj_State
 				else
 				{
 					UI:Update["obj_HangarSale", "Selling \ar${HangarIterator.Value.Quantity}\ag at \ao${ComBot.ISK_To_Str[${sellBuyoutPrice}]}", "g"]
-					HangarIterator.Value:PlaceSellOrder[${sellBuyoutPrice}, ${HangarIterator.Value.Quantity}, 1]
+					HangarIterator.Value:PlaceSellOrder[${sellBuyoutPrice}, ${HangarIterator.Value.Quantity}, ${Config.Duration}]
 					This:QueueState["UpdateCurrentOrderCount"]
 					This:QueueState["CheckItem", 10000]
 				}
@@ -407,7 +409,7 @@ objectdef obj_HangarSale inherits obj_State
 				else
 				{
 					UI:Update["obj_HangarSale", "Selling \ar${HangarIterator.Value.Quantity}\ag at \ao${ComBot.ISK_To_Str[${sellAveragePrice}]}", "g"]
-					HangarIterator.Value:PlaceSellOrder[${sellAveragePrice}, ${HangarIterator.Value.Quantity}, 1]
+					HangarIterator.Value:PlaceSellOrder[${sellAveragePrice}, ${HangarIterator.Value.Quantity}, ${Config.Duration}]
 					This:QueueState["UpdateCurrentOrderCount"]
 					This:QueueState["CheckItem", 10000]
 				}
