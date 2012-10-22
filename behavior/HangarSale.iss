@@ -200,9 +200,9 @@ objectdef obj_HangarSale inherits obj_State
 			Seperator:Set["&"]
 		}
 		
-		if ${EVE.Bookmark[${Config.SellSystem]}](exists)}
+		if ${EVE.Bookmark[${Config.SellSystem}](exists)}
 		{
-			SystemID:Set[${EVE.Bookmark[${Config.SellSystem]}].SolarSystemID}]
+			SystemID:Set[${EVE.Bookmark[${Config.SellSystem}].SolarSystemID}]
 		}
 		
 		UI:Log["GetURL http://api.eve-central.com/api/marketstat?${TypeIDQuery}"]
