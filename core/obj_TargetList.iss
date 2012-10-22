@@ -35,6 +35,7 @@ objectdef obj_TargetList inherits obj_State
 	variable index:string QueryStringList
 	variable collection:int TargetLockPrioritys
 	variable collection:int TargetLockPrioritysBuffer
+	variable set TargetExceptions
 	variable set LockedAndLockingTargets
 	variable int64 DistanceTarget
 	variable int MaxRange = 20000
@@ -143,6 +144,45 @@ objectdef obj_TargetList inherits obj_State
 		This:AddQueryString["${QueryString.Escape}"]
 	}
 	
+	method AddTargetException(int64 ID)
+	{
+		variable iterator RemoveIterator
+		TargetExceptions:Add[${ID}]
+		TargetList:GetIterator[RemoveIterator]
+		if ${RemoveIterator:First(exists)}
+		{
+			do
+			{
+				if ${TargetList.Value.ID.Equal[${ID}]}
+				{
+					TargetList:Remove[${RemoveIterator.Key}]
+				}
+			}
+			while ${RemoveIterator:Next(exists)}
+		}
+		LockedTargetList:GetIterator[RemoveIterator]
+		if ${RemoveIterator:First(exists)}
+		{
+			do
+			{
+				if ${TargetList.Value.ID.Equal[${ID}]}
+				{
+					TargetList:Remove[${RemoveIterator.Key}]
+				}
+			}
+			while ${RemoveIterator:Next(exists)}
+		}
+		if ${Entity[${ID}].IsLockedTarget}
+		{
+			Entity[${ID}]:UnlockTarget
+		}
+	}
+	
+	method ClearTargetExceptions()
+	{
+		TargetExceptions:Clear
+	}
+	
 	member:bool UpdateList()
 	{
 		Profiling:StartTrack["TargetList_UpdateList"]
@@ -242,11 +282,14 @@ objectdef obj_TargetList inherits obj_State
 					}
 					if ${entity_iterator.Value.DistanceTo[${DistanceTarget}]} <= ${MaxRange}
 					{
-						This.TargetListBuffer:Insert[${entity_iterator.Value.ID}]
-						if ${entity_iterator.Value.IsLockedTarget}
+						if !${TargetExceptions.Contains[${entity_iterator.Value.ID}]}
 						{
-							This.LockedTargetListBuffer:Insert[${entity_iterator.Value.ID}]
-							TargetLockPrioritysBuffer:Set[${entity_iterator.Value.ID}, ${Math.Calc[${Priority} + ${Ship.ModuleList_TargetModules.ActiveCountOn[${entity_iterator.Value.ID}]}*100]}]
+							This.TargetListBuffer:Insert[${entity_iterator.Value.ID}]
+							if ${entity_iterator.Value.IsLockedTarget}
+							{
+								This.LockedTargetListBuffer:Insert[${entity_iterator.Value.ID}]
+								TargetLockPrioritysBuffer:Set[${entity_iterator.Value.ID}, ${Math.Calc[${Priority} + ${Ship.ModuleList_TargetModules.ActiveCountOn[${entity_iterator.Value.ID}]}*100]}]
+							}
 						}
 					}
 					else
@@ -265,11 +308,14 @@ objectdef obj_TargetList inherits obj_State
 					{
 						TargetList_DeadDelay:Set[${entity_iterator.Value.ID}, ${Math.Calc[${LavishScript.RunningTime} + 5000]}]
 					}
-					This.TargetListBufferOOR:Insert[${entity_iterator.Value.ID}]
-					if ${entity_iterator.Value.IsLockedTarget}
+					if !${TargetExceptions.Contains[${entity_iterator.Value.ID}]}
 					{
-						This.LockedTargetListBufferOOR:Insert[${entity_iterator.Value.ID}]
-						TargetLockPrioritysBuffer:Set[${entity_iterator.Value.ID}, ${Math.Calc[${Priority} + ${Ship.ModuleList_TargetModules.ActiveCountOn[${entity_iterator.Value.ID}]}*100]}]
+						This.TargetListBufferOOR:Insert[${entity_iterator.Value.ID}]
+						if ${entity_iterator.Value.IsLockedTarget}
+						{
+							This.LockedTargetListBufferOOR:Insert[${entity_iterator.Value.ID}]
+							TargetLockPrioritysBuffer:Set[${entity_iterator.Value.ID}, ${Math.Calc[${Priority} + ${Ship.ModuleList_TargetModules.ActiveCountOn[${entity_iterator.Value.ID}]}*100]}]
+						}
 					}
 				}
 				while ${entity_iterator:Next(exists)}
