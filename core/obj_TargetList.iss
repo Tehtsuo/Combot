@@ -167,7 +167,7 @@ objectdef obj_TargetList inherits obj_State
 			{
 				if ${RemoveIterator.Value.ID.Equal[${ID}]}
 				{
-					TargetList:Remove[${RemoveIterator.Key}]
+					LockedTargetList:Remove[${RemoveIterator.Key}]
 				}
 			}
 			while ${RemoveIterator:Next(exists)}
