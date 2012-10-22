@@ -153,7 +153,7 @@ objectdef obj_TargetList inherits obj_State
 		{
 			do
 			{
-				if ${TargetList.Value.ID.Equal[${ID}]}
+				if ${RemoveIterator.Value.ID.Equal[${ID}]}
 				{
 					TargetList:Remove[${RemoveIterator.Key}]
 				}
@@ -165,7 +165,7 @@ objectdef obj_TargetList inherits obj_State
 		{
 			do
 			{
-				if ${TargetList.Value.ID.Equal[${ID}]}
+				if ${RemoveIterator.Value.ID.Equal[${ID}]}
 				{
 					TargetList:Remove[${RemoveIterator.Key}]
 				}
