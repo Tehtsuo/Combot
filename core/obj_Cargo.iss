@@ -247,4 +247,10 @@ objectdef obj_Cargo inherits obj_State
 		}
 	}
 	
+	
+	; Starting cargo rewrite  /\ Needs tweaking  \/ New stuff
+	
+	
+	
+	
 }
