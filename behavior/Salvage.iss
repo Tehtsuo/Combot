@@ -840,14 +840,7 @@ objectdef obj_LootCans inherits obj_State
 				echo ${i}
 				if ${Salvage.Wrecks.TargetExceptions.Contains[${TargetIterator.Value.ID}]}
 				{
-					if ${TargetIterator:Next(exists)}
-					{
-						continue
-					}
-					else
-					{
-						break
-					}
+					continue
 				}
 			
 				if ${EVEWindow[ByName, Inventory].ChildWindowExists[${TargetIterator.Value}]}
