@@ -59,7 +59,7 @@ objectdef obj_Configuration_DroneData
 					return ${DroneTypes.Key}
 				}
 			}
-			while ${DroneTypes:Next(exists)
+			while ${DroneTypes:Next(exists)}
 		}
 	}
 }

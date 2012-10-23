@@ -30,6 +30,7 @@ objectdef obj_Base_Configuration
 		if !${BaseConfig.BaseRef.FindSet[${This.SetName}](exists)}
 		{
 			UI:Update["obj_Configuration", " ${This.SetName} settings missing - initializing", "o"]
+			BaseConfig.BaseRef:AddSet[${This.SetName}]
 			This:Set_Default_Values[]
 		}
 		UI:Update["obj_Configuration", " ${This.SetName}: Initialized", "-g"]

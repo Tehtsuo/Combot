@@ -106,9 +106,9 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							{
 								do
 								{
-									if !${This.ItemByValue[${drone.Value.TypeID}]}
+									if !${This.ItemByValue[${drone.Value.TypeID}](exists)}
 									{
-										This:AddItem[${drone.Value.name}, ${drone.Value.TypeID}]
+										This:AddItem[${drone.Value.Name}, ${drone.Value.TypeID}]
 									}
 								}
 								while ${drone:Next(exists)}
@@ -118,7 +118,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							
 						</OnLoad>
 						<OnSelect>
-							Script[ComBot].VariableScope.DroneControl.Config.SetDroneType[${This.SelectedItem.Value}]
+							echo ${This.SelectedItem.Value}
+							Script[ComBot].VariableScope.DroneControl.Config:SetDroneType[${This.SelectedItem.Value}]
 						</OnSelect>
 					</listbox>
 				</Children>
