@@ -26,7 +26,7 @@ objectdef obj_Configuration_DroneControl inherits obj_Base_Configuration
 		This[parent]:Initialize["DroneControl"]
 	}
 
-Setting(int64, DroneType, SetDroneType)
+Setting(int, DroneType, SetDroneType)
 
 }
 
