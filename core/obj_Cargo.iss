@@ -19,8 +19,40 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
+objectdef obj_CargoAction
+{
+	variable string Bookmark
+	variable string LocationType
+	variable string LocationSubtype
+	variable string Action
+	variable string Query
+	variable int Quantity
+
+	method Initialize(string arg_Bookmark, string arg_Action, string arg_LocationType, string arg_LocationSubtype, string arg_Query, int arg_Quantity)
+	{
+		Bookmark:Set[${arg_Bookmark}]
+		LocationType:Set[${arg_LocationType}]
+		LocationSubtype:Set[${arg_LocationSubtype}]
+		Action:Set[${arg_Action}]
+		Query:Set["${arg_Query.Escape}"]
+		Quantity:Set[${arg_Quantity}]
+	}
+	
+	method Set(string arg_Bookmark, string arg_Action, string arg_LocationType, string arg_LocationSubtype, string arg_Query, int arg_Quantity)
+	{
+		Bookmark:Set[${arg_Bookmark}]
+		LocationType:Set[${arg_LocationType}]
+		LocationSubtype:Set[${arg_LocationSubtype}]
+		Action:Set[${arg_Action}]
+		Query:Set["${arg_Query.Escape}"]
+		Quantity:Set[${arg_Quantity}]
+	}
+}
+
 objectdef obj_Cargo inherits obj_State
 {
+	variable bool Processing=FALSE
+	variable queue:obj_CargoAction CargoQueue
 	variable index:item CargoList
 	
 	variable bool Active=FALSE
@@ -250,7 +282,52 @@ objectdef obj_Cargo inherits obj_State
 	
 	; Starting cargo rewrite  /\ Needs tweaking  \/ New stuff
 	
+	method Queue(string arg_Bookmark, string arg_Action, string arg_LocationType, string arg_LocationSubtype, string arg_Query, int arg_Quantity)
+	{
+		This.CargoQueue:Queue[arg_Bookmark, arg_Action, string arg_LocationType, string arg_LocationSubtype, arg_Query, arg_Quantity]
+		This.Processing:Set[TRUE]
+		if ${This.IsIdle}
+		{
+			This:Clear
+			This:QueueState["Process"]
+		}
+	}
 	
+	member:bool Process()
+	{
+		if ${This.CargoQueue.Used} == 0
+		{
+			This.Processing:Set[FALSE]
+			return TRUE
+		}
+		
+		Move:Bookmark[${This.CargoQueue.Peek.Bookmark}]
+		This:QueueState["Traveling"]
+		This:QueueState["${This.CargoQueue.Peek.Action}"]
+		This:QueueState["Dequeue"]
+		This:QueueState["Process"]
+		return TRUE
+	}
 	
+	member:bool Traveling()
+	{
+		if ${Move.Traveling} || ${Me.ToEntity.Mode} == 3
+		{
+			return FALSE
+		}
+		return TRUE
+	}
 	
+	member:bool Unload()
+	{
+		variable int64 Container
+
+		if ${Me.InSpace}
+		{
+			if ${Entity[Name = "${This.CargoQueue.Peek.LocationSubtype}"](exists)}
+			{
+				Container:Set[${Entity[Name = "${This.CargoQueue.Peek.LocationSubtype}"].ID}]
+			}
+		}
+	}
 }
