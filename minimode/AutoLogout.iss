@@ -95,6 +95,13 @@ objectdef obj_AutoLogout inherits obj_State
 		This:QueueState["Traveling"]
 		This:QueueState["Logout"]
 	}
+
+	method StationaryLogoutNow()
+	{
+		This:Clear
+		This:QueueState["Logout"]
+	}
+	
 	
 	member:bool MoveToLogout()
 	{
