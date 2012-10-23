@@ -914,6 +914,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									
 									if ${This.Checked}
 									{
+										UIElement[MaxLockTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										UIElement[MaxLock@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
 										UIElement[OrePriorityTitle@MiningFrame@Miner_Frame@ComBot_Miner]:SetText[Ice Priority]
 										variable collection:bool MineOre
 										variable iterator iter
@@ -996,6 +998,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									}
 									else
 									{
+										UIElement[MaxLockTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+										UIElement[MaxLock@MiningFrame@Miner_Frame@ComBot_Miner]:Show
 										UIElement[OrePriorityTitle@MiningFrame@Miner_Frame@ComBot_Miner]:SetText[Ore Priority]
 										Ores:Set[${LavishSettings[ComBotSettings].FindSet[${Me.Name}].FindSet[Miner].FindSet[Ore_Types]}]
 										if ${Ores(exists)}
@@ -1102,6 +1106,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									if ${This.Checked}
 									{
 										UIElement[OrePriorityTitle@MiningFrame@Miner_Frame@ComBot_Miner]:SetText[Ice Priority]
+										UIElement[MaxLockTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										UIElement[MaxLock@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
 										Ores:Set[${LavishSettings[ComBotSettings].FindSet[${Me.Name}].FindSet[Miner].FindSet[ICE_Types]}]
 										if ${Ores(exists)}
 										{
@@ -1180,6 +1186,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									}
 									else
 									{
+										UIElement[MaxLockTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+										UIElement[MaxLock@MiningFrame@Miner_Frame@ComBot_Miner]:Show
 										UIElement[OrePriorityTitle@MiningFrame@Miner_Frame@ComBot_Miner]:SetText[Ore Priority]
 										Ores:Set[${LavishSettings[ComBotSettings].FindSet[${Me.Name}].FindSet[Miner].FindSet[Ore_Types]}]
 										if ${Ores(exists)}
@@ -1297,15 +1305,11 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 										{
 											UIElement[MaxLockTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
 											UIElement[MaxLock@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
-											UIElement[OrePriorityTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
-											UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
 										}
 										else
 										{
 											UIElement[MaxLockTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Show
 											UIElement[MaxLock@MiningFrame@Miner_Frame@ComBot_Miner]:Show
-											UIElement[OrePriorityTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Show
-											UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:Show
 										}
 									}
 									This:SetZOrder[movetop]

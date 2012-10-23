@@ -512,7 +512,6 @@ objectdef obj_Miner inherits obj_State
 	{
 		if ${Move.SavedSpotExists}
 		{
-			UI:Update["obj_Miner","Returning to last location (${Bookmarks.SavedSpot})", "g"]
 			Move:GotoSavedSpot
 			return TRUE
 		}
