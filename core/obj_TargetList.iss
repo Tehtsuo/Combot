@@ -32,6 +32,7 @@ objectdef obj_TargetList inherits obj_State
 	variable index:entity TargetListBufferOOR
 	variable index:entity LockedTargetListBuffer
 	variable index:entity LockedTargetListBufferOOR
+	variable set AlreadyInList
 	variable index:string QueryStringList
 	variable collection:int TargetLockPrioritys
 	variable collection:int TargetLockPrioritysBuffer
@@ -282,9 +283,10 @@ objectdef obj_TargetList inherits obj_State
 					}
 					if ${entity_iterator.Value.DistanceTo[${DistanceTarget}]} <= ${MaxRange}
 					{
-						if !${TargetExceptions.Contains[${entity_iterator.Value.ID}]}
+						if !${TargetExceptions.Contains[${entity_iterator.Value.ID}]} && !${AlreadyInList.Contains[${entity_iterator.Value.ID}]}
 						{
 							This.TargetListBuffer:Insert[${entity_iterator.Value.ID}]
+							AlreadyInList:Add[${entity_iterator.Value.ID}]
 							if ${entity_iterator.Value.IsLockedTarget}
 							{
 								This.LockedTargetListBuffer:Insert[${entity_iterator.Value.ID}]
@@ -308,9 +310,10 @@ objectdef obj_TargetList inherits obj_State
 					{
 						TargetList_DeadDelay:Set[${entity_iterator.Value.ID}, ${Math.Calc[${LavishScript.RunningTime} + 5000]}]
 					}
-					if !${TargetExceptions.Contains[${entity_iterator.Value.ID}]}
+					if !${TargetExceptions.Contains[${entity_iterator.Value.ID}]} && !${AlreadyInList.Contains[${entity_iterator.Value.ID}]}
 					{
 						This.TargetListBufferOOR:Insert[${entity_iterator.Value.ID}]
+						AlreadyInList:Add[${entity_iterator.Value.ID}]
 						if ${entity_iterator.Value.IsLockedTarget}
 						{
 							This.LockedTargetListBufferOOR:Insert[${entity_iterator.Value.ID}]
@@ -373,11 +376,6 @@ objectdef obj_TargetList inherits obj_State
 			while ${EntityIterator:Next(exists)}
 		}
 		
-		This.TargetListBuffer:Clear
-		This.TargetListBufferOOR:Clear
-		This.LockedTargetListBuffer:Clear
-		This.LockedTargetListBufferOOR:Clear
-		
 		This.IPCTargets:GetIterator[EntityIterator]
 		if ${EntityIterator:First(exists)}
 		{
@@ -394,18 +392,26 @@ objectdef obj_TargetList inherits obj_State
 					}
 					elseif ${Entity[${EntityIterator.Key}].DistanceTo[${DistanceTarget}]} <= ${MaxRange}
 					{
-						This.TargetListBuffer:Insert[${EntityIterator.Key}]
-						if ${Entity[${EntityIterator.Key}].IsLockedTarget}
+						if !${AlreadyInList.Contains[${entity_iterator.Value.ID}]}
 						{
-							This.LockedTargetListBuffer:Insert[${EntityIterator.Key}]
+							AlreadyInList:Add[${entity_iterator.Value.ID}]
+							This.TargetListBuffer:Insert[${EntityIterator.Key}]
+							if ${Entity[${EntityIterator.Key}].IsLockedTarget}
+							{
+								This.LockedTargetListBuffer:Insert[${EntityIterator.Key}]
+							}
 						}
 					}
 					elseif ${Entity[${EntityIterator.Key}].DistanceTo[${DistanceTarget}]} > ${MaxRange} && ${ListOutOfRange}
 					{
-						This.TargetListBufferOOR:Insert[${EntityIterator.Key}]
-						if ${Entity[${EntityIterator.Key}].IsLockedTarget}
+						if !${AlreadyInList.Contains[${entity_iterator.Value.ID}]}
 						{
-							This.LockedTargetListBufferOOR:Insert[${EntityIterator.Key}]
+							AlreadyInList:Add[${entity_iterator.Value.ID}]
+							This.TargetListBufferOOR:Insert[${EntityIterator.Key}]
+							if ${Entity[${EntityIterator.Key}].IsLockedTarget}
+							{
+								This.LockedTargetListBufferOOR:Insert[${EntityIterator.Key}]
+							}
 						}
 					}
 				}
@@ -444,6 +450,8 @@ objectdef obj_TargetList inherits obj_State
 		This.TargetListBufferOOR:Clear
 		This.LockedTargetListBuffer:Clear
 		This.LockedTargetListBufferOOR:Clear
+		This.TargetLockPriorityBuffer:Clear
+		AlreadyInList:Clear
 		Profiling:EndTrack
 		return TRUE
 	}
