@@ -28,6 +28,7 @@ objectdef obj_ShortCycle inherits obj_State
 	{
 		This[parent]:Initialize
 		This.NonGameTiedPulse:Set[TRUE]
+		
 		DynamicAddMiniMode("ShortCycle", "ShortCycle")
 	}
 	
@@ -41,7 +42,7 @@ objectdef obj_ShortCycle inherits obj_State
 		This:Clear
 	}
 	
-	member:bool AutoModule()
+	member:bool ShortCycle()
 	{
 		if !${Client.InSpace}
 		{
