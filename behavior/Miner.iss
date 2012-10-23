@@ -1,6 +1,6 @@
 /*
 
-ComBot  Copyright © 2012  Tehtsuo and Vendan
+ComBot  Copyright ï¿½ 2012  Tehtsuo and Vendan
 
 This file is part of ComBot.
 
@@ -824,6 +824,8 @@ objectdef obj_Miner inherits obj_State
 			}
 			else
 			{
+				This:Clear
+				This:QueueState["Mine"]
 				return FALSE
 			}
 		}
@@ -840,6 +842,8 @@ objectdef obj_Miner inherits obj_State
 			}
 			else
 			{
+				This:Clear
+				This:QueueState["Mine"]
 				return FALSE
 			}
 		}
