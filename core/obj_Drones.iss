@@ -187,7 +187,6 @@ objectdef obj_Drones inherits obj_State
 		{
 			if !${This.DronesInSpace.Equal[0]}
 			{
-				echo Recalling - ${DroneTargets.LockedTargetList.Used} Targets
 				This:Recall
 				This:QueueState["Idle", 5000]
 				This:QueueState["DroneControl"]
