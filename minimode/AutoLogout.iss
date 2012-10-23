@@ -54,10 +54,12 @@ objectdef obj_Configuration_AutoLogout
 objectdef obj_AutoLogout inherits obj_State
 {
 	variable obj_Configuration_AutoLogout Config
+	variable obj_AutoLogoutUI LocalUI
 	
 	method Initialize()
 	{
 		This[parent]:Initialize
+		This.NonGameTiedPulse:Set[TRUE]
 		PulseFrequency:Set[500]
 		DynamicAddMiniMode("AutoLogout", "AutoLogout")
 	}
@@ -78,17 +80,30 @@ objectdef obj_AutoLogout inherits obj_State
 	{
 		if ${Time.Hour} == ${Config.Hour} && ${Time.Minute} == ${Config.Minute}
 		{
-			This:QueueState["PrepForMove"]
 			This:QueueState["MoveToLogout"]
 			This:QueueState["Traveling"]
 			This:QueueState["Logout"]
-			This:QueueState["ConfirmLogout", 10000]
 			return TRUE
 		}
 		return FALSE
 	}
 	
-	member:bool PrepForMove()
+	method LogoutNow()
+	{
+		This:Clear
+		This:QueueState["MoveToLogout"]
+		This:QueueState["Traveling"]
+		This:QueueState["Logout"]
+	}
+
+	method StationaryLogoutNow()
+	{
+		This:Clear
+		This:QueueState["Logout"]
+	}
+	
+	
+	member:bool MoveToLogout()
 	{
 		variable iterator Behaviors
 		UI:Update["obj_AutoLogout", "Logout time!", "r"]
@@ -103,11 +118,6 @@ objectdef obj_AutoLogout inherits obj_State
 		}
 		Move:Clear
 		Move.Traveling:Set[FALSE]
-		return TRUE
-	}
-	
-	member:bool MoveToLogout()
-	{
 		Move:Bookmark[${Config.Bookmark}]
 		return TRUE
 	}
@@ -123,13 +133,59 @@ objectdef obj_AutoLogout inherits obj_State
 	
 	member:bool Logout()
 	{
-		EVE:Execute[CmdLogOff]
-		return TRUE
-	}
-	
-	member:bool ConfirmLogout()
-	{
-		EVEWindow[active]:ClickButtonYes
+		EVE:Execute[CmdQuitGame]
 		endscript combot
 	}
+}
+
+
+objectdef obj_AutoLogoutUI inherits obj_State
+{
+
+
+	method Initialize()
+	{
+		This[parent]:Initialize
+		This.NonGameTiedPulse:Set[TRUE]
+	}
+	
+	method Start()
+	{
+		This:QueueState["UpdateBookmarkLists", 5]
+	}
+	
+	method Stop()
+	{
+		This:Clear
+	}
+
+	member:bool UpdateBookmarkLists()
+	{
+		variable index:bookmark Bookmarks
+		variable iterator BookmarkIterator
+
+		EVE:GetBookmarks[Bookmarks]
+		Bookmarks:GetIterator[BookmarkIterator]
+		
+
+		UIElement[BookmarkList@AutoLogoutFrame@ComBot_AutoLogout_Frame@ComBot_AutoLogout]:ClearItems
+		if ${BookmarkIterator:First(exists)}
+			do
+			{	
+				if ${UIElement[Bookmark@AutoLogoutFrame@ComBot_AutoLogout_Frame@ComBot_AutoLogout].Text.Length}
+				{
+					if ${BookmarkIterator.Value.Label.Left[${AutoLogout.Config.Bookmark.Length}].Equal[${AutoLogout.Config.Bookmark}]}
+						UIElement[BookmarkList@AutoLogoutFrame@ComBot_AutoLogout_Frame@ComBot_AutoLogout]:AddItem[${BookmarkIterator.Value.Label.Escape}]
+				}
+				else
+				{
+					UIElement[BookmarkList@AutoLogoutFrame@ComBot_AutoLogout_Frame@ComBot_AutoLogout]:AddItem[${BookmarkIterator.Value.Label.Escape}]
+				}
+			}
+			while ${BookmarkIterator:Next(exists)}
+			
+			
+		return FALSE
+	}
+
 }

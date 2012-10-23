@@ -32,7 +32,11 @@ objectdef obj_TargetList inherits obj_State
 	variable index:entity TargetListBufferOOR
 	variable index:entity LockedTargetListBuffer
 	variable index:entity LockedTargetListBufferOOR
+	variable set AlreadyInList
 	variable index:string QueryStringList
+	variable collection:int TargetLockPrioritys
+	variable collection:int TargetLockPrioritysBuffer
+	variable set TargetExceptions
 	variable set LockedAndLockingTargets
 	variable int64 DistanceTarget
 	variable int MaxRange = 20000
@@ -49,6 +53,7 @@ objectdef obj_TargetList inherits obj_State
 	variable IPCCollection:int IPCExclusion
 	variable bool UseIPCExclusion = FALSE
 	variable bool ForceLockExclusion = FALSE
+	variable bool LockTop = FALSE
 	
 	method Initialize()
 	{
@@ -140,6 +145,45 @@ objectdef obj_TargetList inherits obj_State
 		This:AddQueryString["${QueryString.Escape}"]
 	}
 	
+	method AddTargetException(int64 ID)
+	{
+		variable iterator RemoveIterator
+		TargetExceptions:Add[${ID}]
+		TargetList:GetIterator[RemoveIterator]
+		if ${RemoveIterator:First(exists)}
+		{
+			do
+			{
+				if ${RemoveIterator.Value.ID.Equal[${ID}]}
+				{
+					TargetList:Remove[${RemoveIterator.Key}]
+				}
+			}
+			while ${RemoveIterator:Next(exists)}
+		}
+		LockedTargetList:GetIterator[RemoveIterator]
+		if ${RemoveIterator:First(exists)}
+		{
+			do
+			{
+				if ${RemoveIterator.Value.ID.Equal[${ID}]}
+				{
+					LockedTargetList:Remove[${RemoveIterator.Key}]
+				}
+			}
+			while ${RemoveIterator:Next(exists)}
+		}
+		if ${Entity[${ID}].IsLockedTarget}
+		{
+			Entity[${ID}]:UnlockTarget
+		}
+	}
+	
+	method ClearTargetExceptions()
+	{
+		TargetExceptions:Clear
+	}
+	
 	member:bool UpdateList()
 	{
 		Profiling:StartTrack["TargetList_UpdateList"]
@@ -167,7 +211,7 @@ objectdef obj_TargetList inherits obj_State
 		{
 			do
 			{
-				This:QueueState["GetQueryString", 20, "${QueryStringIterator.Value.Escape}"]
+				This:QueueState["GetQueryString", 20, "${QueryStringIterator.Value.Escape}, ${Math.Calc[${QueryStringList.Used}-${QueryStringIterator.Key}]}"]
 			}
 			while ${QueryStringIterator:Next(exists)}
 		}
@@ -196,7 +240,7 @@ objectdef obj_TargetList inherits obj_State
 		return TRUE
 	}
 	
-	member:bool GetQueryString(string QueryString)
+	member:bool GetQueryString(string QueryString, int Priority = 0)
 	{
 		Profiling:StartTrack["TargetList_GetQueryString"]
 		variable index:entity entity_index
@@ -239,10 +283,15 @@ objectdef obj_TargetList inherits obj_State
 					}
 					if ${entity_iterator.Value.DistanceTo[${DistanceTarget}]} <= ${MaxRange}
 					{
-						This.TargetListBuffer:Insert[${entity_iterator.Value.ID}]
-						if ${entity_iterator.Value.IsLockedTarget}
+						if !${TargetExceptions.Contains[${entity_iterator.Value.ID}]} && !${AlreadyInList.Contains[${entity_iterator.Value.ID}]}
 						{
-							This.LockedTargetListBuffer:Insert[${entity_iterator.Value.ID}]
+							This.TargetListBuffer:Insert[${entity_iterator.Value.ID}]
+							AlreadyInList:Add[${entity_iterator.Value.ID}]
+							if ${entity_iterator.Value.IsLockedTarget}
+							{
+								This.LockedTargetListBuffer:Insert[${entity_iterator.Value.ID}]
+								TargetLockPrioritysBuffer:Set[${entity_iterator.Value.ID}, ${Math.Calc[${Priority} + ${Ship.ModuleList_TargetModules.ActiveCountOn[${entity_iterator.Value.ID}]}*100]}]
+							}
 						}
 					}
 					else
@@ -261,10 +310,15 @@ objectdef obj_TargetList inherits obj_State
 					{
 						TargetList_DeadDelay:Set[${entity_iterator.Value.ID}, ${Math.Calc[${LavishScript.RunningTime} + 5000]}]
 					}
-					This.TargetListBufferOOR:Insert[${entity_iterator.Value.ID}]
-					if ${entity_iterator.Value.IsLockedTarget}
+					if !${TargetExceptions.Contains[${entity_iterator.Value.ID}]} && !${AlreadyInList.Contains[${entity_iterator.Value.ID}]}
 					{
-						This.LockedTargetListBufferOOR:Insert[${entity_iterator.Value.ID}]
+						This.TargetListBufferOOR:Insert[${entity_iterator.Value.ID}]
+						AlreadyInList:Add[${entity_iterator.Value.ID}]
+						if ${entity_iterator.Value.IsLockedTarget}
+						{
+							This.LockedTargetListBufferOOR:Insert[${entity_iterator.Value.ID}]
+							TargetLockPrioritysBuffer:Set[${entity_iterator.Value.ID}, ${Math.Calc[${Priority} + ${Ship.ModuleList_TargetModules.ActiveCountOn[${entity_iterator.Value.ID}]}*100]}]
+						}
 					}
 				}
 				while ${entity_iterator:Next(exists)}
@@ -322,11 +376,6 @@ objectdef obj_TargetList inherits obj_State
 			while ${EntityIterator:Next(exists)}
 		}
 		
-		This.TargetListBuffer:Clear
-		This.TargetListBufferOOR:Clear
-		This.LockedTargetListBuffer:Clear
-		This.LockedTargetListBufferOOR:Clear
-		
 		This.IPCTargets:GetIterator[EntityIterator]
 		if ${EntityIterator:First(exists)}
 		{
@@ -343,18 +392,26 @@ objectdef obj_TargetList inherits obj_State
 					}
 					elseif ${Entity[${EntityIterator.Key}].DistanceTo[${DistanceTarget}]} <= ${MaxRange}
 					{
-						This.TargetListBuffer:Insert[${EntityIterator.Key}]
-						if ${Entity[${EntityIterator.Key}].IsLockedTarget}
+						if !${AlreadyInList.Contains[${entity_iterator.Value.ID}]}
 						{
-							This.LockedTargetListBuffer:Insert[${EntityIterator.Key}]
+							AlreadyInList:Add[${entity_iterator.Value.ID}]
+							This.TargetListBuffer:Insert[${EntityIterator.Key}]
+							if ${Entity[${EntityIterator.Key}].IsLockedTarget}
+							{
+								This.LockedTargetListBuffer:Insert[${EntityIterator.Key}]
+							}
 						}
 					}
 					elseif ${Entity[${EntityIterator.Key}].DistanceTo[${DistanceTarget}]} > ${MaxRange} && ${ListOutOfRange}
 					{
-						This.TargetListBufferOOR:Insert[${EntityIterator.Key}]
-						if ${Entity[${EntityIterator.Key}].IsLockedTarget}
+						if !${AlreadyInList.Contains[${entity_iterator.Value.ID}]}
 						{
-							This.LockedTargetListBufferOOR:Insert[${EntityIterator.Key}]
+							AlreadyInList:Add[${entity_iterator.Value.ID}]
+							This.TargetListBufferOOR:Insert[${EntityIterator.Key}]
+							if ${Entity[${EntityIterator.Key}].IsLockedTarget}
+							{
+								This.LockedTargetListBufferOOR:Insert[${EntityIterator.Key}]
+							}
 						}
 					}
 				}
@@ -387,16 +444,26 @@ objectdef obj_TargetList inherits obj_State
 		
 		This:DeepCopyEntityIndex["This.LockedTargetListBufferOOR", "This.LockedTargetList"]
 		
+		This:DeepCopyCollection["This.TargetLockPriorityBuffer", "This.TargetLockPriority"]
+		
 		This.TargetListBuffer:Clear
 		This.TargetListBufferOOR:Clear
 		This.LockedTargetListBuffer:Clear
 		This.LockedTargetListBufferOOR:Clear
+		This.TargetLockPriorityBuffer:Clear
+		AlreadyInList:Clear
 		Profiling:EndTrack
 		return TRUE
 	}
 	
 	member:bool ManageLocks()
 	{
+		variable bool NeedLock = FALSE
+		variable int TopLocks = 0
+		variable bool IsTopLocked = FALSE
+		variable iterator LockIterator
+		variable int LowestPriority = 999999999
+		variable int64 LowestLock = -1
 		if !${Client.InSpace} || ${Me.ToEntity.Mode} == 3
 		{
 			Profiling:EndTrack
@@ -404,8 +471,6 @@ objectdef obj_TargetList inherits obj_State
 		}
 		Profiling:StartTrack["TargetList_ManageLocks"]
 		variable iterator EntityIterator
-		variable bool NeedLock = FALSE
-		variable int64 LowestLock = -1
 		variable int MaxTarget = ${MyShip.MaxLockedTargets}
 		if ${Me.MaxLockedTargets} < ${MyShip.MaxLockedTargets}
 		{
@@ -444,7 +509,75 @@ objectdef obj_TargetList inherits obj_State
 		}
 
 		This.TargetList:GetIterator[EntityIterator]
-		if ${LockedAndLockingTargets.Used} < ${MinLockCount}
+		
+		
+		
+		if ${LockTop}
+		{
+			if ${EntityIterator:First(exists)}
+			{
+				do
+				{
+					if ${EntityIterator.Value.ID(exists)}
+					{
+						IsTopLocked:Set[FALSE]
+						if ${EntityIterator.Value.IsLockedTarget} || ${EntityIterator.Value.BeingTargeted}
+						{
+							TopLocks:Inc
+							IsTopLocked:Set[TRUE]
+						}
+						if ${UseIPCExclusion}
+						{
+							if ${IPCExclusion.Element[${EntityIterator.Value.ID}](exists)}
+							{
+								TopLocks:Inc
+								IsTopLocked:Set[TRUE]
+							}
+						}
+						if !${IsTopLocked}
+						{
+							break
+						}
+					}
+				}
+				while ${EntityIterator:Next(exists)}
+			}
+			if ${TopLocks} < ${MinLockCount}
+			{
+				NeedLock:Set[TRUE]
+			}
+		}
+		else
+		{
+			if ${LockedAndLockingTargets.Used} < ${MinLockCount}
+			{
+				NeedLock:Set[TRUE]
+			}
+		}
+		
+		if ${NeedLock} && ${TopLock} && ${LockedAndLockingTargets.Used} >= ${MinLockCount}
+		{
+			TargetLockPrioritys:GetIterator[LockIterator]
+			if ${LockIterator:First(exists)}
+			{
+				do
+				{
+					if ${LockIterator.Value} < ${LowestPriority}
+					{
+						LowestLock:Set[${LockIterator.Key}]
+						LowestPriority:Set[${LockIterator.Value}]
+					}
+				}
+				while ${LockIterator:Next(exists)}
+			}
+			if ${LowestPriority} < 1000
+			{
+				Entity[${LowestLock}]:UnlockTarget
+				return FALSE
+			}
+		}
+		
+		if ${NeedLock} && ${LockedAndLockingTargets.Used} < ${MinLockCount}
 		{
 			if ${EntityIterator:First(exists)}
 			{
@@ -526,6 +659,44 @@ objectdef obj_TargetList inherits obj_State
 		return TRUE
 	}
 	
+	method LockTarget(int64 Target, int Priority)
+	{
+		variable iterator LockIterator
+		variable int LowestPriority = 9999999
+		variable int64 LowestLock
+		if ${LockedAndLockingTargets.Used} >= ${MinLockCount}
+		{
+			TargetLockPrioritys:GetIterator[LockIterator]
+			if ${LockIterator:First(exists)}
+			{
+				do
+				{
+					if ${LockIterator.Value} < ${LowestPriority}
+					{
+						LowestLock:Set[${LockIterator.Key}]
+						LowestPriority:Set[${LockIterator.Value}]
+					}
+				}
+				while ${LockIterator:Next(exists)}
+			}
+			if ${LowestPriority} < ${Priority}
+			{
+				Entity[${LowestLock}]:UnlockTarget
+				return FALSE
+			}
+		}
+		This:InsertState[LockNewTarget, 250, ${ID}]
+	}
+	
+	member:bool LockNewTarget(int64 ID)
+	{
+		if ${Entity[${ID}](exists)}
+		{
+			Entity[${ID}]:LockTarget
+		}
+		return TRUE
+	}
+	
 	method ClearExclusions()
 	{
 		variable iterator ExclusionIterator
@@ -563,6 +734,20 @@ objectdef obj_TargetList inherits obj_State
 				${To}:Insert[${EntityIterator.Value.ID}]
 			}
 			while ${EntityIterator:Next(exists)}
+		}
+	}
+	
+	method DeepCopyCollection(string From, string To)
+	{
+		variable iterator ColIterator
+		${From}:GetIterator[ColIterator]
+		if ${ColIterator:First(exists)}
+		{
+			do
+			{
+				${To}:Set[${ColIterator.Key}, ${ColIterator.Value}]
+			}
+			while ${ColIterator:Next(exists)}
 		}
 	}
 	

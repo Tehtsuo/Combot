@@ -48,6 +48,7 @@ objectdef obj_Configuration_AutoModule
 		This.CommonRef:AddSetting[GangLink, TRUE]
 		This.CommonRef:AddSetting[SensorBoosters, TRUE]
 		This.CommonRef:AddSetting[TrackingComputers, TRUE]
+		This.CommonRef:AddSetting[ECCM, TRUE]
 	}
 
 	Setting(bool, ActiveHardeners, SetActiveHardeners)
@@ -59,6 +60,7 @@ objectdef obj_Configuration_AutoModule
 	Setting(bool, GangLink, SetGangLink)
 	Setting(bool, SensorBoosters, SetSensorBoosters)
 	Setting(bool, TrackingComputers, SetTrackingComputers)
+	Setting(bool, ECCM, SetECCM)
 	
 }
 
@@ -134,6 +136,11 @@ objectdef obj_AutoModule inherits obj_State
 		if ${Ship.ModuleList_TrackingComputer.ActiveCount} < ${Ship.ModuleList_TrackingComputer.Count} && ${Config.TrackingComputers}
 		{
 			Ship.ModuleList_TrackingComputer:ActivateCount[${Math.Calc[${Ship.ModuleList_TrackingComputer.Count} - ${Ship.ModuleList_TrackingComputer.ActiveCount}]}]
+		}
+		
+		if ${Ship.ModuleList_ECCM.ActiveCount} < ${Ship.ModuleList_ECCM.Count} && ${Config.ECCM}
+		{
+			Ship.ModuleList_ECCM:ActivateCount[${Math.Calc[${Ship.ModuleList_ECCM.Count} - ${Ship.ModuleList_ECCM.ActiveCount}]}]
 		}
 
 		

@@ -42,21 +42,21 @@ objectdef obj_Configuration_Hauler
 	{
 		BaseConfig.BaseRef:AddSet[${This.SetName}]
 
-		This.CommonRef:AddSetting[Dropoff_ContainerName,""]
-		This.CommonRef:AddSetting[Pickup_ContainerName,""]
+		This.CommonRef:AddSetting[DropoffContainer,""]
+		This.CommonRef:AddSetting[PickupContainer,""]
 		This.CommonRef:AddSetting[Dropoff,""]
 		This.CommonRef:AddSetting[Pickup,""]
 		
 	}
 	
 	Setting(string, MiningSystem, SetMiningSystem)	
-	Setting(string, Pickup_SubType, SetPickup_SubType)
+	Setting(string, PickupSubType, SetPickupSubType)
 	Setting(string, Dropoff, SetDropoff)
 	Setting(string, Pickup, SetPickup)
-	Setting(string, Dropoff_Type, SetDropoff_Type)
-	Setting(string, Pickup_Type, SetPickup_Type)
-	Setting(string, Dropoff_ContainerName, SetDropoff_ContainerName)
-	Setting(string, Pickup_ContainerName, SetPickup_ContainerName)
+	Setting(string, DropoffType, SetDropoffType)
+	Setting(string, PickupType, SetPickupType)
+	Setting(string, DropoffContainer, SetDropoffContainer)
+	Setting(string, PickupContainer, SetPickupContainer)
 	Setting(int, Threshold, SetThreshold)	
 	
 }
@@ -135,7 +135,7 @@ objectdef obj_Hauler inherits obj_State
 	
 	member:bool CheckCargoHold()
 	{
-		switch ${Config.Dropoff_Type}
+		switch ${Config.DropoffType}
 		{
 			case Container
 				if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) >= ${Config.Threshold} * .01
@@ -170,7 +170,7 @@ objectdef obj_Hauler inherits obj_State
 
 	member:bool OrcaWait()
 	{
-		if ${Config.Pickup_Type.Equal[Orca]}
+		if ${Config.PickupType.Equal[Orca]}
 		{
 			if ${OrcaCargo} > ${Config.Threshold} * .01 * ${MyShip.CargoCapacity}
 			{
@@ -205,7 +205,7 @@ objectdef obj_Hauler inherits obj_State
 			MyShip:OpenCargo[]
 			return FALSE
 		}
-		switch ${Config.Dropoff_Type}
+		switch ${Config.DropoffType}
 		{
 			case Personal Hangar
 				break
@@ -227,13 +227,13 @@ objectdef obj_Hauler inherits obj_State
 	{
 		UI:Update["obj_Hauler", "Unloading cargo", "g"]
 		Cargo:PopulateCargoList[SHIP]
-		switch ${Config.Dropoff_Type}
+		switch ${Config.DropoffType}
 		{
 			case Personal Hangar
 				Cargo:MoveCargoList[HANGAR]
 				break
 			default
-				Cargo:MoveCargoList[CORPORATEHANGAR, ${Config.Dropoff_Type}]
+				Cargo:MoveCargoList[CORPORATEHANGAR, ${Config.DropoffType}]
 				break
 		}
 		return TRUE
@@ -241,7 +241,7 @@ objectdef obj_Hauler inherits obj_State
 
 	member:bool Pickup()
 	{
-		switch ${Config.Pickup_Type}
+		switch ${Config.PickupType}
 		{
 			case Personal Hangar
 				UI:Update["obj_Hauler", "Loading cargo", "g"]
@@ -267,13 +267,13 @@ objectdef obj_Hauler inherits obj_State
 		}
 
 		UI:Update["obj_Hauler", "Stacking dropoff container", "g"]
-		switch ${Config.Dropoff_Type}
+		switch ${Config.DropoffType}
 		{
 			case Personal Hangar
 				EVE:StackItems[MyStationHangar, Hangar]
 				break
 			default
-				EVE:StackItems[MyStationCorporateHangar, StationCorporateHangar, "${Config.Dropoff_Type}"]
+				EVE:StackItems[MyStationCorporateHangar, StationCorporateHangar, "${Config.DropoffType}"]
 				break
 		}
 		return TRUE
@@ -526,13 +526,13 @@ objectdef obj_Hauler inherits obj_State
 		}
 
 		echo Pickup Type
-		switch ${Config.Pickup_Type}
+		switch ${Config.PickupType}
 		{
 			case Orca
 				echo Orca
-				if ${Entity[Name = "${Config.Pickup_ContainerName}"](exists)}
+				if ${Entity[Name = "${Config.PickupContainerName}"](exists)}
 				{
-					Container:Set[${Entity[Name = "${Config.Pickup_ContainerName}"].ID}]
+					Container:Set[${Entity[Name = "${Config.PickupContainerName}"].ID}]
 					if ${Entity[${Container}].Distance} > LOOT_RANGE
 					{
 						Move:Approach[${Container}, LOOT_RANGE]
@@ -544,7 +544,7 @@ objectdef obj_Hauler inherits obj_State
 						{
 							if !${EVEWindow[ByName, Inventory].ChildWindowExists[${Container}]}
 							{
-								UI:Update["obj_Hauler", "Opening ${Config.Pickup_ContainerName}", "g"]
+								UI:Update["obj_Hauler", "Opening ${Config.PickupContainerName}", "g"]
 								Entity[${Container}]:Open
 								return FALSE
 							}
@@ -566,10 +566,10 @@ objectdef obj_Hauler inherits obj_State
 				else
 				{
 					echo Check for orca
-					if ${Local[${Config.Pickup_ContainerName}].ToFleetMember(exists)}
+					if ${Local[${Config.PickupContainerName}].ToFleetMember(exists)}
 						{
-							UI:Update["obj_Hauler", "Warping to ${Local[${Config.Pickup_ContainerName}].ToFleetMember.ToPilot.Name}", "g"]
-							Local[${Config.Pickup_ContainerName}].ToFleetMember:WarpTo
+							UI:Update["obj_Hauler", "Warping to ${Local[${Config.PickupContainerName}].ToFleetMember.ToPilot.Name}", "g"]
+							Local[${Config.PickupContainerName}].ToFleetMember:WarpTo
 							Client:Wait[5000]
 							This:Clear
 							This:QueueState["Traveling", 1000]
@@ -580,9 +580,9 @@ objectdef obj_Hauler inherits obj_State
 				break
 
 			case Container
-				if ${Entity[Name = "${Config.Pickup_ContainerName}"](exists)}
+				if ${Entity[Name = "${Config.PickupContainerName}"](exists)}
 				{
-					Container:Set[${Entity[Name = "${Config.Pickup_ContainerName}"].ID}]
+					Container:Set[${Entity[Name = "${Config.PickupContainerName}"].ID}]
 					if ${Entity[${Container}].Distance} > LOOT_RANGE
 					{
 						Move:Approach[${Container}, LOOT_RANGE]
@@ -592,7 +592,7 @@ objectdef obj_Hauler inherits obj_State
 					{
 						if !${EVEWindow[ByName, Inventory].ChildWindowExists[${Container}]}
 						{
-							UI:Update["obj_Hauler", "Opening ${Config.Pickup_ContainerName}", "g"]
+							UI:Update["obj_Hauler", "Opening ${Config.PickupContainerName}", "g"]
 							Entity[${Container}]:Open
 							return FALSE
 						}
@@ -620,8 +620,7 @@ objectdef obj_Hauler inherits obj_State
 				}
 				break
 			case Jetcan
-				echo Jetcan Mode ${Config.Pickup_SubType}
-				Switch ${Config.Pickup_SubType}
+				Switch ${Config.PickupSubType}
 				{
 					case Fleet Jetcan
 						echo Fleet Jetcan
@@ -746,11 +745,11 @@ objectdef obj_Hauler inherits obj_State
 			
 		}
 		
-		if ${Config.Dropoff_Type.Equal[Container]}
+		if ${Config.DropoffType.Equal[Container]}
 		{
-			if ${Entity[Name = "${Config.Dropoff_ContainerName}"](exists)}
+			if ${Entity[Name = "${Config.DropoffContainerName}"](exists)}
 			{
-				Container:Set[${Entity[Name = "${Config.Dropoff_ContainerName}"].ID}]
+				Container:Set[${Entity[Name = "${Config.DropoffContainerName}"].ID}]
 				if ${Entity[${Container}].Distance} > LOOT_RANGE
 				{
 					Move:Approach[${Container}, LOOT_RANGE]
@@ -762,7 +761,7 @@ objectdef obj_Hauler inherits obj_State
 					{
 						if !${EVEWindow[ByName, Inventory].ChildWindowExists[${Container}]}
 						{
-							UI:Update["obj_Hauler", "Opening ${Config.Dropoff_ContainerName}", "g"]
+							UI:Update["obj_Hauler", "Opening ${Config.DropoffContainerName}", "g"]
 							Entity[${Container}]:Open
 							return FALSE
 						}
@@ -771,7 +770,7 @@ objectdef obj_Hauler inherits obj_State
 							EVEWindow[ByName, Inventory]:MakeChildActive[${Container}]
 							return FALSE
 						}
-						;UI:Update["obj_Hauler", "Unloading to ${Config.Dropoff_ContainerName}", "g"]
+						;UI:Update["obj_Hauler", "Unloading to ${Config.DropoffContainerName}", "g"]
 						Cargo:PopulateCargoList[SHIP]
 						Cargo:MoveCargoList[SHIPCORPORATEHANGAR, "", ${Container}]
 						This:QueueState["Idle", 1000]
@@ -813,7 +812,11 @@ objectdef obj_HaulerUI inherits obj_State
 	
 	method Start()
 	{
-		This:QueueState["UpdateBookmarkLists", 5]
+		if ${This.IsIdle}
+		{
+			This:QueueState["OpenCargoHold"]
+			This:QueueState["UpdateBookmarkLists", 5]
+		}
 	}
 	
 	method Stop()
@@ -821,6 +824,17 @@ objectdef obj_HaulerUI inherits obj_State
 		This:Clear
 	}
 
+	member:bool OpenCargoHold()
+	{
+		if !${EVEWindow[ByName, "Inventory"](exists)}
+		{
+			UI:Update["obj_Hauler", "Opening inventory", "g"]
+			MyShip:OpenCargo[]
+			return FALSE
+		}
+		return TRUE
+	}
+	
 	member:bool UpdateBookmarkLists()
 	{
 		variable index:bookmark Bookmarks
@@ -829,34 +843,34 @@ objectdef obj_HaulerUI inherits obj_State
 		EVE:GetBookmarks[Bookmarks]
 		Bookmarks:GetIterator[BookmarkIterator]
 		
-		UIElement[DropoffList@Hauler_Frame@ComBot_Hauler]:ClearItems
+		UIElement[DropoffList@DropoffFrame@Hauler_Frame@ComBot_Hauler]:ClearItems
 		if ${BookmarkIterator:First(exists)}
 			do
 			{	
-				if ${UIElement[Dropoff@Hauler_Frame@ComBot_Hauler].Text.Length}
+				if ${UIElement[Dropoff@DropoffFrame@Hauler_Frame@ComBot_Hauler].Text.Length}
 				{
 					if ${BookmarkIterator.Value.Label.Left[${Hauler.Config.Dropoff.Length}].Equal[${Hauler.Config.Dropoff}]}
-						UIElement[DropoffList@Hauler_Frame@ComBot_Hauler]:AddItem[${BookmarkIterator.Value.Label.Escape}]
+						UIElement[DropoffList@DropoffFrame@Hauler_Frame@ComBot_Hauler]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 				else
 				{
-					UIElement[DropoffList@Hauler_Frame@ComBot_Hauler]:AddItem[${BookmarkIterator.Value.Label.Escape}]
+					UIElement[DropoffList@DropoffFrame@Hauler_Frame@ComBot_Hauler]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 			}
 			while ${BookmarkIterator:Next(exists)}
 			
-		UIElement[PickupList@Hauler_Frame@ComBot_Hauler]:ClearItems
+		UIElement[PickupList@PickupFrame@Hauler_Frame@ComBot_Hauler]:ClearItems
 		if ${BookmarkIterator:First(exists)}
 			do
 			{	
-				if ${UIElement[Pickup@Hauler_Frame@ComBot_Hauler].Text.Length}
+				if ${UIElement[Pickup@PickupFrame@Hauler_Frame@ComBot_Hauler].Text.Length}
 				{
 					if ${BookmarkIterator.Value.Label.Left[${Hauler.Config.Pickup.Length}].Equal[${Hauler.Config.Pickup}]}
-						UIElement[PickupList@Hauler_Frame@ComBot_Hauler]:AddItem[${BookmarkIterator.Value.Label.Escape}]
+						UIElement[PickupList@PickupFrame@Hauler_Frame@ComBot_Hauler]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 				else
 				{
-					UIElement[PickupList@Hauler_Frame@ComBot_Hauler]:AddItem[${BookmarkIterator.Value.Label.Escape}]
+					UIElement[PickupList@PickupFrame@Hauler_Frame@ComBot_Hauler]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 			}
 			while ${BookmarkIterator:Next(exists)}

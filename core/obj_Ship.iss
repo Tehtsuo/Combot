@@ -50,6 +50,7 @@ objectdef obj_Ship inherits obj_State
 		This:AddModuleList[TrackingComputer, "ToItem.GroupID = GROUP_TRACKINGCOMPUTER"]
 		This:AddModuleList[GangLinks, "ToItem.GroupID = GROUP_GANGLINK"]
 		This:AddModuleList[EnergyTransfer, "ToItem.GroupID = GROUP_ENERGY_TRANSFER"]
+		This:AddModuleList[TargetModules, "MaxRange>0"]
 		This:Clear
 		This:QueueState["WaitForSpace"]
 		This:QueueState["UpdateModules"]
