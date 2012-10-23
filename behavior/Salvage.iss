@@ -287,14 +287,15 @@ objectdef obj_Salvage inherits obj_State
 	
 	member:bool InitialUpdate()
 	{
+		Wrecks:ClearTargetExceptions
 		Wrecks:ClearQueryString
 		if ${Config.SalvageYellow}
 		{
-			Wrecks:AddQueryString["(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && !IsAbandoned && !IsMoribund"]
+			Wrecks:AddQueryString["(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && !IsMoribund"]
 		}
 		else
 		{
-			Wrecks:AddQueryString["(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && HaveLootRights && !IsAbandoned && !IsMoribund"]
+			Wrecks:AddQueryString["(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && HaveLootRights && !IsMoribund"]
 		}
 	
 		Wrecks:RequestUpdate
@@ -816,24 +817,24 @@ objectdef obj_LootCans inherits obj_State
 			return FALSE
 		}
 
-		if ${Entity[(GroupID==GROUP_CARGOCONTAINER) && IsAbandoned](exists)}
-		{
-			Entity[(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && IsAbandoned]:UnlockTarget
-		}
-		
 		if ${Salvage.Config.SalvageYellow}
 		{
-			EVE:QueryEntities[Targets, "(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && !IsWreckEmpty && Distance<LOOT_RANGE && !IsAbandoned"]
+			EVE:QueryEntities[Targets, "(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && !IsWreckEmpty && Distance<LOOT_RANGE"]
 		}
 		else
 		{
-			EVE:QueryEntities[Targets, "(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && HaveLootRights && !IsWreckEmpty && Distance<LOOT_RANGE && !IsAbandoned"]
+			EVE:QueryEntities[Targets, "(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && HaveLootRights && !IsWreckEmpty && Distance<LOOT_RANGE"]
 		}
 		Targets:GetIterator[TargetIterator]
 		if ${TargetIterator:First(exists)} && ${EVEWindow[ByName, Inventory](exists)}
 		{
 			do
 			{
+				if ${Salvage.Wrecks.TargetExceptions.Contains[${TargetIterator.Value.ID}]}
+				{
+					continue
+				}
+			
 				if ${EVEWindow[ByName, Inventory].ChildWindowExists[${TargetIterator.Value}]}
 				{
 					if !${EVEWindow[ByItemID, ${TargetIterator.Value}](exists)}
@@ -850,7 +851,7 @@ objectdef obj_LootCans inherits obj_State
 						{
 							if ${CargoIterator.Value.IsContraband}
 							{
-								TargetIterator.Value:Abandon
+								Salvage.Wrecks:AddTargetException[${TargetIterator.Value.ID}]
 								return FALSE
 							}
 						}
