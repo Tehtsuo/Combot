@@ -19,10 +19,25 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
+objectdef obj_Configuration_DroneControl inherits obj_Base_Configuration
+{
+	method Initialize()
+	{
+		This[parent]:Initialize["DroneControl"]
+	}
+
+Setting(int64, DroneType, SetDroneType)
+
+}
+
+
 
 objectdef obj_DroneControl inherits obj_State
 {
 	variable obj_TargetList DroneTargets
+	
+	variable obj_Configuration_DroneControl Config
+	
 	variable int64 CurrentTarget = -1
 	
 	method Initialize()
@@ -54,9 +69,9 @@ objectdef obj_DroneControl inherits obj_State
 		}
 		if ${Me.ToEntity.Mode} == 3
 		{
-			if ${DronesOut}
+			if !${Drones.DronesInSpace.Equal[0]}
 			{
-				This:Recall
+				Drones:Recall["", 5]
 			}
 			return FALSE
 		}
@@ -77,7 +92,7 @@ objectdef obj_DroneControl inherits obj_State
 		{
 			if ${Drones.DronesInSpace.Equal[0]}
 			{
-				Drones:Deploy["TypeID == 21638", 5]
+				Drones:Deploy["TypeID == ${Config.DroneType}", 5]
 				return FALSE
 			}
 			do
@@ -85,7 +100,7 @@ objectdef obj_DroneControl inherits obj_State
 				if ${CurrentTarget.Equal[-1]} && ${TargetIterator.Value.Distance} < ${Me.DroneControlDistance}
 				{
 					CurrentTarget:Set[${TargetIterator.Value.ID}]
-					Drones:Engage["TypeID == 21638", ${CurrentTarget}, 5]
+					Drones:Engage["TypeID == ${Config.DroneType}", ${CurrentTarget}, 5]
 					return FALSE
 				}
 			}
@@ -95,7 +110,7 @@ objectdef obj_DroneControl inherits obj_State
 		{
 			if !${Drones.DronesInSpace.Equal[0]}
 			{
-				Drones:Recall["TypeID = 21638", 5]
+				Drones:Recall["TypeID = ${Config.DroneType}", 5]
 				This:QueueState["Idle", 5000]
 				This:QueueState["DroneControl"]
 				return TRUE

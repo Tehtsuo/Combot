@@ -29,51 +29,38 @@ objectdef obj_Configuration_DroneData
 
 	method Initialize()
 	{
-		LavishSettings[RefineData]:Clear
-		LavishSettings:AddSet[RefineData]
-		LavishSettings[RefineData]:AddSet[${Me.Name}]
+		LavishSettings[DroneData]:Clear
+		LavishSettings:AddSet[DroneData]
 
 		if ${CONFIG_PATH.FileExists["${CONFIG_FILE}"]}
 		{
-			LavishSettings[RefineData]:Import["${CONFIG_PATH}/${CONFIG_FILE}"]
+			LavishSettings[DroneData]:Import["${CONFIG_PATH}/${CONFIG_FILE}"]
 		}
-		BaseRef:Set[${LavishSettings[RefineData].FindSet[Refines]}]
+		BaseRef:Set[${LavishSettings[DroneData].FindSet[DroneTypes]}]
 
 		UI:Update["obj_Configuration", " ${This.SetName}: Initialized", "-g"]
 	}
 
 	method Shutdown()
 	{
-		LavishSettings[RefineData]:Clear
+		LavishSettings[DroneData]:Clear
 	}
 	
-	member:int Tritanium(int ID)
+	member:string DroneType(int TypeID)
 	{
-		return ${This.BaseRef.FindSet["${ID}"].FindSetting["34"]}
-	}
-	member:int Pyerite(int ID)
-	{
-		return ${This.BaseRef.FindSet["${ID}"].FindSetting["35"]}
-	}
-	member:int Mexallon(int ID)
-	{
-		return ${This.BaseRef.FindSet["${ID}"].FindSetting["36"]}
-	}
-	member:int Isogen(int ID)
-	{
-		return ${This.BaseRef.FindSet["${ID}"].FindSetting["37"]}
-	}
-	member:int Nocxium(int ID)
-	{
-		return ${This.BaseRef.FindSet["${ID}"].FindSetting["38"]}
-	}
-	member:int Zydrine(int ID)
-	{
-		return ${This.BaseRef.FindSet["${ID}"].FindSetting["39"]}
-	}
-	member:int Megacyte(int ID)
-	{
-		return ${This.BaseRef.FindSet["${ID}"].FindSetting["40"]}
+		variable iterator DroneTypes
+		BaseRef:GetSetIterator[DroneTypes]
+		if ${DroneTypes:First(exists)}
+		{
+			do
+			{
+				if ${DroneTypes.Value.FindSetting[${TypeID}](exists)}
+				{
+					return ${DroneTypes.Key}
+				}
+			}
+			while ${DroneTypes:Next(exists)
+		}
 	}
 }
 
