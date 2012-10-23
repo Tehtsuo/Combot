@@ -28,7 +28,7 @@ objectdef obj_ShortCycle inherits obj_State
 	{
 		This[parent]:Initialize
 		This.NonGameTiedPulse:Set[TRUE]
-		
+		This.RandomDelta:Set[10000]
 		DynamicAddMiniMode("ShortCycle", "ShortCycle")
 	}
 	
