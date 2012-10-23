@@ -806,6 +806,7 @@ objectdef obj_LootCans inherits obj_State
 		variable iterator TargetIterator
 		variable index:item TargetCargo
 		variable iterator CargoIterator
+		variable int i=0
 	
 		if !${Client.InSpace}
 		{
@@ -817,10 +818,10 @@ objectdef obj_LootCans inherits obj_State
 			return FALSE
 		}
 
-		if ${Entity[(GroupID==GROUP_CARGOCONTAINER) && IsAbandoned](exists)}
-		{
-			Entity[(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && IsAbandoned]:UnlockTarget
-		}
+		; if ${Entity[(GroupID==GROUP_CARGOCONTAINER) && IsAbandoned](exists)}
+		; {
+			; Entity[(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && IsAbandoned]:UnlockTarget
+		; }
 		
 		if ${Salvage.Config.SalvageYellow}
 		{
@@ -835,6 +836,8 @@ objectdef obj_LootCans inherits obj_State
 		{
 			do
 			{
+				i:Inc
+				echo ${i}
 				if ${Salvage.Wrecks.TargetExceptions.Contains[${TargetIterator.Value.ID}]}
 				{
 					if ${TargetIterator:Next(exists)}
