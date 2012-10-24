@@ -27,6 +27,7 @@ objectdef obj_Configuration_DroneControl inherits obj_Base_Configuration
 	}
 
 Setting(int, DroneType, SetDroneType)
+Setting(int, SentryType, SetSentryType)
 Setting(bool, Sentries, SetSentries)
 Setting(int, SentryRange, SetSentryRange)
 
@@ -89,21 +90,52 @@ objectdef obj_DroneControl inherits obj_State
 		{
 			CurrentTarget:Set[-1]
 		}
+		else
+		{
+			if ${Entity[${CurrentTarget}].Distance} < 30000
+			{
+				if ${Drones.ActiveDroneCount["TypeID == ${Config.SentryType}"]} > 0
+				{
+					Drones:Recall["TypeID == ${Config.SentryType}", 5]
+					This:QueueState["Idle", 5000]
+					This:QueueState["DroneControl"]
+					return TRUE
+				}
+			}
+			if ${Entity[${CurrentTarget}].Distance} > 35000
+			{
+				if ${Drones.ActiveDroneCount["TypeID == ${Config.DroneType}"]} > 0
+				{
+					Drones:Recall["TypeID == ${Config.DroneType}", 5]
+					This:QueueState["Idle", 5000]
+					This:QueueState["DroneControl"]
+					return TRUE
+				}
+			}
+			if !${Drones.DronesInSpace.Equal[0]}
+			{
+				Drones:Engage["TypeID == ${Config.DroneType} || TypeID == ${Config.SentryType}", ${CurrentTarget}, 5]
+			}
+			else
+			{
+				if ${Entity[${CurrentTarget}].Distance} > 30000
+				{
+					Drones:Launch["TypeID == ${Config.SentryType}", 5]
+				}
+				else
+				{
+					Drones:Launch["TypeID == ${Config.DroneType}", 5]
+				}
+			}
+		}
 		
 		if ${TargetIterator:First(exists)}
 		{
-			if ${Drones.DronesInSpace.Equal[0]}
-			{
-				Drones:Deploy["TypeID == ${Config.DroneType}", 5]
-				return FALSE
-			}
 			do
 			{
 				if ${CurrentTarget.Equal[-1]} && ${TargetIterator.Value.Distance} < ${Me.DroneControlDistance}
 				{
 					CurrentTarget:Set[${TargetIterator.Value.ID}]
-					Drones:Engage["TypeID == ${Config.DroneType}", ${CurrentTarget}, 5]
-					return FALSE
 				}
 			}
 			while ${TargetIterator:Next(exists)}
@@ -112,7 +144,7 @@ objectdef obj_DroneControl inherits obj_State
 		{
 			if !${Drones.DronesInSpace.Equal[0]}
 			{
-				Drones:Recall["TypeID = ${Config.DroneType}", 5]
+				Drones:Recall["TypeID = ${Config.DroneType} || TypeID == ${Config.SentryType}", 5]
 				This:QueueState["Idle", 5000]
 				This:QueueState["DroneControl"]
 				return TRUE
