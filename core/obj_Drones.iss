@@ -62,11 +62,30 @@ objectdef obj_Configuration_DroneData
 			while ${DroneTypes:Next(exists)}
 		}
 	}
+	
+	member:int FindType(string TypeName)
+	{
+		variable iterator DroneTypeIDs
+		BaseRef.FindSet[${TypeName}]:GetSettingIterator[DroneTypeIDs]
+		if ${DroneTypeIDs:First(exists)}
+		{
+			do
+			{
+				if ${Drones.InactiveDroneCount[${DroneTypeIDs.Key}]} > 0
+				{
+					return ${DroneTypeIDs.Key}
+				}
+			}
+			while ${DroneTypeIDs:Next(exists)}
+		}
+	}
 }
 
 
 objectdef obj_Drones inherits obj_State
 {
+	variable obj_Configuration_DroneData Data
+	
 	method Initialize()
 	{
 		This[parent]:Initialize
@@ -165,11 +184,19 @@ objectdef obj_Drones inherits obj_State
 	member:int InactiveDroneCount(string TypeQuery)
 	{
 		variable index:item DroneBayDrones
-		variable index:int64 DronesToLaunch
 		MyShip:GetDrones[DroneBayDrones]
 		DroneBayDrones:RemoveByQuery[${LavishScript.CreateQuery[${TypeQuery}]}, FALSE]
 		DroneBayDrones:Collapse[]
 		return ${DroneBayDrones.Used}
+	}
+	
+	member:int ActiveDroneCount(string TypeQuery)
+	{
+		variable index:activedrone ActiveDrones
+		Me:GetActiveDrones[ActiveDrones]
+		ActiveDrones:RemoveByQuery[${LavishScript.CreateQuery[${TypeQuery}]}, FALSE]
+		ActiveDrones:Collapse[]
+		return ${ActiveDrones.Used}
 	}
 	
 	member:bool SwitchTarget(int64 TargetID)
@@ -201,7 +228,10 @@ objectdef obj_Drones inherits obj_State
 					{
 						break
 					}
-					DronesToEngage:Insert[${DroneIterator.Value.ID}]
+					if !${DroneIterator.Value.Target.Equal[${TargetID}]}
+					{
+						DronesToEngage:Insert[${DroneIterator.Value.ID}]
+					}
 					Selected:Inc
 				}
 				while ${DroneIterator:Next(exists)}

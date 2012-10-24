@@ -89,7 +89,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Alignment>Center</Alignment>
 						<Text>Drone List</Text>
 					</Text>
-					<listbox Name="EntityList">
+					<listbox Name="DroneList">
 						<BackgroundColor>FF000000</BackgroundColor>
 						<Border>1</Border>
 						<BorderColor>FFFFFFFF</BorderColor>
@@ -122,7 +122,42 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							Script[ComBot].VariableScope.DroneControl.Config:SetDroneType[${This.SelectedItem.Value}]
 						</OnSelect>
 					</listbox>
-					
+					<listbox Name="SentryList">
+						<BackgroundColor>FF000000</BackgroundColor>
+						<Border>1</Border>
+						<BorderColor>FFFFFFFF</BorderColor>
+						<X>35%</X>
+						<Y>15%</Y>
+						<Width>32%</Width>
+						<Height>30%</Height>
+						<OnLoad>
+							variable index:item drones
+							variable iterator drone
+							MyShip:GetDrones[drones]
+							drones:GetIterator[drone]
+							if ${drone:First(exists)}
+							{
+								do
+								{
+									if ${Script[ComBot].VariableScope.Drones.Data.DroneType[${drone.Value.TypeID}].Equal[Sentry Drones]}
+									{
+										if !${This.ItemByValue[${drone.Value.TypeID}](exists)}
+										{
+											This:AddItem[${drone.Value.Name}, ${drone.Value.TypeID}]
+										}
+									}
+								}
+								while ${drone:Next(exists)}
+							}
+							
+							This.ItemByValue[${Script[ComBot].VariableScope.DroneControl.Config.SentryDrone}]:Select
+							
+						</OnLoad>
+						<OnSelect>
+							echo ${This.SelectedItem.Value}
+							Script[ComBot].VariableScope.DroneControl.Config:SetSentryDrone[${This.SelectedItem.Value}]
+						</OnSelect>
+					</listbox>
 					<Checkbox name='Sentries'>
 						<X>1%</X>
 						<Y>50%</Y>
@@ -152,8 +187,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<OnChange>
 							Script[ComBot].VariableScope.DroneControl.Config:SetSentryRange[${This.Value}]
 						</OnChange>
-					</Slider>							
-					
+					</Slider>
 				</Children>
 			</Frame>
 		</Children>
