@@ -122,6 +122,38 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							Script[ComBot].VariableScope.DroneControl.Config:SetDroneType[${This.SelectedItem.Value}]
 						</OnSelect>
 					</listbox>
+					
+					<Checkbox name='Sentries'>
+						<X>1%</X>
+						<Y>50%</Y>
+						<Width>30%</Width> 
+						<Height>3%</Height> 
+						<Text>Use Sentry drones to attack targets more than ${Script[ComBot].VariableScope.DroneControl.Config.SentryRange} km away</Text>
+						<OnLoad>
+							if ${Script[ComBot].VariableScope.DroneControl.Config.Sentries}
+							{
+								This:SetChecked
+							}
+						</OnLoad>
+						<OnLeftClick>
+							Script[ComBot].VariableScope.DroneControl.Config:SetSentries[${This.Checked}]
+						</OnLeftClick>
+					</Checkbox>
+					<Slider name='SentryRange'> 
+						<X>70%</X>
+						<Y>50%</Y>
+						<Width>20%</Width> 
+						<Height>3%</Height> 
+						<Border>1</Border>
+						<Range>300</Range>
+						<OnLoad>
+							This:SetValue[${Script[ComBot].VariableScope.DroneControl.Config.SentryRange}]
+						</OnLoad>
+						<OnChange>
+							Script[ComBot].VariableScope.DroneControl.Config:SetSentryRange[${This.Value}]
+						</OnChange>
+					</Slider>							
+					
 				</Children>
 			</Frame>
 		</Children>

@@ -27,6 +27,8 @@ objectdef obj_Configuration_DroneControl inherits obj_Base_Configuration
 	}
 
 Setting(int, DroneType, SetDroneType)
+Setting(bool, Sentries, SetSentries)
+Setting(int, SentryRange, SetSentryRange)
 
 }
 
