@@ -92,7 +92,7 @@ objectdef obj_DroneControl inherits obj_State
 		}
 		else
 		{
-			if ${Entity[${CurrentTarget}].Distance} < 30000
+			if ${Entity[${CurrentTarget}].Distance} < ${Config.SentryRange}
 			{
 				if ${Drones.ActiveDroneCount["TypeID == ${Config.SentryType}"]} > 0
 				{
@@ -102,7 +102,7 @@ objectdef obj_DroneControl inherits obj_State
 					return TRUE
 				}
 			}
-			if ${Entity[${CurrentTarget}].Distance} > 35000
+			if ${Entity[${CurrentTarget}].Distance} > ${Config.SentryRange} && ${Config.Sentries}
 			{
 				if ${Drones.ActiveDroneCount["TypeID == ${Config.DroneType}"]} > 0
 				{
@@ -118,7 +118,7 @@ objectdef obj_DroneControl inherits obj_State
 			}
 			else
 			{
-				if ${Entity[${CurrentTarget}].Distance} > 30000
+				if ${Entity[${CurrentTarget}].Distance} > ${Config.SentryRange} && ${Config.Sentries}
 				{
 					Drones:Launch["TypeID == ${Config.SentryType}", 5]
 				}
