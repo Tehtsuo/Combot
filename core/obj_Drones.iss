@@ -228,7 +228,7 @@ objectdef obj_Drones inherits obj_State
 					{
 						break
 					}
-					if !${DroneIterator.Value.Target.Equal[${TargetID}]}
+					if !${DroneIterator.Value.Target.ID.Equal[${TargetID}]}
 					{
 						DronesToEngage:Insert[${DroneIterator.Value.ID}]
 					}
