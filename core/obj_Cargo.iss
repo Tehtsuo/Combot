@@ -299,7 +299,15 @@ objectdef obj_Cargo inherits obj_State
 			${This.BuildAction.Action.Length} == 0 || \
 			${arg_Bookmark.Length} == 0
 		{
-			UI:Update["obj_Cargo", "Attempted to queue a cargo operation without a complete Build Action", "r"]
+			UI:Update["obj_Cargo", "Attempted to queue an incomplete cargo action", "r"]
+			return
+		}
+		
+		This.CargoQueue:Queue[${arg_Bookmark}, ${This.BuildAction.Action}, ${arg_LocationType}, ${arg_LocationSubtype}, ${This.BuildAction.Query}, ${arg_Quantity}]
+		This.Processing:Set[TRUE]
+		if ${This.IsIdle}
+		{
+			This:QueueState["Process"]
 		}
 	}
 	
@@ -316,15 +324,6 @@ objectdef obj_Cargo inherits obj_State
 		This.BuildAction.Action:Set[Unload]
 	}
 
-	
-		This.CargoQueue:Queue[arg_Bookmark, arg_Action, string arg_LocationType, string arg_LocationSubtype, arg_Query, arg_Quantity]
-		This.Processing:Set[TRUE]
-		if ${This.IsIdle}
-		{
-			This:Clear
-			This:QueueState["Process"]
-		}
-	}
 	
 	
 	
@@ -362,7 +361,75 @@ objectdef obj_Cargo inherits obj_State
 			if ${Entity[Name = "${This.CargoQueue.Peek.LocationSubtype}"](exists)}
 			{
 				Container:Set[${Entity[Name = "${This.CargoQueue.Peek.LocationSubtype}"].ID}]
+				if ${Entity[${Container}].Distance} > LOOT_RANGE
+				{
+					Move:Approach[${Container}, LOOT_RANGE]
+					return FALSE
+				}
+				else
+				{
+					if !${EVEWindow[ByName, Inventory].ChildWindowExists[${Container}]}
+					{
+						UI:Update["obj_Cargo", "Opening ${This.CargoQueue.Peek.LocationSubtype}", "g"]
+						Entity[${Container}]:Open
+						return FALSE
+					}
+					if !${EVEWindow[ByItemID, ${Container}](exists)} 
+					{
+						EVEWindow[ByName, Inventory]:MakeChildActive[${Container}]
+						return FALSE
+					}
+					Cargo:PopulateCargoList[SHIP]
+					Cargo:MoveCargoList[CONTAINERCORPORATEHANGAR, ${Container}]]
+					return TRUE
+				}
+			}
+			else
+			{
+				UI:Update["obj_Cargo", "Cargo action Unload failed - Container not found", "r"]
+				return TRUE
 			}
 		}
 	}
+	
+	member:bool Load()
+	{
+		variable int64 Container
+
+		if ${Me.InSpace}
+		{
+			if ${Entity[Name = "${This.CargoQueue.Peek.LocationSubtype}"](exists)}
+			{
+				Container:Set[${Entity[Name = "${This.CargoQueue.Peek.LocationSubtype}"].ID}]
+				if ${Entity[${Container}].Distance} > LOOT_RANGE
+				{
+					Move:Approach[${Container}, LOOT_RANGE]
+					return FALSE
+				}
+				else
+				{
+					if !${EVEWindow[ByName, Inventory].ChildWindowExists[${Container}]}
+					{
+						UI:Update["obj_Cargo", "Opening ${This.CargoQueue.Peek.LocationSubtype}", "g"]
+						Entity[${Container}]:Open
+						return FALSE
+					}
+					if !${EVEWindow[ByItemID, ${Container}](exists)} 
+					{
+						EVEWindow[ByName, Inventory]:MakeChildActive[${Container}]
+						return FALSE
+					}
+					Cargo:PopulateCargoList[CONTAINERCORPORATEHANGAR, ${Container}]]
+					Cargo:MoveCargoList[SHIP]
+					return TRUE
+				}
+			}
+			else
+			{
+				UI:Update["obj_Cargo", "Cargo action Load failed - Container not found", "r"]
+				return TRUE
+			}
+		}
+	}
+	
 }
