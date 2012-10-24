@@ -295,11 +295,18 @@ objectdef obj_Cargo inherits obj_State
 	
 	method At(string arg_Bookmark, string arg_LocationType = "STATIONHANGAR", string arg_LocationSubtype = "")
 	{
-		if 	${This.BuildAction.Query.Length} == 0 || \
-			${This.BuildAction.Action.Length} == 0 || \
-			${arg_Bookmark.Length} == 0
+		This.BuildAction:Clear
+		This.BuildAction.Bookmark:Set[${arg_Bookmark}]
+		This.BuildAction.LocationType:Set[${arg_LocationType}]
+		This.BuildAction.LocationSubtype:Set[arg_LocationSubtype]
+	}
+	
+	method Load(string arg_Query = "", int arg_Quantity = 0)
+	{
+		if 	${This.BuildAction.Bookmark.Length} == 0 || \
+			${This.BuildAction.LocationType.Length} == 0
 		{
-			UI:Update["obj_Cargo", "Attempted to queue an incomplete cargo action", "r"]
+			UI:Update["obj_Cargo", "Attempted to queue an incomplete Load cargo action", "r"]
 			return
 		}
 		
@@ -310,18 +317,21 @@ objectdef obj_Cargo inherits obj_State
 			This:QueueState["Process"]
 		}
 	}
-	
-	method Load(string arg_Query, int arg_Quantity = 0)
-	{
-		This.BuildAction.Query:Set[${arg_Query}]
-		This.BuildAction.Quantity:Set[${arg_Quantity}]
-		This.BuildAction.Action:Set[Load]
-	}
 	method Unload(string arg_Query, int arg_Quantity = 0)
 	{
-		This.BuildAction.Query:Set[${arg_Query}]
-		This.BuildAction.Quantity:Set[${arg_Quantity}]
-		This.BuildAction.Action:Set[Unload]
+		if 	${This.BuildAction.Bookmark.Length} == 0 || \
+			${This.BuildAction.LocationType.Length} == 0
+		{
+			UI:Update["obj_Cargo", "Attempted to queue an incomplete Unload cargo action", "r"]
+			return
+		}
+		
+		This.CargoQueue:Queue[${This.BuildAction.Bookmark}, Unload, ${This.BuildAction.LocationType}, ${This.BuildAction.LocationSubtype}, ${arg_Query}, ${arg_Quantity}]
+		This.Processing:Set[TRUE]
+		if ${This.IsIdle}
+		{
+			This:QueueState["Process"]
+		}
 	}
 
 	
