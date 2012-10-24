@@ -41,6 +41,8 @@ objectdef obj_DroneControl inherits obj_State
 	
 	variable obj_Configuration_DroneControl Config
 	
+	variable int RecallDelay
+	
 	variable int64 CurrentTarget = -1
 	
 	method Initialize()
@@ -92,7 +94,8 @@ objectdef obj_DroneControl inherits obj_State
 		}
 		else
 		{
-			if ${Entity[${CurrentTarget}].Distance} < ${Config.SentryRange}
+			RecallDelay:Set[${Math.Calc[${LavishScript.RunningTime}+30000]}]
+			if ${Entity[${CurrentTarget}].Distance} < (${Config.SentryRange} * 1000)
 			{
 				if ${Drones.ActiveDroneCount["TypeID == ${Config.SentryType}"]} > 0
 				{
@@ -102,7 +105,7 @@ objectdef obj_DroneControl inherits obj_State
 					return TRUE
 				}
 			}
-			if ${Entity[${CurrentTarget}].Distance} > ${Config.SentryRange} && ${Config.Sentries}
+			if ${Entity[${CurrentTarget}].Distance} > (${Config.SentryRange} * 1000) && ${Config.Sentries}
 			{
 				if ${Drones.ActiveDroneCount["TypeID == ${Config.DroneType}"]} > 0
 				{
@@ -118,13 +121,13 @@ objectdef obj_DroneControl inherits obj_State
 			}
 			else
 			{
-				if ${Entity[${CurrentTarget}].Distance} > ${Config.SentryRange} && ${Config.Sentries}
+				if ${Entity[${CurrentTarget}].Distance} > (${Config.SentryRange} * 1000) && ${Config.Sentries}
 				{
-					Drones:Launch["TypeID == ${Config.SentryType}", 5]
+					Drones:Deploy["TypeID == ${Config.SentryType}", 5]
 				}
 				else
 				{
-					Drones:Launch["TypeID == ${Config.DroneType}", 5]
+					Drones:Deploy["TypeID == ${Config.DroneType}", 5]
 				}
 			}
 		}
@@ -142,7 +145,7 @@ objectdef obj_DroneControl inherits obj_State
 		}
 		else
 		{
-			if !${Drones.DronesInSpace.Equal[0]}
+			if !${Drones.DronesInSpace.Equal[0]} && ${LavishScript.RunningTime} > ${RecallDelay}
 			{
 				Drones:Recall["TypeID = ${Config.DroneType} || TypeID == ${Config.SentryType}", 5]
 				This:QueueState["Idle", 5000]

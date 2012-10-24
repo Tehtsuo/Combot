@@ -118,7 +118,6 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							
 						</OnLoad>
 						<OnSelect>
-							echo ${This.SelectedItem.Value}
 							Script[ComBot].VariableScope.DroneControl.Config:SetDroneType[${This.SelectedItem.Value}]
 						</OnSelect>
 					</listbox>
@@ -150,12 +149,11 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								while ${drone:Next(exists)}
 							}
 							
-							This.ItemByValue[${Script[ComBot].VariableScope.DroneControl.Config.SentryDrone}]:Select
+							This.ItemByValue[${Script[ComBot].VariableScope.DroneControl.Config.SentryType}]:Select
 							
 						</OnLoad>
 						<OnSelect>
-							echo ${This.SelectedItem.Value}
-							Script[ComBot].VariableScope.DroneControl.Config:SetSentryDrone[${This.SelectedItem.Value}]
+							Script[ComBot].VariableScope.DroneControl.Config:SetSentryType[${This.SelectedItem.Value}]
 						</OnSelect>
 					</listbox>
 					<Checkbox name='Sentries'>
