@@ -621,6 +621,12 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<Width>20%</Width> 
 								<Height>10%</Height> 
 								<Text>Belt Prefix:</Text>
+								<OnLoad>
+								if ${Script[ComBot].VariableScope.Miner.Config.GasHarvesting}
+									{
+										This:Hide
+									}
+								</OnLoad>
 							</Text>
 							<Textentry name='OrePrefix'>
 								<X>13%</X>
@@ -629,6 +635,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<Height>9%</Height> 
 								<OnLoad>
 									This:SetText[${Script[ComBot].VariableScope.Miner.Config.BeltPrefix}]
+									if ${Script[ComBot].VariableScope.Miner.Config.GasHarvesting}
+									{
+										This:Hide
+									}
 								</OnLoad>
 								<OnChange>
 									if ${This.Text.Length} > 0
@@ -650,6 +660,12 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<Width>20%</Width> 
 								<Height>10%</Height> 
 								<Text>Ice Belt Prefix:</Text>
+								<OnLoad>
+								if ${Script[ComBot].VariableScope.Miner.Config.GasHarvesting}
+									{
+										This:Hide
+									}
+								</OnLoad>
 							</Text>
 							<Textentry name='IcePrefix'>
 								<X>13%</X>
@@ -658,6 +674,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<Height>9%</Height> 
 								<OnLoad>
 									This:SetText[${Script[ComBot].VariableScope.Miner.Config.IceBeltPrefix}]
+									if ${Script[ComBot].VariableScope.Miner.Config.GasHarvesting}
+									{
+										This:Hide
+									}
 								</OnLoad>
 								<OnChange>
 									if ${This.Text.Length} > 0
@@ -694,6 +714,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 										UIElement[OrePrefix@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
 										UIElement[IcePrefixTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
 										UIElement[IcePrefix@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+									}
+									if ${Script[ComBot].VariableScope.Miner.Config.GasHarvesting}
+									{
+										This:Hide
 									}
 									This:SetZOrder[movetop]
 								</OnLoad>
@@ -973,6 +997,11 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 										UIElement[MaxLockTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
 										UIElement[MaxLock@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
 										UIElement[obj_MinerIceMining@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										UIElement[obj_MinerUseBookmarks@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										UIElement[OrePrefixTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										UIElement[OrePrefix@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										UIElement[IcePrefixTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										UIElement[IcePrefix@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
 									}
 									else
 									{
@@ -981,6 +1010,14 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 										UIElement[MaxLockTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Show
 										UIElement[MaxLock@MiningFrame@Miner_Frame@ComBot_Miner]:Show
 										UIElement[obj_MinerIceMining@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+										UIElement[obj_MinerUseBookmarks@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+										if ${Script[ComBot].VariableScope.Miner.Config.UseBookmarks}
+										{
+											UIElement[OrePrefixTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[OrePrefix@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[IcePrefixTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[IcePrefix@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+										}
 									}
 								</OnLeftClick>
 							</Checkbox>
