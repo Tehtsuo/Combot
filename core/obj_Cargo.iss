@@ -497,6 +497,11 @@ objectdef obj_Cargo inherits obj_State
 				return TRUE
 			}
 		}
+		
+		Cargo:PopulateCargoList[SHIP]
+		Cargo:Filter[${This.CargoQueue.Peek.QueryString}]
+		Cargo:MoveCargoList[${This.BuildAction.LocationType}, ${This.CargoQueue.Peek.LocationSubtype}, ${Container}, ${This.CargoQueue.Peek.Quantity}]
+		return TRUE
 	}
 	
 	member:bool Load()
@@ -538,6 +543,11 @@ objectdef obj_Cargo inherits obj_State
 				return TRUE
 			}
 		}
+
+		Cargo:PopulateCargoList[${This.BuildAction.LocationType}, ${Container}]]
+		Cargo:Filter[${This.CargoQueue.Peek.QueryString}]
+		Cargo:MoveCargoList[SHIP, "", -1, ${This.CargoQueue.Peek.Quantity}]
+		return TRUE
 	}
 	
 }
