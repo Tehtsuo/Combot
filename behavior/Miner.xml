@@ -725,23 +725,31 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							
 							<Text name='MaxLockTitle'> 
 								<X>34%</X> 
-								<Y>30%</Y> 
+								<Y>33%</Y> 
 								<Width>32%</Width> 
 								<Height>10%</Height> 
 								<Alignment>Center</Alignment>
 								<OnLoad>
 									This:SetText[Lock ${Script[ComBot].VariableScope.Miner.Config.MaxLaserLocks} targets for mining]
+									if ${Script[ComBot].VariableScope.Miner.Config.GasHarvesting}
+									{
+										This:Hide
+									}
 								</OnLoad>
 							</Text>						 
 							<Slider name='MaxLock'> 
 								<X>34%</X> 
-								<Y>37%</Y> 
+								<Y>40%</Y> 
 								<Width>32%</Width> 
 								<Height>10%</Height> 
 								<Border>1</Border>
 								<OnLoad>
 									This:SetRange[10]
 									This:SetValue[${Script[ComBot].VariableScope.Miner.Config.MaxLaserLocks}]
+									if ${Script[ComBot].VariableScope.Miner.Config.GasHarvesting}
+									{
+										This:Hide
+									}
 								</OnLoad>
 								<OnChange>
 									Script[ComBot].VariableScope.Miner.Config:SetMaxLaserLocks[${This.Value}]
@@ -960,16 +968,16 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 									if ${This.Checked}
 									{
-										UIElement[GasPrefixTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
-										UIElement[GasPrefix@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										UIElement[GasPrefixTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+										UIElement[GasPrefix@MiningFrame@Miner_Frame@ComBot_Miner]:Show
 										UIElement[MaxLockTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
 										UIElement[MaxLock@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
 										UIElement[obj_MinerIceMining@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
 									}
 									else
 									{
-										UIElement[GasPrefixTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Show
-										UIElement[GasPrefix@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+										UIElement[GasPrefixTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										UIElement[GasPrefix@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
 										UIElement[MaxLockTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Show
 										UIElement[MaxLock@MiningFrame@Miner_Frame@ComBot_Miner]:Show
 										UIElement[obj_MinerIceMining@MiningFrame@Miner_Frame@ComBot_Miner]:Show
