@@ -725,7 +725,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							
 							<Text name='MaxLockTitle'> 
 								<X>34%</X> 
-								<Y>23%</Y> 
+								<Y>30%</Y> 
 								<Width>32%</Width> 
 								<Height>10%</Height> 
 								<Alignment>Center</Alignment>
@@ -735,7 +735,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							</Text>						 
 							<Slider name='MaxLock'> 
 								<X>34%</X> 
-								<Y>30%</Y> 
+								<Y>37%</Y> 
 								<Width>32%</Width> 
 								<Height>10%</Height> 
 								<Border>1</Border>
