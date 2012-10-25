@@ -31,7 +31,6 @@ objectdef obj_Move inherits obj_State
 
 	method Initialize()
 	{
-		This.NonGameTiedPulse:Set[TRUE]
 		This[parent]:Initialize
 	}
 
