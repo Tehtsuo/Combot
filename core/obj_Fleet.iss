@@ -229,7 +229,7 @@ objectdef obj_Fleet inherits obj_State
 	
 	member:string ResolveName(int64 value)
 	{
-		variable index:pilot CorpMembers
+		variable index:being CorpMembers
 		variable iterator CorpMember
 
 		EVE:GetOnlineCorpMembers[CorpMembers]
@@ -548,7 +548,7 @@ objectdef obj_Fleet inherits obj_State
 		}
 		
 	
-		variable index:pilot CorpMembers
+		variable index:being CorpMembers
 		variable iterator CorpMember
 
 		EVE:GetOnlineCorpMembers[CorpMembers]
