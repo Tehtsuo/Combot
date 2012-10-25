@@ -849,6 +849,7 @@ objectdef obj_Miner inherits obj_State
 		
 		if ${Ship.ModuleList_MiningLaser.ActiveCount} < ${Ship.ModuleList_MiningLaser.Count}
 		{
+			This:QueueState["CheckCargoHold"]
 			This:QueueState["ActivateLasers", 2000]
 			This:QueueState["Mine"]
 			Profiling:EndTrack
