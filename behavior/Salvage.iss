@@ -253,7 +253,7 @@ objectdef obj_Salvage inherits obj_State
 		{
 			return TRUE
 		}
-		if ${Move.Traveling} || ${Me.ToEntity.Mode} == 3
+		if ${Cargo.Processing} || ${Move.Traveling} || ${Me.ToEntity.Mode} == 3
 		{
 			return FALSE
 		}
