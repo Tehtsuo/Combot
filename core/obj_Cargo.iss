@@ -159,13 +159,6 @@ objectdef obj_Cargo inherits obj_State
 		}
 	}
 	
-	method Test()
-	{
-		This:PopulateCargoList[STATIONHANGAR]
-		This:Filter[TypeID==37]
-		This:MoveCargoList[SHIPCORPORATEHANGAR,"Corporation Folder 2",-1,17000]
-	}
-	
 	method MoveCargoList(string location, string folder="", int64 ID=-1, int Quantity=0)
 	{
 		variable string TransferFolder
@@ -411,6 +404,7 @@ objectdef obj_Cargo inherits obj_State
 		Move:Bookmark[${This.CargoQueue.Peek.Bookmark}]
 		This:QueueState["Traveling"]
 		This:QueueState["${This.CargoQueue.Peek.Action}"]
+		This:QueueState["Stack"]
 		This:QueueState["Dequeue"]
 		This:QueueState["Process"]
 		return TRUE
@@ -430,8 +424,84 @@ objectdef obj_Cargo inherits obj_State
 		This.CargoQueue:Dequeue
 		return TRUE
 	}
+
+	member:bool Stack(bool OpenedCorpHangar=FALSE, bool StackedShip=FALSE)
+	{
+		variable int64 Container
+
 	
-	member:bool Unload()
+		if !${EVEWindow[ByName, "Inventory"](exists)}
+		{
+			UI:Update["obj_Cargo", "Making sure inventory is open", "g"]
+			MyShip:Open
+			return FALSE
+		}
+
+		UI:Update["obj_Cargo", "Stacking dropoff container", "g"]
+		
+		if ${Me.InSpace}
+		{
+			if ${Entity[Name = "${This.CargoQueue.Peek.Container}"](exists)}
+			{
+				Container:Set[${Entity[Name = "${This.CargoQueue.Peek.Container}"].ID}]
+				if ${Entity[${Container}].Distance} > LOOT_RANGE
+				{
+					Move:Approach[${Container}, LOOT_RANGE]
+					return FALSE
+				}
+				else
+				{
+					if !${EVEWindow[ByName, Inventory].ChildWindowExists[${Container}]}
+					{
+						UI:Update["obj_Cargo", "Opening ${This.CargoQueue.Peek.Container}", "g"]
+						Entity[${Container}]:Open
+						return FALSE
+					}
+					if !${EVEWindow[ByItemID, ${Container}](exists)} 
+					{
+						EVEWindow[ByName, Inventory]:MakeChildActive[${Container}]
+						return FALSE
+					}
+					EVE:StackItems[${Container}, CorpHangars, ${This.CargoQueue.Peek.LocationSubtype}]
+					return TRUE
+				}
+			}
+			else
+			{
+				UI:Update["obj_Cargo", "Cargo action Stack failed - Container not found", "r"]
+				return TRUE
+			}
+		
+		}
+		
+		if ${EVEWindow[ByName, Inventory].ChildWindowExists[Corporation Hangars]} && !${OpenedCorpHangar}
+		{
+			EVEWindow[ByName, Inventory]:MakeChildActive[Corporation Hangars]
+			This:InsertState["Stack", 2000, TRUE]
+			return TRUE
+		}
+			
+		if !${StackedShip}
+		{
+			EVE:StackItems[MyShip, CargoHold]
+			This:InsertState["Stack", 2000, TRUE, TRUE]
+			return TRUE
+		}
+		
+		switch ${This.BuildAction.LocationType}
+		{
+			case STATIONHANGAR
+				EVE:StackItems[MyStationHangar, Hangar]
+				break
+			case STATIONCORPORATEHANGAR
+				EVE:StackItems[MyStationCorporateHangar, StationCorporateHangar, "${Config.Dropoff_Type.Escape}"]
+				break
+		}
+		
+		return TRUE
+	}
+	
+	member:bool Unload(bool OpenedCorpHangar=FALSE)
 	{
 		variable int64 Container
 
@@ -471,13 +541,20 @@ objectdef obj_Cargo inherits obj_State
 			}
 		}
 		
+		if ${EVEWindow[ByName, Inventory].ChildWindowExists[Corporation Hangars]} && !${OpenedCorpHangar}
+		{
+			EVEWindow[ByName, Inventory]:MakeChildActive[Corporation Hangars]
+			This:InsertState["Unload", 2000, TRUE]
+			return TRUE
+		}
+		
 		Cargo:PopulateCargoList[SHIP]
 		Cargo:Filter[${This.CargoQueue.Peek.QueryString}]
 		Cargo:MoveCargoList[${This.BuildAction.LocationType}, ${This.CargoQueue.Peek.LocationSubtype}, ${Container}, ${This.CargoQueue.Peek.Quantity}]
 		return TRUE
 	}
 	
-	member:bool Load()
+	member:bool Load(bool OpenedCorpHangar=FALSE)
 	{
 		variable int64 Container
 
@@ -517,6 +594,13 @@ objectdef obj_Cargo inherits obj_State
 			}
 		}
 
+		if ${EVEWindow[ByName, Inventory].ChildWindowExists[Corporation Hangars]} && !${OpenedCorpHangar}
+		{
+			EVEWindow[ByName, Inventory]:MakeChildActive[Corporation Hangars]
+			This:InsertState["Load", 2000, TRUE]
+			return TRUE
+		}
+		
 		Cargo:PopulateCargoList[${This.BuildAction.LocationType}, ${Container}]]
 		Cargo:Filter[${This.CargoQueue.Peek.QueryString}]
 		Cargo:MoveCargoList[SHIP, "", -1, ${This.CargoQueue.Peek.Quantity}]
