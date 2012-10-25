@@ -897,15 +897,57 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								</OnMouseExit>
 							</listbox>	
 
+							<Checkbox name='GasHarvesting'>
+								<X>34%</X>
+								<Y>13%</Y>
+								<Width>32%</Width> 
+								<Height>9%</Height> 
+								<Text>Gas Harvesting</Text>
+								<OnLoad>
+									if ${Script[ComBot].VariableScope.Miner.Config.IceMining}
+									{
+										This:Hide
+									}
+									if ${Script[ComBot].VariableScope.Miner.Config.GasHarvesting}
+									{
+										This:SetChecked
+										UIElement[MaxLockTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										UIElement[MaxLock@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										UIElement[obj_MinerIceMining@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+									}
+								</OnLoad>
+								<OnLeftClick>
+									Script[ComBot].VariableScope.Miner.Config:SetGasHarvesting[${This.Checked}]
+
+									if ${This.Checked}
+									{
+										UIElement[MaxLockTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										UIElement[MaxLock@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										UIElement[obj_MinerIceMining@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+									}
+									else
+									{
+										UIElement[MaxLockTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+										UIElement[MaxLock@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+										UIElement[obj_MinerIceMining@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+									}
+								</OnLeftClick>
+							</Checkbox>
+								
 							<Checkbox name='obj_MinerIceMining'>
 								<X>34%</X>
 								<Y>3%</Y>
 								<Width>32%</Width> 
-								<Height>10%</Height> 
+								<Height>9%</Height> 
 								<Text>Ice Mining</Text>
 								<OnLoad>
 									variable int count
 									variable settingsetref Ores
+									
+									if ${Script[ComBot].VariableScope.Miner.Config.GasHarvesting}
+									{
+										This:Hide
+									}
 
 									if ${Script[ComBot].VariableScope.Miner.Config.IceMining}
 									{
@@ -1105,6 +1147,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 									if ${This.Checked}
 									{
+										UIElement[GasHarvesting@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
 										UIElement[OrePriorityTitle@MiningFrame@Miner_Frame@ComBot_Miner]:SetText[Ice Priority]
 										UIElement[MaxLockTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
 										UIElement[MaxLock@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
@@ -1186,6 +1229,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									}
 									else
 									{
+										UIElement[GasHarvesting@MiningFrame@Miner_Frame@ComBot_Miner]:Show
 										UIElement[MaxLockTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Show
 										UIElement[MaxLock@MiningFrame@Miner_Frame@ComBot_Miner]:Show
 										UIElement[OrePriorityTitle@MiningFrame@Miner_Frame@ComBot_Miner]:SetText[Ore Priority]
