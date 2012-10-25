@@ -1,6 +1,6 @@
 /*
 
-ComBot  Copyright ? 2012  Tehtsuo and Vendan
+ComBot  Copyright © 2012  Tehtsuo and Vendan
 
 This file is part of ComBot.
 
@@ -52,6 +52,7 @@ objectdef obj_Configuration_Salvager
 	Setting(string, Prefix, SetPrefix)
 	Setting(string, Dropoff, SetDropoff)
 	Setting(string, Dropoff_Type, SetDropoff_Type)
+	Setting(string, Dropoff_SubType, SetDropoff_SubType)
 	Setting(bool, BeltPatrolEnabled, SetBeltPatrolEnabled)
 	Setting(bool, SalvageYellow, SetSalvageYellow)
 	Setting(bool, AvoidShips, SetAvoidShips)
@@ -80,7 +81,7 @@ objectdef obj_Salvage inherits obj_State
 	method Initialize()
 	{
 		This[parent]:Initialize
-		Wrecks:AddQueryString["(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && HaveLootRights && !IsAbandoned && !IsMoribund"]
+		Wrecks:AddQueryString["(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && HaveLootRights && !IsMoribund"]
 		NPCs:AddAllNPCs
 		DynamicAddBehavior("Salvage", "Dedicated Salvager")
 	}
@@ -240,10 +241,8 @@ objectdef obj_Salvage inherits obj_State
 		else
 		{
 			UI:Update["obj_Salvage", "No salvage bookmark found - returning to station", "g"]
-			Move:Bookmark[${Config.Dropoff}, TRUE]
-			This:QueueState["Traveling"]
-			This:QueueState["PrepOffload"]
 			This:QueueState["Offload"]
+			This:QueueState["Traveling"]
 			return TRUE
 		}
 	}
@@ -404,11 +403,9 @@ objectdef obj_Salvage inherits obj_State
 			LootCans:Disable
 			if ${Dedicated}
 			{
-				Move:Bookmark[${Config.Dropoff}]
 				This:Clear
-				This:QueueState["Traveling"]
-				This:QueueState["PrepOffload"]
 				This:QueueState["Offload"]
+				This:QueueState["Traveling"]
 				This:QueueState["RefreshBookmarks", 3000]
 				This:QueueState["CheckBookmarks"]
 			}
@@ -625,12 +622,6 @@ objectdef obj_Salvage inherits obj_State
 	
 	member:bool OpenCargoHold()
 	{
-		if ${EVEWindow[byCaption, "wreck"](exists)}
-		{
-			UI:Update["obj_Salvage", "Bugged inventory window found, ignoring", "y"]
-			/*EVEWindow[byCaption, "wreck"]:Close
-			return FALSE*/
-		}
 		if !${EVEWindow[ByName, "Inventory"](exists)}
 		{
 			UI:Update["obj_Salvage", "Opening inventory", "g"]
@@ -649,10 +640,8 @@ objectdef obj_Salvage inherits obj_State
 		if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) > 0.75
 		{
 			UI:Update["obj_Salvage", "Unload trip required", "g"]
-			Move:Bookmark[${Config.Dropoff}]
-			This:QueueState["Traveling"]
-			This:QueueState["PrepOffload"]
 			This:QueueState["Offload"]
+			This:QueueState["Traveling"]
 		}
 		else
 		{
@@ -663,80 +652,8 @@ objectdef obj_Salvage inherits obj_State
 		return TRUE;
 	}
 
-	member:bool PrepOffload()
-	{
-		if ${Client.InSpace}
-		{
-			return TRUE
-		}
-		if !${EVEWindow[ByName, "Inventory"](exists)}
-		{
-			UI:Update["obj_Salvage", "Opening inventory", "g"]
-			MyShip:OpenCargo[]
-			return FALSE
-		}
-		switch ${Config.Dropoff_Type}
-		{
-			case Personal Hangar
-				break
-			default
-				if !${EVEWindow[ByName, Inventory].ChildWindowExists[Corporation Hangars]}
-				{
-					UI:Update["obj_Salvage", "Delivery Location: Corporate Hangars child not found", "r"]
-					UI:Update["obj_Salvage", "Closing inventory to fix possible EVE bug", "y"]
-					EVEWindow[ByName, Inventory]:Close
-					return FALSE
-				}
-				EVEWindow[ByName, Inventory]:MakeChildActive[Corporation Hangars]
-				break
-		}
-		return TRUE
-	}
 	
-	member:bool Offload()
-	{
-		UI:Update["obj_Salvage", "Unloading cargo", "g"]
-		Cargo:PopulateCargoList[SHIP]
-		switch ${Config.Dropoff_Type}
-		{
-			case Personal Hangar
-				Cargo:MoveCargoList[HANGAR]
-				break
-			default
-				Cargo:MoveCargoList[CORPORATEHANGAR, ${Config.Dropoff_Type}]
-				break
-		}
-		This:Clear
-		This:QueueState["StackItemHangar"]
-		This:QueueState["Log", 1000, "Idling for 1 minute"]
-		This:QueueState["Idle", 60000]
-		This:QueueState["RefreshBookmarks", 3000]
-		This:QueueState["CheckBookmarks"]
-		return TRUE
-	}
 	
-	member:bool StackItemHangar()
-	{
-		if !${EVEWindow[ByName, "Inventory"](exists)}
-		{
-			UI:Update["obj_Salvage", "Making sure inventory is open", "g"]
-			MyShip:Open
-			return FALSE
-		}
-
-		UI:Update["obj_Salvage", "Stacking dropoff container", "g"]
-		switch ${Config.Dropoff_Type}
-		{
-			case Personal Hangar
-				EVE:StackItems[MyStationHangar, Hangar]
-				break
-			default
-				EVE:StackItems[MyStationCorporateHangar, StationCorporateHangar, "${Config.Dropoff_Type.Escape}"]
-				break
-		}
-		
-		return TRUE
-	}
 
 	member:bool RefreshBookmarks()
 	{
@@ -774,6 +691,19 @@ objectdef obj_Salvage inherits obj_State
 		return TRUE
 	}	
 	
+	member:bool Offload()
+	{
+		switch ${Config.Dropoff_Type}
+		{
+			case Personal Hangar
+				Cargo:At[${Config.Dropoff}]:Unload
+				break
+			default
+				Cargo:At[${Config.Dropoff},${Config.Dropoff_Type},${Config.Dropoff_SubType}]:Unload
+				break
+		}
+		return TRUE
+	}
 
 }
 

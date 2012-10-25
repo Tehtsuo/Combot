@@ -94,13 +94,13 @@ objectdef obj_Cargo inherits obj_State
 			case CONTAINERCORPORATEHANGAR
 				Entity[${ID}]:GetCorpHangarsCargo[CargoList]
 				break
-			case STATIONCORPORATEHANGAR
+			case Corporation Folder
 				Me.Station:GetCorpHangarItems[CargoList]
 				break
-			case STATIONHANGAR
+			case Personal Hangar
 				Me.Station:GetHangarItems[CargoList]
 				break
-			case CONTAINER
+			case Container
 				Entity[${ID}]:GetCargo[CargoList]
 		}
 	}
@@ -195,7 +195,7 @@ objectdef obj_Cargo inherits obj_State
 						CargoItem:MoveTo[MyShip, CargoHold, ${Math.Calc[(${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}) / ${CargoItem.Volume}].Int}]
 					}
 					break
-				case CONTAINER
+				case Container
 					if ${ID} == -1
 					{
 						if ${Volume} < ${EVEWindow[ByName, Inventory].ChildCapacity[ShipCorpHangar]} - ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipCorpHangar]}
@@ -229,10 +229,10 @@ objectdef obj_Cargo inherits obj_State
 						CargoItem:MoveTo[MyShip, OreHold, ${Math.Calc[(${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]} - ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]}) / ${CargoItem.Volume}].Int}]
 					}
 					break
-				case STATIONHANGAR
+				case Personal Hangar
 					CargoItem:MoveTo[MyStationHangar, Hangar, ${Quantity}]
 					break
-				case STATIONCORPORATEHANGAR
+				case Corporation Folder
 					CargoItem:MoveTo[MyStationCorporateHangar, StationCorporateHangar, ${Quantity}${TransferFolder}]
 					break
 			}
@@ -277,7 +277,7 @@ objectdef obj_Cargo inherits obj_State
 						while ${Cargo:Next(exists)}
 					EVE:MoveItemsTo[TransferIndex, MyShip, CargoHold]
 					break
-				case CONTAINER
+				case Container
 					TransferIndex:Clear
 					if ${ID} == -1
 					{
@@ -337,10 +337,10 @@ objectdef obj_Cargo inherits obj_State
 						while ${Cargo:Next(exists)}
 					EVE:MoveItemsTo[TransferIndex, MyShip, OreHold]
 					break
-				case STATIONHANGAR
+				case Personal Hangar
 					EVE:MoveItemsTo[TransferIndex, MyStationHangar, Hangar]
 					break
-				case STATIONCORPORATEHANGAR
+				case Corporation Folder
 					EVE:MoveItemsTo[TransferIndex, MyStationCorporateHangar, StationCorporateHangar${TransferFolder}]
 					break
 			}
@@ -348,7 +348,7 @@ objectdef obj_Cargo inherits obj_State
 	}
 	
 	
-	method At(string arg_Bookmark, string arg_LocationType = "STATIONHANGAR", string arg_LocationSubtype = "", string arg_Container = "")
+	method At(string arg_Bookmark, string arg_LocationType = "Personal Hangar", string arg_LocationSubtype = "", string arg_Container = "")
 	{
 		This.BuildAction:Clear
 		This.BuildAction.Bookmark:Set[${arg_Bookmark}]
@@ -401,7 +401,7 @@ objectdef obj_Cargo inherits obj_State
 			return TRUE
 		}
 		
-		Move:Bookmark[${This.CargoQueue.Peek.Bookmark}]
+		Move:Bookmark[${This.CargoQueue.Peek.Bookmark}, TRUE]
 		This:QueueState["Traveling"]
 		This:QueueState["${This.CargoQueue.Peek.Action}"]
 		This:QueueState["Stack"]

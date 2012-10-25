@@ -393,6 +393,84 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									UIElement[Information@InformationFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText[""]
 								</OnMouseExit>
 							</listbox>
+							<Text name='Dropoff_ContainerTitle'> 
+								<X>34%</X> 
+								<Y>73%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Container Name</Text>
+							</Text>
+							<TextEntry name='Dropoff_Container'> 
+								<X>34%</X> 
+								<Y>80%</Y> 
+								<Width>32%</Width> 
+								<Height>15%</Height> 
+								<OnLoad>
+									This:SetText[${Script[ComBot].VariableScope.Salvage.Config.Container_Name}]
+								</OnLoad>
+								<OnChange>
+									Script[ComBot].VariableScope.Salvage.Config:SetContainer_Name[${This.Text}]
+								</OnChange>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText["This field is used to supply ComBot with an identifier for your dropoff location.  If you are delivering to an Orca, this needs to contain the name of the pilot flying your Orca.  If you are delivering to a Player Owned Station structure, this needs to contain the structure's name.  This field is also used to specify the prefix for corporate bookmarks created using the Corporate Jetcan mode."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText[""]
+								</OnMouseExit>
+							</TextEntry>
+
+							<Text name='DropoffSubTypeTitle'> 
+								<X>67%</X> 
+								<Y>3%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Dropoff Sub-Type</Text>
+							</Text>
+							<listbox Name="DropoffSubType">
+								<BackgroundColor>FF000000</BackgroundColor>
+								<Border>1</Border>
+								<BorderColor>FFFFFFFF</BorderColor>
+								<X>67%</X>
+								<Y>10%</Y>
+								<Width>32%</Width>
+								<Height>85%</Height>
+								<OnLoad>
+									switch ${Script[ComBot].VariableScope.Salvage.Config.Dropoff_Type}
+									{
+										case Corporation Folder
+											This:AddItem[Corporation Folder 1]
+											This:AddItem[Corporation Folder 2]
+											This:AddItem[Corporation Folder 3]
+											This:AddItem[Corporation Folder 4]
+											This:AddItem[Corporation Folder 5]
+											This:AddItem[Corporation Folder 6]
+											This:AddItem[Corporation Folder 7]
+											break
+										case Container
+											This:AddItem[Corporation Folder 1]
+											This:AddItem[Corporation Folder 2]
+											This:AddItem[Corporation Folder 3]
+											This:AddItem[Corporation Folder 4]
+											This:AddItem[Corporation Folder 5]
+											This:AddItem[Corporation Folder 6]
+											This:AddItem[Corporation Folder 7]
+											break
+									}
+									This.ItemByText["${Script[ComBot].VariableScope.Salvage.Config.Dropoff_SubType}"]:Select
+								</OnLoad>
+								<OnSelect>
+									Script[ComBot].VariableScope.Salvage.Config:SetDropoff_SubType[${This.SelectedItem.Text}]
+								</OnSelect>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText["This field is used to further configure your dropoff type for types that have additional options, like Corporate Hangars."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText[""]
+								</OnMouseExit>
+							</listbox>
+
 							<Text name='DropoffTypeTitle'> 
 								<X>1%</X> 
 								<Y>3%</Y> 
@@ -411,19 +489,39 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<Height>85%</Height>
 								<Items>
 									<Item>Personal Hangar</Item>
-									<Item>Corporation Folder 1</Item>
-									<Item>Corporation Folder 2</Item>
-									<Item>Corporation Folder 3</Item>
-									<Item>Corporation Folder 4</Item>
-									<Item>Corporation Folder 5</Item>
-									<Item>Corporation Folder 6</Item>
-									<Item>Corporation Folder 7</Item>
+									<Item>Corporation Folder</Item>
+									<Item>Container</Item>
 								</Items>
 								<OnLoad>
 									This.ItemByText[${Script[ComBot].VariableScope.Salvage.Config.Dropoff_Type}]:Select
 								</OnLoad>
 								<OnSelect>
 									Script[ComBot].VariableScope.Salvage.Config:SetDropoff_Type[${This.SelectedItem.Text}]
+									UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:ClearItems
+									switch ${This.SelectedItem.Text}
+									{
+										case Corporation Folder
+											UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[Corporation Folder 1]
+											UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[Corporation Folder 2]
+											UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[Corporation Folder 3]
+											UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[Corporation Folder 4]
+											UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[Corporation Folder 5]
+											UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[Corporation Folder 6]
+											UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[Corporation Folder 7]
+										case Container
+											UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[Corporation Folder 1]
+											UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[Corporation Folder 2]
+											UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[Corporation Folder 3]
+											UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[Corporation Folder 4]
+											UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[Corporation Folder 5]
+											UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[Corporation Folder 6]
+											UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[Corporation Folder 7]
+											UIElement[Dropoff_Container@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Show
+											UIElement[Dropoff_ContainerTitle@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText[Container Name]
+											UIElement[Dropoff_ContainerTitle@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Show
+											UIElement[DropoffSubTypeTitle@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Show
+											UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Show
+									}
 								</OnSelect>
 								<OnMouseEnter>
 									UIElement[Information@InformationFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText["Use this field to configure where you would like ComBot to unload salvage loot."]
