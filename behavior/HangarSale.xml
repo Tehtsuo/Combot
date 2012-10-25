@@ -162,7 +162,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							</listbox>
 							
 							<Checkbox name='obj_HangarSale_RePrice'>
-								<X>34%</X>
+								<X>1%</X>
 								<Y>30%</Y>
 								<Width>32%</Width> 
 								<Height>10%</Height> 
@@ -184,7 +184,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								</OnMouseExit>
 							</Checkbox>
 							<Checkbox name='obj_HangarSale_Sell'>
-								<X>34%</X>
+								<X>1%</X>
 								<Y>40%</Y>
 								<Width>32%</Width> 
 								<Height>10%</Height> 
@@ -206,7 +206,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								</OnMouseExit>
 							</Checkbox>
 							<Checkbox name='MoveRefine'>
-								<X>34%</X>
+								<X>1%</X>
 								<Y>50%</Y>
 								<Width>32%</Width> 
 								<Height>10%</Height> 
@@ -222,6 +222,28 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								</OnLeftClick>
 								<OnMouseEnter>
 									UIElement[Information@InformationFrame@ComBot_HangarSale_Frame@ComBot_HangarSale]:SetText["When this is checked, ComBot will move items to your active ship when the items are worth more when reprocessed into minerals."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@ComBot_HangarSale_Frame@ComBot_HangarSale]:SetText[""]
+								</OnMouseExit>
+							</Checkbox>
+							<Checkbox name='Logout'>
+								<X>1%</X>
+								<Y>60%</Y>
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Text>Log out after one cycle</Text>
+								<OnLoad>
+									if ${Script[ComBot].VariableScope.HangarSale.Config.Logout}
+									{
+										This:SetChecked
+									}
+								</OnLoad>
+								<OnLeftClick>
+									Script[ComBot].VariableScope.HangarSale.Config:SetLogout[${This.Checked}]
+								</OnLeftClick>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@ComBot_HangarSale_Frame@ComBot_HangarSale]:SetText["When this is checked, ComBot will log out of the game after performing one cycle."]
 								</OnMouseEnter>
 								<OnMouseExit>
 									UIElement[Information@InformationFrame@ComBot_HangarSale_Frame@ComBot_HangarSale]:SetText[""]
@@ -289,7 +311,42 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<OnMouseExit>
 									UIElement[Information@InformationFrame@ComBot_HangarSale_Frame@ComBot_HangarSale]:SetText[""]
 								</OnMouseExit>
-							</Slider>						 
+							</Slider>			
+
+							<Text name='DurationTitle'> 
+								<X>34%</X> 
+								<Y>33%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Duration (Days)</Text>
+							</Text>						 
+							<ComboBox name='Duration'> 
+								<X>34%</X> 
+								<Y>40%</Y> 
+								<Width>32%</Width> 
+								<Height>15%</Height> 
+								<Items>
+									<Item>1</Item>
+									<Item>3</Item>
+									<Item>7</Item>
+									<Item>14</Item>
+									<Item>30</Item>
+									<Item>90</Item>
+								</Items>
+								<OnLoad>
+									This.ItemByText[${Script[ComBot].VariableScope.HangarSale.Config.Duration}]:Select
+								</OnLoad>
+								<OnSelect>
+									Script[ComBot].VariableScope.HangarSale.Config:SetDuration[${This.SelectedItem.Text}]
+								</OnSelect>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@ComBot_HangarSale_Frame@ComBot_HangarSale]:SetText["This option determines the duration in days ComBot will put on sell orders."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@ComBot_HangarSale_Frame@ComBot_HangarSale]:SetText[""]
+								</OnMouseExit>
+							</ComboBox>		
 
 							<Text name='obj_HangarSale_PriceModeTitle'> 
 								<X>34%</X> 

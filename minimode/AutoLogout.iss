@@ -80,6 +80,7 @@ objectdef obj_AutoLogout inherits obj_State
 	{
 		if ${Time.Hour} == ${Config.Hour} && ${Time.Minute} == ${Config.Minute}
 		{
+			Move:NonGameTiedPulse:Set[TRUE]
 			This:QueueState["MoveToLogout"]
 			This:QueueState["Traveling"]
 			This:QueueState["Logout"]
@@ -90,11 +91,19 @@ objectdef obj_AutoLogout inherits obj_State
 	
 	method LogoutNow()
 	{
+		Move:NonGameTiedPulse:Set[TRUE]
 		This:Clear
 		This:QueueState["MoveToLogout"]
 		This:QueueState["Traveling"]
 		This:QueueState["Logout"]
 	}
+
+	method StationaryLogoutNow()
+	{
+		This:Clear
+		This:QueueState["Logout"]
+	}
+	
 	
 	member:bool MoveToLogout()
 	{

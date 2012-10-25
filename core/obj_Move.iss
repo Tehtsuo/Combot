@@ -31,7 +31,6 @@ objectdef obj_Move inherits obj_State
 
 	method Initialize()
 	{
-		This.NonGameTiedPulse:Set[TRUE]
 		This[parent]:Initialize
 	}
 
@@ -571,7 +570,7 @@ objectdef obj_Move inherits obj_State
 	method SaveSpot()
 	{
 		UI:Update["obj_Move", "Storing current location", "y"]
-		This.SavedSpot:Set["Saved Spot ${EVETime.Time}"]
+		This.SavedSpot:Set["Saved Spot ${EVETime.Time.Left[-3]}"]
 		EVE:CreateBookmark["${This.SavedSpot}"]
 	}
 	

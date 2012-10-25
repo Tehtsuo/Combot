@@ -1,6 +1,6 @@
 /*
 
-ComBot  Copyright © 2012  Tehtsuo and Vendan
+ComBot  Copyright ï¿½ 2012  Tehtsuo and Vendan
 
 This file is part of ComBot.
 
@@ -512,7 +512,6 @@ objectdef obj_Miner inherits obj_State
 	{
 		if ${Move.SavedSpotExists}
 		{
-			UI:Update["obj_Miner","Returning to last location (${Bookmarks.SavedSpot})", "g"]
 			Move:GotoSavedSpot
 			return TRUE
 		}
@@ -603,6 +602,8 @@ objectdef obj_Miner inherits obj_State
 	
 	member:bool Mine()
 	{
+		variable iterator Roid
+		
 		Profiling:StartTrack["Miner_Mine"]
 		if ${Me.ToEntity.Mode} == 3
 		{
@@ -806,7 +807,6 @@ objectdef obj_Miner inherits obj_State
 		{
 			relay all -event ComBot_Orca_InBelt TRUE
 			relay all -event ComBot_Orca_Cargo ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipCorpHangar]}
-			variable iterator Roid
 			Asteroids:RequestUpdate
 			Asteroids.TargetList:GetIterator[Roid]
 			
@@ -823,14 +823,27 @@ objectdef obj_Miner inherits obj_State
 			}
 			else
 			{
+				This:Clear
+				This:QueueState["Mine"]
 				return FALSE
 			}
 		}
 		else
 		{
-			if ${Entity[CategoryID==CATEGORYID_ORE].Distance} > ${Math.Calc[${Ship.ModuleList_MiningLaser.Range} * (1/2)]}
+			Asteroids:RequestUpdate
+			Asteroids.TargetList:GetIterator[Roid]
+			if ${Roid:First(exists)}
 			{
-				Move:Approach[${Entity[CategoryID==CATEGORYID_ORE].ID}, ${Math.Calc[${Ship.ModuleList_MiningLaser.Range} * (1/3)]}]
+				if ${Roid.Value.Distance} > ${Math.Calc[${Ship.ModuleList_MiningLaser.Range} * (3/4)]}
+				{
+					Move:Approach[${Roid.Value.ID}, ${Math.Calc[${Ship.ModuleList_MiningLaser.Range} * (1/2)]}]
+				}
+			}
+			else
+			{
+				This:Clear
+				This:QueueState["Mine"]
+				return FALSE
 			}
 		}
 		
