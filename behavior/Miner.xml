@@ -805,6 +805,12 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<Height>90%</Height>
 								<SelectMultiple>1</SelectMultiple>
 								<Sort>User</Sort>
+								<OnLoad>
+									if ${Script[ComBot].VariableScope.Miner.Config.GasHarvesting}
+									{
+										This:Hide
+									}
+								</OnLoad>
 								<OnLeftClick>
 									variable settingsetref Ores
 									variable int counter
@@ -996,6 +1002,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 										UIElement[GasPrefix@MiningFrame@Miner_Frame@ComBot_Miner]:Show
 										UIElement[MaxLockTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
 										UIElement[MaxLock@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										UIElement[OrePriorityTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
 										UIElement[obj_MinerIceMining@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
 										UIElement[obj_MinerUseBookmarks@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
 										UIElement[OrePrefixTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
@@ -1009,6 +1017,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 										UIElement[GasPrefix@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
 										UIElement[MaxLockTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Show
 										UIElement[MaxLock@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+										UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+										UIElement[OrePriorityTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Show
 										UIElement[obj_MinerIceMining@MiningFrame@Miner_Frame@ComBot_Miner]:Show
 										UIElement[obj_MinerUseBookmarks@MiningFrame@Miner_Frame@ComBot_Miner]:Show
 										if ${Script[ComBot].VariableScope.Miner.Config.UseBookmarks}
