@@ -896,6 +896,45 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[""]
 								</OnMouseExit>
 							</listbox>	
+							
+							<Text name='GasPrefixTitle'>
+								<X>34%</X>
+								<Y>24%</Y>
+								<Width>20%</Width> 
+								<Height>10%</Height> 
+								<Text>Ice Belt Prefix:</Text>
+								<OnLoad>
+									if !${Script[ComBot].VariableScope.Miner.Config.GasHarvesting}
+									{
+										This:Hide
+									}
+								</OnLoad>
+							</Text>
+							<Textentry name='GasPrefix'>
+								<X>46%</X>
+								<Y>22%</Y>
+								<Width>20%</Width> 
+								<Height>9%</Height> 
+								<OnLoad>
+									if !${Script[ComBot].VariableScope.Miner.Config.GasHarvesting}
+									{
+										This:Hide
+									}
+									This:SetText[${Script[ComBot].VariableScope.Miner.Config.GasPrefix}]
+								</OnLoad>
+								<OnChange>
+									if ${This.Text.Length} > 0
+									{
+										Script[ComBot].VariableScope.Miner.Config:SetGasPrefix[${This.Text}]
+									}
+								</OnChange>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText["This field is to specify the prefix to use for your gas bookmarks.  Any bookmark in the mining system which starts with this prefix will be used as a mining location for gas harvesting."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[""]
+								</OnMouseExit>
+							</Textentry>
 
 							<Checkbox name='GasHarvesting'>
 								<X>34%</X>
@@ -921,12 +960,16 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 									if ${This.Checked}
 									{
+										UIElement[GasPrefixTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										UIElement[GasPrefix@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
 										UIElement[MaxLockTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
 										UIElement[MaxLock@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
 										UIElement[obj_MinerIceMining@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
 									}
 									else
 									{
+										UIElement[GasPrefixTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+										UIElement[GasPrefix@MiningFrame@Miner_Frame@ComBot_Miner]:Show
 										UIElement[MaxLockTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Show
 										UIElement[MaxLock@MiningFrame@Miner_Frame@ComBot_Miner]:Show
 										UIElement[obj_MinerIceMining@MiningFrame@Miner_Frame@ComBot_Miner]:Show

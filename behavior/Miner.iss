@@ -120,6 +120,7 @@ objectdef obj_Configuration_Miner
 		This.CommonRef:AddSetting[Miner_Dropoff_Type,Personal Hangar]
 		This.CommonRef:AddSetting[BeltPrefix,Belt:]
 		This.CommonRef:AddSetting[IceBeltPrefix,Ice Belt:]
+		This.CommonRef:AddSetting[GasPrefix,Gas:]
 		This.CommonRef:AddSetting[MaxLasers,3]
 		This.CommonRef:AddSetting[MiningSystem,""]
 		This.CommonRef:AddSetting[Dropoff,""]
@@ -137,6 +138,7 @@ objectdef obj_Configuration_Miner
 	Setting(bool, UseBookmarks, SetUseBookmarks)	
 	Setting(string, BeltPrefix, SetBeltPrefix)	
 	Setting(string, IceBeltPrefix, SetIceBeltPrefix)	
+	Setting(string, GasPrefix, SetGasPrefix)	
 	Setting(int, Threshold, SetThreshold)	
 	Setting(int, MaxLaserLocks, SetMaxLaserLocks)
 	Setting(string, JetcanPrefix, SetJetcanPrefix)
