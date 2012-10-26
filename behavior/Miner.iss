@@ -530,8 +530,6 @@ objectdef obj_Miner inherits obj_State
 		if ${Config.UseBookmarks} || ${Config.GasHarvesting}
 		{
 
-			variable int RandomBelt
-			variable string Label
 			variable string prefix
 			if ${Config.GasHarvesting}
 			{
