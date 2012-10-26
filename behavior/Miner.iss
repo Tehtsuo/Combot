@@ -152,6 +152,7 @@ objectdef obj_Miner inherits obj_State
 	
 	variable obj_TargetList Asteroids
 	variable bool WarpToOrca=FALSE
+	variable index:bookmark BookmarkIndex
 
 	method Initialize()
 	{
@@ -525,68 +526,39 @@ objectdef obj_Miner inherits obj_State
 			Move:GotoSavedSpot
 			return TRUE
 		}
-
-		variable index:bookmark BookmarkIndex
-		variable int RandomBelt
-		variable string Label
-		variable string prefix
-		EVE:GetBookmarks[BookmarkIndex]
 		
-		
-		if ${Config.GasHarvesting}
+		if ${Config.UseBookmarks} || ${Config.GasHarvesting}
 		{
-			while ${BookmarkIndex.Used} > 0
-			{
-				RandomBelt:Set[${Math.Rand[${BookmarkIndex.Used}]:Inc[1]}]
 
+			variable int RandomBelt
+			variable string Label
+			variable string prefix
+			if ${Config.GasHarvesting}
+			{
 				prefix:Set[${Config.GasPrefix}]
-
-				Label:Set[${BookmarkIndex[${RandomBelt}].Label}]
-
-				if (${BookmarkIndex[${RandomBelt}].SolarSystemID} != ${Me.SolarSystemID} || \
-					${Label.Left[${prefix.Length}].NotEqual[${prefix}]})
-				{
-					BookmarkIndex:Remove[${RandomBelt}]
-					BookmarkIndex:Collapse
-					continue
-				}
-
-				Move:Bookmark[${BookmarkIndex[${RandomBelt}].Label}]
-
-				return TRUE
 			}
-			return TRUE
-		}
-	
-		if ${Config.UseBookmarks}
-		{
-			while ${BookmarkIndex.Used} > 0
+			elseif ${Config.IceMining}
 			{
-				RandomBelt:Set[${Math.Rand[${BookmarkIndex.Used}]:Inc[1]}]
-
-				if ${Config.IceMining}
-				{
-					prefix:Set[${Config.IceBeltPrefix}]
-				}
-				else
-				{
-					prefix:Set[${Config.BeltPrefix}]
-				}
-
-				Label:Set[${BookmarkIndex[${RandomBelt}].Label}]
-
-				if (${BookmarkIndex[${RandomBelt}].SolarSystemID} != ${Me.SolarSystemID} || \
-					${Label.Left[${prefix.Length}].NotEqual[${prefix}]})
-				{
-					BookmarkIndex:Remove[${RandomBelt}]
-					BookmarkIndex:Collapse
-					continue
-				}
-
-				Move:Bookmark[${BookmarkIndex[${RandomBelt}].Label}]
-
-				return TRUE
-			}	
+				prefix:Set[${Config.IceBeltPrefix}]
+			}
+			else
+			{
+				prefix:Set[${Config.BeltPrefix}]
+			}
+			
+			if ${BookmarkIndex.Used} == 0
+			{
+				EVE:GetBookmarks[BookmarkIndex]
+				BookmarkIndex:RemoveByQuery[${LavishScript.CreateQuery[SolarSystemID == ${Me.SolarSystemID}]}, FALSE]
+				BookmarkIndex:RemoveByQuery[${LavishScript.CreateQuery[Label.Left[${prefix.Length}] =- ${prefix}]}, FALSE]
+				BookmarkIndex:Collapse
+			}
+		
+			Move:Bookmark[${BookmarkIndex[1].Label}]
+			BookmarkIndex:Remove[1]
+			BookmarkIndex:Collapse
+			
+			return TRUE
 		}
 		else
 		{
@@ -822,6 +794,12 @@ objectdef obj_Miner inherits obj_State
 
 		if !${Entity[CategoryID==CATEGORYID_ORE]} && !${Entity[GroupID==GROUP_HARVESTABLECLOUD]}
 		{
+			if ${Config.GasHarvesting} && ${BookmarkIndex.Used} > 0
+			{
+				BookmarkIndex[1]:Remove
+				BookmarkIndex:Remove[1]
+				BookmarkIndex:Collapse
+			}
 			if ${Config.OrcaMode}
 			{
 				relay all -event ComBot_Orca_InBelt FALSE
