@@ -99,287 +99,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 				<Border>1</Border>
 				<BorderColor>FFFFFFFF</BorderColor>
 				<Children name="Hauler_Frame_Children">
-					<Text name='DropoffFrameTitle'> 
-						<X>1%</X> 
-						<Y>2%</Y> 
-						<Width>32%</Width> 
-						<Height>4%</Height> 
-						<Text>Dropoff Configuration</Text>
-						<OnLoad>
-							This.Font:SetColor[FFFFFF00]
-						</OnLoad>
-					</Text>
-					<Frame name="DropoffFrame">
-						<X>0%</X>
-						<Y>4%</Y>
-						<Width>100%</Width>
-						<Height>30%</Height>
-						<BackgroundColor>FF000000</BackgroundColor>
-						<Border>1</Border>
-						<BorderColor>FFFFFFFF</BorderColor>
-						<Children>
-							<Text name='ThresholdTitle'> 
-								<X>34%</X> 
-								<Y>33%</Y> 
-								<Width>32%</Width> 
-								<Height>10%</Height> 
-								<Alignment>Center</Alignment>
-								<OnLoad>
-									This:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Hauler.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Hauler.Config.Threshold} * .01 * ${MyShip.CargoCapacity}].Round} m3]
-								</OnLoad>
-							</Text>						 
-							<Slider name='Threshold'> 
-								<X>34%</X> 
-								<Y>40%</Y> 
-								<Width>32%</Width> 
-								<Height>15%</Height> 
-								<Border>1</Border>
-								<OnLoad>
-									This:SetRange[100]
-									This:SetValue[${Script[ComBot].VariableScope.Hauler.Config.Threshold}]
-								</OnLoad>
-								<OnChange>
-									Script[ComBot].VariableScope.Hauler.Config:SetThreshold[${This.Value}]
-									UIElement[ThresholdTitle@DropoffFrame@Hauler_Frame@ComBot_Hauler]:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Hauler.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Hauler.Config.Threshold} * .01 * ${MyShip.CargoCapacity}].Round} m3]
-								</OnChange>
-								<OnMouseEnter>
-									UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText["This field is used to determine when ComBot should perform a dropoff."]
-								</OnMouseEnter>
-								<OnMouseExit>
-									UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText[""]
-								</OnMouseExit>
-							</Slider>		
-							<Text name='DropoffContainerTitle'> 
-								<X>34%</X> 
-								<Y>73%</Y> 
-								<Width>32%</Width> 
-								<Height>10%</Height> 
-								<Alignment>Center</Alignment>
-								<Text>Container Name</Text>
-							</Text>
-							<TextEntry name='DropoffContainer'> 
-								<X>34%</X> 
-								<Y>80%</Y> 
-								<Width>32%</Width> 
-								<Height>15%</Height> 
-								<OnLoad>
-									This:SetText[${Script[ComBot].VariableScope.Hauler.Config.DropoffContainer}]
-								</OnLoad>
-								<OnChange>
-									Script[ComBot].VariableScope.Hauler.Config:SetDropoffContainer[${This.Text}]
-								</OnChange>
-								<OnMouseEnter>
-									UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText["This field is used to supply ComBot with an identifier for your dropoff location.  If you are delivering to a Player Owned Station structure, this needs to contain the structure's name."]
-								</OnMouseEnter>
-								<OnMouseExit>
-									UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText[""]
-								</OnMouseExit>
-							</TextEntry>
-							
-							<Text name='DropoffTitle'> 
-								<X>34%</X> 
-								<Y>3%</Y> 
-								<Width>32%</Width> 
-								<Height>10%</Height> 
-								<Alignment>Center</Alignment>
-								<Text>Dropoff Bookmark</Text>
-							</Text>
-							<Textentry name='Dropoff'> 
-								<X>34%</X> 
-								<Y>10%</Y> 
-								<Width>32%</Width> 
-								<Height>15%</Height> 
-								<OnLoad>
-									This:SetText[${Script[ComBot].VariableScope.Hauler.Config.Dropoff}]
-								</OnLoad>
-								<OnChange>
-									if ${This.Text.Length}
-									{
-										Script[ComBot].VariableScope.Hauler.Config:SetDropoff[${This.Text}]
-									}
-									else
-									{
-										Script[ComBot].VariableScope.Hauler.Config:SetDropoff[\"\"]
-									}
-									UIElement[DropoffList@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Show
-									Script[ComBot].VariableScope.Hauler.LocalUI:Start
-								</OnChange>
-								<OnMouseEnter>
-									UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText["This field needs to contain the exact name of your dropoff location bookmark.  If you are delivering to a personal or corporate hangar in a station, the bookmark needs to be a station.  If you are delivering to a POS structure, the bookmark should be near the structure."]
-								</OnMouseEnter>
-								<OnMouseExit>
-									UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText[""]
-								</OnMouseExit>
-							</Textentry>
-							<listbox Name="DropoffList">
-								<BackgroundColor>FF000000</BackgroundColor>
-								<Border>1</Border>
-								<BorderColor>FFFFFFFF</BorderColor>
-								<X>34%</X>
-								<Y>25%</Y>
-								<Width>32%</Width>
-								<Height>70%</Height>
-								<OnLoad>
-									This:SetZOrder[alwaysontop]
-									This:Hide
-								</OnLoad>
-								<OnSelect>
-									UIElement[Dropoff@DropoffFrame@Hauler_Frame@ComBot_Hauler]:SetText[${This.SelectedItem.Text}]
-									Script[ComBot].VariableScope.Hauler.Config:SetDropoff[${This.SelectedItem.Text}]
-									This:Hide
-									Script[ComBot].VariableScope.Hauler.LocalUI:Stop
-								</OnSelect>
-								<OnMouseEnter>
-									UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText["This field needs to contain the exact name of your dropoff location bookmark.  If you are delivering to a personal or corporate hangar in a station, the bookmark needs to be a station.  If you are delivering to a POS structure, the bookmark should be near the structure."]
-								</OnMouseEnter>
-								<OnMouseExit>
-									UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText[""]
-								</OnMouseExit>
-							</listbox>
-							
-							<Text name='DropoffSubTypeTitle'> 
-								<X>67%</X> 
-								<Y>3%</Y> 
-								<Width>32%</Width> 
-								<Height>10%</Height> 
-								<Alignment>Center</Alignment>
-								<Text>Dropoff Sub-Type</Text>
-							</Text>
-							<listbox Name="DropoffSubType">
-								<BackgroundColor>FF000000</BackgroundColor>
-								<Border>1</Border>
-								<BorderColor>FFFFFFFF</BorderColor>
-								<X>67%</X>
-								<Y>10%</Y>
-								<Width>32%</Width>
-								<Height>85%</Height>
-								<OnLoad>
-									switch ${Script[ComBot].VariableScope.Hauler.Config.DropoffType}
-									{
-										case Corporation Folder
-											This:AddItem[Corporation Folder 1]
-											This:AddItem[Corporation Folder 2]
-											This:AddItem[Corporation Folder 3]
-											This:AddItem[Corporation Folder 4]
-											This:AddItem[Corporation Folder 5]
-											This:AddItem[Corporation Folder 6]
-											This:AddItem[Corporation Folder 7]
-											break
-										case Container
-											This:AddItem[Corporation Folder 1]
-											This:AddItem[Corporation Folder 2]
-											This:AddItem[Corporation Folder 3]
-											This:AddItem[Corporation Folder 4]
-											This:AddItem[Corporation Folder 5]
-											This:AddItem[Corporation Folder 6]
-											This:AddItem[Corporation Folder 7]
-											break
-									}
-									This.ItemByText["${Script[ComBot].VariableScope.Hauler.Config.DropoffSubType}"]:Select
-								</OnLoad>
-								<OnSelect>
-									echo ${This.SelectedItem.Text}
-									Script[ComBot].VariableScope.Hauler.Config:SetDropoffSubType[${This.SelectedItem.Text}]
-								</OnSelect>
-								<OnMouseEnter>
-									UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText["This field is used to further configure your dropoff type for types that have additional options, like Corporate Hangars."]
-								</OnMouseEnter>
-								<OnMouseExit>
-									UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText[""]
-								</OnMouseExit>
-							</listbox>
-							
-							<Text name='DropoffTypeTitle'> 
-								<X>1%</X> 
-								<Y>3%</Y> 
-								<Width>32%</Width> 
-								<Height>10%</Height> 
-								<Alignment>Center</Alignment>
-								<Text>Dropoff Type</Text>
-							</Text>
-							<listbox Name="DropoffType">
-								<BackgroundColor>FF000000</BackgroundColor>
-								<Border>1</Border>
-								<BorderColor>FFFFFFFF</BorderColor>
-								<X>1%</X>
-								<Y>10%</Y>
-								<Width>32%</Width>
-								<Height>85%</Height>
-								<Items>
-									<Item>Personal Hangar</Item>
-									<Item>Corporation Folder</Item>
-									<Item>Container</Item>
-								</Items>
-								<OnLoad>
-									This.ItemByText[${Script[ComBot].VariableScope.Hauler.Config.DropoffType}]:Select
-									switch ${Script[ComBot].VariableScope.Hauler.Config.DropoffType}
-									{
-										case Container
-										
-											break
-										default
-											UIElement[DropoffContainerTitle@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Hide
-											UIElement[DropoffContainer@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Hide
-									}
-								</OnLoad>
-								<OnSelect>
-									Script[ComBot].VariableScope.Hauler.Config:SetDropoffType[${This.SelectedItem.Text}]
-									UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:ClearItems
-									switch ${Script[ComBot].VariableScope.Hauler.Config.DropoffType}
-									{
-										case Corporation Folder
-											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 1]
-											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 2]
-											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 3]
-											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 4]
-											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 5]
-											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 6]
-											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 7]
-											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler].ItemByText["${Script[ComBot].VariableScope.Hauler.Config.DropoffSubType}"]:Select
-											UIElement[DropoffSubTypeTitle@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Show
-											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Show
-											UIElement[DropoffContainer@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Hide
-											UIElement[DropoffContainerTitle@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Hide
-											break
-										case Container
-											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 1]
-											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 2]
-											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 3]
-											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 4]
-											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 5]
-											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 6]
-											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 7]
-											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler].ItemByText["${Script[ComBot].VariableScope.Hauler.Config.DropoffSubType}"]:Select
-											UIElement[DropoffContainer@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Show
-											UIElement[DropoffContainerTitle@DropoffFrame@Hauler_Frame@ComBot_Hauler]:SetText[Container Name]
-											UIElement[DropoffContainerTitle@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Show
-											UIElement[DropoffSubTypeTitle@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Show
-											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Show
-											break
-										case Personal Hangar
-											UIElement[DropoffSubTypeTitle@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Hide
-											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Hide
-											UIElement[DropoffContainer@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Hide
-											UIElement[DropoffContainerTitle@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Hide
-									}
-								</OnSelect>
-								<OnMouseEnter>
-									UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText["This field determines how ComBot should drop off cargo after it reaches the dropoff location."]
-								</OnMouseEnter>
-								<OnMouseExit>
-									UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText[""]
-								</OnMouseExit>
-							</listbox>
-							
-						</Children>
-					</Frame>
-				
-				
-				
 				
 					<Text name='PickupFrameTitle'> 
 						<X>1%</X> 
-						<Y>40%</Y> 
+						<Y>2%</Y> 
 						<Width>32%</Width> 
 						<Height>4%</Height> 
 						<Text>Pickup Configuration</Text>
@@ -389,7 +112,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					</Text>
 					<Frame name="PickupFrame">
 						<X>0%</X>
-						<Y>42%</Y>
+						<Y>4%</Y>
 						<Width>100%</Width>
 						<Height>30%</Height>
 						<BackgroundColor>FF000000</BackgroundColor>
@@ -727,7 +450,288 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								</OnMouseExit>
 							</listbox>
 						</Children>
+					</Frame>				
+				
+				
+					<Text name='DropoffFrameTitle'> 
+						<X>1%</X> 
+						<Y>35%</Y> 
+						<Width>32%</Width> 
+						<Height>4%</Height> 
+						<Text>Dropoff Configuration</Text>
+						<OnLoad>
+							This.Font:SetColor[FFFFFF00]
+						</OnLoad>
+					</Text>
+					<Frame name="DropoffFrame">
+						<X>0%</X>
+						<Y>37%</Y>
+						<Width>100%</Width>
+						<Height>30%</Height>
+						<BackgroundColor>FF000000</BackgroundColor>
+						<Border>1</Border>
+						<BorderColor>FFFFFFFF</BorderColor>
+						<Children>
+							<Text name='ThresholdTitle'> 
+								<X>34%</X> 
+								<Y>33%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Alignment>Center</Alignment>
+								<OnLoad>
+									This:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Hauler.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Hauler.Config.Threshold} * .01 * ${MyShip.CargoCapacity}].Round} m3]
+								</OnLoad>
+							</Text>						 
+							<Slider name='Threshold'> 
+								<X>34%</X> 
+								<Y>40%</Y> 
+								<Width>32%</Width> 
+								<Height>15%</Height> 
+								<Border>1</Border>
+								<OnLoad>
+									This:SetRange[100]
+									This:SetValue[${Script[ComBot].VariableScope.Hauler.Config.Threshold}]
+								</OnLoad>
+								<OnChange>
+									Script[ComBot].VariableScope.Hauler.Config:SetThreshold[${This.Value}]
+									UIElement[ThresholdTitle@DropoffFrame@Hauler_Frame@ComBot_Hauler]:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Hauler.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Hauler.Config.Threshold} * .01 * ${MyShip.CargoCapacity}].Round} m3]
+								</OnChange>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText["This field is used to determine when ComBot should perform a dropoff."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText[""]
+								</OnMouseExit>
+							</Slider>		
+							<Text name='DropoffContainerTitle'> 
+								<X>34%</X> 
+								<Y>73%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Container Name</Text>
+							</Text>
+							<TextEntry name='DropoffContainer'> 
+								<X>34%</X> 
+								<Y>80%</Y> 
+								<Width>32%</Width> 
+								<Height>15%</Height> 
+								<OnLoad>
+									This:SetText[${Script[ComBot].VariableScope.Hauler.Config.DropoffContainer}]
+								</OnLoad>
+								<OnChange>
+									Script[ComBot].VariableScope.Hauler.Config:SetDropoffContainer[${This.Text}]
+								</OnChange>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText["This field is used to supply ComBot with an identifier for your dropoff location.  If you are delivering to a Player Owned Station structure, this needs to contain the structure's name."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText[""]
+								</OnMouseExit>
+							</TextEntry>
+							
+							<Text name='DropoffTitle'> 
+								<X>34%</X> 
+								<Y>3%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Dropoff Bookmark</Text>
+							</Text>
+							<Textentry name='Dropoff'> 
+								<X>34%</X> 
+								<Y>10%</Y> 
+								<Width>32%</Width> 
+								<Height>15%</Height> 
+								<OnLoad>
+									This:SetText[${Script[ComBot].VariableScope.Hauler.Config.Dropoff}]
+								</OnLoad>
+								<OnChange>
+									if ${This.Text.Length}
+									{
+										Script[ComBot].VariableScope.Hauler.Config:SetDropoff[${This.Text}]
+									}
+									else
+									{
+										Script[ComBot].VariableScope.Hauler.Config:SetDropoff[\"\"]
+									}
+									UIElement[DropoffList@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Show
+									Script[ComBot].VariableScope.Hauler.LocalUI:Start
+								</OnChange>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText["This field needs to contain the exact name of your dropoff location bookmark.  If you are delivering to a personal or corporate hangar in a station, the bookmark needs to be a station.  If you are delivering to a POS structure, the bookmark should be near the structure."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText[""]
+								</OnMouseExit>
+							</Textentry>
+							<listbox Name="DropoffList">
+								<BackgroundColor>FF000000</BackgroundColor>
+								<Border>1</Border>
+								<BorderColor>FFFFFFFF</BorderColor>
+								<X>34%</X>
+								<Y>25%</Y>
+								<Width>32%</Width>
+								<Height>70%</Height>
+								<OnLoad>
+									This:SetZOrder[alwaysontop]
+									This:Hide
+								</OnLoad>
+								<OnSelect>
+									UIElement[Dropoff@DropoffFrame@Hauler_Frame@ComBot_Hauler]:SetText[${This.SelectedItem.Text}]
+									Script[ComBot].VariableScope.Hauler.Config:SetDropoff[${This.SelectedItem.Text}]
+									This:Hide
+									Script[ComBot].VariableScope.Hauler.LocalUI:Stop
+								</OnSelect>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText["This field needs to contain the exact name of your dropoff location bookmark.  If you are delivering to a personal or corporate hangar in a station, the bookmark needs to be a station.  If you are delivering to a POS structure, the bookmark should be near the structure."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText[""]
+								</OnMouseExit>
+							</listbox>
+							
+							<Text name='DropoffSubTypeTitle'> 
+								<X>67%</X> 
+								<Y>3%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Dropoff Sub-Type</Text>
+							</Text>
+							<listbox Name="DropoffSubType">
+								<BackgroundColor>FF000000</BackgroundColor>
+								<Border>1</Border>
+								<BorderColor>FFFFFFFF</BorderColor>
+								<X>67%</X>
+								<Y>10%</Y>
+								<Width>32%</Width>
+								<Height>85%</Height>
+								<OnLoad>
+									switch ${Script[ComBot].VariableScope.Hauler.Config.DropoffType}
+									{
+										case Corporation Folder
+											This:AddItem[Corporation Folder 1]
+											This:AddItem[Corporation Folder 2]
+											This:AddItem[Corporation Folder 3]
+											This:AddItem[Corporation Folder 4]
+											This:AddItem[Corporation Folder 5]
+											This:AddItem[Corporation Folder 6]
+											This:AddItem[Corporation Folder 7]
+											break
+										case Container
+											This:AddItem[Corporation Folder 1]
+											This:AddItem[Corporation Folder 2]
+											This:AddItem[Corporation Folder 3]
+											This:AddItem[Corporation Folder 4]
+											This:AddItem[Corporation Folder 5]
+											This:AddItem[Corporation Folder 6]
+											This:AddItem[Corporation Folder 7]
+											break
+									}
+									This.ItemByText["${Script[ComBot].VariableScope.Hauler.Config.DropoffSubType}"]:Select
+								</OnLoad>
+								<OnSelect>
+									echo ${This.SelectedItem.Text}
+									Script[ComBot].VariableScope.Hauler.Config:SetDropoffSubType[${This.SelectedItem.Text}]
+								</OnSelect>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText["This field is used to further configure your dropoff type for types that have additional options, like Corporate Hangars."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText[""]
+								</OnMouseExit>
+							</listbox>
+							
+							<Text name='DropoffTypeTitle'> 
+								<X>1%</X> 
+								<Y>3%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Dropoff Type</Text>
+							</Text>
+							<listbox Name="DropoffType">
+								<BackgroundColor>FF000000</BackgroundColor>
+								<Border>1</Border>
+								<BorderColor>FFFFFFFF</BorderColor>
+								<X>1%</X>
+								<Y>10%</Y>
+								<Width>32%</Width>
+								<Height>85%</Height>
+								<Items>
+									<Item>Personal Hangar</Item>
+									<Item>Corporation Folder</Item>
+									<Item>Container</Item>
+								</Items>
+								<OnLoad>
+									This.ItemByText[${Script[ComBot].VariableScope.Hauler.Config.DropoffType}]:Select
+									switch ${Script[ComBot].VariableScope.Hauler.Config.DropoffType}
+									{
+										case Container
+										
+											break
+										default
+											UIElement[DropoffContainerTitle@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Hide
+											UIElement[DropoffContainer@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Hide
+									}
+								</OnLoad>
+								<OnSelect>
+									Script[ComBot].VariableScope.Hauler.Config:SetDropoffType[${This.SelectedItem.Text}]
+									UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:ClearItems
+									switch ${Script[ComBot].VariableScope.Hauler.Config.DropoffType}
+									{
+										case Corporation Folder
+											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 1]
+											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 2]
+											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 3]
+											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 4]
+											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 5]
+											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 6]
+											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 7]
+											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler].ItemByText["${Script[ComBot].VariableScope.Hauler.Config.DropoffSubType}"]:Select
+											UIElement[DropoffSubTypeTitle@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Show
+											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Show
+											UIElement[DropoffContainer@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Hide
+											UIElement[DropoffContainerTitle@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Hide
+											break
+										case Container
+											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 1]
+											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 2]
+											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 3]
+											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 4]
+											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 5]
+											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 6]
+											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 7]
+											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler].ItemByText["${Script[ComBot].VariableScope.Hauler.Config.DropoffSubType}"]:Select
+											UIElement[DropoffContainer@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Show
+											UIElement[DropoffContainerTitle@DropoffFrame@Hauler_Frame@ComBot_Hauler]:SetText[Container Name]
+											UIElement[DropoffContainerTitle@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Show
+											UIElement[DropoffSubTypeTitle@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Show
+											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Show
+											break
+										case Personal Hangar
+											UIElement[DropoffSubTypeTitle@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Hide
+											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Hide
+											UIElement[DropoffContainer@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Hide
+											UIElement[DropoffContainerTitle@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Hide
+									}
+								</OnSelect>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText["This field determines how ComBot should drop off cargo after it reaches the dropoff location."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText[""]
+								</OnMouseExit>
+							</listbox>
+							
+						</Children>
 					</Frame>
+				
+				
+				
+				
+
 						
 						
 						
