@@ -508,6 +508,12 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[Corporation Folder 5]
 											UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[Corporation Folder 6]
 											UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[Corporation Folder 7]
+											UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager].ItemByText["${Script[ComBot].VariableScope.Salvage.Config.Dropoff_SubType}"]:Select
+											UIElement[DropoffSubTypeTitle@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Show
+											UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Show
+											UIElement[Dropoff_Container@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Hide
+											UIElement[Dropoff_ContainerTitle@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Hide
+											break
 										case Container
 											UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[Corporation Folder 1]
 											UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[Corporation Folder 2]
@@ -516,11 +522,18 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[Corporation Folder 5]
 											UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[Corporation Folder 6]
 											UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[Corporation Folder 7]
+											UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager].ItemByText["${Script[ComBot].VariableScope.Salvage.Config.Dropoff_SubType}"]:Select
 											UIElement[Dropoff_Container@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Show
 											UIElement[Dropoff_ContainerTitle@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText[Container Name]
 											UIElement[Dropoff_ContainerTitle@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Show
 											UIElement[DropoffSubTypeTitle@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Show
 											UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Show
+											break
+										case Personal Hangar
+											UIElement[DropoffSubTypeTitle@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Hide
+											UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Hide
+											UIElement[Dropoff_Container@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Hide
+											UIElement[Dropoff_ContainerTitle@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Hide
 									}
 								</OnSelect>
 								<OnMouseEnter>

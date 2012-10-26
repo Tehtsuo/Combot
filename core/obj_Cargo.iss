@@ -401,6 +401,8 @@ objectdef obj_Cargo inherits obj_State
 			return TRUE
 		}
 		
+		UI:Update["obj_Cargo", "Process ${This.CargoQueue.Peek.Action} @ ${This.CargoQueue.Peek.Bookmark} - ${This.CargoQueue.Peek.LocationType}", "g", TRUE]
+		
 		Move:Bookmark[${This.CargoQueue.Peek.Bookmark}, TRUE]
 		This:QueueState["Traveling"]
 		This:QueueState["WarpFleetMember"]
@@ -423,9 +425,9 @@ objectdef obj_Cargo inherits obj_State
 	
 	member:bool WarpFleetMember()
 	{
-		if ${Local[${This.BuildAction.Container}](exists)}
+		if ${Local[${This.CargoQueue.Peek.Container}](exists)}
 		{
-			Move:Fleetmember[${Local[${This.BuildAction.Container}].ID}]
+			Move:Fleetmember[${Local[${This.CargoQueue.Peek.Container}].ID}]
 		}
 		return TRUE
 	}
@@ -448,7 +450,6 @@ objectdef obj_Cargo inherits obj_State
 			return FALSE
 		}
 
-		UI:Update["obj_Cargo", "Stacking dropoff container", "g"]
 		
 		if ${Me.InSpace}
 		{
@@ -473,7 +474,7 @@ objectdef obj_Cargo inherits obj_State
 						EVEWindow[ByName, Inventory]:MakeChildActive[${Container}]
 						return FALSE
 					}
-					EVE:StackItems[${Container}, CorpHangars, ${This.CargoQueue.Peek.LocationSubtype}]
+					EVE:StackItems[${Container}, CorpHangars]
 					return TRUE
 				}
 			}
@@ -484,7 +485,7 @@ objectdef obj_Cargo inherits obj_State
 			}
 		
 		}
-		
+
 		if ${EVEWindow[ByName, Inventory].ChildWindowExists[Corporation Hangars]} && !${OpenedCorpHangar}
 		{
 			EVEWindow[ByName, Inventory]:MakeChildActive[Corporation Hangars]
@@ -495,17 +496,17 @@ objectdef obj_Cargo inherits obj_State
 		if !${StackedShip}
 		{
 			EVE:StackItems[MyShip, CargoHold]
-			This:InsertState["Stack", 2000, TRUE, TRUE]
+			This:InsertState["Stack", 2000, "TRUE, TRUE"]
 			return TRUE
 		}
 		
 		switch ${This.BuildAction.LocationType}
 		{
-			case STATIONHANGAR
+			case Personal Hangar
 				EVE:StackItems[MyStationHangar, Hangar]
 				break
-			case STATIONCORPORATEHANGAR
-				EVE:StackItems[MyStationCorporateHangar, StationCorporateHangar, "${Config.Dropoff_Type.Escape}"]
+			case Corporation Folder
+				EVE:StackItems[MyStationCorporateHangar, StationCorporateHangar]
 				break
 		}
 		
@@ -541,7 +542,7 @@ objectdef obj_Cargo inherits obj_State
 					}
 					Cargo:PopulateCargoList[SHIP]
 					Cargo:Filter[${This.CargoQueue.Peek.QueryString}]
-					Cargo:MoveCargoList[CONTAINER, ${This.CargoQueue.Peek.LocationSubtype}, ${Container}, ${This.CargoQueue.Peek.Quantity}]
+					Cargo:MoveCargoList[Container, ${This.CargoQueue.Peek.LocationSubtype}, ${Container}, ${This.CargoQueue.Peek.Quantity}]
 					return TRUE
 				}
 			}
@@ -561,7 +562,7 @@ objectdef obj_Cargo inherits obj_State
 		
 		Cargo:PopulateCargoList[SHIP]
 		Cargo:Filter[${This.CargoQueue.Peek.QueryString}]
-		Cargo:MoveCargoList[${This.BuildAction.LocationType}, ${This.CargoQueue.Peek.LocationSubtype}, ${Container}, ${This.CargoQueue.Peek.Quantity}]
+		Cargo:MoveCargoList[${This.CargoQueue.Peek.LocationType}, ${This.CargoQueue.Peek.LocationSubtype}, ${Container}, ${This.CargoQueue.Peek.Quantity}]
 		return TRUE
 	}
 	
@@ -592,7 +593,10 @@ objectdef obj_Cargo inherits obj_State
 						EVEWindow[ByName, Inventory]:MakeChildActive[${Container}]
 						return FALSE
 					}
-					Cargo:PopulateCargoList[CONTAINER, ${Container}]]
+					echo Cargo:PopulateCargoList[Container, ${Container}]
+					echo Cargo:Filter[${This.CargoQueue.Peek.QueryString}]
+					echo Cargo:MoveCargoList[SHIP, "", -1, ${This.CargoQueue.Peek.Quantity}]
+					Cargo:PopulateCargoList[Container, ${Container}]
 					Cargo:Filter[${This.CargoQueue.Peek.QueryString}]
 					Cargo:MoveCargoList[SHIP, "", -1, ${This.CargoQueue.Peek.Quantity}]
 					return TRUE
@@ -612,7 +616,7 @@ objectdef obj_Cargo inherits obj_State
 			return TRUE
 		}
 		
-		Cargo:PopulateCargoList[${This.BuildAction.LocationType}, ${Container}]]
+		Cargo:PopulateCargoList[${This.CargoQueue.Peek.LocationType}, ${Container}]]
 		Cargo:Filter[${This.CargoQueue.Peek.QueryString}]
 		Cargo:MoveCargoList[SHIP, "", -1, ${This.CargoQueue.Peek.Quantity}]
 		return TRUE

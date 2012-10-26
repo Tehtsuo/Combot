@@ -57,6 +57,7 @@ objectdef obj_Configuration_Hauler
 	Setting(string, PickupType, SetPickupType)
 	Setting(string, DropoffContainer, SetDropoffContainer)
 	Setting(string, PickupContainer, SetPickupContainer)
+	Setting(string, DropoffSubType, SetDropoffSubType)
 	Setting(int, Threshold, SetThreshold)	
 	
 }
@@ -130,7 +131,7 @@ objectdef obj_Hauler inherits obj_State
 		if ${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity} >= ${Config.Threshold} * .01
 		{
 			UI:Update["obj_Hauler", "Unload trip required", "g"]
-			Cargo:At[${Config.Dropoff},${Config.Dropoff_Type},${Config.Dropoff_SubType}]:Unload
+			Cargo:At[${Config.Dropoff},${Config.DropoffType},${Config.DropoffSubType}]:Unload
 			This:QueueState["Traveling"]
 			This:QueueState["OpenCargoHold"]
 			This:QueueState["CheckCargoHold"]
@@ -138,15 +139,10 @@ objectdef obj_Hauler inherits obj_State
 		}
 		else
 		{
-			switch ${Config.Pickup_Type}
-			{
-			
-			}
 			This:QueueState["CheckForWork"]
-			
+			This:QueueState["QueuePickup"]
+			return TRUE
 		}
-	
-		return TRUE
 	}
 
 	member:bool CheckForWork()
@@ -168,6 +164,31 @@ objectdef obj_Hauler inherits obj_State
 		}
 		return TRUE
 	}
+	
+	member:bool QueuePickup()
+	{
+		if ${Config.PickupType.Equal[Jetcan]}
+		{
+			Move:Bookmark[${Config.Pickup}]
+			This:QueueState["Traveling"]
+			
+			;	NEED JETCAN STATES HERE
+		}
+		else
+		{
+			variable string PickupType=${Config.PickupType}
+			if ${PickupType.Equal[Orca]}
+			{
+				PickupType:Set[Container]
+			}
+			Cargo:At[${Config.Pickup},${PickupType},${Config.PickupSubType},${Config.PickupContainer}]:Load
+			This:QueueState["Traveling"]
+			This:QueueState["OpenCargoHold"]
+			This:QueueState["CheckCargoHold"]
+		}
+		return TRUE
+	}
+	
 	
 	member:bool Traveling()
 	{
@@ -194,71 +215,6 @@ objectdef obj_Hauler inherits obj_State
 	
 	
 	
-	
-	
-	
-	
-	
-
-
-	member:bool Pickup()
-	{
-		switch ${Config.PickupType}
-		{
-			case Personal Hangar
-				UI:Update["obj_Hauler", "Loading cargo", "g"]
-				Cargo:PopulateCargoList[STATIONHANGAR]
-				Cargo:MoveCargoList[SHIP]
-				break
-			case Corporation Hangar
-				UI:Update["obj_Hauler", "Loading cargo", "g"]
-				Cargo:PopulateCargoList[STATIONCORPORATEHANGAR]
-				Cargo:MoveCargoList[SHIP]
-				break
-		}
-		return TRUE
-	}
-	
-	member:bool StackItemHangar()
-	{
-		if !${EVEWindow[ByName, "Inventory"](exists)}
-		{
-			UI:Update["obj_Hauler", "Making sure inventory is open", "g"]
-			MyShip:Open
-			return FALSE
-		}
-
-		UI:Update["obj_Hauler", "Stacking dropoff container", "g"]
-		switch ${Config.DropoffType}
-		{
-			case Personal Hangar
-				EVE:StackItems[MyStationHangar, Hangar]
-				break
-			default
-				EVE:StackItems[MyStationCorporateHangar, StationCorporateHangar, "${Config.DropoffType}"]
-				break
-		}
-		return TRUE
-	}
-	
-	member:bool GoToPickup()
-	{
-		if !${EVE.Bookmark[${Config.Pickup}](exists)}
-		{
-			UI:Update["obj_Hauler", "No Pickup Bookmark defined!  Check your settings", "r"]
-		}
-		if ${EVE.Bookmark[${Config.Pickup}].SolarSystemID} != ${Me.SolarSystemID}
-		{
-			Move:System[${EVE.Bookmark[${Config.Pickup}].SolarSystemID}]
-		}
-		return TRUE
-	}
-
-	member:bool Undock()
-	{
-		Move:Undock
-		return TRUE
-	}
 	
 	member:bool PopulateTargetList(int64 ID)
 	{
