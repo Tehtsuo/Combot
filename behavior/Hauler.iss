@@ -767,10 +767,12 @@ objectdef obj_Hauler inherits obj_State
 						}
 						if !${EVEWindow[ByItemID, ${Container}](exists)}
 						{
+							UI:Update["obj_Hauler", "Activating ${Config.DropoffContainer}", "g"]
 							EVEWindow[ByName, Inventory]:MakeChildActive[${Container}]
 							return FALSE
 						}
-						;UI:Update["obj_Hauler", "Unloading to ${Config.DropoffContainer}", "g"]
+
+						UI:Update["obj_Hauler", "Unloading to ${Config.DropoffContainer}", "g"]
 						Cargo:PopulateCargoList[SHIP]
 						Cargo:MoveCargoList[SHIPCORPORATEHANGAR, "", ${Container}]
 						This:QueueState["Idle", 1000]
