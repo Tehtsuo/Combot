@@ -552,7 +552,7 @@ objectdef obj_Miner inherits obj_State
 				BookmarkIndex:Collapse
 			}
 		
-			Move:Bookmark[${BookmarkIndex[1].Label}]
+			Move:Bookmark[${BookmarkIndex.Get[1].Label}]
 			BookmarkIndex:Remove[1]
 			BookmarkIndex:Collapse
 			
@@ -794,7 +794,7 @@ objectdef obj_Miner inherits obj_State
 		{
 			if ${Config.GasHarvesting} && ${BookmarkIndex.Used} > 0
 			{
-				BookmarkIndex[1]:Remove
+				BookmarkIndex.Get[1]:Remove
 				BookmarkIndex:Remove[1]
 				BookmarkIndex:Collapse
 			}
