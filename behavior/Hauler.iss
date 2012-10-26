@@ -101,7 +101,8 @@ objectdef obj_Hauler inherits obj_State
 		This:AssignStateQueueDisplay[DebugStateList@Debug@ComBotTab@ComBot]
 		if ${This.IsIdle}
 		{
-			This:QueueState["Haul"]
+			This:QueueState["OpenCargoHold"]
+			This:QueueState["CheckCargoHold"]
 		}
 	}
 	
@@ -110,16 +111,7 @@ objectdef obj_Hauler inherits obj_State
 		This:DeactivateStateQueueDisplay
 		This:Clear
 	}
-	method PopulateTargetList(int64 ID)
-	{
-		variable int64 CharID = ${Entity[${ID}].CharID}
-		IR_Cans:ClearQueryString
-		IR_Cans:AddQueryString["GroupID==GROUP_CARGOCONTAINER && OwnerID == ${CharID}"]
-		IR_Cans.DistanceTarget:Set[${ID}]
-		OOR_Cans:ClearQueryString
-		OOR_Cans:AddQueryString["GroupID==GROUP_CARGOCONTAINER && OwnerID == ${CharID}"]
-		OOR_Cans.DistanceTarget:Set[${ID}]
-	}	
+	
 	
 	
 	member:bool OpenCargoHold()
@@ -135,40 +127,29 @@ objectdef obj_Hauler inherits obj_State
 	
 	member:bool CheckCargoHold()
 	{
-		switch ${Config.DropoffType}
+		if ${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity} >= ${Config.Threshold} * .01
 		{
-			case Container
-				if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) >= ${Config.Threshold} * .01
-				{
-					UI:Update["obj_Hauler", "Unload trip required", "g"]
-					This:Clear
-					Move:Bookmark[${Config.Dropoff}]
-					This:QueueState["Traveling", 1000]
-					This:QueueState["Haul"]
-				}
-				break
-			default
-				echo (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) >= ${Config.Threshold} * .01
-				if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) >= ${Config.Threshold} * .01
-				{
-					UI:Update["obj_Hauler", "Unload trip required", "g"]
-					This:Clear
-					Move:Bookmark[${Config.Dropoff}]
-					This:QueueState["Traveling", 1000]
-					This:QueueState["PrepOffload", 1000]
-					This:QueueState["Offload", 1000]
-					This:QueueState["StackItemHangar", 1000]
-					This:QueueState["OrcaWait"]
-					This:QueueState["GoToPickup", 1000]
-					This:QueueState["Traveling", 1000]
-					This:QueueState["Haul"]
-				}
-				break
+			UI:Update["obj_Hauler", "Unload trip required", "g"]
+			Cargo:At[${Config.Dropoff},${Config.Dropoff_Type},${Config.Dropoff_SubType}]:Unload
+			This:QueueState["Traveling"]
+			This:QueueState["OpenCargoHold"]
+			This:QueueState["CheckCargoHold"]
+			return TRUE
 		}
-		return TRUE;
+		else
+		{
+			switch ${Config.Pickup_Type}
+			{
+			
+			}
+			This:QueueState["CheckForWork"]
+			
+		}
+	
+		return TRUE
 	}
 
-	member:bool OrcaWait()
+	member:bool CheckForWork()
 	{
 		if ${Config.PickupType.Equal[Orca]}
 		{
@@ -178,7 +159,11 @@ objectdef obj_Hauler inherits obj_State
 			}
 			else
 			{
-				return FALSE
+				Move:Bookmark[${Config.Dropoff}]
+				This:InsertState["Traveling"]
+				This:InsertState["Idle", 30000]
+				This:InsertState["CheckForWork"]
+				return TRUE
 			}
 		}
 		return TRUE
@@ -186,58 +171,35 @@ objectdef obj_Hauler inherits obj_State
 	
 	member:bool Traveling()
 	{
-		if ${Move.Traveling} || ${Me.ToEntity.Mode} == 3
+		if ${Cargo.Processing} || ${Move.Traveling} || ${Me.ToEntity.Mode} == 3
 		{
 			return FALSE
 		}
 		return TRUE
 	}
 
-	member:bool PrepOffload()
-	{	
-		if ${Client.InSpace}
-		{
-			return TRUE
-		}
-		if !${EVEWindow[ByName, "Inventory"](exists)}
-		{
-			UI:Update["obj_Hauler", "Opening inventory", "g"]
-			MyShip:OpenCargo[]
-			return FALSE
-		}
-		switch ${Config.DropoffType}
-		{
-			case Personal Hangar
-				break
-			default
-				if !${EVEWindow[ByName, Inventory].ChildWindowExists[Corporation Hangars]}
-				{
-					UI:Update["obj_Hauler", "Delivery Location: Corporate Hangars child not found", "r"]
-					UI:Update["obj_Hauler", "Closing inventory to fix possible EVE bug", "y"]
-					EVEWindow[ByName, Inventory]:Close
-					return FALSE
-				}
-				EVEWindow[ByName, Inventory]:MakeChildActive[Corporation Hangars]
-				break
-		}
-		return TRUE		
-	}
 	
-	member:bool Offload()
-	{
-		UI:Update["obj_Hauler", "Unloading cargo", "g"]
-		Cargo:PopulateCargoList[SHIP]
-		switch ${Config.DropoffType}
-		{
-			case Personal Hangar
-				Cargo:MoveCargoList[HANGAR]
-				break
-			default
-				Cargo:MoveCargoList[CORPORATEHANGAR, ${Config.DropoffType}]
-				break
-		}
-		return TRUE
-	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
 
 	member:bool Pickup()
 	{
@@ -790,6 +752,16 @@ objectdef obj_Hauler inherits obj_State
 		return TRUE
 	}
 	
+	method PopulateTargetList(int64 ID)
+	{
+		variable int64 CharID = ${Entity[${ID}].CharID}
+		IR_Cans:ClearQueryString
+		IR_Cans:AddQueryString["GroupID==GROUP_CARGOCONTAINER && OwnerID == ${CharID}"]
+		IR_Cans.DistanceTarget:Set[${ID}]
+		OOR_Cans:ClearQueryString
+		OOR_Cans:AddQueryString["GroupID==GROUP_CARGOCONTAINER && OwnerID == ${CharID}"]
+		OOR_Cans.DistanceTarget:Set[${ID}]
+	}	
 
 	method OrcaCargoUpdate(float value)
 	{
