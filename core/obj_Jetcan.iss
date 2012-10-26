@@ -133,7 +133,7 @@ objectdef obj_Jetcan inherits obj_State
 					else
 					{
 						Cargo:PopulateCargoList[SHIP]
-						Cargo:Filter["CategoryID == CATEGORYID_ORE || GroupID == GROUP_HARVESTABLECLOUD", FALSE]
+						Cargo:Filter["CategoryID == CATEGORYID_ORE", FALSE]
 					}
 					Cargo:MoveCargoList[CONTAINER, "", ${TargetIterator.Value}]
 					This:QueueState["Stack", 1000, ${TargetIterator.Value}]
@@ -166,7 +166,7 @@ objectdef obj_Jetcan inherits obj_State
 			if ${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity} >= ${Config.Miner.Threshold} * .01
 			{
 				Cargo:PopulateCargoList[SHIP]
-				Cargo:Filter["CategoryID == CATEGORYID_ORE || GroupID == GROUP_HARVESTABLECLOUD", FALSE]
+				Cargo:Filter["CategoryID == CATEGORYID_ORE", FALSE]
 				Cargo.CargoList:GetIterator[TargetIterator]
 				if ${TargetIterator:First(exists)}
 				{
@@ -281,7 +281,7 @@ objectdef obj_Jetcan inherits obj_State
 		else
 		{
 			Cargo:PopulateCargoList[SHIP]
-			Cargo:Filter["CategoryID == CATEGORYID_ORE || GroupID == GROUP_HARVESTABLECLOUD", FALSE]
+			Cargo:Filter["CategoryID == CATEGORYID_ORE", FALSE]
 		}
 		Cargo.CargoList.Get[1]:Jettison
 		return TRUE
@@ -350,7 +350,7 @@ objectdef obj_Jetcan inherits obj_State
 				else
 				{
 					Cargo:PopulateCargoList[SHIP]
-					Cargo:Filter["CategoryID == CATEGORYID_ORE || GroupID == GROUP_HARVESTABLECLOUD", FALSE]
+					Cargo:Filter["CategoryID == CATEGORYID_ORE", FALSE]
 				}
 				Cargo:MoveCargoList[CONTAINER, "", ${TargetIterator.Value}]
 				This:QueueState["Stack", 1000, ${TargetIterator.Value}]
