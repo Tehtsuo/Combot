@@ -403,6 +403,8 @@ objectdef obj_Cargo inherits obj_State
 		
 		Move:Bookmark[${This.CargoQueue.Peek.Bookmark}, TRUE]
 		This:QueueState["Traveling"]
+		This:QueueState["WarpFleetMember"]
+		This:QueueState["Traveling"]
 		This:QueueState["${This.CargoQueue.Peek.Action}"]
 		This:QueueState["Stack"]
 		This:QueueState["Dequeue"]
@@ -415,6 +417,15 @@ objectdef obj_Cargo inherits obj_State
 		if ${Move.Traveling} || ${Me.ToEntity.Mode} == 3
 		{
 			return FALSE
+		}
+		return TRUE
+	}
+	
+	member:bool WarpFleetMember()
+	{
+		if ${Local[${This.BuildAction.Container}](exists)}
+		{
+			Move:Fleetmember[${Local[${This.BuildAction.Container}].ID}]
 		}
 		return TRUE
 	}
