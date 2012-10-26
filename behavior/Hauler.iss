@@ -747,9 +747,9 @@ objectdef obj_Hauler inherits obj_State
 		
 		if ${Config.DropoffType.Equal[Container]}
 		{
-			if ${Entity[Name = "${Config.DropoffContainerName}"](exists)}
+			if ${Entity[Name = "${Config.DropoffContainer}"](exists)}
 			{
-				Container:Set[${Entity[Name = "${Config.DropoffContainerName}"].ID}]
+				Container:Set[${Entity[Name = "${Config.DropoffContainer}"].ID}]
 				if ${Entity[${Container}].Distance} > LOOT_RANGE
 				{
 					Move:Approach[${Container}, LOOT_RANGE]
@@ -761,7 +761,7 @@ objectdef obj_Hauler inherits obj_State
 					{
 						if !${EVEWindow[ByName, Inventory].ChildWindowExists[${Container}]}
 						{
-							UI:Update["obj_Hauler", "Opening ${Config.DropoffContainerName}", "g"]
+							UI:Update["obj_Hauler", "Opening ${Config.DropoffContainer}", "g"]
 							Entity[${Container}]:Open
 							return FALSE
 						}
@@ -770,7 +770,7 @@ objectdef obj_Hauler inherits obj_State
 							EVEWindow[ByName, Inventory]:MakeChildActive[${Container}]
 							return FALSE
 						}
-						;UI:Update["obj_Hauler", "Unloading to ${Config.DropoffContainerName}", "g"]
+						;UI:Update["obj_Hauler", "Unloading to ${Config.DropoffContainer}", "g"]
 						Cargo:PopulateCargoList[SHIP]
 						Cargo:MoveCargoList[SHIPCORPORATEHANGAR, "", ${Container}]
 						This:QueueState["Idle", 1000]
