@@ -145,6 +145,12 @@ objectdef obj_Hauler inherits obj_State
 		}
 	}
 
+	method OrcaCargoUpdate(float value)
+	{
+		OrcaCargo:Set[${value}]
+		UIElement[obj_HaulerOrcaCargo@Hauler@ComBotTab@ComBot]:SetText[Orca Cargo Hold: ${OrcaCargo.Round} m3]
+	}
+	
 	member:bool CheckForWork()
 	{
 		if ${Config.PickupType.Equal[Orca]}
@@ -169,10 +175,14 @@ objectdef obj_Hauler inherits obj_State
 	{
 		if ${Config.PickupType.Equal[Jetcan]}
 		{
-			Move:Bookmark[${Config.Pickup}]
-			This:QueueState["Traveling"]
-			
-			;	NEED JETCAN STATES HERE
+			switch ${Config.PickupSubType}
+			{
+				case Fleet Jetcan
+					Move:System[${EVE.Bookmark[${Config.Pickup}].SolarSystemID}]
+					This:QueueState["Traveling"]
+					This:QueueState["FleetJetcan"]
+					break
+			}
 		}
 		else
 		{
@@ -199,20 +209,35 @@ objectdef obj_Hauler inherits obj_State
 		return TRUE
 	}
 
+	member:bool FleetJetcan()
+	{
+		if !${FleetMembers.Used}
+		{
+			Me.Fleet:GetMembers[FleetMembers]
+			FleetMembers:RemoveByQuery[${LavishScript.CreateQuery[ID == ${Me.CharID}]}]
+			FleetMembers:Collapse
+		}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+		if ${FleetMembers.Get[1].ToEntity(exists)}
+		{
+			This:QueueState["PopulateTargetList", 2000, ${FleetMembers.Get[1].ToEntity.ID}]
+			This:QueueState["CheckTargetList", 50]
+			This:QueueState["LootCans", 1000, ${FleetMembers.Get[1].ToEntity.ID}]
+			This:QueueState["DepopulateTargetList", 2000]
+			This:QueueState["OpenCargoHold"]
+			This:QueueState["CheckCargoHold"]
+			FleetMembers:Remove[1]
+			FleetMembers:Collapse
+			return TRUE
+		}
+		else
+		{
+			Move:Fleetmember[${FleetMembers.Get[1].ID}, TRUE]
+			This:QueueState["Traveling"]
+			This:QueueState["FleetJetcan"]
+			return TRUE
+		}
+	}
 	
 	
 	
@@ -244,7 +269,6 @@ objectdef obj_Hauler inherits obj_State
 		return FALSE
 	}
 
-	
 	member:bool LootCans(int64 ID)
 	{
 		if !${Entity[${ID}](exists)}
@@ -327,13 +351,11 @@ objectdef obj_Hauler inherits obj_State
 		{
 			if !${EVEWindow[ByName, Inventory].ChildWindowExists[${CurrentCan}]}
 			{
-				;UI:Update["obj_Hauler", "Opening - ${Entity[${CurrentCan}].Name}", "g"]
 				Entity[${CurrentCan}]:OpenCargo
 				return FALSE
 			}
 			if !${EVEWindow[ByItemID, ${CurrentCan}](exists)}
 			{
-				;UI:Update["obj_Hauler", "Activating - ${Entity[${CurrentCan}].Name}", "g"]
 				EVEWindow[ByName, Inventory]:MakeChildActive[${CurrentCan}]
 				return FALSE
 			}
@@ -409,172 +431,17 @@ objectdef obj_Hauler inherits obj_State
 	}	
 	
 	
+	
+	
+	;	HAUL IS NOT USED ANYMORE - It remains here to be used as a palette for future jetcan implementations
+	
 	member:bool Haul()
 	{
-		variable int64 Container
 
-		This:Clear
-		This:QueueState["OpenCargoHold", 10]
-
-		if !${Client.InSpace}
-		{
-			This:QueueState["CheckCargoHold", 1000]
-			This:QueueState["Pickup"]
-			This:QueueState["OrcaWait"]
-			This:QueueState["Undock"]
-			This:QueueState["Haul"]
-			return TRUE
-		}
-		else
-		{
-			This:QueueState["CheckCargoHold"]
-			This:QueueState["GoToPickup"]
-			This:QueueState["Traveling", 1000]
-			This:QueueState["Haul"]
-			if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) >= ${Config.Threshold} * .01
-			{
-				echo Exiting before Haul - (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) >= ${Config.Threshold} * .01
-				return TRUE
-			}
-		}
-
-		if ${Me.ToEntity.Mode} == 3
-		{
-			return FALSE
-		}
-
-		echo Pickup Type
-		switch ${Config.PickupType}
-		{
-			case Orca
-				echo Orca
-				if ${Entity[Name = "${Config.PickupContainerName}"](exists)}
-				{
-					Container:Set[${Entity[Name = "${Config.PickupContainerName}"].ID}]
-					if ${Entity[${Container}].Distance} > LOOT_RANGE
-					{
-						Move:Approach[${Container}, LOOT_RANGE]
-						return FALSE
-					}
-					else
-					{
-						if ${OrcaCargo}
-						{
-							if !${EVEWindow[ByName, Inventory].ChildWindowExists[${Container}]}
-							{
-								UI:Update["obj_Hauler", "Opening ${Config.PickupContainerName}", "g"]
-								Entity[${Container}]:Open
-								return FALSE
-							}
-							if !${EVEWindow[ByItemID, ${Container}](exists)} 
-							{
-								EVEWindow[ByName, Inventory]:MakeChildActive[${Container}]
-								return FALSE
-							}
-							Cargo:PopulateCargoList[CONTAINERCORPORATEHANGAR, ${Container}]
-							Cargo:MoveCargoList[SHIP]
-							This:Clear
-							This:QueueState["Idle", 1000]
-							This:QueueState["CheckCargoHold"]
-							This:QueueState["Haul"]
-							return TRUE
-						}
-					}
-				}
-				else
-				{
-					echo Check for orca
-					if ${Local[${Config.PickupContainerName}].ToFleetMember(exists)}
-						{
-							UI:Update["obj_Hauler", "Warping to ${Local[${Config.PickupContainerName}].ToFleetMember.ToPilot.Name}", "g"]
-							Local[${Config.PickupContainerName}].ToFleetMember:WarpTo
-							Client:Wait[5000]
-							This:Clear
-							This:QueueState["Traveling", 1000]
-							This:QueueState["Haul"]
-							return TRUE
-						}
-				}
-				break
-
-			case Container
-				if ${Entity[Name = "${Config.PickupContainerName}"](exists)}
-				{
-					Container:Set[${Entity[Name = "${Config.PickupContainerName}"].ID}]
-					if ${Entity[${Container}].Distance} > LOOT_RANGE
-					{
-						Move:Approach[${Container}, LOOT_RANGE]
-						return FALSE
-					}
-					else
-					{
-						if !${EVEWindow[ByName, Inventory].ChildWindowExists[${Container}]}
-						{
-							UI:Update["obj_Hauler", "Opening ${Config.PickupContainerName}", "g"]
-							Entity[${Container}]:Open
-							return FALSE
-						}
-						if !${EVEWindow[ByItemID, ${Container}](exists)} 
-						{
-							EVEWindow[ByName, Inventory]:MakeChildActive[${Container}]
-							return FALSE
-						}
-						Cargo:PopulateCargoList[CONTAINERCORPORATEHANGAR, ${Container}]
-						Cargo:MoveCargoList[SHIP]
-						This:Clear
-						This:QueueState["Idle", 1000]
-						This:QueueState["CheckCargoHold"]
-						This:QueueState["Haul"]
-						return TRUE
-					}
-				}
-				else
-				{
-					Move:Bookmark[${Config.Pickup}]
-					This:Clear
-					This:QueueState["Traveling", 1000]
-					This:QueueState["Haul"]
-					return TRUE
-				}
-				break
-			case Jetcan
 				Switch ${Config.PickupSubType}
 				{
 					case Fleet Jetcan
-						echo Fleet Jetcan
-						if ${MyShip.UsedCargoCapacity} > (${Config.Threshold} * .01 * ${MyShip.CargoCapacity}) || ${EVE.Bookmark[${Config.Pickup}].SolarSystemID} != ${Me.SolarSystemID}
-						{
-							break
-						}
-						if !${FleetMembers.Used}
-						{
-							Me.Fleet:GetMembers[FleetMembers]
-							FleetMembers:RemoveByQuery[${LavishScript.CreateQuery[ID == ${Me.CharID}]}]
-							FleetMembers:Collapse
-						}
-
-						if ${FleetMembers.Get[1].ToEntity(exists)}
-						{
-							;UI:Update["obj_Miner", "Looting cans for ${FleetMembers.Get[1].ToPilot.Name}", "g"]
-							This:Clear
-							This:QueueState["PopulateTargetList", 2000, ${FleetMembers.Get[1].ToEntity.ID}]
-							This:QueueState["CheckTargetList", 50]
-							This:QueueState["LootCans", 1000, ${FleetMembers.Get[1].ToEntity.ID}]
-							This:QueueState["DepopulateTargetList", 2000]
-							This:QueueState["Haul"]
-							FleetMembers:Remove[1]
-							FleetMembers:Collapse
-							return TRUE
-						}
-						else
-						{
-							echo Warping to ${FleetMembers.Get[1].ToPilot.Name} - ${FleetMembers.Get[1].ID}
-							Move:Fleetmember[${FleetMembers.Get[1].ID}, TRUE]
-							This:Clear
-							This:QueueState["Traveling", 1000]
-							This:QueueState["Haul"]
-							return TRUE
-						}
+							;	Already implemented
 						break
 					case Corporate Bookmark Jetcan
 						variable string Target
@@ -654,76 +521,10 @@ objectdef obj_Hauler inherits obj_State
 						
 						break
 				}
-			
-				break
-				
-			default
-			
-			Move:Bookmark[${Config.Pickup}]
-			
-		}
-		
-		if ${Config.DropoffType.Equal[Container]}
-		{
-			if ${Entity[Name = "${Config.DropoffContainerName}"](exists)}
-			{
-				Container:Set[${Entity[Name = "${Config.DropoffContainerName}"].ID}]
-				if ${Entity[${Container}].Distance} > LOOT_RANGE
-				{
-					Move:Approach[${Container}, LOOT_RANGE]
-					return FALSE
-				}
-				else
-				{
-					if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) > 0.10
-					{
-						if !${EVEWindow[ByName, Inventory].ChildWindowExists[${Container}]}
-						{
-							UI:Update["obj_Hauler", "Opening ${Config.DropoffContainerName}", "g"]
-							Entity[${Container}]:Open
-							return FALSE
-						}
-						if !${EVEWindow[ByItemID, ${Container}](exists)}
-						{
-							EVEWindow[ByName, Inventory]:MakeChildActive[${Container}]
-							return FALSE
-						}
-						;UI:Update["obj_Hauler", "Unloading to ${Config.DropoffContainerName}", "g"]
-						Cargo:PopulateCargoList[SHIP]
-						Cargo:MoveCargoList[SHIPCORPORATEHANGAR, "", ${Container}]
-						This:QueueState["Idle", 1000]
-						This:QueueState["Haul"]
-						return TRUE
-					}
-				}
-			}
-		}
-		
-		if ${Ship.ModuleList_GangLinks.ActiveCount} < ${Ship.ModuleList_GangLinks.Count}
-		{
-			Ship.ModuleList_GangLinks:ActivateCount[${Math.Calc[${Ship.ModuleList_GangLinks.Count} - ${Ship.ModuleList_GangLinks.ActiveCount}]}]
-		}
-		
-	
-		return TRUE
-	}
-	
-	method PopulateTargetList(int64 ID)
-	{
-		variable int64 CharID = ${Entity[${ID}].CharID}
-		IR_Cans:ClearQueryString
-		IR_Cans:AddQueryString["GroupID==GROUP_CARGOCONTAINER && OwnerID == ${CharID}"]
-		IR_Cans.DistanceTarget:Set[${ID}]
-		OOR_Cans:ClearQueryString
-		OOR_Cans:AddQueryString["GroupID==GROUP_CARGOCONTAINER && OwnerID == ${CharID}"]
-		OOR_Cans.DistanceTarget:Set[${ID}]
-	}	
 
-	method OrcaCargoUpdate(float value)
-	{
-		OrcaCargo:Set[${value}]
-		UIElement[obj_HaulerOrcaCargo@Hauler@ComBotTab@ComBot]:SetText[Orca Cargo Hold: ${OrcaCargo.Round} m3]
 	}
+	
+
 	
 }	
 
