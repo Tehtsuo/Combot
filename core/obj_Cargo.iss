@@ -78,8 +78,9 @@ objectdef obj_Cargo inherits obj_State
 	}
 
 	
-	method PopulateCargoList(string location, int64 ID=-1)
+	method PopulateCargoList(string location, int64 ID=-1, string Folder="")
 	{
+		echo Populating from ${location} ${Folder}
 		switch ${location} 
 		{
 			case SHIP
@@ -94,7 +95,7 @@ objectdef obj_Cargo inherits obj_State
 			case CONTAINERCORPORATEHANGAR
 				Entity[${ID}]:GetCorpHangarsCargo[CargoList]
 				break
-			case Corporation Folder
+			case Corporation Hangar
 				Me.Station:GetCorpHangarItems[CargoList]
 				break
 			case Personal Hangar
@@ -103,10 +104,40 @@ objectdef obj_Cargo inherits obj_State
 			case Container
 				Entity[${ID}]:GetCargo[CargoList]
 		}
+
+		echo CargoList size: ${CargoList.Used}
+
+		switch ${Folder}
+		{
+			case Corporation Folder 1
+				This:Filter["SlotID = 4"]
+				break
+			case Corporation Folder 2
+				This:Filter["SlotID = 116"]
+				break
+			case Corporation Folder 3
+				This:Filter["SlotID = 117"]
+				break
+			case Corporation Folder 4
+				This:Filter["SlotID = 118"]
+				break
+			case Corporation Folder 5
+				This:Filter["SlotID = 119"]
+				break
+			case Corporation Folder 6
+				This:Filter["SlotID = 120"]
+				break
+			case Corporation Folder 7
+				This:Filter["SlotID = 121"]
+				break
+		}
+		
+		echo Filtered CargoList size: ${CargoList.Used}
 	}
 	
 	method Filter(string Filter)
 	{
+		echo Filtering ${Filter}
 		if ${CargoList.Used}
 		{
 			CargoList:RemoveByQuery[${LavishScript.CreateQuery["${Filter}"]}, FALSE]
@@ -593,10 +624,7 @@ objectdef obj_Cargo inherits obj_State
 						EVEWindow[ByName, Inventory]:MakeChildActive[${Container}]
 						return FALSE
 					}
-					echo Cargo:PopulateCargoList[Container, ${Container}]
-					echo Cargo:Filter[${This.CargoQueue.Peek.QueryString}]
-					echo Cargo:MoveCargoList[SHIP, "", -1, ${This.CargoQueue.Peek.Quantity}]
-					Cargo:PopulateCargoList[Container, ${Container}]
+					Cargo:PopulateCargoList[Container, ${Container}, ${This.CargoQueue.Peek.LocationSubtype}]
 					Cargo:Filter[${This.CargoQueue.Peek.QueryString}]
 					Cargo:MoveCargoList[SHIP, "", -1, ${This.CargoQueue.Peek.Quantity}]
 					return TRUE
@@ -616,7 +644,10 @@ objectdef obj_Cargo inherits obj_State
 			return TRUE
 		}
 		
-		Cargo:PopulateCargoList[${This.CargoQueue.Peek.LocationType}, ${Container}]]
+		echo Cargo:PopulateCargoList[${This.CargoQueue.Peek.LocationType}, 0, ${This.CargoQueue.Peek.LocationSubtype}]
+		echo Cargo:Filter[${This.CargoQueue.Peek.QueryString}]
+		echo Cargo:MoveCargoList[SHIP, "", -1, ${This.CargoQueue.Peek.Quantity}]
+		Cargo:PopulateCargoList[${This.CargoQueue.Peek.LocationType}, 0, ${This.CargoQueue.Peek.LocationSubtype}]
 		Cargo:Filter[${This.CargoQueue.Peek.QueryString}]
 		Cargo:MoveCargoList[SHIP, "", -1, ${This.CargoQueue.Peek.Quantity}]
 		return TRUE
