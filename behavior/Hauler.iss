@@ -455,12 +455,19 @@ objectdef obj_Hauler inherits obj_State
 		This:Remove
 		if ${This.HaulQueue.Used} == 0
 		{
-			UI:Update["obj_Hauler", "Haul operations complete, idling", "o"]
 			This:Clear
+			This:QueueState["Traveling"]
+			This:QueueState["Log", 1000, "Haul operations complete - idling, o"]
 			return TRUE
 		}
 		This:QueueState["ProcessQueue"]
 		This:QueueState["Traveling"]
+		return TRUE
+	}
+
+	member:bool Log(string text, string color)
+	{
+		UI:Update["obj_Hauler", "${text}", "${color}"]
 		return TRUE
 	}
 	
