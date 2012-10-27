@@ -80,7 +80,6 @@ objectdef obj_Cargo inherits obj_State
 	
 	method PopulateCargoList(string location, int64 ID=-1, string Folder="")
 	{
-		echo Populating from ${location} ${Folder}
 		switch ${location} 
 		{
 			case SHIP
@@ -105,7 +104,6 @@ objectdef obj_Cargo inherits obj_State
 				Entity[${ID}]:GetCargo[CargoList]
 		}
 
-		echo CargoList size: ${CargoList.Used}
 
 		switch ${Folder}
 		{
@@ -132,12 +130,10 @@ objectdef obj_Cargo inherits obj_State
 				break
 		}
 		
-		echo Filtered CargoList size: ${CargoList.Used}
 	}
 	
 	method Filter(string Filter)
 	{
-		echo Filtering ${Filter}
 		if ${CargoList.Used}
 		{
 			CargoList:RemoveByQuery[${LavishScript.CreateQuery["${Filter}"]}, FALSE]
@@ -644,9 +640,6 @@ objectdef obj_Cargo inherits obj_State
 			return TRUE
 		}
 		
-		echo Cargo:PopulateCargoList[${This.CargoQueue.Peek.LocationType}, 0, ${This.CargoQueue.Peek.LocationSubtype}]
-		echo Cargo:Filter[${This.CargoQueue.Peek.QueryString}]
-		echo Cargo:MoveCargoList[SHIP, "", -1, ${This.CargoQueue.Peek.Quantity}]
 		Cargo:PopulateCargoList[${This.CargoQueue.Peek.LocationType}, 0, ${This.CargoQueue.Peek.LocationSubtype}]
 		Cargo:Filter[${This.CargoQueue.Peek.QueryString}]
 		Cargo:MoveCargoList[SHIP, "", -1, ${This.CargoQueue.Peek.Quantity}]

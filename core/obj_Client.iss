@@ -55,7 +55,6 @@ objectdef obj_Client
 		{
 			if ${Me.SolarSystemID} != ${SystemID}
 			{
-				echo SolarSystemID:  ${Me.SolarSystemID}
 				SystemID:Set[${Me.SolarSystemID}]
 				This:Wait[5000]
 				return
