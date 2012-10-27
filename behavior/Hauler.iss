@@ -474,6 +474,9 @@ objectdef obj_Hauler inherits obj_State
 			case Unload
 				This.HaulQueue:Insert[${Config.Dropoff},${Action},${Config.DropoffType},${Config.DropoffSubType},${Config.DropoffContainer},"",0]
 				break
+			case Move
+				This.HaulQueue:Insert[${Config.Move},${Action},"","","","",0]
+				break
 		}
 		LocalUI:UpdateQueueList
 	}
