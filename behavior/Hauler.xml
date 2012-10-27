@@ -267,6 +267,15 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											This:AddItem[Corporation Folder 6]
 											This:AddItem[Corporation Folder 7]
 											break
+										case Orca
+											This:AddItem[Corporation Folder 1]
+											This:AddItem[Corporation Folder 2]
+											This:AddItem[Corporation Folder 3]
+											This:AddItem[Corporation Folder 4]
+											This:AddItem[Corporation Folder 5]
+											This:AddItem[Corporation Folder 6]
+											This:AddItem[Corporation Folder 7]
+											break
 										default
 											This:Hide
 									}
@@ -300,11 +309,11 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<Width>32%</Width>
 								<Height>85%</Height>
 								<Items>
+									<Item>Container</Item>
+									<Item>Corporation Hangar</Item>
+									<Item>Personal Hangar</Item>
 									<Item>Orca</Item>
 									<Item>Jetcan</Item>
-									<Item>Container</Item>
-									<Item>Personal Hangar</Item>
-									<Item>Corporation Hangar</Item>
 								</Items>
 								<OnLoad>
 									This.ItemByText[${Script[ComBot].VariableScope.Hauler.Config.PickupType}]:Select
@@ -641,6 +650,15 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											This:AddItem[Corporation Folder 6]
 											This:AddItem[Corporation Folder 7]
 											break
+										case Orca
+											This:AddItem[Corporation Folder 1]
+											This:AddItem[Corporation Folder 2]
+											This:AddItem[Corporation Folder 3]
+											This:AddItem[Corporation Folder 4]
+											This:AddItem[Corporation Folder 5]
+											This:AddItem[Corporation Folder 6]
+											This:AddItem[Corporation Folder 7]
+											break
 									}
 									This.ItemByText["${Script[ComBot].VariableScope.Hauler.Config.DropoffSubType}"]:Select
 								</OnLoad>
@@ -673,9 +691,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<Width>32%</Width>
 								<Height>85%</Height>
 								<Items>
-									<Item>Personal Hangar</Item>
-									<Item>Corporation Hangar</Item>
 									<Item>Container</Item>
+									<Item>Corporation Hangar</Item>
+									<Item>Personal Hangar</Item>
+									<Item>Orca</Item>
 								</Items>
 								<OnLoad>
 									This.ItemByText[${Script[ComBot].VariableScope.Hauler.Config.DropoffType}]:Select
@@ -720,6 +739,21 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler].ItemByText["${Script[ComBot].VariableScope.Hauler.Config.DropoffSubType}"]:Select
 											UIElement[DropoffContainer@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Show
 											UIElement[DropoffContainerTitle@DropoffFrame@Hauler_Frame@ComBot_Hauler]:SetText[Container Name]
+											UIElement[DropoffContainerTitle@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Show
+											UIElement[DropoffSubTypeTitle@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Show
+											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Show
+											break
+										case Orca
+											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 1]
+											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 2]
+											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 3]
+											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 4]
+											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 5]
+											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 6]
+											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 7]
+											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler].ItemByText["${Script[ComBot].VariableScope.Hauler.Config.DropoffSubType}"]:Select
+											UIElement[DropoffContainer@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Show
+											UIElement[DropoffContainerTitle@DropoffFrame@Hauler_Frame@ComBot_Hauler]:SetText[Orca Player Name]
 											UIElement[DropoffContainerTitle@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Show
 											UIElement[DropoffSubTypeTitle@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Show
 											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Show
