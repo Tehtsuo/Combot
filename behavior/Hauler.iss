@@ -682,18 +682,18 @@ objectdef obj_HaulerUI inherits obj_State
 			}
 			while ${BookmarkIterator:Next(exists)}
 		
-		UIElement[PickupList@DropoffFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:ClearItems
+		UIElement[PickupList@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:ClearItems
 		if ${BookmarkIterator:First(exists)}
 			do
 			{	
-				if ${UIElement[Pickup@DropoffFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler].Text.Length}
+				if ${UIElement[Pickup@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler].Text.Length}
 				{
 					if ${BookmarkIterator.Value.Label.Left[${Hauler.Config.Pickup.Length}].Equal[${Hauler.Config.Pickup}]}
-						UIElement[PickupList@DropoffFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[${BookmarkIterator.Value.Label.Escape}]
+						UIElement[PickupList@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 				else
 				{
-					UIElement[PickupList@DropoffFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[${BookmarkIterator.Value.Label.Escape}]
+					UIElement[PickupList@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 			}
 			while ${BookmarkIterator:Next(exists)}
