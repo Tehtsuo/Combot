@@ -443,20 +443,24 @@ objectdef obj_Hauler inherits obj_State
 	
 	member:bool ProcessQueue()
 	{
-		echo Cargo:At[${This.HaulQueue.Get[1].Bookmark},${This.HaulQueue.Get[1].LocationType},${This.HaulQueue.Get[1].LocationSubtype},${This.HaulQueue.Get[1].Container}]:${This.HaulQueue.Get[1].Action}["",0]
 		Cargo:At[${This.HaulQueue.Get[1].Bookmark},${This.HaulQueue.Get[1].LocationType},${This.HaulQueue.Get[1].LocationSubtype},${This.HaulQueue.Get[1].Container}]:${This.HaulQueue.Get[1].Action}["",0]
+		This:Remove
+		if ${This.HaulQueue.Used} == 0
+		{
+			UI:Update["obj_Hauler", "Haul operations complete, idling", "o"]
+			This:Clear
+			return TRUE
+		}
 		This:QueueState["ProcessQueue"]
 		This:QueueState["Traveling"]
 		return TRUE
 	}
 	
-	method Add()
+	method AddPickup()
 	{
-		echo Add
 		if !${Config.PickupType.Equal[Jetcan]}
 		{
 			This.HaulQueue:Insert[${Config.Pickup},Load,${Config.PickupType},${Config.PickupSubType},${Config.PickupContainer},"",0]
-			This.HaulQueue:Insert[${Config.Dropoff},Unload,${Config.DropoffType},${Config.DropoffSubType},${Config.DropoffContainer},"",0]
 			LocalUI:UpdateQueueList
 		}
 		else
@@ -464,9 +468,16 @@ objectdef obj_Hauler inherits obj_State
 			UI:Update["obj_Hauler", "Cannot queue a Jetcan pickup", "y"]
 		}
 	}
-	
-	method Remove(int ID=1)
+	method AddDropoff()
 	{
+			This.HaulQueue:Insert[${Config.Dropoff},Unload,${Config.DropoffType},${Config.DropoffSubType},${Config.DropoffContainer},"",0]
+			LocalUI:UpdateQueueList
+	}
+	
+	method Remove(int ID=0)
+	{
+		This.HaulQueue:Remove[${ID:Inc}]
+		This.HaulQueue:Collapse
 		LocalUI:UpdateQueueList
 	}
 	

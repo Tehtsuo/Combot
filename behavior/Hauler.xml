@@ -412,7 +412,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											UIElement[PickupTitle@PickupFrame@Hauler_Frame@ComBot_Hauler]:SetText[Pickup Station Bookmark]
 											UIElement[PickupContainerTitle@PickupFrame@Hauler_Frame@ComBot_Hauler]:Hide
 											UIElement[PickupContainer@PickupFrame@Hauler_Frame@ComBot_Hauler]:Hide
-											Script[ComBot].VariableScope.Hauler.Config.SetPickupContainer[\"\"]
+											Script[ComBot].VariableScope.Hauler.Config:SetPickupContainer[\"\"]
 											UIElement[PickupSubType@PickupFrame@Hauler_Frame@ComBot_Hauler]:Show
 											UIElement[PickupSubTypeTitle@PickupFrame@Hauler_Frame@ComBot_Hauler]:Show
 											break
@@ -447,10 +447,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											UIElement[PickupTitle@PickupFrame@Hauler_Frame@ComBot_Hauler]:SetText[Pickup Station Bookmark]
 											UIElement[PickupContainerTitle@PickupFrame@Hauler_Frame@ComBot_Hauler]:Hide
 											UIElement[PickupContainer@PickupFrame@Hauler_Frame@ComBot_Hauler]:Hide
-											Script[ComBot].VariableScope.Hauler.Config.SetPickupContainer[\"\"]
+											Script[ComBot].VariableScope.Hauler.Config:SetPickupContainer[\"\"]
 											UIElement[PickupSubType@PickupFrame@Hauler_Frame@ComBot_Hauler]:Hide
 											UIElement[PickupSubTypeTitle@PickupFrame@Hauler_Frame@ComBot_Hauler]:Hide
-											Script[ComBot].VariableScope.Hauler.Config.SetPickupSubType[\"\"]
+											Script[ComBot].VariableScope.Hauler.Config:SetPickupSubType[\"\"]
 											break
 									}
 								</OnSelect>
@@ -780,14 +780,24 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText[""]
 								</OnMouseExit>
 							</listbox>
-							<Button name="Add">
+							<Button name="AddPickup">
 								<X>1%</X>
 								<Y>40%</Y>
-								<Width>32%</Width>
+								<Width>16%</Width>
 								<Height>25%</Height>
-								<Text>Add</Text>
+								<Text>Add Pickup</Text>
 								<OnLeftClick>
-									Script[ComBot].VariableScope.Hauler:Add
+									Script[ComBot].VariableScope.Hauler:AddPickup
+								</OnLeftClick>
+							</Button>
+							<Button name="AddDropoff">
+								<X>17%</X>
+								<Y>40%</Y>
+								<Width>16%</Width>
+								<Height>25%</Height>
+								<Text>Add Dropoff</Text>
+								<OnLeftClick>
+									Script[ComBot].VariableScope.Hauler:AddDropoff
 								</OnLeftClick>
 							</Button>
 							<Button name="Remove">
@@ -813,7 +823,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									if ${Script[ComBot].VariableScope.Hauler.Config.Repeat}
 									{
 										UIElement[Queue@QueueFrame@Hauler_Frame@ComBot_Hauler]:Hide
-										UIElement[Add@QueueFrame@Hauler_Frame@ComBot_Hauler]:Hide
+										UIElement[AddPickup@QueueFrame@Hauler_Frame@ComBot_Hauler]:Hide
+										UIElement[AddDropoff@QueueFrame@Hauler_Frame@ComBot_Hauler]:Hide
 										UIElement[Remove@QueueFrame@Hauler_Frame@ComBot_Hauler]:Hide
 										This:SetChecked
 									}
@@ -824,13 +835,15 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									if ${This.Checked}
 									{
 										UIElement[Queue@QueueFrame@Hauler_Frame@ComBot_Hauler]:Hide
-										UIElement[Add@QueueFrame@Hauler_Frame@ComBot_Hauler]:Hide
+										UIElement[AddPickup@QueueFrame@Hauler_Frame@ComBot_Hauler]:Hide
+										UIElement[AddDropoff@QueueFrame@Hauler_Frame@ComBot_Hauler]:Hide
 										UIElement[Remove@QueueFrame@Hauler_Frame@ComBot_Hauler]:Hide
 									}
 									else
 									{
 										UIElement[Queue@QueueFrame@Hauler_Frame@ComBot_Hauler]:Show
-										UIElement[Add@QueueFrame@Hauler_Frame@ComBot_Hauler]:Show
+										UIElement[AddPickup@QueueFrame@Hauler_Frame@ComBot_Hauler]:Show
+										UIElement[AddDropoff@QueueFrame@Hauler_Frame@ComBot_Hauler]:Show
 										UIElement[Remove@QueueFrame@Hauler_Frame@ComBot_Hauler]:Show
 									}
 									This:SetZOrder[movetop]
