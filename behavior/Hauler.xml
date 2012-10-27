@@ -724,9 +724,11 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler].ItemByText["${Script[ComBot].VariableScope.Hauler.Config.DropoffSubType}"]:Select
 											UIElement[DropoffSubTypeTitle@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Show
 											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Show
+											UIElement[DropoffTitle@DropoffFrame@Hauler_Frame@ComBot_Hauler]:SetText[Dropoff Station Bookmark]
 											UIElement[DropoffContainer@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Hide
 											UIElement[DropoffContainerTitle@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Hide
 											Script[ComBot].VariableScope.Hauler.Config:SetDropoffContainer[\"\"]
+											UIElement[DropoffSubTypeTitle@DropoffFrame@Hauler_Frame@ComBot_Hauler]:SetText[Corporate Folder]
 											break
 										case Container
 											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 1]
@@ -742,6 +744,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											UIElement[DropoffContainerTitle@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Show
 											UIElement[DropoffSubTypeTitle@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Show
 											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Show
+											UIElement[DropoffTitle@DropoffFrame@Hauler_Frame@ComBot_Hauler]:SetText[Container Bookmark]
+											UIElement[DropoffSubTypeTitle@DropoffFrame@Hauler_Frame@ComBot_Hauler]:SetText[Corporate Folder]
 											break
 										case Orca
 											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 1]
@@ -754,9 +758,11 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler].ItemByText["${Script[ComBot].VariableScope.Hauler.Config.DropoffSubType}"]:Select
 											UIElement[DropoffContainer@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Show
 											UIElement[DropoffContainerTitle@DropoffFrame@Hauler_Frame@ComBot_Hauler]:SetText[Orca Pilot Name]
+											UIElement[DropoffTitle@DropoffFrame@Hauler_Frame@ComBot_Hauler]:SetText[Mining System Bookmark]
 											UIElement[DropoffContainerTitle@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Show
 											UIElement[DropoffSubTypeTitle@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Show
 											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Show
+											UIElement[DropoffSubTypeTitle@DropoffFrame@Hauler_Frame@ComBot_Hauler]:SetText[Corporate Folder]
 											break
 										case Personal Hangar
 											UIElement[DropoffSubTypeTitle@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Hide
@@ -765,6 +771,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											UIElement[DropoffContainer@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Hide
 											UIElement[DropoffContainerTitle@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Hide
 											Script[ComBot].VariableScope.Hauler.Config:SetDropoffContainer[\"\"]
+											UIElement[DropoffTitle@DropoffFrame@Hauler_Frame@ComBot_Hauler]:SetText[Dropoff Station Bookmark]
 									}
 									UIElement[DropoffContainer@DropoffFrame@Hauler_Frame@ComBot_Hauler]:SetText[${Script[ComBot].VariableScope.Hauler.Config.DropoffContainer}]
 								</OnSelect>
