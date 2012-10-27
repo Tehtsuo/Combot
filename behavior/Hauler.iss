@@ -46,8 +46,8 @@ objectdef obj_Configuration_Hauler
 		This.CommonRef:AddSetting[PickupContainer,""]
 		This.CommonRef:AddSetting[Dropoff,""]
 		This.CommonRef:AddSetting[Pickup,""]
-		This.CommonRef:AddSetting[Repeat,TRUE]
-		
+		This.CommonRef:AddSetting[Repeat,FALSE]
+		This.CommonRef:AddSetting[Mode,Continuous]
 	}
 	
 	Setting(string, PickupSubType, SetPickupSubType)
@@ -58,6 +58,7 @@ objectdef obj_Configuration_Hauler
 	Setting(string, DropoffContainer, SetDropoffContainer)
 	Setting(string, PickupContainer, SetPickupContainer)
 	Setting(string, DropoffSubType, SetDropoffSubType)
+	Setting(string, Mode, SetMode)
 	Setting(int, Threshold, SetThreshold)	
 	Setting(bool, Repeat, SetRepeat)	
 	
@@ -456,24 +457,12 @@ objectdef obj_Hauler inherits obj_State
 		return TRUE
 	}
 	
-	method AddPickup()
+	method Add(string Action)
 	{
-		if !${Config.PickupType.Equal[Jetcan]}
-		{
-			This.HaulQueue:Insert[${Config.Pickup},Load,${Config.PickupType},${Config.PickupSubType},${Config.PickupContainer},"",0]
-			LocalUI:UpdateQueueList
-		}
-		else
-		{
-			UI:Update["obj_Hauler", "Cannot queue a Jetcan pickup", "y"]
-		}
+		This.HaulQueue:Insert[${Config.Pickup},${Action},${Config.PickupType},${Config.PickupSubType},${Config.PickupContainer},"",0]
+		LocalUI:UpdateQueueList
 	}
-	method AddDropoff()
-	{
-			This.HaulQueue:Insert[${Config.Dropoff},Unload,${Config.DropoffType},${Config.DropoffSubType},${Config.DropoffContainer},"",0]
-			LocalUI:UpdateQueueList
-	}
-	
+
 	method Remove(int ID=0)
 	{
 		This.HaulQueue:Remove[${ID:Inc}]
@@ -619,11 +608,11 @@ objectdef obj_HaulerUI inherits obj_State
 	{
 		variable iterator Haul
 		Hauler.HaulQueue:GetIterator[Haul]
-		UIElement[Queue@QueueFrame@Hauler_Frame@ComBot_Hauler]:ClearItems
+		UIElement[Queue@QueueFrame@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:ClearItems
 		if ${Haul:First(exists)}
 			do
 			{
-				UIElement[Queue@QueueFrame@Hauler_Frame@ComBot_Hauler]:AddItem[${Haul.Value.Action} at ${Haul.Value.Bookmark} - ${Haul.Value.LocationType} ${Haul.Value.LocationSubtype} ${Haul.Value.Container}]
+				UIElement[Queue@QueueFrame@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[${Haul.Value.Action} at ${Haul.Value.Bookmark} - ${Haul.Value.LocationType} ${Haul.Value.LocationSubtype} ${Haul.Value.Container}]
 			}
 			while ${Haul:Next(exists)}
 	}
@@ -636,34 +625,51 @@ objectdef obj_HaulerUI inherits obj_State
 		EVE:GetBookmarks[Bookmarks]
 		Bookmarks:GetIterator[BookmarkIterator]
 		
-		UIElement[DropoffList@DropoffFrame@Hauler_Frame@ComBot_Hauler]:ClearItems
+		UIElement[DropoffList@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:ClearItems
 		if ${BookmarkIterator:First(exists)}
 			do
 			{	
-				if ${UIElement[Dropoff@DropoffFrame@Hauler_Frame@ComBot_Hauler].Text.Length}
+				if ${UIElement[Dropoff@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler].Text.Length}
 				{
 					if ${BookmarkIterator.Value.Label.Left[${Hauler.Config.Dropoff.Length}].Equal[${Hauler.Config.Dropoff}]}
-						UIElement[DropoffList@DropoffFrame@Hauler_Frame@ComBot_Hauler]:AddItem[${BookmarkIterator.Value.Label.Escape}]
+						UIElement[DropoffList@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 				else
 				{
-					UIElement[DropoffList@DropoffFrame@Hauler_Frame@ComBot_Hauler]:AddItem[${BookmarkIterator.Value.Label.Escape}]
+					UIElement[DropoffList@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 			}
 			while ${BookmarkIterator:Next(exists)}
 			
-		UIElement[PickupList@PickupFrame@Hauler_Frame@ComBot_Hauler]:ClearItems
+		UIElement[PickupList@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:ClearItems
 		if ${BookmarkIterator:First(exists)}
 			do
 			{	
-				if ${UIElement[Pickup@PickupFrame@Hauler_Frame@ComBot_Hauler].Text.Length}
+				if ${UIElement[Pickup@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler].Text.Length}
 				{
 					if ${BookmarkIterator.Value.Label.Left[${Hauler.Config.Pickup.Length}].Equal[${Hauler.Config.Pickup}]}
-						UIElement[PickupList@PickupFrame@Hauler_Frame@ComBot_Hauler]:AddItem[${BookmarkIterator.Value.Label.Escape}]
+						UIElement[PickupList@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 				else
 				{
-					UIElement[PickupList@PickupFrame@Hauler_Frame@ComBot_Hauler]:AddItem[${BookmarkIterator.Value.Label.Escape}]
+					UIElement[PickupList@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[${BookmarkIterator.Value.Label.Escape}]
+				}
+			}
+			while ${BookmarkIterator:Next(exists)}
+		
+		echo Updating
+		UIElement[DropoffList@DropoffFrame@Unload@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:ClearItems
+		if ${BookmarkIterator:First(exists)}
+			do
+			{	
+				if ${UIElement[Dropoff@DropoffFrame@Unload@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler].Text.Length}
+				{
+					if ${BookmarkIterator.Value.Label.Left[${Hauler.Config.Dropoff.Length}].Equal[${Hauler.Config.Dropoff}]}
+						UIElement[DropoffList@DropoffFrame@Unload@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[${BookmarkIterator.Value.Label.Escape}]
+				}
+				else
+				{
+					UIElement[DropoffList@DropoffFrame@Unload@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 			}
 			while ${BookmarkIterator:Next(exists)}
