@@ -33,6 +33,12 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 		<Color>FFFFFFFF</Color>
 		<Bold />
 	</template>	
+	<template name='Listbox.Font'>	
+		<Name>Verdana</Name>
+		<Size>12</Size>
+		<Color>FFFFFFFF</Color>
+		<Bold />
+	</template>	
 
 	<window name='ComBot_Hauler'>
 		<Visible>1</Visible>
@@ -314,6 +320,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											UIElement[PickupSubType@PickupFrame@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 5]
 											UIElement[PickupSubType@PickupFrame@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 6]
 											UIElement[PickupSubType@PickupFrame@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 7]
+											UIElement[PickupSubType@PickupFrame@Hauler_Frame@ComBot_Hauler].ItemByText[${Script[ComBot].VariableScope.Hauler.Config.PickupSubType}]:Select
 											UIElement[PickupTitle@PickupFrame@Hauler_Frame@ComBot_Hauler]:SetText[Container Bookmark]
 											UIElement[PickupContainerTitle@PickupFrame@Hauler_Frame@ComBot_Hauler]:SetText[Container Name]
 											UIElement[PickupContainerTitle@PickupFrame@Hauler_Frame@ComBot_Hauler]:Show
@@ -329,6 +336,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											UIElement[PickupSubType@PickupFrame@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 5]
 											UIElement[PickupSubType@PickupFrame@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 6]
 											UIElement[PickupSubType@PickupFrame@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 7]
+											UIElement[PickupSubType@PickupFrame@Hauler_Frame@ComBot_Hauler].ItemByText[${Script[ComBot].VariableScope.Hauler.Config.PickupSubType}]:Select
 											UIElement[PickupTitle@PickupFrame@Hauler_Frame@ComBot_Hauler]:SetText[Pickup Station Bookmark]
 											UIElement[PickupContainerTitle@PickupFrame@Hauler_Frame@ComBot_Hauler]:Hide
 											UIElement[PickupContainer@PickupFrame@Hauler_Frame@ComBot_Hauler]:Hide
@@ -343,6 +351,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											UIElement[PickupSubType@PickupFrame@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 5]
 											UIElement[PickupSubType@PickupFrame@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 6]
 											UIElement[PickupSubType@PickupFrame@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 7]
+											UIElement[PickupSubType@PickupFrame@Hauler_Frame@ComBot_Hauler].ItemByText[${Script[ComBot].VariableScope.Hauler.Config.PickupSubType}]:Select
 											UIElement[PickupTitle@PickupFrame@Hauler_Frame@ComBot_Hauler]:SetText[Mining System Bookmark]
 											UIElement[PickupContainerTitle@PickupFrame@Hauler_Frame@ComBot_Hauler]:SetText[Orca Pilot Name]
 											UIElement[PickupContainerTitle@PickupFrame@Hauler_Frame@ComBot_Hauler]:Show
@@ -403,6 +412,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											UIElement[PickupTitle@PickupFrame@Hauler_Frame@ComBot_Hauler]:SetText[Pickup Station Bookmark]
 											UIElement[PickupContainerTitle@PickupFrame@Hauler_Frame@ComBot_Hauler]:Hide
 											UIElement[PickupContainer@PickupFrame@Hauler_Frame@ComBot_Hauler]:Hide
+											Script[ComBot].VariableScope.Hauler.Config.SetPickupContainer[\"\"]
 											UIElement[PickupSubType@PickupFrame@Hauler_Frame@ComBot_Hauler]:Show
 											UIElement[PickupSubTypeTitle@PickupFrame@Hauler_Frame@ComBot_Hauler]:Show
 											break
@@ -437,8 +447,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											UIElement[PickupTitle@PickupFrame@Hauler_Frame@ComBot_Hauler]:SetText[Pickup Station Bookmark]
 											UIElement[PickupContainerTitle@PickupFrame@Hauler_Frame@ComBot_Hauler]:Hide
 											UIElement[PickupContainer@PickupFrame@Hauler_Frame@ComBot_Hauler]:Hide
+											Script[ComBot].VariableScope.Hauler.Config.SetPickupContainer[\"\"]
 											UIElement[PickupSubType@PickupFrame@Hauler_Frame@ComBot_Hauler]:Hide
 											UIElement[PickupSubTypeTitle@PickupFrame@Hauler_Frame@ComBot_Hauler]:Hide
+											Script[ComBot].VariableScope.Hauler.Config.SetPickupSubType[\"\"]
 											break
 									}
 								</OnSelect>
@@ -694,6 +706,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Show
 											UIElement[DropoffContainer@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Hide
 											UIElement[DropoffContainerTitle@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Hide
+											Script[ComBot].VariableScope.Hauler.Config:SetDropoffContainer[\"\"]
 											break
 										case Container
 											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 1]
@@ -713,8 +726,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 										case Personal Hangar
 											UIElement[DropoffSubTypeTitle@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Hide
 											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Hide
+											Script[ComBot].VariableScope.Hauler.Config:SetDropoffSubType[\"\"]
 											UIElement[DropoffContainer@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Hide
 											UIElement[DropoffContainerTitle@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Hide
+											Script[ComBot].VariableScope.Hauler.Config:SetDropoffContainer[\"\"]
 									}
 								</OnSelect>
 								<OnMouseEnter>
@@ -728,8 +743,107 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						</Children>
 					</Frame>
 				
-				
-				
+					<Text name='QueueFrameTitle'> 
+						<X>1%</X> 
+						<Y>68%</Y> 
+						<Width>32%</Width> 
+						<Height>4%</Height> 
+						<Text>Queue Configuration</Text>
+						<OnLoad>
+							This.Font:SetColor[FFFFFF00]
+						</OnLoad>
+					</Text>
+					<Frame name="QueueFrame">
+						<X>0%</X>
+						<Y>70%</Y>
+						<Width>100%</Width>
+						<Height>19%</Height>
+						<BackgroundColor>FF000000</BackgroundColor>
+						<Border>1</Border>
+						<BorderColor>FFFFFFFF</BorderColor>
+						<Children>
+							<listbox Name="Queue">
+								<BackgroundColor>FF000000</BackgroundColor>
+								<Border>1</Border>
+								<BorderColor>FFFFFFFF</BorderColor>
+								<X>34%</X>
+								<Y>5%</Y>
+								<Width>65%</Width>
+								<Height>90%</Height>
+								<OnLoad>
+									Script[ComBot].VariableScope.Hauler.LocalUI:Add
+								</OnLoad>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText["This field displays the cargo operations you have queued."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText[""]
+								</OnMouseExit>
+							</listbox>
+							<Button name="Add">
+								<X>1%</X>
+								<Y>40%</Y>
+								<Width>32%</Width>
+								<Height>25%</Height>
+								<Text>Add</Text>
+								<OnLeftClick>
+									Script[ComBot].VariableScope.Hauler:Add
+								</OnLeftClick>
+							</Button>
+							<Button name="Remove">
+								<X>1%</X>
+								<Y>70%</Y>
+								<Width>32%</Width>
+								<Height>25%</Height>
+								<Text>Remove</Text>
+								<OnLeftClick>
+									if ${UIElement[Queue@QueueFrame@Hauler_Frame@ComBot_Hauler].SelectedItem(exists)}
+									{
+										Script[ComBot].VariableScope.Hauler:Remove[${UIElement[Queue@QueueFrame@Hauler_Frame@ComBot_Hauler].SelectedItem.Order}]
+									}
+								</OnLeftClick>
+							</Button>
+							<Checkbox name='Repeat'>
+								<X>1%</X>
+								<Y>5%</Y>
+								<Width>32%</Width> 
+								<Height>25%</Height> 
+								<Text>Repeat Continuously</Text>
+								<OnLoad>
+									if ${Script[ComBot].VariableScope.Hauler.Config.Repeat}
+									{
+										UIElement[Queue@QueueFrame@Hauler_Frame@ComBot_Hauler]:Hide
+										UIElement[Add@QueueFrame@Hauler_Frame@ComBot_Hauler]:Hide
+										UIElement[Remove@QueueFrame@Hauler_Frame@ComBot_Hauler]:Hide
+										This:SetChecked
+									}
+									This:SetZOrder[movetop]
+								</OnLoad>
+								<OnLeftClick>
+									Script[ComBot].VariableScope.Hauler.Config:SetRepeat[${This.Checked}]
+									if ${This.Checked}
+									{
+										UIElement[Queue@QueueFrame@Hauler_Frame@ComBot_Hauler]:Hide
+										UIElement[Add@QueueFrame@Hauler_Frame@ComBot_Hauler]:Hide
+										UIElement[Remove@QueueFrame@Hauler_Frame@ComBot_Hauler]:Hide
+									}
+									else
+									{
+										UIElement[Queue@QueueFrame@Hauler_Frame@ComBot_Hauler]:Show
+										UIElement[Add@QueueFrame@Hauler_Frame@ComBot_Hauler]:Show
+										UIElement[Remove@QueueFrame@Hauler_Frame@ComBot_Hauler]:Show
+									}
+									This:SetZOrder[movetop]
+								</OnLeftClick>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText["When this is checked, ComBot will repeat the haul operation continuously."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText[""]
+								</OnMouseExit>
+							</Checkbox>
+						</Children>
+					</Frame>
 				
 
 						
@@ -737,7 +851,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						
 					<Text name='InformationFrameTitle'> 
 						<X>1%</X> 
-						<Y>80%</Y> 
+						<Y>90%</Y> 
 						<Width>32%</Width> 
 						<Height>4%</Height> 
 						<Text>Information</Text>
@@ -747,9 +861,9 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					</Text>
 					<Frame name="InformationFrame">
 						<X>0%</X>
-						<Y>82%</Y>
+						<Y>92%</Y>
 						<Width>100%</Width>
-						<Height>18%</Height>
+						<Height>8%</Height>
 						<BackgroundColor>FF000000</BackgroundColor>
 						<Border>1</Border>
 						<BorderColor>FFFFFFFF</BorderColor>

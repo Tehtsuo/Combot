@@ -46,10 +46,10 @@ objectdef obj_Configuration_Hauler
 		This.CommonRef:AddSetting[PickupContainer,""]
 		This.CommonRef:AddSetting[Dropoff,""]
 		This.CommonRef:AddSetting[Pickup,""]
+		This.CommonRef:AddSetting[Repeat,TRUE]
 		
 	}
 	
-	Setting(string, MiningSystem, SetMiningSystem)	
 	Setting(string, PickupSubType, SetPickupSubType)
 	Setting(string, Dropoff, SetDropoff)
 	Setting(string, Pickup, SetPickup)
@@ -59,6 +59,7 @@ objectdef obj_Configuration_Hauler
 	Setting(string, PickupContainer, SetPickupContainer)
 	Setting(string, DropoffSubType, SetDropoffSubType)
 	Setting(int, Threshold, SetThreshold)	
+	Setting(bool, Repeat, SetRepeat)	
 	
 }
 
@@ -67,6 +68,7 @@ objectdef obj_Hauler inherits obj_State
 	variable obj_Configuration_Hauler Config
 	variable obj_HaulerUI LocalUI
 
+	variable index:obj_CargoAction HaulQueue
 	variable float OrcaCargo
 	variable index:fleetmember FleetMembers
 	variable int64 CurrentCan
@@ -102,8 +104,16 @@ objectdef obj_Hauler inherits obj_State
 		This:AssignStateQueueDisplay[DebugStateList@Debug@ComBotTab@ComBot]
 		if ${This.IsIdle}
 		{
-			This:QueueState["OpenCargoHold"]
-			This:QueueState["CheckCargoHold"]
+			if ${Config.Repeat}
+			{
+				This:QueueState["OpenCargoHold"]
+				This:QueueState["CheckCargoHold"]
+			}
+			else
+			{
+				This:QueueState["ProcessQueue"]
+				This:QueueState["Traveling"]
+			}
 		}
 	}
 	
@@ -431,6 +441,35 @@ objectdef obj_Hauler inherits obj_State
 	}	
 	
 	
+	member:bool ProcessQueue()
+	{
+		echo Cargo:At[${This.HaulQueue.Get[1].Bookmark},${This.HaulQueue.Get[1].LocationType},${This.HaulQueue.Get[1].LocationSubtype},${This.HaulQueue.Get[1].Container}]:${This.HaulQueue.Get[1].Action}["",0]
+		Cargo:At[${This.HaulQueue.Get[1].Bookmark},${This.HaulQueue.Get[1].LocationType},${This.HaulQueue.Get[1].LocationSubtype},${This.HaulQueue.Get[1].Container}]:${This.HaulQueue.Get[1].Action}["",0]
+		This:QueueState["ProcessQueue"]
+		This:QueueState["Traveling"]
+		return TRUE
+	}
+	
+	method Add()
+	{
+		echo Add
+		if !${Config.PickupType.Equal[Jetcan]}
+		{
+			This.HaulQueue:Insert[${Config.Pickup},Load,${Config.PickupType},${Config.PickupSubType},${Config.PickupContainer},"",0]
+			This.HaulQueue:Insert[${Config.Dropoff},Unload,${Config.DropoffType},${Config.DropoffSubType},${Config.DropoffContainer},"",0]
+			LocalUI:UpdateQueueList
+		}
+		else
+		{
+			UI:Update["obj_Hauler", "Cannot queue a Jetcan pickup", "y"]
+		}
+	}
+	
+	method Remove(int ID=1)
+	{
+		LocalUI:UpdateQueueList
+	}
+	
 	
 	
 	;	HAUL IS NOT USED ANYMORE - It remains here to be used as a palette for future jetcan implementations
@@ -564,6 +603,20 @@ objectdef obj_HaulerUI inherits obj_State
 		return TRUE
 	}
 	
+	
+	method UpdateQueueList()
+	{
+		variable iterator Haul
+		Hauler.HaulQueue:GetIterator[Haul]
+		UIElement[Queue@QueueFrame@Hauler_Frame@ComBot_Hauler]:ClearItems
+		if ${Haul:First(exists)}
+			do
+			{
+				UIElement[Queue@QueueFrame@Hauler_Frame@ComBot_Hauler]:AddItem[${Haul.Value.Action} at ${Haul.Value.Bookmark} - ${Haul.Value.LocationType} ${Haul.Value.LocationSubtype} ${Haul.Value.Container}]
+			}
+			while ${Haul:Next(exists)}
+	}
+	
 	member:bool UpdateBookmarkLists()
 	{
 		variable index:bookmark Bookmarks
@@ -603,6 +656,7 @@ objectdef obj_HaulerUI inherits obj_State
 				}
 			}
 			while ${BookmarkIterator:Next(exists)}
+			
 			
 		return FALSE
 	}
