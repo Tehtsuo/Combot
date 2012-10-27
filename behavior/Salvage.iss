@@ -57,6 +57,7 @@ objectdef obj_Configuration_Salvager
 	Setting(bool, SalvageYellow, SetSalvageYellow)
 	Setting(bool, AvoidShips, SetAvoidShips)
 	Setting(string, BeltPatrol, SetBeltPatrol)
+	Setting(string, DropoffContainer, SetDropoffContainer)
 }
 
 objectdef obj_Salvage inherits obj_State
@@ -699,7 +700,7 @@ objectdef obj_Salvage inherits obj_State
 				Cargo:At[${Config.Dropoff}]:Unload
 				break
 			default
-				Cargo:At[${Config.Dropoff},${Config.Dropoff_Type},${Config.Dropoff_SubType}]:Unload
+				Cargo:At[${Config.Dropoff},${Config.Dropoff_Type},${Config.Dropoff_SubType},${Config.DropoffContainer}]:Unload
 				break
 		}
 		return TRUE

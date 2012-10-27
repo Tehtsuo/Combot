@@ -453,6 +453,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											Script[ComBot].VariableScope.Hauler.Config:SetPickupSubType[\"\"]
 											break
 									}
+									UIElement[PickupContainer@PickupFrame@Hauler_Frame@ComBot_Hauler]:SetText[${Script[ComBot].VariableScope.Hauler.Config.PickupContainer}]
 								</OnSelect>
 								<OnMouseEnter>
 									UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText["This field determines how ComBot should pick up cargo for hauling."]
@@ -731,6 +732,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											UIElement[DropoffContainerTitle@DropoffFrame@Hauler_Frame@ComBot_Hauler]:Hide
 											Script[ComBot].VariableScope.Hauler.Config:SetDropoffContainer[\"\"]
 									}
+									UIElement[DropoffContainer@DropoffFrame@Hauler_Frame@ComBot_Hauler]:SetText[${Script[ComBot].VariableScope.Hauler.Config.DropoffContainer}]
 								</OnSelect>
 								<OnMouseEnter>
 									UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText["This field determines how ComBot should drop off cargo after it reaches the dropoff location."]
