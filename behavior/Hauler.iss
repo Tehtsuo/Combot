@@ -530,9 +530,9 @@ objectdef obj_Hauler inherits obj_State
 		{
 			case Orca
 				echo Orca
-				if ${Entity[Name = "${Config.PickupContainerName}"](exists)}
+				if ${Entity[Name = "${Config.PickupContainer}"](exists)}
 				{
-					Container:Set[${Entity[Name = "${Config.PickupContainerName}"].ID}]
+					Container:Set[${Entity[Name = "${Config.PickupContainer}"].ID}]
 					if ${Entity[${Container}].Distance} > LOOT_RANGE
 					{
 						Move:Approach[${Container}, LOOT_RANGE]
@@ -544,7 +544,7 @@ objectdef obj_Hauler inherits obj_State
 						{
 							if !${EVEWindow[ByName, Inventory].ChildWindowExists[${Container}]}
 							{
-								UI:Update["obj_Hauler", "Opening ${Config.PickupContainerName}", "g"]
+								UI:Update["obj_Hauler", "Opening ${Config.PickupContainer}", "g"]
 								Entity[${Container}]:Open
 								return FALSE
 							}
@@ -566,10 +566,10 @@ objectdef obj_Hauler inherits obj_State
 				else
 				{
 					echo Check for orca
-					if ${Local[${Config.PickupContainerName}].ToFleetMember(exists)}
+					if ${Local[${Config.PickupContainer}].ToFleetMember(exists)}
 						{
-							UI:Update["obj_Hauler", "Warping to ${Local[${Config.PickupContainerName}].ToFleetMember.ToPilot.Name}", "g"]
-							Local[${Config.PickupContainerName}].ToFleetMember:WarpTo
+							UI:Update["obj_Hauler", "Warping to ${Local[${Config.PickupContainer}].ToFleetMember.ToPilot.Name}", "g"]
+							Local[${Config.PickupContainer}].ToFleetMember:WarpTo
 							Client:Wait[5000]
 							This:Clear
 							This:QueueState["Traveling", 1000]
@@ -580,9 +580,9 @@ objectdef obj_Hauler inherits obj_State
 				break
 
 			case Container
-				if ${Entity[Name = "${Config.PickupContainerName}"](exists)}
+				if ${Entity[Name = "${Config.PickupContainer}"](exists)}
 				{
-					Container:Set[${Entity[Name = "${Config.PickupContainerName}"].ID}]
+					Container:Set[${Entity[Name = "${Config.PickupContainer}"].ID}]
 					if ${Entity[${Container}].Distance} > LOOT_RANGE
 					{
 						Move:Approach[${Container}, LOOT_RANGE]
@@ -592,7 +592,7 @@ objectdef obj_Hauler inherits obj_State
 					{
 						if !${EVEWindow[ByName, Inventory].ChildWindowExists[${Container}]}
 						{
-							UI:Update["obj_Hauler", "Opening ${Config.PickupContainerName}", "g"]
+							UI:Update["obj_Hauler", "Opening ${Config.PickupContainer}", "g"]
 							Entity[${Container}]:Open
 							return FALSE
 						}
@@ -747,8 +747,10 @@ objectdef obj_Hauler inherits obj_State
 		
 		if ${Config.DropoffType.Equal[Container]}
 		{
+			UI:Update["obj_Hauler", "Looking for ${Config.DropoffContainer}", "g"]
 			if ${Entity[Name = "${Config.DropoffContainer}"](exists)}
 			{
+				UI:Update["obj_Hauler", "Found ${Config.DropoffContainer}", "g"]
 				Container:Set[${Entity[Name = "${Config.DropoffContainer}"].ID}]
 				if ${Entity[${Container}].Distance} > LOOT_RANGE
 				{
