@@ -959,7 +959,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<Y>24%</Y>
 								<Width>20%</Width> 
 								<Height>10%</Height> 
-								<Text>Ice Belt Prefix:</Text>
+								<Text>Gas Cloud Prefix:</Text>
 								<OnLoad>
 									if !${Script[ComBot].VariableScope.Miner.Config.GasHarvesting}
 									{
