@@ -1714,7 +1714,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 														</OnLoad>
 														<OnSelect>
 															UIElement[Move@MoveFrame@Move@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[${This.SelectedItem.Text}]
-															Script[ComBot].VariableScope.Hauler.Config:SetDropoff[${This.SelectedItem.Text}]
+															Script[ComBot].VariableScope.Hauler.Config:SetMove[${This.SelectedItem.Text}]
 															This:Hide
 															Script[ComBot].VariableScope.Hauler.LocalUI:Stop
 														</OnSelect>
