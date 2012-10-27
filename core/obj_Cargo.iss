@@ -416,6 +416,21 @@ objectdef obj_Cargo inherits obj_State
 			This:QueueState["Process"]
 		}
 	}
+	method Move()
+	{
+		if 	${This.BuildAction.Bookmark.Length} == 0
+		{
+			UI:Update["obj_Cargo", "Attempted to queue an incomplete Move cargo action", "r"]
+			return
+		}
+		
+		This.CargoQueue:Queue[${This.BuildAction.Bookmark}, Move, "", "", "", "", 0]
+		This.Processing:Set[TRUE]
+		if ${This.IsIdle}
+		{
+			This:QueueState["Process"]
+		}
+	}
 
 	
 	
@@ -478,7 +493,7 @@ objectdef obj_Cargo inherits obj_State
 		}
 
 		
-		if ${Me.InSpace}
+		if ${Me.InSpace} && ${This.CargoQueue.Peek.Action.NotEqual[Move]}
 		{
 			if ${Entity[Name = "${This.CargoQueue.Peek.Container}"](exists)}
 			{
@@ -643,6 +658,10 @@ objectdef obj_Cargo inherits obj_State
 		Cargo:PopulateCargoList[${This.CargoQueue.Peek.LocationType}, 0, ${This.CargoQueue.Peek.LocationSubtype}]
 		Cargo:Filter[${This.CargoQueue.Peek.QueryString}]
 		Cargo:MoveCargoList[SHIP, "", -1, ${This.CargoQueue.Peek.Quantity}]
+		return TRUE
+	}
+	member:bool Move()
+	{
 		return TRUE
 	}
 	

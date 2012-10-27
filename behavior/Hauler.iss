@@ -46,11 +46,13 @@ objectdef obj_Configuration_Hauler
 		This.CommonRef:AddSetting[PickupContainer,""]
 		This.CommonRef:AddSetting[Dropoff,""]
 		This.CommonRef:AddSetting[Pickup,""]
+		This.CommonRef:AddSetting[Move,""]
 		This.CommonRef:AddSetting[Repeat,FALSE]
 		This.CommonRef:AddSetting[Mode,Continuous]
 	}
 	
 	Setting(string, PickupSubType, SetPickupSubType)
+	Setting(string, Move, SetMove)
 	Setting(string, Dropoff, SetDropoff)
 	Setting(string, Pickup, SetPickup)
 	Setting(string, DropoffType, SetDropoffType)
@@ -702,6 +704,21 @@ objectdef obj_HaulerUI inherits obj_State
 			}
 			while ${BookmarkIterator:Next(exists)}
 			
+		UIElement[MoveList@MoveFrame@Move@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:ClearItems
+		if ${BookmarkIterator:First(exists)}
+			do
+			{	
+				if ${UIElement[Move@MoveFrame@Move@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler].Text.Length}
+				{
+					if ${BookmarkIterator.Value.Label.Left[${Hauler.Config.Move.Length}].Equal[${Hauler.Config.Move}]}
+						UIElement[MoveList@MoveFrame@Move@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[${BookmarkIterator.Value.Label.Escape}]
+				}
+				else
+				{
+					UIElement[MoveList@MoveFrame@Move@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[${BookmarkIterator.Value.Label.Escape}]
+				}
+			}
+			while ${BookmarkIterator:Next(exists)}
 			
 		return FALSE
 	}

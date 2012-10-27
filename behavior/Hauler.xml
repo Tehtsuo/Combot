@@ -1408,7 +1408,6 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 														<Width>32%</Width> 
 														<Height>15%</Height> 
 														<OnLoad>
-															echo ${This.FullName}
 															This:SetText[${Script[ComBot].VariableScope.Hauler.Config.Dropoff}]
 														</OnLoad>
 														<OnChange>
@@ -1506,7 +1505,6 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 															This.ItemByText["${Script[ComBot].VariableScope.Hauler.Config.DropoffSubType}"]:Select
 														</OnLoad>
 														<OnSelect>
-															echo ${This.SelectedItem.Text}
 															Script[ComBot].VariableScope.Hauler.Config:SetDropoffSubType[${This.SelectedItem.Text}]
 														</OnSelect>
 														<OnMouseEnter>
@@ -1635,11 +1633,106 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 												</Children>
 											</Frame>											 
 										</Tab>
+										<Tab Name="Move">
+											<frame name='FillerFrame'>
+												<BackgroundColor>FF000000</BackgroundColor>
+												<Border>1</Border>
+												<BorderColor>FFFFFFFF</BorderColor>
+												<X>0</X>
+												<Y>0</Y>
+												<Height>100%</Height>
+												<Width>100%</Width>
+												<OnLoad>
+													This:SetLeftClickThru[TRUE]
+												</OnLoad>
+											 </frame>					
+											<Text name='MoveTitle'> 
+												<X>1%</X> 
+												<Y>2%</Y> 
+												<Width>32%</Width> 
+												<Height>4%</Height> 
+												<Text>Move Configuration</Text>
+												<OnLoad>
+													This.Font:SetColor[FFFFFF00]
+												</OnLoad>
+											</Text>
+											<Frame name="MoveFrame">
+												<X>0%</X>
+												<Y>8%</Y>
+												<Width>100%</Width>
+												<Height>92%</Height>
+												<BackgroundColor>FF000000</BackgroundColor>
+												<Border>1</Border>
+												<BorderColor>FFFFFFFF</BorderColor>
+												<Children>
+													<Text name='MoveTitle'> 
+														<X>1%</X> 
+														<Y>3%</Y> 
+														<Width>32%</Width> 
+														<Height>10%</Height> 
+														<Alignment>Center</Alignment>
+														<Text>Move Bookmark</Text>
+													</Text>
+													<Textentry name='Move'> 
+														<X>1%</X> 
+														<Y>10%</Y> 
+														<Width>32%</Width> 
+														<Height>15%</Height> 
+														<OnLoad>
+															This:SetText[${Script[ComBot].VariableScope.Hauler.Config.Move}]
+														</OnLoad>
+														<OnChange>
+															if ${This.Text.Length}
+															{
+																Script[ComBot].VariableScope.Hauler.Config:SetMove[${This.Text}]
+															}
+															else
+															{
+																Script[ComBot].VariableScope.Hauler.Config:SetDropoff[\"\"]
+															}
+															UIElement[MoveList@MoveFrame@Move@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
+															Script[ComBot].VariableScope.Hauler.LocalUI:Start
+														</OnChange>
+														<OnMouseEnter>
+															UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText["This field needs to contain the exact name of your move location bookmark."]
+														</OnMouseEnter>
+														<OnMouseExit>
+															UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText[""]
+														</OnMouseExit>
+													</Textentry>
+													<listbox Name="MoveList">
+														<BackgroundColor>FF000000</BackgroundColor>
+														<Border>1</Border>
+														<BorderColor>FFFFFFFF</BorderColor>
+														<X>1%</X>
+														<Y>25%</Y>
+														<Width>32%</Width>
+														<Height>70%</Height>
+														<OnLoad>
+															This:SetZOrder[alwaysontop]
+															This:Hide
+														</OnLoad>
+														<OnSelect>
+															UIElement[Move@MoveFrame@Move@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[${This.SelectedItem.Text}]
+															Script[ComBot].VariableScope.Hauler.Config:SetDropoff[${This.SelectedItem.Text}]
+															This:Hide
+															Script[ComBot].VariableScope.Hauler.LocalUI:Stop
+														</OnSelect>
+														<OnMouseEnter>
+															UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText["This field needs to contain the exact name of your dropoff location bookmark.  If you are delivering to a personal or corporate hangar in a station, the bookmark needs to be a station.  If you are delivering to a POS structure, the bookmark should be near the structure."]
+														</OnMouseEnter>
+														<OnMouseExit>
+															UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText[""]
+														</OnMouseExit>
+													</listbox>													
+												</Children>
+											</Frame>
+										</Tab>
 									</Tabs>
 								</TabControl>
 							</Tab>
-						</Tabs>
 						
+						</Tabs>
 						<OnLoad>
 							This.Tab[${Script[ComBot].VariableScope.Hauler.Config.Mode}]:Select
 						</OnLoad>
