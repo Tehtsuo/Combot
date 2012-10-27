@@ -895,7 +895,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											<Height>25%</Height>
 											<Text>Add</Text>
 											<OnLeftClick>
-												Script[ComBot].VariableScope.Hauler:Add
+												Script[ComBot].VariableScope.Hauler:Add[${UIElement[Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler].SelectedTab.Name}]
 											</OnLeftClick>
 										</Button>
 										<Button name="Remove">
@@ -929,7 +929,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 												This:SetZOrder[movetop]
 											</OnLeftClick>
 											<OnMouseEnter>
-												UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText["When this is checked, ComBot will repeat the haul operation continuously."]
+												UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText["When this is checked, ComBot will repeat the haul queue continuously."]
 											</OnMouseEnter>
 											<OnMouseExit>
 												UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText[""]
@@ -957,7 +957,384 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 													This:SetLeftClickThru[TRUE]
 												</OnLoad>
 											 </frame>					
+											<Text name='PickupFrameTitle'> 
+												<X>1%</X> 
+												<Y>2%</Y> 
+												<Width>32%</Width> 
+												<Height>4%</Height> 
+												<Text>Pickup Configuration</Text>
+												<OnLoad>
+													This.Font:SetColor[FFFFFF00]
+												</OnLoad>
+											</Text>
+											<Frame name="PickupFrame">
+												<X>0%</X>
+												<Y>8%</Y>
+												<Width>100%</Width>
+												<Height>92%</Height>
+												<BackgroundColor>FF000000</BackgroundColor>
+												<Border>1</Border>
+												<BorderColor>FFFFFFFF</BorderColor>
+												<Children>
+													<Text name='PickupTitle'> 
+														<X>34%</X> 
+														<Y>3%</Y> 
+														<Width>32%</Width> 
+														<Height>10%</Height> 
+														<Alignment>Center</Alignment>
+														<Text>Pickup Bookmark</Text>
+													</Text>
+													<Textentry name='Pickup'> 
+														<X>34%</X> 
+														<Y>10%</Y> 
+														<Width>32%</Width> 
+														<Height>15%</Height> 
+														<OnLoad>
+															This:SetText[${Script[ComBot].VariableScope.Hauler.Config.Pickup}]
+														</OnLoad>
+														<OnChange>
+															if ${This.Text.Length}
+															{
+																Script[ComBot].VariableScope.Hauler.Config:SetPickup[${This.Text}]
+															}
+															else
+															{
+																Script[ComBot].VariableScope.Hauler.Config:SetPickup[\"\"]
+															}
+															UIElement[PickupList@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
+															Script[ComBot].VariableScope.Hauler.LocalUI:Start
+														</OnChange>
+														<OnMouseEnter>
+															UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText["This field needs to contain the exact name of your pickup bookmark.  The bookmark can be a station if you are picking up from a personal hangar or corporate hangar, or a location if you are picking up from a Player Owned Station structure.  If you are picking up from an Orca or Jetcan, the bookmark needs to be any bookmark in the system where your fleet is mining."]
+														</OnMouseEnter>
+														<OnMouseExit>
+															UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText[""]
+														</OnMouseExit>
+													</Textentry>
+													<listbox Name="PickupList">
+														<BackgroundColor>FF000000</BackgroundColor>
+														<Border>1</Border>
+														<BorderColor>FFFFFFFF</BorderColor>
+														<X>34%</X>
+														<Y>25%</Y>
+														<Width>32%</Width>
+														<Height>70%</Height>
+														<OnLoad>
+															This:SetZOrder[alwaysontop]
+															This:Hide
+														</OnLoad>
+														<OnSelect>
+															UIElement[Pickup@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[${This.SelectedItem.Text}]
+															Script[ComBot].VariableScope.Hauler.Config:SetPickup[${This.SelectedItem.Text}]
+															This:Hide
+															Script[ComBot].VariableScope.Hauler.LocalUI:Stop
+														</OnSelect>
+														<OnMouseEnter>
+															UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText["This field needs to contain the exact name of your pickup bookmark.  The bookmark can be a station if you are picking up from a personal hangar or corporate hangar, or a location if you are picking up from a Player Owned Station structure.  If you are picking up from an Orca or Jetcan, the bookmark needs to be any bookmark in the system where your fleet is mining."]
+														</OnMouseEnter>
+														<OnMouseExit>
+															UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText[""]
+														</OnMouseExit>
+													</listbox>					
+													<Text name='PickupContainerTitle'> 
+														<X>34%</X> 
+														<Y>73%</Y> 
+														<Width>32%</Width> 
+														<Height>10%</Height> 
+														<Alignment>Center</Alignment>
+														<Text>Orca Name</Text>
+													</Text>
+													<TextEntry name='PickupContainer'> 
+														<X>34%</X> 
+														<Y>80%</Y> 
+														<Width>32%</Width> 
+														<Height>15%</Height> 
+														<OnLoad>
+															This:SetText[${Script[ComBot].VariableScope.Hauler.Config.PickupContainer}]
+															This:Hide
+														</OnLoad>
+														<OnChange>
+															Script[ComBot].VariableScope.Hauler.Config:SetPickupContainer[${This.Text}]
+														</OnChange>
+														<OnMouseEnter>
+															UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText["This field is used to supply ComBot with an identifier for your pickup location.  If you are picking up from an Orca, this needs to contain the name of the pilot flying your Orca.  If you are picking up from a Player Owned Station structure, this needs to contain the structure's name.  This field is also used to specify the prefix for corporate bookmarks created using the Corporate Jetcan mode."]
+														</OnMouseEnter>
+														<OnMouseExit>
+															UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText[""]
+														</OnMouseExit>
+													</TextEntry>
+
+													<Text name='PickupSubTypeTitle'> 
+														<X>67%</X> 
+														<Y>3%</Y> 
+														<Width>32%</Width> 
+														<Height>10%</Height> 
+														<Alignment>Center</Alignment>
+														<Text>Jetcan Mode</Text>
+														<OnLoad>
+															switch ${Script[ComBot].VariableScope.Hauler.Config.PickupType}
+															{
+																case Jetcan
+																	break
+																case Corporation Folder
+																	This:SetText[Corporation Folder]
+																	break
+																case Container
+																	This:SetText[Corporation Folder]
+																	break
+																default
+																	This:Hide
+															}
+														</OnLoad>
+													</Text>
+													<listbox Name="PickupSubType">
+														<BackgroundColor>FF000000</BackgroundColor>
+														<Border>1</Border>
+														<BorderColor>FFFFFFFF</BorderColor>
+														<X>67%</X>
+														<Y>10%</Y>
+														<Width>32%</Width>
+														<Height>85%</Height>
+														<OnLoad>
+															switch ${Script[ComBot].VariableScope.Hauler.Config.PickupType}
+															{
+																case Jetcan
+																	This:AddItem[Fleet Jetcan]
+																	break
+																case Corporation Hangar
+																	This:AddItem[Corporation Folder 1]
+																	This:AddItem[Corporation Folder 2]
+																	This:AddItem[Corporation Folder 3]
+																	This:AddItem[Corporation Folder 4]
+																	This:AddItem[Corporation Folder 5]
+																	This:AddItem[Corporation Folder 6]
+																	This:AddItem[Corporation Folder 7]
+																	break
+																case Container
+																	This:AddItem[Corporation Folder 1]
+																	This:AddItem[Corporation Folder 2]
+																	This:AddItem[Corporation Folder 3]
+																	This:AddItem[Corporation Folder 4]
+																	This:AddItem[Corporation Folder 5]
+																	This:AddItem[Corporation Folder 6]
+																	This:AddItem[Corporation Folder 7]
+																	break
+																case Orca
+																	This:AddItem[Corporation Folder 1]
+																	This:AddItem[Corporation Folder 2]
+																	This:AddItem[Corporation Folder 3]
+																	This:AddItem[Corporation Folder 4]
+																	This:AddItem[Corporation Folder 5]
+																	This:AddItem[Corporation Folder 6]
+																	This:AddItem[Corporation Folder 7]
+																	break
+																default
+																	This:Hide
+															}
+															This.ItemByText[${Script[ComBot].VariableScope.Hauler.Config.PickupSubType}]:Select
+														</OnLoad>
+														<OnSelect>
+															Script[ComBot].VariableScope.Hauler.Config:SetPickupSubType[${This.SelectedItem.Text}]
+														</OnSelect>
+														<OnMouseEnter>
+															UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText["This field is used to further configure your pickup type for types that have additional options, like Jetcans."]
+														</OnMouseEnter>
+														<OnMouseExit>
+															UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText[""]
+														</OnMouseExit>
+													</listbox>
+													
+													<Text name='PickupTypeTitle'> 
+														<X>1%</X> 
+														<Y>3%</Y> 
+														<Width>32%</Width> 
+														<Height>10%</Height> 
+														<Alignment>Center</Alignment>
+														<Text>Pickup Type</Text>
+													</Text>
+													<listbox Name="PickupType">
+														<BackgroundColor>FF000000</BackgroundColor>
+														<Border>1</Border>
+														<BorderColor>FFFFFFFF</BorderColor>
+														<X>1%</X>
+														<Y>10%</Y>
+														<Width>32%</Width>
+														<Height>85%</Height>
+														<Items>
+															<Item>Container</Item>
+															<Item>Corporation Hangar</Item>
+															<Item>Personal Hangar</Item>
+															<Item>Orca</Item>
+														</Items>
+														<OnLoad>
+															This.ItemByText[${Script[ComBot].VariableScope.Hauler.Config.PickupType}]:Select
+															UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:ClearItems
+
+															switch ${Script[ComBot].VariableScope.Hauler.Config.PickupType}
+															{
+																case Container
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 1]
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 2]
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 3]
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 4]
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 5]
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 6]
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 7]
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler].ItemByText[${Script[ComBot].VariableScope.Hauler.Config.PickupSubType}]:Select
+																	UIElement[PickupTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Container Bookmark]
+																	UIElement[PickupContainerTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Container Name]
+																	UIElement[PickupContainerTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
+																	UIElement[PickupContainer@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
+																	UIElement[PickupSubTypeTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
+																	break
+																case Corporation Hangar
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 1]
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 2]
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 3]
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 4]
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 5]
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 6]
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 7]
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler].ItemByText[${Script[ComBot].VariableScope.Hauler.Config.PickupSubType}]:Select
+																	UIElement[PickupTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Pickup Station Bookmark]
+																	UIElement[PickupContainerTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
+																	UIElement[PickupContainer@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
+																	UIElement[PickupSubTypeTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
+																	Script[ComBot].VariableScope.Hauler.Config:SetPickupContainer[\"\"]
+																	break
+																case Orca
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 1]
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 2]
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 3]
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 4]
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 5]
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 6]
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 7]
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler].ItemByText[${Script[ComBot].VariableScope.Hauler.Config.PickupSubType}]:Select
+																	UIElement[PickupTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Mining System Bookmark]
+																	UIElement[PickupContainerTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Orca Pilot Name]
+																	UIElement[PickupContainerTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
+																	UIElement[PickupContainer@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
+																	UIElement[PickupSubTypeTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
+																	break
+																case Jetcan
+																	UIElement[PickupTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Mining System Bookmark]
+																	switch ${Script[ComBot].VariableScope.Hauler.Config.PickupSubType}
+																	{
+																		default
+																		UIElement[PickupContainerTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
+																		UIElement[PickupContainer@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
+																	}
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Fleet Jetcan]
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler].ItemByText[${Script[ComBot].VariableScope.Hauler.Config.PickupSubType}]:Select
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
+																	UIElement[PickupSubTypeTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
+																	break
+																default
+																	UIElement[PickupTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Pickup Station Bookmark]
+																	UIElement[PickupContainerTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
+																	UIElement[PickupContainer@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
+																	UIElement[PickupSubTypeTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
+																	Script[ComBot].VariableScope.Hauler.Config:SetPickupContainer[\"\"]
+																	Script[ComBot].VariableScope.Hauler.Config:SetPickupSubType[\"\"]
+																	break
+															}
+														</OnLoad>
+														<OnSelect>
+															Script[ComBot].VariableScope.Hauler.Config:SetPickupType[${This.SelectedItem.Text}]
+															UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:ClearItems
+
+															switch ${Script[ComBot].VariableScope.Hauler.Config.PickupType}
+															{
+																case Container
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 1]
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 2]
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 3]
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 4]
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 5]
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 6]
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 7]
+																	UIElement[PickupSubTypeTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Corporate Folder]
+																	UIElement[PickupTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Container Bookmark]
+																	UIElement[PickupContainerTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Container Name]
+																	UIElement[PickupContainerTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
+																	UIElement[PickupContainer@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
+																	UIElement[PickupSubTypeTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
+																	break
+																case Corporation Hangar
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 1]
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 2]
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 3]
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 4]
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 5]
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 6]
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 7]
+																	UIElement[PickupSubTypeTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Corporate Folder]
+																	UIElement[PickupTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Pickup Station Bookmark]
+																	UIElement[PickupContainerTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
+																	UIElement[PickupContainer@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
+																	Script[ComBot].VariableScope.Hauler.Config:SetPickupContainer[\"\"]
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
+																	UIElement[PickupSubTypeTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
+																	break
+																case Orca
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 1]
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 2]
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 3]
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 4]
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 5]
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 6]
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 7]
+																	UIElement[PickupSubTypeTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Corporate Folder]
+																	UIElement[PickupTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Mining System Bookmark]
+																	UIElement[PickupContainerTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Orca Pilot Name]
+																	UIElement[PickupContainerTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
+																	UIElement[PickupContainer@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
+																	UIElement[PickupSubTypeTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
+																	break
+																case Jetcan
+																	UIElement[PickupSubTypeTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Jetcan Mode]
+																	UIElement[PickupTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Mining System Bookmark]
+																	switch ${Script[ComBot].VariableScope.Hauler.Config.PickupSubType}
+																	{
+																		default
+																		UIElement[PickupContainerTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
+																		UIElement[PickupContainer@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
+																	}
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Fleet Jetcan]
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler].ItemByText[${Script[ComBot].VariableScope.Hauler.Config.PickupSubType}]:Select
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
+																	UIElement[PickupSubTypeTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
+																	break
+																default
+																	UIElement[PickupTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Pickup Station Bookmark]
+																	UIElement[PickupContainerTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
+																	UIElement[PickupContainer@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
+																	UIElement[PickupSubTypeTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
+																	Script[ComBot].VariableScope.Hauler.Config:SetPickupContainer[\"\"]
+																	Script[ComBot].VariableScope.Hauler.Config:SetPickupSubType[\"\"]
+																	break
+															}
+															UIElement[PickupContainer@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[${Script[ComBot].VariableScope.Hauler.Config.PickupContainer}]
+														</OnSelect>
+														<OnMouseEnter>
+															UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText["This field determines how ComBot should pick up cargo for hauling."]
+														</OnMouseEnter>
+														<OnMouseExit>
+															UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText[""]
+														</OnMouseExit>
+													</listbox>
+												</Children>
+											</Frame>	
 										</Tab>
+										
 										<Tab Name='Unload'>
 											<frame name='FillerFrame'>
 												<BackgroundColor>FF000000</BackgroundColor>
@@ -1166,8 +1543,15 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 															This.ItemByText[${Script[ComBot].VariableScope.Hauler.Config.DropoffType}]:Select
 															switch ${Script[ComBot].VariableScope.Hauler.Config.DropoffType}
 															{
+																case Corporation Hangar
+																	Script[ComBot].VariableScope.Hauler.Config:SetDropoffContainer[\"\"]
+																	break
 																case Container
 																
+																	break
+																case Personal Hangar
+																	Script[ComBot].VariableScope.Hauler.Config:SetDropoffSubType[\"\"]
+																	Script[ComBot].VariableScope.Hauler.Config:SetDropoffContainer[\"\"]
 																	break
 																default
 																	UIElement[DropoffContainerTitle@DropoffFrame@Unload@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
@@ -1193,8 +1577,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 																	UIElement[DropoffTitle@DropoffFrame@Unload@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Dropoff Station Bookmark]
 																	UIElement[DropoffContainer@DropoffFrame@Unload@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
 																	UIElement[DropoffContainerTitle@DropoffFrame@Unload@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
-																	Script[ComBot].VariableScope.Hauler.Config:SetDropoffContainer[\"\"]
 																	UIElement[DropoffSubTypeTitle@DropoffFrame@Unload@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Corporate Folder]
+																	Script[ComBot].VariableScope.Hauler.Config:SetDropoffContainer[\"\"]
 																	break
 																case Container
 																	UIElement[DropoffSubType@DropoffFrame@Unload@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 1]
@@ -1233,11 +1617,11 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 																case Personal Hangar
 																	UIElement[DropoffSubTypeTitle@DropoffFrame@Unload@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
 																	UIElement[DropoffSubType@DropoffFrame@Unload@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
-																	Script[ComBot].VariableScope.Hauler.Config:SetDropoffSubType[\"\"]
 																	UIElement[DropoffContainer@DropoffFrame@Unload@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
 																	UIElement[DropoffContainerTitle@DropoffFrame@Unload@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
-																	Script[ComBot].VariableScope.Hauler.Config:SetDropoffContainer[\"\"]
 																	UIElement[DropoffTitle@DropoffFrame@Unload@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Dropoff Station Bookmark]
+																	Script[ComBot].VariableScope.Hauler.Config:SetDropoffSubType[\"\"]
+																	Script[ComBot].VariableScope.Hauler.Config:SetDropoffContainer[\"\"]
 															}
 															UIElement[DropoffContainer@DropoffFrame@Unload@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[${Script[ComBot].VariableScope.Hauler.Config.DropoffContainer}]
 														</OnSelect>

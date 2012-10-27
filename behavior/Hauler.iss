@@ -105,15 +105,16 @@ objectdef obj_Hauler inherits obj_State
 		This:AssignStateQueueDisplay[DebugStateList@Debug@ComBotTab@ComBot]
 		if ${This.IsIdle}
 		{
-			if ${Config.Repeat}
+			switch ${Config.Mode}
 			{
-				This:QueueState["OpenCargoHold"]
-				This:QueueState["CheckCargoHold"]
-			}
-			else
-			{
-				This:QueueState["ProcessQueue"]
-				This:QueueState["Traveling"]
+				case Continuous
+					This:QueueState["OpenCargoHold"]
+					This:QueueState["CheckCargoHold"]
+					break
+				case Queue
+					This:QueueState["ProcessQueue"]
+					This:QueueState["Traveling"]
+				break
 			}
 		}
 	}
@@ -445,6 +446,10 @@ objectdef obj_Hauler inherits obj_State
 	member:bool ProcessQueue()
 	{
 		Cargo:At[${This.HaulQueue.Get[1].Bookmark},${This.HaulQueue.Get[1].LocationType},${This.HaulQueue.Get[1].LocationSubtype},${This.HaulQueue.Get[1].Container}]:${This.HaulQueue.Get[1].Action}["",0]
+		if ${Config.Repeat}
+		{
+			This.HaulQueue:Insert[${This.HaulQueue.Get[1].Bookmark},${This.HaulQueue.Get[1].Action},${This.HaulQueue.Get[1].LocationType},${This.HaulQueue.Get[1].LocationSubtype},${This.HaulQueue.Get[1].Container},"",0]
+		}
 		This:Remove
 		if ${This.HaulQueue.Used} == 0
 		{
@@ -459,7 +464,15 @@ objectdef obj_Hauler inherits obj_State
 	
 	method Add(string Action)
 	{
-		This.HaulQueue:Insert[${Config.Pickup},${Action},${Config.PickupType},${Config.PickupSubType},${Config.PickupContainer},"",0]
+		switch ${Action}
+		{
+			case Load
+				This.HaulQueue:Insert[${Config.Pickup},${Action},${Config.PickupType},${Config.PickupSubType},${Config.PickupContainer},"",0]
+				break
+			case Unload
+				This.HaulQueue:Insert[${Config.Dropoff},${Action},${Config.DropoffType},${Config.DropoffSubType},${Config.DropoffContainer},"",0]
+				break
+		}
 		LocalUI:UpdateQueueList
 	}
 
@@ -657,7 +670,22 @@ objectdef obj_HaulerUI inherits obj_State
 			}
 			while ${BookmarkIterator:Next(exists)}
 		
-		echo Updating
+		UIElement[PickupList@DropoffFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:ClearItems
+		if ${BookmarkIterator:First(exists)}
+			do
+			{	
+				if ${UIElement[Pickup@DropoffFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler].Text.Length}
+				{
+					if ${BookmarkIterator.Value.Label.Left[${Hauler.Config.Pickup.Length}].Equal[${Hauler.Config.Pickup}]}
+						UIElement[PickupList@DropoffFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[${BookmarkIterator.Value.Label.Escape}]
+				}
+				else
+				{
+					UIElement[PickupList@DropoffFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[${BookmarkIterator.Value.Label.Escape}]
+				}
+			}
+			while ${BookmarkIterator:Next(exists)}
+
 		UIElement[DropoffList@DropoffFrame@Unload@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:ClearItems
 		if ${BookmarkIterator:First(exists)}
 			do
