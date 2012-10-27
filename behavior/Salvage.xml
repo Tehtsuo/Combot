@@ -439,7 +439,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<OnLoad>
 									switch ${Script[ComBot].VariableScope.Salvage.Config.Dropoff_Type}
 									{
-										case Corporation Folder
+										case Corporation Hangar
 											This:AddItem[Corporation Folder 1]
 											This:AddItem[Corporation Folder 2]
 											This:AddItem[Corporation Folder 3]
@@ -489,7 +489,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<Height>85%</Height>
 								<Items>
 									<Item>Personal Hangar</Item>
-									<Item>Corporation Folder</Item>
+									<Item>Corporation Hangar</Item>
 									<Item>Container</Item>
 								</Items>
 								<OnLoad>
@@ -500,7 +500,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:ClearItems
 									switch ${This.SelectedItem.Text}
 									{
-										case Corporation Folder
+										case Corporation Hangar
 											UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[Corporation Folder 1]
 											UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[Corporation Folder 2]
 											UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[Corporation Folder 3]

@@ -622,7 +622,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<OnLoad>
 									switch ${Script[ComBot].VariableScope.Hauler.Config.DropoffType}
 									{
-										case Corporation Folder
+										case Corporation Hangar
 											This:AddItem[Corporation Folder 1]
 											This:AddItem[Corporation Folder 2]
 											This:AddItem[Corporation Folder 3]
@@ -673,7 +673,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<Height>85%</Height>
 								<Items>
 									<Item>Personal Hangar</Item>
-									<Item>Corporation Folder</Item>
+									<Item>Corporation Hangar</Item>
 									<Item>Container</Item>
 								</Items>
 								<OnLoad>
@@ -693,7 +693,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:ClearItems
 									switch ${Script[ComBot].VariableScope.Hauler.Config.DropoffType}
 									{
-										case Corporation Folder
+										case Corporation Hangar
 											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 1]
 											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 2]
 											UIElement[DropoffSubType@DropoffFrame@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 3]

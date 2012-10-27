@@ -259,7 +259,7 @@ objectdef obj_Cargo inherits obj_State
 				case Personal Hangar
 					CargoItem:MoveTo[MyStationHangar, Hangar, ${Quantity}]
 					break
-				case Corporation Folder
+				case Corporation Hangar
 					CargoItem:MoveTo[MyStationCorporateHangar, StationCorporateHangar, ${Quantity}${TransferFolder}]
 					break
 			}
@@ -367,7 +367,7 @@ objectdef obj_Cargo inherits obj_State
 				case Personal Hangar
 					EVE:MoveItemsTo[TransferIndex, MyStationHangar, Hangar]
 					break
-				case Corporation Folder
+				case Corporation Hangar
 					EVE:MoveItemsTo[TransferIndex, MyStationCorporateHangar, StationCorporateHangar${TransferFolder}]
 					break
 			}
