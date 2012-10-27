@@ -25,6 +25,7 @@ objectdef obj_Client
 	variable int NextPulse
 	
 	variable bool Ready=TRUE
+	variable bool Undock=FALSE
 	variable int64 SystemID=${Me.SolarSystemID}
 	
 	method Initialize()
@@ -69,6 +70,17 @@ objectdef obj_Client
 				return
 			}			
 			
+			if ${This.Undock}
+			{
+				if !${This.InSpace}
+				{
+					return
+				}
+				else
+				{
+					This:Undock
+				}
+			}
 			This.Ready:Set[TRUE]
 		}
 	}
@@ -115,6 +127,24 @@ objectdef obj_Client
 		{
 			EVE:ToggleTextureLoading
 		}
+	}
+	
+	method Undock()
+	{
+		variable index:bookmark BookmarkIndex
+		variable string suffix
+		suffix:Set[${Config.Common.UndockSuffix}]
+		EVE:GetBookmarks[BookmarkIndex]
+		BookmarkIndex:RemoveByQuery[${LavishScript.CreateQuery[SolarSystemID == ${Me.SolarSystemID}]}, FALSE]
+		BookmarkIndex:RemoveByQuery[${LavishScript.CreateQuery[Label.Right[${suffix.Length}] =- ${suffix}]}, FALSE]
+		BookmarkIndex:RemoveByQuery[${LavishScript.CreateQuery[Distance > 150000]}, FALSE]
+		BookmarkIndex:RemoveByQuery[${LavishScript.CreateQuery[Distance < 250000]}, FALSE]
+		BookmarkIndex:Collapse
+		
+		UI:Update["obj_Client", "Undock warping to ${BookmarkIndex.Get[1].Label}", "g"]
+		BookmarkIndex.Get[1]:WarpTo
+		Client:Wait[5000]
+		This.Undock:Set[FALSE]
 	}
 
 	method Wait(int delay)
