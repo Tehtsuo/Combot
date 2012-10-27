@@ -120,6 +120,7 @@ objectdef obj_Configuration_Miner
 		This.CommonRef:AddSetting[Miner_Dropoff_Type,Personal Hangar]
 		This.CommonRef:AddSetting[BeltPrefix,Belt:]
 		This.CommonRef:AddSetting[IceBeltPrefix,Ice Belt:]
+		This.CommonRef:AddSetting[GasPrefix,Gas:]
 		This.CommonRef:AddSetting[MaxLasers,3]
 		This.CommonRef:AddSetting[MiningSystem,""]
 		This.CommonRef:AddSetting[Dropoff,""]
@@ -132,10 +133,12 @@ objectdef obj_Configuration_Miner
 	Setting(string, Dropoff_SubType, SetDropoff_SubType)
 	Setting(string, Container_Name, SetContainer_Name)	
 	Setting(bool, IceMining, SetIceMining)	
+	Setting(bool, GasHarvesting, SetGasHarvesting)
 	Setting(bool, OrcaMode, SetOrcaMode)	
 	Setting(bool, UseBookmarks, SetUseBookmarks)	
 	Setting(string, BeltPrefix, SetBeltPrefix)	
 	Setting(string, IceBeltPrefix, SetIceBeltPrefix)	
+	Setting(string, GasPrefix, SetGasPrefix)	
 	Setting(int, Threshold, SetThreshold)	
 	Setting(int, MaxLaserLocks, SetMaxLaserLocks)
 	Setting(string, JetcanPrefix, SetJetcanPrefix)
@@ -149,6 +152,7 @@ objectdef obj_Miner inherits obj_State
 	
 	variable obj_TargetList Asteroids
 	variable bool WarpToOrca=FALSE
+	variable index:bookmark BookmarkIndex
 
 	method Initialize()
 	{
@@ -191,28 +195,35 @@ objectdef obj_Miner inherits obj_State
 	method PopulateTargetList()
 	{
 		Asteroids:ClearQueryString
-		
-		variable iterator OreTypeIterator
-		if ${Config.IceMining}
-		{
-			Config.IceTypesRef:GetSettingIterator[OreTypeIterator]
-		}
-		else
-		{
-			Config.OreTypesRef:GetSettingIterator[OreTypeIterator]
-		}
 
-		if ${OreTypeIterator:First(exists)}
-		{		
-			do
+		if !${Config.GasHarvesting}
+		{
+			variable iterator OreTypeIterator
+			if ${Config.IceMining}
 			{
-				Asteroids:AddQueryString[CategoryID==CATEGORYID_ORE && Name =- "${OreTypeIterator.Key}"]
+				Config.IceTypesRef:GetSettingIterator[OreTypeIterator]
 			}
-			while ${OreTypeIterator:Next(exists)}
+			else
+			{
+				Config.OreTypesRef:GetSettingIterator[OreTypeIterator]
+			}
+
+			if ${OreTypeIterator:First(exists)}
+			{		
+				do
+				{
+					Asteroids:AddQueryString[CategoryID==CATEGORYID_ORE && Name =- "${OreTypeIterator.Key}"]
+				}
+				while ${OreTypeIterator:Next(exists)}
+			}
+			else
+			{
+				echo "WARNING: obj_Miner: Ore Type list is empty, please check config"
+			}
 		}
 		else
 		{
-			echo "WARNING: obj_Miner: Ore Type list is empty, please check config"
+			Asteroids:AddQueryString[GroupID==GROUP_HARVESTABLECLOUD]
 		}
 	}
 	
@@ -515,42 +526,37 @@ objectdef obj_Miner inherits obj_State
 			Move:GotoSavedSpot
 			return TRUE
 		}
-	
-		if ${Config.UseBookmarks}
+		
+		if ${Config.UseBookmarks} || ${Config.GasHarvesting}
 		{
-			variable index:bookmark BookmarkIndex
-			variable int RandomBelt
-			variable string Label
+
 			variable string prefix
-			EVE:GetBookmarks[BookmarkIndex]
-
-			while ${BookmarkIndex.Used} > 0
+			if ${Config.GasHarvesting}
 			{
-				RandomBelt:Set[${Math.Rand[${BookmarkIndex.Used}]:Inc[1]}]
-
-				if ${Config.IceMining}
-				{
-					prefix:Set[${Config.IceBeltPrefix}]
-				}
-				else
-				{
-					prefix:Set[${Config.BeltPrefix}]
-				}
-
-				Label:Set[${BookmarkIndex[${RandomBelt}].Label}]
-
-				if (${BookmarkIndex[${RandomBelt}].SolarSystemID} != ${Me.SolarSystemID} || \
-					${Label.Left[${prefix.Length}].NotEqual[${prefix}]})
-				{
-					BookmarkIndex:Remove[${RandomBelt}]
-					BookmarkIndex:Collapse
-					continue
-				}
-
-				Move:Bookmark[${BookmarkIndex[${RandomBelt}].Label}]
-
-				return TRUE
-			}	
+				prefix:Set[${Config.GasPrefix}]
+			}
+			elseif ${Config.IceMining}
+			{
+				prefix:Set[${Config.IceBeltPrefix}]
+			}
+			else
+			{
+				prefix:Set[${Config.BeltPrefix}]
+			}
+			
+			if ${BookmarkIndex.Used} == 0
+			{
+				EVE:GetBookmarks[BookmarkIndex]
+				BookmarkIndex:RemoveByQuery[${LavishScript.CreateQuery[SolarSystemID == ${Me.SolarSystemID}]}, FALSE]
+				BookmarkIndex:RemoveByQuery[${LavishScript.CreateQuery[Label.Left[${prefix.Length}] =- ${prefix}]}, FALSE]
+				BookmarkIndex:Collapse
+			}
+		
+			Move:Bookmark[${BookmarkIndex.Get[1].Label}]
+			BookmarkIndex:Remove[1]
+			BookmarkIndex:Collapse
+			
+			return TRUE
 		}
 		else
 		{
@@ -636,7 +642,7 @@ objectdef obj_Miner inherits obj_State
 		{
 			MaxTarget:Set[${Ship.ModuleList_MiningLaser.Count}]
 		}
-		if ${Config.IceMining}
+		if ${Config.IceMining} || ${Config.GasHarvesting}
 		{
 			MaxTarget:Set[1]
 		}
@@ -784,8 +790,14 @@ objectdef obj_Miner inherits obj_State
 			Jetcan:Disable
 		}
 
-		if !${Entity[CategoryID==CATEGORYID_ORE]}
+		if !${Entity[CategoryID==CATEGORYID_ORE]} && !${Entity[GroupID==GROUP_HARVESTABLECLOUD]}
 		{
+			if ${Config.GasHarvesting} && ${BookmarkIndex.Used} > 0
+			{
+				BookmarkIndex.Get[1]:Remove
+				BookmarkIndex:Remove[1]
+				BookmarkIndex:Collapse
+			}
 			if ${Config.OrcaMode}
 			{
 				relay all -event ComBot_Orca_InBelt FALSE
@@ -910,6 +922,14 @@ objectdef obj_Miner inherits obj_State
 					{
 						UI:Update["obj_Miner", "Activating ${Ship.ModuleList_MiningLaser.InactiveCount} laser(s) on ${Roid.Value.Name} (${ComBot.MetersToKM_Str[${Roid.Value.Distance}]})", "y"]
 						Ship.ModuleList_MiningLaser:ActivateCount[${Ship.ModuleList_MiningLaser.InactiveCount}, ${Roid.Value.ID}]
+						Profiling:EndTrack
+						return TRUE
+					}
+					elseif ${Config.GasHarvesting}
+					{
+						variable int MoreLasers=${Math.Calc[${Me.Skill[Gas Cloud Harvesting].Level} - ${Ship.ModuleList_MiningLaser.ActiveCount}]}
+						UI:Update["obj_Miner", "Activating ${MoreLasers} harvester(s) on ${Roid.Value.Name} (${ComBot.MetersToKM_Str[${Roid.Value.Distance}]})", "y"]
+						Ship.ModuleList_MiningLaser:ActivateCount[${MoreLasers}, ${Roid.Value.ID}]
 						Profiling:EndTrack
 						return TRUE
 					}
