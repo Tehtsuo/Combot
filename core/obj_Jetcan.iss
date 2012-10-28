@@ -350,7 +350,7 @@ objectdef obj_Jetcan inherits obj_State
 				}
 				else
 				{
-					Cargo:PopulateCargoList[OreHold]
+					Cargo:PopulateCargoList[Ship]
 					Cargo:Filter["CategoryID == CATEGORYID_ORE || GroupID == GROUP_HARVESTABLECLOUD", FALSE]
 				}
 				Cargo:MoveCargoList[Container, "", ${TargetIterator.Value}]
