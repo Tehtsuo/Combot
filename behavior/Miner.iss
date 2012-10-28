@@ -270,14 +270,6 @@ objectdef obj_Miner inherits obj_State
 		}
 		else
 		{
-			if ${Config.Dropoff_Type.Equal[Jetcan]}
-			{
-				Jetcan:Enable
-			}
-			else
-			{
-				Jetcan:Disable
-			}
 			This:QueueState["GoToMiningSystem"]
 			This:QueueState["Traveling"]
 			This:QueueState["Undock"]
@@ -541,6 +533,15 @@ objectdef obj_Miner inherits obj_State
 		
 		Asteroids.MinLockCount:Set[${MaxTarget}]
 		Asteroids.MaxRange:Set[${Ship.ModuleList_MiningLaser.Range}]
+		
+		if ${Config.Dropoff_Type.Equal[Jetcan]}
+		{
+			Jetcan:Enable
+		}
+		else
+		{
+			Jetcan:Disable
+		}
 		
 	
 		if ${Config.Dropoff_Type.Equal[Orca]}
