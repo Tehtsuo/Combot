@@ -897,6 +897,12 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											<OnLeftClick>
 												Script[ComBot].VariableScope.Hauler:Add[${UIElement[Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler].SelectedTab.Name}]
 											</OnLeftClick>
+											<OnMouseEnter>
+												UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText["Add a haul operation based on the action tab currently selected below."]
+											</OnMouseEnter>
+											<OnMouseExit>
+												UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText[""]
+											</OnMouseExit>
 										</Button>
 										<Button name="Remove">
 											<X>1%</X>
@@ -910,6 +916,12 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 													Script[ComBot].VariableScope.Hauler:Remove[${UIElement[Queue@QueueFrame@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler].SelectedItem.Order}]
 												}
 											</OnLeftClick>
+											<OnMouseEnter>
+												UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText["Remove the selected action from the queue to the right."]
+											</OnMouseEnter>
+											<OnMouseExit>
+												UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText[""]
+											</OnMouseExit>
 										</Button>
 										<Checkbox name='Repeat'>
 											<X>1%</X>
