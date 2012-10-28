@@ -1,6 +1,6 @@
 /*
 
-ComBot  Copyright � 2012  Tehtsuo and Vendan
+ComBot  Copyright © 2012  Tehtsuo and Vendan
 
 This file is part of ComBot.
 
@@ -124,6 +124,7 @@ objectdef obj_Configuration_Miner
 		This.CommonRef:AddSetting[MaxLasers,3]
 		This.CommonRef:AddSetting[MiningSystem,""]
 		This.CommonRef:AddSetting[Dropoff,""]
+		This.CommonRef:AddSetting[TetherName,""]
 		
 	}
 	
@@ -135,6 +136,9 @@ objectdef obj_Configuration_Miner
 	Setting(bool, IceMining, SetIceMining)	
 	Setting(bool, GasHarvesting, SetGasHarvesting)
 	Setting(bool, OrcaMode, SetOrcaMode)	
+	Setting(bool, Tether, SetTether)	
+	Setting(bool, ApproachPriority, SetApproachPriority)
+	Setting(string, TetherName, SetTetherName)	
 	Setting(bool, UseBookmarks, SetUseBookmarks)	
 	Setting(string, BeltPrefix, SetBeltPrefix)	
 	Setting(string, IceBeltPrefix, SetIceBeltPrefix)	
@@ -181,7 +185,7 @@ objectdef obj_Miner inherits obj_State
 		if ${This.IsIdle}
 		{
 			This:QueueState["OpenCargoHold"]
-			This:QueueState["Mine"]
+			This:QueueState["CheckCargoHold"]
 		}
 	}
 	
@@ -227,6 +231,7 @@ objectdef obj_Miner inherits obj_State
 		}
 	}
 	
+	
 	member:bool OpenCargoHold()
 	{
 		if !${EVEWindow[ByName, "Inventory"](exists)}
@@ -240,265 +245,110 @@ objectdef obj_Miner inherits obj_State
 	
 	member:bool CheckCargoHold()
 	{
-		Profiling:StartTrack["Miner_CheckCargohold"]
-		switch ${Config.Dropoff_Type}
+		if 	${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]} >= ${Config.Threshold} * .01 && \
+			${MyShip.HasOreHold} && \
+			!${Config.Dropoff_Type.Equal[No Dropoff]} && \
+			!${Config.Dropoff_Type.Equal[Jetcan]} && \
+			!${Config.OrcaMode}
 		{
-			case Orca
-				if !${Client.InSpace}
-				{
-					This:QueueState["Undock"]
-					This:QueueState["Mine"]
-					return TRUE
-				}
-				if !${Entity[Name = "${Config.Container_Name}"](exists)} && ${Local[${Config.Container_Name}].ToFleetMember(exists)} && ${This.WarpToOrca}
-				{
-					if ${Drones.DronesInSpace}
-					{
-						Drones:Recall
-						return FALSE
-					}
-					UI:Update["obj_Miner", "Warping to ${Local[${Config.Container_Name}].ToFleetMember.ToPilot.Name}", "g", TRUE]
-					UI:Log["Redacted:  obj_Miner - Warping to XXXXXXX (FleetMember)"]
-					Local[${Config.Container_Name}].ToFleetMember:WarpTo
-					Asteroids:ClearExclusions
-					Client:Wait[5000]
-					This:Clear
-					Asteroids.LockedTargetList:Clear
-					This:QueueState["Traveling", 1000]
-					This:QueueState["Mine"]
-				}
-				if !${This.WarpToOrca}
-				{
-					This:Clear
-					This:QueueState["Mine"]
-				}
-				break
-			case Container
-				if  ${MyShip.HasOreHold}
-				{
-					if ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]} < ${Config.Threshold} * .01
-					{
-						break
-					}
-				}
-				else
-				{
-					if ${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity} < ${Config.Threshold} * .01
-					{
-						break
-					}
-				}
-				
-				if ${Drones.DronesInSpace}
-				{
-					Drones:Recall
-					This:InsertState["CheckCargoHold"]
-					This:InsertState["Idle", 5000]
-					return TRUE
-				}
-				UI:Update["obj_Miner", "Unload trip required", "g"]
-				if ${Config.OrcaMode}
-				{
-					relay all -event ComBot_Orca_InBelt FALSE
-				}
-				Move:SaveSpot
-				This:Clear
-				Asteroids.LockedTargetList:Clear
-				Asteroids:ClearExclusions
-				Move:Bookmark[${Config.Dropoff}]
-				This:QueueState["Traveling", 1000]
-				This:QueueState["Mine"]
-					
-				break
-			case No Dropoff
-				break
-			case Jetcan
-				break		
-			default
-				if  ${MyShip.HasOreHold}
-				{
-					if ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]} < ${Config.Threshold} * .01
-					{
-						break
-					}
-				}
-				else
-				{
-					if ${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity} < ${Config.Threshold} * .01
-					{
-						break
-					}
-				}
-
-				if ${Drones.DronesInSpace}
-				{
-					Drones:Recall
-					This:InsertState["CheckCargoHold"]
-					This:InsertState["Idle", 5000]
-					return TRUE
-				}
-				UI:Update["obj_Miner", "Unload trip required", "g"]
-				if ${Client.InSpace}
-				{
-					Move:SaveSpot
-				}
-				if ${Config.OrcaMode}
-				{
-					relay all -event ComBot_Orca_InBelt FALSE
-				}
-				This:Clear
-				Asteroids.LockedTargetList:Clear
-				Asteroids:ClearExclusions
-				Move:Bookmark[${Config.Dropoff}]
-				This:QueueState["Traveling", 1000]
-				This:QueueState["PrepOffload", 1000]
-				This:QueueState["Offload", 1000]
-				This:QueueState["StackItemHangar", 1000]
-				This:QueueState["GoToMiningSystem", 1000]
-				This:QueueState["Traveling", 1000]
-				This:QueueState["Mine"]
-		}
-		Profiling:EndTrack
-		return TRUE
-	}
-
-	member:bool Traveling()
-	{
-		if ${Move.Traveling} || ${Me.ToEntity.Mode} == 3
-		{
-			return FALSE
-		}
-		return TRUE
-	}
-	
-	member:bool PrepOffload()
-	{
-		if ${Client.InSpace}
-		{
+			UI:Update["obj_Miner", "Unload trip required", "g"]
+			This:QueueState["PrepareWarp"]
+			This:QueueState["Dropoff", 1000, "OreHold"]
+			This:QueueState["Traveling"]
+			This:QueueState["OpenCargoHold"]
+			This:QueueState["CheckCargoHold"]
 			return TRUE
 		}
-		if !${EVEWindow[ByName, "Inventory"](exists)}
+		elseif ${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity} >= ${Config.Threshold} * .01 && \
+			!${MyShip.HasOreHold} && \
+			!${Config.Dropoff_Type.Equal[No Dropoff]} && \
+			!${Config.Dropoff_Type.Equal[Jetcan]} && \
+			!${Config.OrcaMode}
 		{
-			UI:Update["obj_Miner", "Opening inventory", "g"]
-			MyShip:OpenCargo[]
-			return FALSE
+			UI:Update["obj_Miner", "Unload trip required", "g"]
+			This:QueueState["PrepareWarp"]
+			This:QueueState["Dropoff", 1000, "Ship"]
+			This:QueueState["Traveling"]
+			This:QueueState["OpenCargoHold"]
+			This:QueueState["CheckCargoHold"]
+			return TRUE
 		}
-		switch ${Config.Dropoff_Type}
+		elseif ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipCorpHangar]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipCorpHangar]} >= ${Config.Threshold} * .01 && \
+			!${Config.Dropoff_Type.Equal[No Dropoff]} && \
+			!${Config.Dropoff_Type.Equal[Jetcan]} && \
+			${Config.OrcaMode}
 		{
-			case Corporation Folder
-				if !${EVEWindow[ByName, Inventory].ChildWindowExists[Corporation Hangars]}
-				{
-					UI:Update["obj_Miner", "Delivery Location: Corporate Hangars child not found", "r"]
-					UI:Update["obj_Miner", "Closing inventory to fix possible EVE bug", "y"]
-					EVEWindow[ByName, Inventory]:Close
-					return FALSE
-				}
-				EVEWindow[ByName, Inventory]:MakeChildActive[Corporation Hangars]
-				break
-		}
-		return TRUE
-	}
-	member:bool Offload()
-	{
-		Profiling:StartTrack["Miner_Offload"]
-		UI:Update["obj_Miner", "Unloading cargo", "g"]
-		if ${MyShip.HasOreHold}
-		{
-			Cargo:PopulateCargoList[SHIPOREHOLD]
+			UI:Update["obj_Miner", "Unload trip required", "g"]
+			This:QueueState["PrepareWarp"]
+			This:QueueState["Dropoff", 1000, "ShipCorpHangar"]
+			This:QueueState["Traveling"]
+			This:QueueState["OpenCargoHold"]
+			This:QueueState["CheckCargoHold"]
+			return TRUE
 		}
 		else
 		{
-			Cargo:PopulateCargoList[SHIP]
-			Cargo:Filter["CategoryID == CATEGORYID_ORE", FALSE]
+			This:QueueState["GoToMiningSystem"]
+			This:QueueState["Traveling"]
+			This:QueueState["Undock"]
+			This:QueueState["WaitForSpace"]
+			This:QueueState["RequestUpdate"]
+			This:QueueState["Updated"]
+			This:QueueState["CheckForWork"]
+			return TRUE
 		}
-		switch ${Config.Dropoff_Type}
+	}
+	
+	member:bool PrepareWarp()
+	{
+		if ${Drones.DronesInSpace}
 		{
-			case Personal Hangar
-				Cargo:MoveCargoList[HANGAR]
-				break
-			case Corporation Folder
-				Cargo:MoveCargoList[CORPORATEHANGAR, ${Config.Dropoff_SubType}]
-				break
+			Drones:Recall
+			return FALSE
 		}
-		Profiling:EndTrack
 		if ${Config.OrcaMode}
 		{
-			This:InsertState["OffloadOrca"]
+			relay all -event ComBot_Orca_InBelt FALSE
 		}
+		if ${Asteroids.TargetList.Used} && !${Config.Dropoff_Type.Equal[Orca]} && !${Config.Tether}
+		{
+			Move:SaveSpot
+		}
+		Asteroids:ClearExclusions
 		return TRUE
 	}
-	member:bool OffloadOrca()
-	{
-		Profiling:StartTrack["Miner_OffloadOrca"]
-		Cargo:PopulateCargoList[SHIP]
-		Cargo:Filter["CategoryID == CATEGORYID_ORE", FALSE]
-		if !${Cargo.CargoList.Used}
-		{
-			Cargo:PopulateCargoList[SHIPCORPORATEHANGAR]
-			Cargo:Filter["CategoryID == CATEGORYID_ORE", FALSE]
-		}
-		switch ${Config.Dropoff_Type}
-		{
-			case Personal Hangar
-				Cargo:MoveCargoList[HANGAR]
-				break
-			case Corporation Folder
-				Cargo:MoveCargoList[CORPORATEHANGAR, ${Config.Dropoff_SubType}]
-				break
-		}
-		Cargo:PopulateCargoList[SHIPCORPORATEHANGAR]
-		Cargo:Filter["CategoryID == CATEGORYID_ORE", FALSE]
-		Profiling:EndTrack
-
-		if ${Cargo.CargoList.Used}
-		{
-			return FALSE
-		}
-		else
-		{
-			return TRUE
-		}
-	}	
 	
-	member:bool StackItemHangar()
+	member:bool Dropoff(string Source)
 	{
-		Profiling:StartTrack["Miner_StackItemHanger"]
-		variable int64 Orca
-		if !${EVEWindow[ByName, "Inventory"](exists)}
+		variable string Dropoff_Type=${Config.Dropoff_Type}
+		variable string Bookmark=${Config.Dropoff}
+		if ${Dropoff_Type.Equal[Orca]}
 		{
-			UI:Update["obj_Miner", "Making sure inventory is open", "g"]
-			MyShip:Open
-			Profiling:EndTrack
-			return FALSE
+			echo OrcaWarp - ${This.WarpToOrca}
+			if ${This.WarpToOrca}
+			{
+				Dropoff_Type:Set[Container]
+				Bookmark:Set[${Config.MiningSystem}]
+			}
+			else
+			{
+				return TRUE
+			}
 		}
-
-		;UI:Update["obj_Miner", "Stacking dropoff container", "g"]
-		switch ${Config.Dropoff_Type}
-		{
-			case Personal Hangar
-				EVE:StackItems[MyStationHangar, Hangar]
-				break
-			case Orca
-				if ${Entity[Name = "${Config.Container_Name}"](exists)}
-				{
-					EVE:StackItems[${Entity[Name = "${Config.Container_Name}"].ID}, CorpHangars]
-				}
-				break
-			case Container
-				if ${Entity[Name = "${Config.Container_Name}"](exists)}
-				{
-					EVE:StackItems[${Entity[Name = "${Config.Container_Name}"].ID}, CorpHangars]
-				}
-				break
-			case Corporation Folder
-				EVE:StackItems[MyStationCorporateHangar, StationCorporateHangar, "${Config.Dropoff_SubType.Escape}"]
-				break
-			default
-				break
-		}
-		Profiling:EndTrack
+		Cargo:At[${Bookmark},${Config.Dropoff_Type},${Config.Dropoff_SubType}, ${Config.Container_Name}]:Unload["", 0, ${Source}]
 		return TRUE
 	}
+		
+	
+	member:bool Traveling()
+	{
+		if ${Cargo.Processing} || ${Move.Traveling} || ${Me.ToEntity.Mode} == 3
+		{
+			return FALSE
+		}
+		return TRUE
+	}
+	
 	
 	member:bool GoToMiningSystem()
 	{
@@ -513,17 +363,71 @@ objectdef obj_Miner inherits obj_State
 		return TRUE
 	}
 	
-	member:bool RemoveSavedSpot()
+	member:bool Undock()
 	{
-		Move:RemoveSavedSpot
+		if !${Client.InSpace}
+		{
+			Move:Undock
+		}
 		return TRUE
 	}
-
+	
+	member:bool WaitForSpace()
+	{
+		return ${Client.InSpace}
+	}
+	
+	member:bool RequestUpdate()
+	{
+		Asteroids:RequestUpdate
+		return TRUE
+	}
+	
+	member:bool Updated()
+	{
+		return ${Asteroids.Updated}
+	}
+	
+	member:bool CheckForWork()
+	{
+		if !${Asteroids.TargetList.Used}
+		{
+			This:QueueState["MoveToBelt"]
+			This:QueueState["RequestUpdate"]
+			This:QueueState["Updated"]
+			This:QueueState["CheckForWork"]
+		}
+		else
+		{
+			This:QueueState["Mine"]
+			This:QueueState["OpenCargoHold"]
+			This:QueueState["CheckCargoHold"]
+		}
+		return TRUE
+	}
+	
+	
 	member:bool MoveToBelt()
 	{
+		if ${Config.Tether} && ${Local[${Config.TetherName}](exists)}
+		{
+			Move:Fleetmember[${Local[${Config.TetherName}].ID}]
+			This:InsertState["Traveling"]
+			return TRUE
+		}
+		
 		if ${Move.SavedSpotExists}
 		{
 			Move:GotoSavedSpot
+			This:InsertState["RemoveSavedSpot"]
+			This:InsertState["Traveling", 2000]
+			return TRUE
+		}
+		
+		if ${Config.Dropoff_Type.Equal[Orca]} && ${This.WarpToOrca} && ${Local[${Config.Container_Name}](exists)}
+		{
+			Move:Fleetmember[${Local[${Config.Container_Name}].ID}]
+			This:InsertState["Traveling"]
 			return TRUE
 		}
 		
@@ -548,14 +452,25 @@ objectdef obj_Miner inherits obj_State
 			{
 				EVE:GetBookmarks[BookmarkIndex]
 				BookmarkIndex:RemoveByQuery[${LavishScript.CreateQuery[SolarSystemID == ${Me.SolarSystemID}]}, FALSE]
-				BookmarkIndex:RemoveByQuery[${LavishScript.CreateQuery[Label.Left[${prefix.Length}] =- ${prefix}]}, FALSE]
+				BookmarkIndex:RemoveByQuery[${LavishScript.CreateQuery[Label =- "${prefix}"]}, FALSE]
 				BookmarkIndex:Collapse
+				
+			}
+			else
+			{
+				if ${Config.GasHarvesting}
+				{
+					BookmarkIndex.Get[1]:Remove
+					BookmarkIndex:Remove[1]
+					BookmarkIndex:Collapse
+				}
 			}
 		
 			Move:Bookmark[${BookmarkIndex.Get[1].Label}]
 			BookmarkIndex:Remove[1]
 			BookmarkIndex:Collapse
 			
+			This:InsertState["Traveling"]
 			return TRUE
 		}
 		else
@@ -596,38 +511,48 @@ objectdef obj_Miner inherits obj_State
 					${This.IsBeltEmpty[${Belts[${curBelt}].Name}]} )
 
 			Move:Object[${Entity[${Belts[${curBelt}].ID}]}]
+			This:InsertState["Traveling"]
 			return TRUE
 		}
-	}
-
-	member:bool Undock()
+	}	
+	
+	member:bool RemoveSavedSpot()
 	{
-		Move:Undock
+		echo Removing Save spot
+		Move:RemoveSavedSpot
 		return TRUE
 	}
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+	
+	
+	
+
+
+	
+
+
+
 	member:bool Mine()
 	{
-		variable iterator Roid
 		
-		Profiling:StartTrack["Miner_Mine"]
 		if ${Me.ToEntity.Mode} == 3
 		{
-			Profiling:EndTrack
 			return FALSE
 		}
-		
-		This:Clear
-		This:QueueState["OpenCargoHold", 10]
 
-		if !${Client.InSpace}
-		{
-			This:QueueState["CheckCargoHold", 1000]
-			This:QueueState["Undock"]
-			This:QueueState["Mine"]
-			Profiling:EndTrack
-			return TRUE
-		}
+		Asteroids:RequestUpdate
 		
 		variable int MaxTarget = ${MyShip.MaxLockedTargets}
 		if ${Me.MaxLockedTargets} < ${MaxTarget}
@@ -647,139 +572,8 @@ objectdef obj_Miner inherits obj_State
 			MaxTarget:Set[1]
 		}
 		
-		
 		Asteroids.MinLockCount:Set[${MaxTarget}]
 		Asteroids.MaxRange:Set[${Ship.ModuleList_MiningLaser.Range}]
-		
-		if ${Config.OrcaMode}
-		{
-			Asteroids.AutoLock:Set[FALSE]
-			Asteroids.AutoRelock:Set[FALSE]
-			Asteroids.AutoRelockPriority:Set[FALSE]
-			
-			
-			Cargo:PopulateCargoList[SHIPCORPORATEHANGAR]
-			Cargo:Filter["CategoryID == CATEGORYID_ORE", FALSE]
-			
-			if ${Config.Dropoff_Type.Equal[No Dropoff]}
-			{
-			}
-			elseif ${Cargo.CargoList.Used}
-			{
-				Cargo:MoveCargoList[SHIPOREHOLD]
-				Cargo:PopulateCargoList[SHIPCORPORATEHANGAR]
-				Cargo:Filter["CategoryID == CATEGORYID_ORE", FALSE]
-				Cargo:MoveCargoList[SHIP]
-				This:QueueState["StackOreHold", 1000]
-				This:QueueState["StackCargoHold", 1000]
-				This:QueueState["CheckCargoHold", 1000]
-				This:QueueState["Idle", 1000]
-				This:QueueState["Mine"]
-				Profiling:EndTrack
-				return TRUE
-			}
-		}
-		
-		if ${Config.Dropoff_Type.Equal[Orca]} || ${Config.Dropoff_Type.Equal[Container]}
-		{
-			variable int64 Orca
-			if ${Entity[Name = "${Config.Container_Name}"](exists)}
-			{
-				Orca:Set[${Entity[Name = "${Config.Container_Name}"].ID}]
-				Asteroids.DistanceTarget:Set[${Orca}]
-				if ${Entity[${Orca}].Distance} > LOOT_RANGE
-				{
-					Move:Approach[${Orca}, LOOT_RANGE]
-					Profiling:EndTrack
-					This:Clear
-					This:QueueState["Mine"]
-					return FALSE
-				}
-				else
-				{
-					if  ${MyShip.HasOreHold}
-					{
-						if ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]} >= ${Config.Threshold} * .01
-						{
-							if !${EVEWindow[ByName, Inventory].ChildWindowExists[${Orca}]}
-							{
-								UI:Update["obj_Miner", "Opening ${Config.Container_Name}", "g"]
-								Entity[${Orca}]:Open
-								Profiling:EndTrack
-								This:Clear
-								This:QueueState["Mine"]
-								return FALSE
-							}
-							if !${EVEWindow[ByItemID, ${Orca}](exists)}
-							{
-								EVEWindow[ByName, Inventory]:MakeChildActive[${Orca}]
-								Profiling:EndTrack
-								This:Clear
-								This:QueueState["Mine"]
-								return FALSE
-							}
-							;UI:Update["obj_Miner", "Unloading to ${Config.Container_Name}", "g"]
-							Cargo:PopulateCargoList[SHIPOREHOLD]
-							Cargo:MoveCargoList[SHIPCORPORATEHANGAR, "", ${Orca}]
-							This:QueueState["Idle", 1000]
-							This:QueueState["StackItemHangar"]
-							This:QueueState["Mine"]
-							Profiling:EndTrack
-							return TRUE
-						}
-					}
-					else
-					{
-						if ${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity} >= ${Config.Threshold} * .01
-						{
-							if !${EVEWindow[ByName, Inventory].ChildWindowExists[${Orca}]}
-							{
-								UI:Update["obj_Miner", "Opening ${Config.Container_Name}", "g"]
-								Entity[${Orca}]:Open
-								Profiling:EndTrack
-								This:Clear
-								This:QueueState["Mine"]
-								return FALSE
-							}
-							if !${EVEWindow[ByItemID, ${Orca}](exists)}
-							{
-								EVEWindow[ByName, Inventory]:MakeChildActive[${Orca}]
-								Profiling:EndTrack
-								This:Clear
-								This:QueueState["Mine"]
-								return FALSE
-							}
-							;UI:Update["obj_Miner", "Unloading to ${Config.Container_Name}", "g"]
-							Cargo:PopulateCargoList[SHIP]
-							Cargo:Filter["CategoryID == CATEGORYID_ORE", FALSE]
-							Cargo:MoveCargoList[SHIPCORPORATEHANGAR, "", ${Orca}]
-							This:QueueState["Idle", 1000]
-							This:QueueState["StackItemHangar"]
-							This:QueueState["Mine"]
-							Profiling:EndTrack
-							return TRUE
-						}
-					}
-				}
-			}
-			else
-			{
-				Asteroids.DistanceTarget:Set[${MyShip.ID}]
-			}
-		}
-		
-		if !${Config.Dropoff_Type.Equal[Orca]}
-		{
-			Asteroids.DistanceTarget:Set[${MyShip.ID}]
-		}
-		
-		if !${Config.OrcaMode}
-		{
-			Asteroids.AutoLock:Set[TRUE]
-			Asteroids.AutoRelock:Set[TRUE]
-			Asteroids.AutoRelockPriority:Set[TRUE]
-		}
-
 		
 		if ${Config.Dropoff_Type.Equal[Jetcan]}
 		{
@@ -789,61 +583,79 @@ objectdef obj_Miner inherits obj_State
 		{
 			Jetcan:Disable
 		}
-
-		if !${Entity[CategoryID==CATEGORYID_ORE]} && !${Entity[GroupID==GROUP_HARVESTABLECLOUD]}
+		
+	
+		variable int64 Orca
+		if ${Config.Dropoff_Type.Equal[Orca]}
 		{
-			if ${Config.GasHarvesting} && ${BookmarkIndex.Used} > 0
+			if ${Entity[Name = "${Config.Container_Name}"](exists)}
 			{
-				BookmarkIndex.Get[1]:Remove
-				BookmarkIndex:Remove[1]
-				BookmarkIndex:Collapse
+				Orca:Set[${Entity[Name = "${Config.Container_Name}"].ID}]
+				Asteroids.DistanceTarget:Set[${Orca}]
 			}
-			if ${Config.OrcaMode}
+			else
 			{
-				relay all -event ComBot_Orca_InBelt FALSE
+				Asteroids.DistanceTarget:Set[${MyShip.ID}]
 			}
-			Drones:Recall
-			UI:Update["obj_Miner", "No asteroids found, moving to a new belt", "g"]
-			This:QueueState["CheckCargoHold", 1000]
-			This:QueueState["GoToMiningSystem", 1000]
-			This:QueueState["Traveling", 1000]
-			This:QueueState["MoveToBelt", 1000]
-			This:QueueState["Traveling", 1000]
-			This:QueueState["RemoveSavedSpot", 1000]
-			This:QueueState["Mine"]
-			Profiling:EndTrack
-			return TRUE
 		}
-
+		elseif ${Config.Tether}
+		{
+			if ${Entity[Name = "${Config.TetherName}"](exists)}
+			{
+				Orca:Set[${Entity[Name = "${Config.TetherName}"].ID}]
+				Asteroids.DistanceTarget:Set[${Orca}]
+			}
+			else
+			{
+				Asteroids.DistanceTarget:Set[${MyShip.ID}]
+			}
+		}
+		else
+		{
+			Asteroids.DistanceTarget:Set[${MyShip.ID}]
+		}
+		
+		variable index:entity Roids
+		variable iterator Roid
+		if ${Config.ApproachPriority}
+		{
+			Asteroids.TargetList:GetIterator[Roid]
+		}
+		else
+		{
+			EVE:QueryEntities[Roids]
+			Roids:GetIterator[Roid]
+		}
 		if ${Config.OrcaMode}
 		{
+			Asteroids.AutoLock:Set[FALSE]
+			Asteroids.AutoRelock:Set[FALSE]
+			Asteroids.AutoRelockPriority:Set[FALSE]
 			relay all -event ComBot_Orca_InBelt TRUE
 			relay all -event ComBot_Orca_Cargo ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipCorpHangar]}
-			Asteroids:RequestUpdate
-			Asteroids.TargetList:GetIterator[Roid]
-			
+
 			if ${Roid:First(exists)}
 			{
 				if ${Config.IceMining}
 				{
 					Move:Approach[${Roid.Value.ID}, 10000]
 				}
+				elseif ${Config.GasHarvesting}
+				{
+					Move:Approach[${Roid.Value.ID}, 1000]
+				}
 				else
 				{
 					Move:Approach[${Roid.Value.ID}, 8000]
 				}
 			}
-			else
-			{
-				This:Clear
-				This:QueueState["Mine"]
-				return FALSE
-			}
 		}
 		else
 		{
-			Asteroids:RequestUpdate
-			Asteroids.TargetList:GetIterator[Roid]
+			Asteroids.AutoLock:Set[TRUE]
+			Asteroids.AutoRelock:Set[TRUE]
+			Asteroids.AutoRelockPriority:Set[TRUE]
+			
 			if ${Roid:First(exists)}
 			{
 				if ${Roid.Value.Distance} > ${Math.Calc[${Ship.ModuleList_MiningLaser.Range} * (3/4)]}
@@ -851,34 +663,15 @@ objectdef obj_Miner inherits obj_State
 					Move:Approach[${Roid.Value.ID}, ${Math.Calc[${Ship.ModuleList_MiningLaser.Range} * (1/2)]}]
 				}
 			}
-			else
-			{
-				This:Clear
-				This:QueueState["Mine"]
-				return FALSE
-			}
 		}
-		
+
+
 		if ${Ship.ModuleList_MiningLaser.ActiveCount} < ${Ship.ModuleList_MiningLaser.Count}
 		{
-			This:QueueState["CheckCargoHold"]
-			This:QueueState["ActivateLasers", 2000]
-			This:QueueState["Mine"]
-			Profiling:EndTrack
-			return TRUE
+			This:InsertState["ActivateLasers", 2000]
 		}
 		
-		if !${Config.Dropoff_Type.Equal[No Dropoff]}
-		{
-			This:QueueState["CheckCargoHold"]
-			This:QueueState["Mine"]
-			Profiling:EndTrack
-			return TRUE
-		}
-		Profiling:EndTrack
-		This:Clear
-		This:QueueState["Mine"]
-		return FALSE
+		return TRUE
 	}
 
 
@@ -916,6 +709,7 @@ objectdef obj_Miner inherits obj_State
 					}
 					if ${Roid.Value.Distance} > ${Ship.ModuleList_MiningLaser.Range}
 					{
+						Move:Approach[${Roid.Value.ID}, ${Ship.ModuleList_MiningLaser.Range}]
 						continue
 					}
 					if ${Config.IceMining}
@@ -952,39 +746,12 @@ objectdef obj_Miner inherits obj_State
 		return TRUE
 	}
 	
-	member:bool ExpandContainer()
-	{
-		variable int64 Orca
-		if ${Entity[Name = "${Config.Container_Name}"](exists)}
-		{
-			Orca:Set[${Entity[Name = "${Config.Container_Name}"].ID}]
-			if ${EVEWindow[ByName, Inventory].ChildWindowExists[${Orca}]}
-			{
-				${EVEWindow[ByName, Inventory]:OpenChildAsNewWindow[${Orca}]
-			}
-		}
-		return TRUE
-	}
-	
 	method OrcaInBelt(bool value)
 	{
 		WarpToOrca:Set[${value}]
 	}
 	
-	member:bool StackOreHold()
-	{
-		EVE:StackItems[MyShip,OreHold]
-		return TRUE
-	}
-	member:bool StackCargoHold()
-	{
-		EVE:StackItems[MyShip,CargoHold]
-		return TRUE
-	}
-	
-}	
-
-
+}
 
 
 
