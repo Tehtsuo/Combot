@@ -88,11 +88,11 @@ objectdef obj_Jetcan inherits obj_State
 								TargetIterator.Value:OpenCargo
 								return FALSE
 							}
-							if !${EVEWindow[ByItemID, ${TargetIterator.Value}](exists)}
-							{
-								EVEWindow[ByName, Inventory]:MakeChildActive[${TargetIterator.Value}]
-								return FALSE
-							}
+							; if !${EVEWindow[ByItemID, ${TargetIterator.Value}](exists)}
+							; {
+								; EVEWindow[ByName, Inventory]:MakeChildActive[${TargetIterator.Value}]
+								; return FALSE
+							; }
 							This:QueueState["LootCan", 1000, ${TargetIterator.Key}]
 							This:QueueState["NewCan", 2000]
 							This:QueueState["TransferCan", 10000, "${TargetIterator.Key}"]
@@ -229,11 +229,11 @@ objectdef obj_Jetcan inherits obj_State
 			MyShip:Open
 			return FALSE
 		}
-		if !${EVEWindow[ByItemID, ${ID}](exists)}
-		{
-			EVEWindow[ByName, Inventory]:MakeChildActive[${ID}]
-			return FALSE
-		}
+		; if !${EVEWindow[ByItemID, ${ID}](exists)}
+		; {
+			; EVEWindow[ByName, Inventory]:MakeChildActive[${ID}]
+			; return FALSE
+		; }
 		EVEWindow[ByItemID, ${ID}]:StackAll
 		return TRUE
 	}
@@ -250,11 +250,11 @@ objectdef obj_Jetcan inherits obj_State
 			MyShip:Open
 			return FALSE
 		}
-		if !${EVEWindow[ByItemID, ${ID}](exists)}
-		{
-			EVEWindow[ByName, Inventory]:MakeChildActive[${ID}]
-			return FALSE
-		}
+		; if !${EVEWindow[ByItemID, ${ID}](exists)}
+		; {
+			; EVEWindow[ByName, Inventory]:MakeChildActive[${ID}]
+			; return FALSE
+		; }
 		Entity[${ID}]:GetCargo[CargoList]
 		if ${MyShip.HasOreHold}
 		{
@@ -301,11 +301,11 @@ objectdef obj_Jetcan inherits obj_State
 			MyShip:Open
 			return FALSE
 		}
-		if !${EVEWindow[ByItemID, ${ID}](exists)}
-		{
-			EVEWindow[ByName, Inventory]:MakeChildActive[${ID}]
-			return FALSE
-		}
+		; if !${EVEWindow[ByItemID, ${ID}](exists)}
+		; {
+			; EVEWindow[ByName, Inventory]:MakeChildActive[${ID}]
+			; return FALSE
+		; }
 		Cargo:PopulateList[Container, "", ${ID}]
 		EVE:QueryEntities[Cans, "GroupID==GROUP_CARGOCONTAINER && HaveLootRights && Distance<LOOT_RANGE && !IsAbandoned"]
 		Cans:GetIterator[CanIterator]
@@ -338,11 +338,11 @@ objectdef obj_Jetcan inherits obj_State
 					TargetIterator.Value:OpenCargo
 					return FALSE
 				}
-				if !${EVEWindow[ByItemID, ${TargetIterator.Value}](exists)}
-				{
-					EVEWindow[ByName, Inventory]:MakeChildActive[${TargetIterator.Value}]
-					return FALSE
-				}
+				; if !${EVEWindow[ByItemID, ${TargetIterator.Value}](exists)}
+				; {
+					; EVEWindow[ByName, Inventory]:MakeChildActive[${TargetIterator.Value}]
+					; return FALSE
+				; }
 				if ${Miner.UseOreHold}
 				{
 					Cargo:PopulateCargoList[OreHold]
