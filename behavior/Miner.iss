@@ -709,6 +709,7 @@ objectdef obj_Miner inherits obj_State
 					}
 					if ${Roid.Value.Distance} > ${Ship.ModuleList_MiningLaser.Range}
 					{
+						Move:Approach[${Roid.Value.ID}, ${Ship.ModuleList_MiningLaser.Range}]
 						continue
 					}
 					if ${Config.IceMining}
