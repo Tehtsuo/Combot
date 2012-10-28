@@ -252,58 +252,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								This:SetLeftClickThru[TRUE]
 							</OnLoad>
 						</frame>					
-						<Text name='UndockSuffixTitle'>
-							<X>50%</X>
-							<Y>59%</Y>
-							<Width>10%</Width> 
-							<Height>6%</Height> 
-							<Text>Suffix:</Text>
-						</Text>
-						<Textentry name='UndockSuffix'>
-							<X>60%</X>
-							<Y>58%</Y>
-							<Width>38%</Width> 
-							<Height>6%</Height> 
-							<OnLoad>
-								This:SetText[${Script[ComBot].VariableScope.Config.Common.UndockSuffix}]
-							</OnLoad>
-							<OnChange>
-								Script[ComBot].VariableScope.Config.Common:SetUndockSuffix[${This.Text}]
-							</OnChange>
-						</Textentry>
-						<Checkbox name='Undock'>
-							<X>50%</X>
-							<Y>50%</Y>
-							<Width>48%</Width> 
-							<Height>6%</Height> 
-							<Text>Use Undock Bookmarks</Text>
-							<OnLoad>
-								if ${Script[ComBot].VariableScope.Config.Common.Undock}
-								{
-									This:SetChecked
-								}
-								else
-								{
-									UIElement[UndockSuffix@Settings@ComBotTab@ComBot]:Hide
-									UIElement[UndockSuffixTitle@Settings@ComBotTab@ComBot]:Hide
-								}
-								This:SetZOrder[movetop]
-							</OnLoad>
-							<OnLeftClick>
-								Script[ComBot].VariableScope.Config.Common:SetUndock[${This.Checked}]
-								if ${This.Checked}
-								{
-									UIElement[UndockSuffix@Settings@ComBotTab@ComBot]:Show
-									UIElement[UndockSuffixTitle@Settings@ComBotTab@ComBot]:Show
-								}
-								else
-								{
-									UIElement[UndockSuffix@Settings@ComBotTab@ComBot]:Hide
-									UIElement[UndockSuffixTitle@Settings@ComBotTab@ComBot]:Hide
-								}
-								This:SetZOrder[movetop]
-							</OnLeftClick>
-						</Checkbox>
+
 						<Checkbox name='Disable3D'>
 							<X>1%</X>
 							<Y>50%</Y>

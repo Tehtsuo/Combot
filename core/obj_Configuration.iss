@@ -153,7 +153,6 @@ objectdef obj_Configuration_Common
 		This.CommonRef:AddSetting[Account,""]
 		This.CommonRef:AddSetting[Password,""]
 		This.CommonRef:AddSetting[LogUser,""]
-		This.CommonRef:AddSetting[UndockSuffix,"Undock"]
 	}
 
 	Setting(string, ComBot_Mode, SetComBot_Mode)
@@ -161,7 +160,6 @@ objectdef obj_Configuration_Common
 	Setting(bool, Propulsion, SetPropulsion)
 	Setting(int, Propulsion_Threshold, SetPropulsion_Threshold)
 	Setting(bool, Undock, SetUndock)
-	Setting(string, UndockSuffix, SetUndockSuffix)
 	Setting(bool, Disable3D, SetDisable3D)
 	Setting(bool, DisableUI, SetDisableUI)
 	Setting(bool, DisableTexture, SetDisableTexture)

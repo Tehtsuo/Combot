@@ -78,10 +78,6 @@ objectdef obj_Move inherits obj_State
 	{
 		EVE:Execute[CmdExitStation]
 		Client:Wait[10000]
-		if ${Config.Common.Undock}
-		{
-			Client.Undock:Set[TRUE]
-		}
 	}	
 
 	method DockAtStation(int64 StationID)
