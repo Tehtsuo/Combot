@@ -148,7 +148,7 @@ objectdef obj_Jetcan inherits obj_State
 		{
 			if ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]} >= ${Config.Miner.Threshold} * .01
 			{
-				Cargo:PopulateCargoList[SHIPOREHOLD]
+				Cargo:PopulateCargoList[OreHold]
 				Cargo.CargoList:GetIterator[TargetIterator]
 				if ${TargetIterator:First(exists)}
 				{
@@ -165,7 +165,7 @@ objectdef obj_Jetcan inherits obj_State
 		{
 			if ${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity} >= ${Config.Miner.Threshold} * .01
 			{
-				Cargo:PopulateCargoList[SHIP]
+				Cargo:PopulateCargoList[Ship]
 				Cargo:Filter["CategoryID == CATEGORYID_ORE || GroupID == GROUP_HARVESTABLECLOUD", FALSE]
 				Cargo.CargoList:GetIterator[TargetIterator]
 				if ${TargetIterator:First(exists)}
