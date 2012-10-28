@@ -121,21 +121,21 @@ objectdef obj_Jetcan inherits obj_State
 				}
 				if ${Math.Calc[${EVEWindow[ByName, Inventory].ChildCapacity[${TargetIterator.Value}]} - ${EVEWindow[ByName, Inventory].ChildUsedCapacity[${TargetIterator.Value}]}]} > 1000
 				{
-					if !${EVEWindow[ByItemID, ${TargetIterator.Value}](exists)}
-					{
-						EVEWindow[ByName, Inventory]:MakeChildActive[${TargetIterator.Value}]
-						return FALSE
-					}
+					; if !${EVEWindow[ByItemID, ${TargetIterator.Value}](exists)}
+					; {
+						; EVEWindow[ByName, Inventory]:MakeChildActive[${TargetIterator.Value}]
+						; return FALSE
+					; }
 					if ${MyShip.HasOreHold}
 					{
-						Cargo:PopulateCargoList[SHIPOREHOLD]
+						Cargo:PopulateCargoList[OreHold]
 					}
 					else
 					{
-						Cargo:PopulateCargoList[SHIP]
+						Cargo:PopulateCargoList[Ship]
 						Cargo:Filter["CategoryID == CATEGORYID_ORE || GroupID == GROUP_HARVESTABLECLOUD", FALSE]
 					}
-					Cargo:MoveCargoList[CONTAINER, "", ${TargetIterator.Value}]
+					Cargo:MoveCargoList[Container, "", ${TargetIterator.Value}]
 					This:QueueState["Stack", 1000, ${TargetIterator.Value}]
 					This:QueueState["Fill", 1500]
 					return TRUE
@@ -276,11 +276,11 @@ objectdef obj_Jetcan inherits obj_State
 		}
 		if ${MyShip.HasOreHold}
 		{
-			Cargo:PopulateCargoList[SHIPOREHOLD]
+			Cargo:PopulateCargoList[OreHold]
 		}
 		else
 		{
-			Cargo:PopulateCargoList[SHIP]
+			Cargo:PopulateCargoList[Ship]
 			Cargo:Filter["CategoryID == CATEGORYID_ORE || GroupID == GROUP_HARVESTABLECLOUD", FALSE]
 		}
 		Cargo.CargoList.Get[1]:Jettison
@@ -306,7 +306,7 @@ objectdef obj_Jetcan inherits obj_State
 			EVEWindow[ByName, Inventory]:MakeChildActive[${ID}]
 			return FALSE
 		}
-		Cargo:PopulateList[CONTAINER, "", ${ID}]
+		Cargo:PopulateList[Container, "", ${ID}]
 		EVE:QueryEntities[Cans, "GroupID==GROUP_CARGOCONTAINER && HaveLootRights && Distance<LOOT_RANGE && !IsAbandoned"]
 		Cans:GetIterator[CanIterator]
 		
@@ -314,7 +314,7 @@ objectdef obj_Jetcan inherits obj_State
 		{
 			if !${CanAges.Element[CanIterator.Value.ID](exists)}
 			{
-				Cargo:MoveCargoList[CONTAINER, "", ${CanIterator.Value.ID}]
+				Cargo:MoveCargoList[Container, "", ${CanIterator.Value.ID}]
 				return TRUE
 			}
 		}
@@ -345,14 +345,14 @@ objectdef obj_Jetcan inherits obj_State
 				}
 				if ${Miner.UseOreHold}
 				{
-					Cargo:PopulateCargoList[SHIPOREHOLD]
+					Cargo:PopulateCargoList[OreHold]
 				}
 				else
 				{
-					Cargo:PopulateCargoList[SHIP]
+					Cargo:PopulateCargoList[OreHold]
 					Cargo:Filter["CategoryID == CATEGORYID_ORE || GroupID == GROUP_HARVESTABLECLOUD", FALSE]
 				}
-				Cargo:MoveCargoList[CONTAINER, "", ${TargetIterator.Value}]
+				Cargo:MoveCargoList[Container, "", ${TargetIterator.Value}]
 				This:QueueState["Stack", 1000, ${TargetIterator.Value}]
 				return TRUE
 			}
