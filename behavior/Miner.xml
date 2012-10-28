@@ -1482,7 +1482,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<Width>32%</Width> 
 								<Height>10%</Height> 
 								<Text>Orca Mode</Text>
-									<OnLoad>
+								<OnLoad>
 									if ${Script[ComBot].VariableScope.Miner.Config.OrcaMode}
 									{
 										This:SetChecked
@@ -1535,6 +1535,64 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[""]
 								</OnMouseExit>
 							</Checkbox>							
+							<Checkbox name='Tether'>
+								<X>1%</X>
+								<Y>75%</Y>
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Text>Tether</Text>
+								<OnLoad>
+									if ${Script[ComBot].VariableScope.Miner.Config.Tether}
+									{
+										This:SetChecked
+									}
+									This:SetZOrder[movetop]
+								</OnLoad>
+								<OnLeftClick>
+									Script[ComBot].VariableScope.Miner.Config:SetTether[${This.Checked}]
+									if ${This.Checked}
+									{
+										UIElement[TetherName@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+									}
+									else
+									{
+										UIElement[TetherName@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+									}
+									This:SetZOrder[movetop]
+								</OnLeftClick>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText["When checked, this enables tether mode, allowing ComBot to tether your miner to another fleet member."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[""]
+								</OnMouseExit>
+							</Checkbox>							
+							<Textentry name='TetherName'>
+								<X>1%</X>
+								<Y>85%</Y>
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Text>Tether</Text>
+								<OnLoad>
+									if !${Script[ComBot].VariableScope.Miner.Config.Tether}
+									{
+										This:Hide
+									}
+									This:SetText[${Script[ComBot].VariableScope.Miner.Config.TetherName}]
+								</OnLoad>
+								<OnChange>
+									if ${This.Text.Length} > 0
+									{
+										Script[ComBot].VariableScope.Miner.Config:SetTetherName[${This.Text}]
+									}
+								</OnChange>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText["This field should contain the exact name of the fleet member to whom you would like to tether."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[""]
+								</OnMouseExit>
+							</Textentry>							
 						</Children>
 					</Frame>
 

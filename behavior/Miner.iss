@@ -124,6 +124,7 @@ objectdef obj_Configuration_Miner
 		This.CommonRef:AddSetting[MaxLasers,3]
 		This.CommonRef:AddSetting[MiningSystem,""]
 		This.CommonRef:AddSetting[Dropoff,""]
+		This.CommonRef:AddSetting[TetherName,""]
 		
 	}
 	
@@ -135,6 +136,8 @@ objectdef obj_Configuration_Miner
 	Setting(bool, IceMining, SetIceMining)	
 	Setting(bool, GasHarvesting, SetGasHarvesting)
 	Setting(bool, OrcaMode, SetOrcaMode)	
+	Setting(bool, Tether, SetTether)	
+	Setting(string, TetherName, SetTetherName)	
 	Setting(bool, UseBookmarks, SetUseBookmarks)	
 	Setting(string, BeltPrefix, SetBeltPrefix)	
 	Setting(string, IceBeltPrefix, SetIceBeltPrefix)	
@@ -241,11 +244,11 @@ objectdef obj_Miner inherits obj_State
 	
 	member:bool CheckCargoHold()
 	{
-		
 		if 	${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]} >= ${Config.Threshold} * .01 && \
 			${MyShip.HasOreHold} && \
 			!${Config.Dropoff_Type.Equal[No Dropoff]} && \
-			!${Config.Dropoff_Type.Equal[Jetcan]}
+			!${Config.Dropoff_Type.Equal[Jetcan]} && \
+			!${Config.OrcaMode}
 		{
 			UI:Update["obj_Miner", "Unload trip required", "g"]
 			This:QueueState["PrepareWarp"]
@@ -258,11 +261,25 @@ objectdef obj_Miner inherits obj_State
 		elseif ${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity} >= ${Config.Threshold} * .01 && \
 			!${MyShip.HasOreHold} && \
 			!${Config.Dropoff_Type.Equal[No Dropoff]} && \
-			!${Config.Dropoff_Type.Equal[Jetcan]}
+			!${Config.Dropoff_Type.Equal[Jetcan]} && \
+			!${Config.OrcaMode}
 		{
 			UI:Update["obj_Miner", "Unload trip required", "g"]
 			This:QueueState["PrepareWarp"]
 			This:QueueState["Dropoff", 1000, "Ship"]
+			This:QueueState["Traveling"]
+			This:QueueState["OpenCargoHold"]
+			This:QueueState["CheckCargoHold"]
+			return TRUE
+		}
+		elseif ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipCorpHangar]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipCorpHangar]} >= ${Config.Threshold} * .01 && \
+			!${Config.Dropoff_Type.Equal[No Dropoff]} && \
+			!${Config.Dropoff_Type.Equal[Jetcan]} && \
+			${Config.OrcaMode}
+		{
+			UI:Update["obj_Miner", "Unload trip required", "g"]
+			This:QueueState["PrepareWarp"]
+			This:QueueState["Dropoff", 1000, "ShipCorpHangar"]
 			This:QueueState["Traveling"]
 			This:QueueState["OpenCargoHold"]
 			This:QueueState["CheckCargoHold"]
@@ -292,7 +309,7 @@ objectdef obj_Miner inherits obj_State
 		{
 			relay all -event ComBot_Orca_InBelt FALSE
 		}
-		if ${Asteroids.TargetList.Used}
+		if ${Asteroids.TargetList.Used} && !${Config.Dropoff_Type.Equal[Orca]} && !{Config.Tether}
 		{
 			Move:SaveSpot
 		}
@@ -306,9 +323,16 @@ objectdef obj_Miner inherits obj_State
 		variable string Bookmark=${Config.Dropoff}
 		if ${Dropoff_Type.Equal[Orca]}
 		{
-			Dropoff_Type:Set[Container]
-			Bookmark:Set[${Config.MiningSystem}]
-			
+			echo OrcaWarp - ${This.WarpToOrca}
+			if ${This.WarpToOrca}
+			{
+				Dropoff_Type:Set[Container]
+				Bookmark:Set[${Config.MiningSystem}]
+			}
+			else
+			{
+				return TRUE
+			}
 		}
 		Cargo:At[${Bookmark},${Config.Dropoff_Type},${Config.Dropoff_SubType}, ${Config.Container_Name}]:Unload["", 0, ${Source}]
 		return TRUE
@@ -384,11 +408,25 @@ objectdef obj_Miner inherits obj_State
 	
 	member:bool MoveToBelt()
 	{
+		if ${Config.Tether} && ${Local[${Config.TetherName}](exists)}
+		{
+			Move:Fleetmember[${Local[${Config.TetherName}].ID}]
+			This:InsertState["Traveling"]
+			return TRUE
+		}
+		
 		if ${Move.SavedSpotExists}
 		{
 			Move:GotoSavedSpot
 			This:InsertState["RemoveSavedSpot"]
 			This:InsertState["Traveling", 2000]
+			return TRUE
+		}
+		
+		if ${Config.Dropoff_Type.Equal[Orca]} && ${This.WarpToOrca} && ${Local[${Config.Container_Name}](exists)}
+		{
+			Move:Fleetmember[${Local[${Config.Container_Name}].ID}]
+			This:InsertState["Traveling"]
 			return TRUE
 		}
 		
@@ -546,12 +584,24 @@ objectdef obj_Miner inherits obj_State
 		}
 		
 	
+		variable int64 Orca
 		if ${Config.Dropoff_Type.Equal[Orca]}
 		{
-			variable int64 Orca
 			if ${Entity[Name = "${Config.Container_Name}"](exists)}
 			{
 				Orca:Set[${Entity[Name = "${Config.Container_Name}"].ID}]
+				Asteroids.DistanceTarget:Set[${Orca}]
+			}
+			else
+			{
+				Asteroids.DistanceTarget:Set[${MyShip.ID}]
+			}
+		}
+		elseif ${Config.Tether}
+		{
+			if ${Entity[Name = "${Config.TetherName}"](exists)}
+			{
+				Orca:Set[${Entity[Name = "${Config.TetherName}"].ID}]
 				Asteroids.DistanceTarget:Set[${Orca}]
 			}
 			else

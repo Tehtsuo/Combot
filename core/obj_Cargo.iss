@@ -89,7 +89,7 @@ objectdef obj_Cargo inherits obj_State
 			case Ship
 				Me.Ship:GetCargo[CargoList]
 				break
-			case SHIPCORPORATEHANGAR
+			case ShipCorpHangar
 				Me.Ship:GetCorpHangarsCargo[CargoList]
 				break
 			case OreHold
@@ -449,7 +449,11 @@ objectdef obj_Cargo inherits obj_State
 		
 		UI:Update["obj_Cargo", "Process ${This.CargoQueue.Peek.Action} @ ${This.CargoQueue.Peek.Bookmark} - ${This.CargoQueue.Peek.LocationType}", "g", TRUE]
 		
-		Move:Bookmark[${This.CargoQueue.Peek.Bookmark}, TRUE]
+		if !${Local[${This.CargoQueue.Peek.Container}](exists)}
+		{
+			echo Local[${This.CargoQueue.Peek.Container}](exists) - ${Local[${This.CargoQueue.Peek.Container}](exists)}
+			Move:Bookmark[${This.CargoQueue.Peek.Bookmark}, TRUE]
+		}
 		This:QueueState["Traveling"]
 		This:QueueState["WarpFleetMember"]
 		This:QueueState["Traveling"]
