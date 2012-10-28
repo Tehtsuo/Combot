@@ -451,7 +451,6 @@ objectdef obj_Cargo inherits obj_State
 		
 		if !${Local[${This.CargoQueue.Peek.Container}](exists)}
 		{
-			echo Local[${This.CargoQueue.Peek.Container}](exists) - ${Local[${This.CargoQueue.Peek.Container}](exists)}
 			Move:Bookmark[${This.CargoQueue.Peek.Bookmark}, TRUE]
 		}
 		This:QueueState["Traveling"]
