@@ -374,12 +374,12 @@ objectdef obj_Hauler inherits obj_State
 				return FALSE
 			}
 			UI:Update["obj_Hauler", "Looting - ${Entity[${CurrentCan}].Name}", "g"]
-			Cargo:PopulateCargoList[CONTAINER, ${CurrentCan}]
+			Cargo:PopulateCargoList[Container, ${CurrentCan}]
 			if ${EVEWindow[ByItemID, ${CurrentCan}].UsedCapacity} > ${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}]}
 			{
 				if ${PopCan}
 				{
-					Cargo:MoveCargoList[SHIP]
+					Cargo:MoveCargoList[Ship]
 				}
 				else
 				{
@@ -393,7 +393,7 @@ objectdef obj_Hauler inherits obj_State
 			{
 				if ${PopCan}
 				{
-					Cargo:MoveCargoList[SHIP]
+					Cargo:MoveCargoList[Ship]
 				}
 				else
 				{
