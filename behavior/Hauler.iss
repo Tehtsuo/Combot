@@ -81,6 +81,7 @@ objectdef obj_Hauler inherits obj_State
 	
 	variable obj_TargetList IR_Cans
 	variable obj_TargetList OOR_Cans
+	variable obj_TargetList AllCans
 
 
 	method Initialize()
@@ -93,6 +94,9 @@ objectdef obj_Hauler inherits obj_State
 		IR_Cans.ListOutOfRange:Set[FALSE]
 		OOR_Cans.MaxRange:Set[WARP_RANGE]
 		OOR_Cans.MinRange:Set[LOOT_RANGE]
+		AllCans.MaxRange:Set[WARP_RANGE]
+		AllCans:AddQueryString[GroupID == GROUP_CARGOCONTAINER && HaveLootRights]
+		IR_Cans.AutoLock:Set[TRUE]
 		DynamicAddBehavior("Hauler", "Hauler")
 	}
 
@@ -198,6 +202,11 @@ objectdef obj_Hauler inherits obj_State
 					This:QueueState["Traveling"]
 					This:QueueState["FleetJetcan"]
 					break
+				case Fleet Jetcan (Pop All)
+					Move:System[${EVE.Bookmark[${Config.Pickup}].SolarSystemID}]
+					This:QueueState["Traveling"]
+					This:QueueState["FleetJetcan", 1000, TRUE]
+					break
 			}
 		}
 		else
@@ -225,7 +234,7 @@ objectdef obj_Hauler inherits obj_State
 		return TRUE
 	}
 
-	member:bool FleetJetcan()
+	member:bool FleetJetcan(bool PopAll=FALSE)
 	{
 		if !${FleetMembers.Used}
 		{
@@ -236,12 +245,23 @@ objectdef obj_Hauler inherits obj_State
 	
 		if ${FleetMembers.Get[1].ToEntity(exists)}
 		{
+			if ${PopAll}
+			{
+				This:QueueState["PrepAllCans"]
+				This:QueueState["UpdateAllCans"]
+				This:QueueState["PopAllCans"]
+				This:QueueState["OpenCargoHold"]
+				This:QueueState["CheckCargoHold"]
+			}
+			else
+			{
 			This:QueueState["PopulateTargetList", 2000, ${FleetMembers.Get[1].ToEntity.ID}]
 			This:QueueState["CheckTargetList", 50]
 			This:QueueState["LootCans", 1000, ${FleetMembers.Get[1].ToEntity.ID}]
 			This:QueueState["DepopulateTargetList", 2000]
 			This:QueueState["OpenCargoHold"]
 			This:QueueState["CheckCargoHold"]
+			}
 			FleetMembers:Remove[1]
 			FleetMembers:Collapse
 			return TRUE
@@ -250,12 +270,75 @@ objectdef obj_Hauler inherits obj_State
 		{
 			Move:Fleetmember[${FleetMembers.Get[1].ID}, TRUE]
 			This:QueueState["Traveling"]
-			This:QueueState["FleetJetcan"]
+			This:QueueState["FleetJetcan", 1000, ${PopAll}]
 			return TRUE
 		}
 	}
 	
+	member:bool PrepAllCans()
+	{
+		AllCans.AutoLock:Set[TRUE]
+		AllCans:RequestUpdate
+		return TRUE
+	}
 	
+	member:bool UpdateAllCans()
+	{
+		return ${AllCans.Updated}
+	}
+	
+	member:bool PopAllCans()
+	{
+		if ${MyShip.UsedCargoCapacity} > (${Config.Threshold} * .01 * ${MyShip.CargoCapacity})
+		{
+			return TRUE
+		}
+
+		Loot:Enable
+		AllCans:RequestUpdate
+		
+		variable iterator TargetIterator
+	
+		AllCans.TargetList:GetIterator[TargetIterator]
+		if ${TargetIterator:First(exists)} && ${EVEWindow[ByName, Inventory](exists)}
+		{
+			do
+			{
+				if ${TargetIterator.Value.Distance} > LOOT_RANGE
+				{
+					if ${Ship.ModuleList_TractorBeams.InactiveCount} && !${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]}
+					{
+						Ship.ModuleList_TractorBeams:Activate[${TargetIterator.Value.ID}]
+					}
+					continue
+				}
+				else
+				{
+					if ${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]}
+					{
+						Ship.ModuleList_TractorBeams:Deactivate[${TargetIterator.Value.ID}]
+					}
+				}
+				
+				if ${EVEWindow[ByName, Inventory].ChildWindowExists[${TargetIterator.Value}]}
+				{
+					UI:Update["obj_Haul", "Looting - ${TargetIterator.Value.Name}", "g"]
+					Cargo:PopulateCargoList[Container, ${TargetIterator.Value}]
+					Cargo:MoveCargoList[Ship]
+					return FALSE
+				}
+				if !${EVEWindow[ByName, Inventory].ChildWindowExists[${TargetIterator.Value}]}
+				{
+					UI:Update["obj_Haul", "Opening - ${TargetIterator.Value.Name}", "g"]
+					TargetIterator.Value:OpenCargo
+					return FALSE
+				}		
+			}
+			while ${TargetIterator:Next(exists)}
+		}		
+		
+		return TRUE
+	}
 	
 	member:bool PopulateTargetList(int64 ID)
 	{
@@ -608,7 +691,6 @@ objectdef obj_LootWrecks inherits obj_State
 	method Initialize()
 	{
 		Wrecks:AddQueryString["GroupID==GROUP_WRECK && HaveLootRights && !IsWreckEmpty"]
-		Wrecks.AutoLock:Set[TRUE]
 		
 		This[parent]:Initialize
 		This.NonGameTiedPulse:Set[TRUE]
@@ -616,11 +698,13 @@ objectdef obj_LootWrecks inherits obj_State
 	
 	method Enable()
 	{
+		Wrecks.AutoLock:Set[TRUE]
 		This:QueueState["Loot", 1500]
 	}
 	
 	method Disable()
 	{
+		Wrecks.AutoLock:Set[FALSE]
 		This:Clear
 	}
 	
