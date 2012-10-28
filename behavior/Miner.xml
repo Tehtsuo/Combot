@@ -1593,6 +1593,30 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[""]
 								</OnMouseExit>
 							</Textentry>							
+							<Checkbox name='ApproachPriority'>
+								<X>34%</X>
+								<Y>75%</Y>
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Text>Approach by Priority</Text>
+								<OnLoad>
+									if ${Script[ComBot].VariableScope.Miner.Config.ApproachPriority}
+									{
+										This:SetChecked
+									}
+									This:SetZOrder[movetop]
+								</OnLoad>
+								<OnLeftClick>
+									Script[ComBot].VariableScope.Miner.Config:SetApproachPriority[${This.Checked}]
+									This:SetZOrder[movetop]
+								</OnLeftClick>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText["When checked, ComBot will approachs asteroids based on your priority. When unchecked, ComBot will keep the nearest asteroid in range."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[""]
+								</OnMouseExit>
+							</Checkbox>							
 						</Children>
 					</Frame>
 

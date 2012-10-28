@@ -137,6 +137,7 @@ objectdef obj_Configuration_Miner
 	Setting(bool, GasHarvesting, SetGasHarvesting)
 	Setting(bool, OrcaMode, SetOrcaMode)	
 	Setting(bool, Tether, SetTether)	
+	Setting(bool, ApproachPriority, SetApproachPriority)
 	Setting(string, TetherName, SetTetherName)	
 	Setting(bool, UseBookmarks, SetUseBookmarks)	
 	Setting(string, BeltPrefix, SetBeltPrefix)	
@@ -614,7 +615,17 @@ objectdef obj_Miner inherits obj_State
 			Asteroids.DistanceTarget:Set[${MyShip.ID}]
 		}
 		
+		variable index:entity Roids
 		variable iterator Roid
+		if ${Config.ApproachPriority}
+		{
+			Asteroids.TargetList:GetIterator[Roid]
+		}
+		else
+		{
+			EVE:GetEntities[Roids]
+			Roids:GetIterator[Roid]
+		}
 		if ${Config.OrcaMode}
 		{
 			Asteroids.AutoLock:Set[FALSE]
@@ -623,7 +634,6 @@ objectdef obj_Miner inherits obj_State
 			relay all -event ComBot_Orca_InBelt TRUE
 			relay all -event ComBot_Orca_Cargo ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipCorpHangar]}
 
-			Asteroids.TargetList:GetIterator[Roid]
 			if ${Roid:First(exists)}
 			{
 				if ${Config.IceMining}
@@ -646,7 +656,6 @@ objectdef obj_Miner inherits obj_State
 			Asteroids.AutoRelock:Set[TRUE]
 			Asteroids.AutoRelockPriority:Set[TRUE]
 			
-			Asteroids.TargetList:GetIterator[Roid]
 			if ${Roid:First(exists)}
 			{
 				if ${Roid.Value.Distance} > ${Math.Calc[${Ship.ModuleList_MiningLaser.Range} * (3/4)]}
