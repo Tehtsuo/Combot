@@ -255,12 +255,12 @@ objectdef obj_Hauler inherits obj_State
 			}
 			else
 			{
-			This:QueueState["PopulateTargetList", 2000, ${FleetMembers.Get[1].ToEntity.ID}]
-			This:QueueState["CheckTargetList", 50]
-			This:QueueState["LootCans", 1000, ${FleetMembers.Get[1].ToEntity.ID}]
-			This:QueueState["DepopulateTargetList", 2000]
-			This:QueueState["OpenCargoHold"]
-			This:QueueState["CheckCargoHold"]
+				This:QueueState["PopulateTargetList", 2000, ${FleetMembers.Get[1].ToEntity.ID}]
+				This:QueueState["CheckTargetList", 50]
+				This:QueueState["LootCans", 1000, ${FleetMembers.Get[1].ToEntity.ID}]
+				This:QueueState["DepopulateTargetList", 2000]
+				This:QueueState["OpenCargoHold"]
+				This:QueueState["CheckCargoHold"]
 			}
 			FleetMembers:Remove[1]
 			FleetMembers:Collapse
@@ -304,13 +304,17 @@ objectdef obj_Hauler inherits obj_State
 		{
 			do
 			{
-				if ${TargetIterator.Value.Distance} > LOOT_RANGE
+				if ${TargetIterator.Value.Distance} > ${Ship.ModuleList_TractorBeams.Range}
+				{
+					Move:Approach[${TargetIterator.Value.ID}, ${Ship.ModuleList_TractorBeams.Range}]
+				}
+				elseif ${TargetIterator.Value.Distance} > LOOT_RANGE
 				{
 					if ${Ship.ModuleList_TractorBeams.InactiveCount} && !${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]}
 					{
 						Ship.ModuleList_TractorBeams:Activate[${TargetIterator.Value.ID}]
 					}
-					continue
+					return FALSE
 				}
 				else
 				{
@@ -318,6 +322,7 @@ objectdef obj_Hauler inherits obj_State
 					{
 						Ship.ModuleList_TractorBeams:Deactivate[${TargetIterator.Value.ID}]
 					}
+					return FALSE
 				}
 				
 				if ${EVEWindow[ByName, Inventory].ChildWindowExists[${TargetIterator.Value}]}
