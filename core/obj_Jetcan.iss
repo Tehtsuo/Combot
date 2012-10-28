@@ -344,7 +344,7 @@ objectdef obj_Jetcan inherits obj_State
 					; EVEWindow[ByName, Inventory]:MakeChildActive[${TargetIterator.Value}]
 					; return FALSE
 				; }
-				if ${Miner.UseOreHold}
+				if ${MyShip.HasOreHold}
 				{
 					Cargo:PopulateCargoList[OreHold]
 				}
