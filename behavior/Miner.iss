@@ -623,7 +623,7 @@ objectdef obj_Miner inherits obj_State
 		}
 		else
 		{
-			EVE:GetEntities[Roids]
+			EVE:QueryEntities[Roids]
 			Roids:GetIterator[Roid]
 		}
 		if ${Config.OrcaMode}
