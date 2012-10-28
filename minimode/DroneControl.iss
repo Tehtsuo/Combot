@@ -45,6 +45,8 @@ objectdef obj_DroneControl inherits obj_State
 	
 	variable int64 CurrentTarget = -1
 	
+	variable bool IsBusy
+	
 	method Initialize()
 	{
 		This[parent]:Initialize
@@ -83,8 +85,18 @@ objectdef obj_DroneControl inherits obj_State
 		DroneTargets:RequestUpdate
 		if ${Drones.DronesInBay.Equal[0]} && ${Drones.DronesInSpace.Equal[0]}
 		{
+			Busy:UnsetBusy["DroneControl"]
 			return FALSE
 		}
+		if ${IsBusy}
+		{
+			if ${Drones.DronesInSpace.Equal[0]}
+			{
+				Busy:UnsetBusy["DroneControl"]
+				IsBusy:Set[FALSE]
+			}
+		}
+		
 		
 		DroneTargets.LockedTargetList:GetIterator[TargetIterator]
 		
@@ -129,6 +141,8 @@ objectdef obj_DroneControl inherits obj_State
 				{
 					Drones:Deploy["TypeID == ${Config.DroneType}", 5]
 				}
+				IsBusy:Set[TRUE]
+				Busy:SetBusy["DroneControl"]
 			}
 		}
 		
