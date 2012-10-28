@@ -70,6 +70,7 @@ objectdef obj_Hauler inherits obj_State
 {
 	variable obj_Configuration_Hauler Config
 	variable obj_HaulerUI LocalUI
+	variable obj_LootWrecks Loot
 
 	variable index:obj_CargoAction HaulQueue
 	variable float OrcaCargo
@@ -80,6 +81,7 @@ objectdef obj_Hauler inherits obj_State
 	
 	variable obj_TargetList IR_Cans
 	variable obj_TargetList OOR_Cans
+
 
 	method Initialize()
 	{
@@ -268,6 +270,7 @@ objectdef obj_Hauler inherits obj_State
 		IR_Cans.AutoLock:Set[FALSE]
 		OOR_Cans.AutoLock:Set[FALSE]
 		
+		
 		OOR_Cans:RequestUpdate
 		IR_Cans:RequestUpdate
 		
@@ -297,11 +300,10 @@ objectdef obj_Hauler inherits obj_State
 			return TRUE
 		}
 		
-		echo ${IR_Cans.TargetList.Used} cans in range
-		echo ${OOR_Cans.TargetList.Used} cans out of range
 		
 		OOR_Cans:RequestUpdate
 		IR_Cans:RequestUpdate
+		
 		
 		if !${Entity[${CurrentCan}](exists)}
 		{
@@ -349,6 +351,7 @@ objectdef obj_Hauler inherits obj_State
 		{
 			if ${Ship.ModuleList_TractorBeams.Count} > 0 && ${PopCan} && ${Entity[${CurrentCan}].Distance} <= ${Ship.ModuleList_TractorBeams.Range}
 			{
+				Loot:Disable
 				if !${Ship.ModuleList_TractorBeams.IsActiveOn[${CurrentCan}]}
 				{
 					Ship.ModuleList_TractorBeams:Activate[${CurrentCan}]
@@ -357,22 +360,24 @@ objectdef obj_Hauler inherits obj_State
 			}
 			else
 			{
+				Loot:Enable
 				Move:Approach[${CurrentCan}, LOOT_RANGE]
 				return FALSE
 			}
 		}
 		else
 		{
+			Loot:Enable
 			if !${EVEWindow[ByName, Inventory].ChildWindowExists[${CurrentCan}]}
 			{
 				Entity[${CurrentCan}]:OpenCargo
 				return FALSE
 			}
-			if !${EVEWindow[ByItemID, ${CurrentCan}](exists)}
-			{
-				EVEWindow[ByName, Inventory]:MakeChildActive[${CurrentCan}]
-				return FALSE
-			}
+			; if !${EVEWindow[ByItemID, ${CurrentCan}](exists)}
+			; {
+				; EVEWindow[ByName, Inventory]:MakeChildActive[${CurrentCan}]
+				; return FALSE
+			; }
 			UI:Update["obj_Hauler", "Looting - ${Entity[${CurrentCan}].Name}", "g"]
 			Cargo:PopulateCargoList[Container, ${CurrentCan}]
 			if ${EVEWindow[ByItemID, ${CurrentCan}].UsedCapacity} > ${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}]}
@@ -433,6 +438,9 @@ objectdef obj_Hauler inherits obj_State
 			}
 			return FALSE
 		}
+		
+		
+
 		return FALSE
 	}
 
@@ -591,6 +599,107 @@ objectdef obj_Hauler inherits obj_State
 
 	
 }	
+
+
+objectdef obj_LootWrecks inherits obj_State
+{
+	variable obj_TargetList Wrecks
+	
+	method Initialize()
+	{
+		Wrecks:AddQueryString["GroupID==GROUP_WRECK && HaveLootRights && !IsWreckEmpty"]
+		Wrecks.AutoLock:Set[TRUE]
+		
+		This[parent]:Initialize
+		This.NonGameTiedPulse:Set[TRUE]
+	}
+	
+	method Enable()
+	{
+		This:QueueState["Loot", 1500]
+	}
+	
+	method Disable()
+	{
+		This:Clear
+	}
+	
+	
+	member:bool Loot()
+	{
+		if ${Ship.ModuleList_TractorBeams.Range}
+		{
+			Wrecks.MaxRange:Set[${Ship.ModuleList_TractorBeams.Range}]
+		}
+		else
+		{
+			Wrecks.MaxRange:Set[LOOT_RANGE]
+		}
+		Wrecks:RequestUpdate
+		
+		variable iterator TargetIterator
+	
+		if !${Client.InSpace}
+		{
+			return FALSE
+		}
+		
+		if ${Me.ToEntity.Mode} == 3
+		{
+			return FALSE
+		}
+
+		Wrecks.TargetList:GetIterator[TargetIterator]
+		if ${TargetIterator:First(exists)} && ${EVEWindow[ByName, Inventory](exists)}
+		{
+			do
+			{
+				echo Starting
+				if ${TargetIterator.Value.Distance} > LOOT_RANGE
+				{
+					if ${Ship.ModuleList_TractorBeams.InactiveCount} && !${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]}
+					{
+						Ship.ModuleList_TractorBeams:Activate[${TargetIterator.Value.ID}]
+					}
+					continue
+				}
+				else
+				{
+					if ${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]}
+					{
+						Ship.ModuleList_TractorBeams:Deactivate[${TargetIterator.Value.ID}]
+					}
+				}
+				if ${EVEWindow[ByName, Inventory].ChildWindowExists[${TargetIterator.Value}]}
+				{
+					if !${EVEWindow[ByItemID, ${TargetIterator.Value}](exists)}
+					{
+						EVEWindow[ByName, Inventory]:MakeChildActive[${TargetIterator.Value}]
+						return FALSE
+					}
+					UI:Update["obj_Haul", "Looting - ${TargetIterator.Value.Name}", "g"]
+					EVEWindow[ByItemID, ${TargetIterator.Value}]:LootAll
+					TargetIterator.Value:UnlockTarget
+					return FALSE
+				}
+				if !${EVEWindow[ByName, Inventory].ChildWindowExists[${TargetIterator.Value}]}
+				{
+					UI:Update["obj_Haul", "Opening - ${TargetIterator.Value.Name}", "g"]
+					TargetIterator.Value:OpenCargo
+					return FALSE
+				}		
+			}
+			while ${TargetIterator:Next(exists)}
+		}
+		return FALSE
+	}
+}
+
+
+
+
+
+
 
 
 objectdef obj_HaulerUI inherits obj_State
