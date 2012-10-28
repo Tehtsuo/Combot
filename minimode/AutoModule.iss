@@ -44,6 +44,8 @@ objectdef obj_Configuration_AutoModule
 		This.CommonRef:AddSetting[ActiveHardeners, TRUE]
 		This.CommonRef:AddSetting[ActiveShieldBoost, 95]
 		This.CommonRef:AddSetting[ActiveArmorRepair, 95]
+		This.CommonRef:AddSetting[ActiveShieldCap, 20]
+		This.CommonRef:AddSetting[ActiveArmorCap, 20]
 		This.CommonRef:AddSetting[Cloak, TRUE]
 		This.CommonRef:AddSetting[GangLink, TRUE]
 		This.CommonRef:AddSetting[SensorBoosters, TRUE]
@@ -54,8 +56,10 @@ objectdef obj_Configuration_AutoModule
 	Setting(bool, ActiveHardeners, SetActiveHardeners)
 	Setting(bool, ShieldBoost, SetShieldBoost)
 	Setting(int, ActiveShieldBoost, SetActiveShieldBoost)
+	Setting(int, ActiveShieldCap, SetActiveShieldCap)
 	Setting(bool, ArmorRepair, SetArmorRepair)
 	Setting(int, ActiveArmorRepair, SetActiveArmorRepair)
+	Setting(int, ActiveArmorCap, SetActiveArmorCap)
 	Setting(bool, Cloak, SetCloak)
 	Setting(bool, GangLink, SetGangLink)
 	Setting(bool, SensorBoosters, SetSensorBoosters)
@@ -100,20 +104,20 @@ objectdef obj_AutoModule inherits obj_State
 			Ship.ModuleList_Cloaks:Activate
 		}
 
-		if ${Ship.ModuleList_Regen_Shield.InactiveCount} && (${MyShip.ShieldPct} < ${Config.ActiveShieldBoost} || ${Config.ShieldBoost})
+		if ${Ship.ModuleList_Regen_Shield.InactiveCount} && ((${MyShip.ShieldPct} < ${Config.ActiveShieldBoost} && ${MyShip.CapacitorPct} > ${Config.ActiveShieldCap}) || ${Config.ShieldBoost})
 		{
 			Ship.ModuleList_Regen_Shield:ActivateCount[${Ship.ModuleList_Regen_Shield.InactiveCount}]
 		}
-		if ${Ship.ModuleList_Regen_Shield.ActiveCount} && ${MyShip.ShieldPct} > ${Config.ActiveShieldBoost} && !${Config.ShieldBoost}
+		if ${Ship.ModuleList_Regen_Shield.ActiveCount} && (${MyShip.ShieldPct} > ${Config.ActiveShieldBoost} || ${MyShip.CapacitorPct} < ${Config.ActiveShieldCap}) && !${Config.ShieldBoost}
 		{
 			Ship.ModuleList_Regen_Shield:DeactivateCount[${Ship.ModuleList_Regen_Shield.ActiveCount}]
 		}
 		
-		if ${Ship.ModuleList_Repair_Armor.InactiveCount} && (${MyShip.ArmorPct} < ${Config.ActiveArmorRepair} || ${Config.ArmorRepair})
+		if ${Ship.ModuleList_Repair_Armor.InactiveCount} && ((${MyShip.ArmorPct} < ${Config.ActiveArmorRepair} && ${MyShip.CapacitorPct} > ${Config.ActiveArmorCap}) || ${Config.ArmorRepair})
 		{
 			Ship.ModuleList_Repair_Armor:ActivateCount[${Ship.ModuleList_Repair_Armor.InactiveCount}]
 		}
-		if ${Ship.ModuleList_Repair_Armor.ActiveCount} && ${MyShip.ArmorPct} > ${Config.ActiveArmorRepair} && !${Config.ArmorRepair}
+		if ${Ship.ModuleList_Repair_Armor.ActiveCount} && (${MyShip.ArmorPct} > ${Config.ActiveArmorRepair} || ${MyShip.CapacitorPct} < ${Config.ActiveArmorCap}) && !${Config.ArmorRepair}
 		{
 			Ship.ModuleList_Repair_Armor:DeactivateCount[${Ship.ModuleList_Repair_Armor.ActiveCount}]
 		}
