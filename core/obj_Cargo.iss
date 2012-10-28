@@ -28,8 +28,9 @@ objectdef obj_CargoAction
 	variable string Action
 	variable string QueryString
 	variable int Quantity
+	variable string Source
 
-	method Initialize(string arg_Bookmark, string arg_Action, string arg_LocationType, string arg_LocationSubtype, string arg_Container, string arg_QueryString, int arg_Quantity)
+	method Initialize(string arg_Bookmark, string arg_Action, string arg_LocationType, string arg_LocationSubtype, string arg_Container, string arg_QueryString, int arg_Quantity, string arg_Source)
 	{
 		Bookmark:Set["${arg_Bookmark.Escape}"]
 		LocationType:Set[${arg_LocationType}]
@@ -38,9 +39,10 @@ objectdef obj_CargoAction
 		Action:Set[${arg_Action}]
 		QueryString:Set["${arg_QueryString.Escape}"]
 		Quantity:Set[${arg_Quantity}]
+		Source:Set[${arg_Source}]
 	}
 	
-	method Set(string arg_Bookmark, string arg_Action, string arg_LocationType, string arg_LocationSubtype, string arg_Container, string arg_QueryString, int arg_Quantity)
+	method Set(string arg_Bookmark, string arg_Action, string arg_LocationType, string arg_LocationSubtype, string arg_Container, string arg_QueryString, int arg_Quantity, string arg_Source)
 	{
 		Bookmark:Set["${arg_Bookmark.Escape}"]
 		LocationType:Set[${arg_LocationType}]
@@ -49,6 +51,7 @@ objectdef obj_CargoAction
 		Action:Set[${arg_Action}]
 		QueryString:Set["${arg_QueryString.Escape}"]
 		Quantity:Set[${arg_Quantity}]
+		Source:Set[${arg_Source}]
 	}
 	
 	method Clear()
@@ -60,6 +63,7 @@ objectdef obj_CargoAction
 		Action:Set[""]
 		QueryString:Set[""]
 		Quantity:Set[0]
+		Source:Set[""]
 	}
 }
 
@@ -82,13 +86,13 @@ objectdef obj_Cargo inherits obj_State
 	{
 		switch ${location} 
 		{
-			case SHIP
+			case Ship
 				Me.Ship:GetCargo[CargoList]
 				break
 			case SHIPCORPORATEHANGAR
 				Me.Ship:GetCorpHangarsCargo[CargoList]
 				break
-			case SHIPOREHOLD
+			case OreHold
 				Me.Ship:GetOreHoldCargo[CargoList]
 				break
 			case CONTAINERCORPORATEHANGAR
@@ -400,7 +404,7 @@ objectdef obj_Cargo inherits obj_State
 			This:QueueState["Process"]
 		}
 	}
-	method Unload(string arg_Query, int arg_Quantity = 0)
+	method Unload(string arg_Query, int arg_Quantity = 0, string arg_Source = "Ship")
 	{
 		if 	${This.BuildAction.Bookmark.Length} == 0 || \
 			${This.BuildAction.LocationType.Length} == 0
@@ -409,7 +413,7 @@ objectdef obj_Cargo inherits obj_State
 			return
 		}
 		
-		This.CargoQueue:Queue[${This.BuildAction.Bookmark}, Unload, ${This.BuildAction.LocationType}, ${This.BuildAction.LocationSubtype}, ${This.BuildAction.Container}, ${arg_Query}, ${arg_Quantity}]
+		This.CargoQueue:Queue[${This.BuildAction.Bookmark}, Unload, ${This.BuildAction.LocationType}, ${This.BuildAction.LocationSubtype}, ${This.BuildAction.Container}, ${arg_Query}, ${arg_Quantity}, ${arg_Source}]
 		This.Processing:Set[TRUE]
 		if ${This.IsIdle}
 		{
@@ -582,7 +586,7 @@ objectdef obj_Cargo inherits obj_State
 						EVEWindow[ByName, Inventory]:MakeChildActive[${Container}]
 						return FALSE
 					}
-					Cargo:PopulateCargoList[SHIP]
+					Cargo:PopulateCargoList[${This.CargoQueue.Peek.Source}]
 					Cargo:Filter[${This.CargoQueue.Peek.QueryString}]
 					Cargo:MoveCargoList[Container, ${This.CargoQueue.Peek.LocationSubtype}, ${Container}, ${This.CargoQueue.Peek.Quantity}]
 					return TRUE
@@ -602,7 +606,7 @@ objectdef obj_Cargo inherits obj_State
 			return TRUE
 		}
 		
-		Cargo:PopulateCargoList[SHIP]
+		Cargo:PopulateCargoList[${This.CargoQueue.Peek.Source}]
 		Cargo:Filter[${This.CargoQueue.Peek.QueryString}]
 		Cargo:MoveCargoList[${This.CargoQueue.Peek.LocationType}, ${This.CargoQueue.Peek.LocationSubtype}, ${Container}, ${This.CargoQueue.Peek.Quantity}]
 		return TRUE
