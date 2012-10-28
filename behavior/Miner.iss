@@ -308,6 +308,7 @@ objectdef obj_Miner inherits obj_State
 		{
 			Dropoff_Type:Set[Container]
 			Bookmark:Set[${Config.MiningSystem}]
+			
 		}
 		Cargo:At[${Bookmark},${Config.Dropoff_Type},${Config.Dropoff_SubType}, ${Config.Container_Name}]:Unload["", 0, ${Source}]
 		return TRUE
@@ -386,8 +387,8 @@ objectdef obj_Miner inherits obj_State
 		if ${Move.SavedSpotExists}
 		{
 			Move:GotoSavedSpot
-			This:InsertState["Traveling", 2000]
 			This:InsertState["RemoveSavedSpot"]
+			This:InsertState["Traveling", 2000]
 			return TRUE
 		}
 		
@@ -478,6 +479,7 @@ objectdef obj_Miner inherits obj_State
 	
 	member:bool RemoveSavedSpot()
 	{
+		echo Removing Save spot
 		Move:RemoveSavedSpot
 		return TRUE
 	}
