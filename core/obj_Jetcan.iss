@@ -119,7 +119,8 @@ objectdef obj_Jetcan inherits obj_State
 					TargetIterator.Value:OpenCargo
 					return FALSE
 				}
-				if ${Math.Calc[${EVEWindow[ByName, Inventory].ChildCapacity[${TargetIterator.Value}]} - ${EVEWindow[ByName, Inventory].ChildUsedCapacity[${TargetIterator.Value}]}]} > 1000
+				echo ${EVEWindow[ByName, Inventory].ChildCapacity[${TargetIterator.Value}]} - ${EVEWindow[ByName, Inventory].ChildUsedCapacity[${TargetIterator.Value}]} > 1000
+				if ${EVEWindow[ByName, Inventory].ChildCapacity[${TargetIterator.Value}]} - ${EVEWindow[ByName, Inventory].ChildUsedCapacity[${TargetIterator.Value}]} > 1000
 				{
 					; if !${EVEWindow[ByItemID, ${TargetIterator.Value}](exists)}
 					; {
