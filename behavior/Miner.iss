@@ -530,13 +530,6 @@ objectdef obj_Miner inherits obj_State
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	
 
 
 	
