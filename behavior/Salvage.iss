@@ -164,7 +164,7 @@ objectdef obj_Salvage inherits obj_State
 					if ${BookmarkIterator.Value.Created.AsInt64} + 72000000000 < ${EVETime.AsInt64}
 					{
 						UI:["Salvager", "Removing expired bookmark - ${BookmarkIterator.Value.Label}", "o", TRUE]
-						BookmarkIterator.Value: Remove
+						BookmarkIterator.Value:Remove
 						return FALSE
 					}
 					if ${BookmarkIterator.Value.Created.AsInt64} < ${BookmarkTime} || ${BookmarkTime} == 0
@@ -199,7 +199,7 @@ objectdef obj_Salvage inherits obj_State
 					if ${BookmarkIterator.Value.Created.AsInt64} + 72000000000 < ${EVETime.AsInt64}
 					{
 						UI:["Salvager", "Removing expired bookmark - ${BookmarkIterator.Value.Label}", "o", TRUE]
-						BookmarkIterator.Value: Remove
+						BookmarkIterator.Value:Remove
 						return FALSE
 					}
 					if ${BookmarkIterator.Value.Created.AsInt64} < ${BookmarkTime} || ${BookmarkTime} == 0
