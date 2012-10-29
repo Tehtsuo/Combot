@@ -364,6 +364,13 @@ objectdef obj_Hauler inherits obj_State
 			CurrentCan:Set[-1]
 		}
 		
+		if ${Entity[${CurrentCan}].GroupID} == GROUP_WRECK && ${Entity[${CurrentCan}].IsWreckEmpty}
+		{
+			Ship.ModuleList_TractorBeams:Deactivate[${CurrentCan}]
+			Entity[${CurrentCan}]:UnlockTarget
+			CurrentCan:Set[-1]
+		}
+		
 		if ${OOR_Cans.TargetList.Used} > 0 && ${CurrentCan.Equal[-1]}
 		{
 			CurrentCan:Set[${OOR_Cans.TargetList.Get[1].ID}]
