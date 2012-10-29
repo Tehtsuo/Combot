@@ -258,10 +258,6 @@ objectdef obj_Salvage inherits obj_State
 
 	member:bool Traveling()
 	{
-		if !${Client.InSpace}
-		{
-			return TRUE
-		}
 		if ${Cargo.Processing} || ${Move.Traveling} || ${Me.ToEntity.Mode} == 3
 		{
 			return FALSE
