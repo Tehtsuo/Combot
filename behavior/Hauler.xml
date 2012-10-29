@@ -271,6 +271,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 												{
 													case Jetcan
 														This:AddItem[Fleet Jetcan]
+														This:AddItem[Fleet Jetcan(Pop All)]
 														break
 													case Corporation Hangar
 														This:AddItem[Corporation Folder 1]
@@ -400,6 +401,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 															UIElement[PickupContainer@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
 														}
 														UIElement[PickupSubType@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Fleet Jetcan]
+														UIElement[PickupSubType@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Fleet Jetcan(Pop All)]
 														UIElement[PickupSubType@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler].ItemByText[${Script[ComBot].VariableScope.Hauler.Config.PickupSubType}]:Select
 														UIElement[PickupSubType@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
 														UIElement[PickupSubTypeTitle@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
@@ -477,6 +479,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 															UIElement[PickupContainer@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
 														}
 														UIElement[PickupSubType@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Fleet Jetcan]
+														UIElement[PickupSubType@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Fleet Jetcan(Pop All)]
 														UIElement[PickupSubType@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler].ItemByText[${Script[ComBot].VariableScope.Hauler.Config.PickupSubType}]:Select
 														UIElement[PickupSubType@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
 														UIElement[PickupSubTypeTitle@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
@@ -1112,6 +1115,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 															{
 																case Jetcan
 																	This:AddItem[Fleet Jetcan]
+																	This:AddItem[Fleet Jetcan(Pop All)]
 																	break
 																case Corporation Hangar
 																	This:AddItem[Corporation Folder 1]
@@ -1241,6 +1245,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 																		UIElement[PickupContainer@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
 																	}
 																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Fleet Jetcan]
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Fleet Jetcan(Pop All)]
 																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler].ItemByText[${Script[ComBot].VariableScope.Hauler.Config.PickupSubType}]:Select
 																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
 																	UIElement[PickupSubTypeTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
@@ -1320,6 +1325,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 																		UIElement[PickupContainer@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
 																	}
 																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Fleet Jetcan]
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Fleet Jetcan(Pop All)]
 																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler].ItemByText[${Script[ComBot].VariableScope.Hauler.Config.PickupSubType}]:Select
 																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
 																	UIElement[PickupSubTypeTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show

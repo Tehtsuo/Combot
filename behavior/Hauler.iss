@@ -196,6 +196,11 @@ objectdef obj_Hauler inherits obj_State
 					This:QueueState["Traveling"]
 					This:QueueState["FleetJetcan"]
 					break
+				case Fleet Jetcan(Pop All)
+					Move:System[${EVE.Bookmark[${Config.Pickup}].SolarSystemID}]
+					This:QueueState["Traveling"]
+					This:QueueState["FleetJetcanPopAll"]
+					break
 			}
 		}
 		else
@@ -253,6 +258,36 @@ objectdef obj_Hauler inherits obj_State
 		}
 	}
 	
+	member:bool FleetJetcanPopAll()
+	{
+		if !${FleetMembers.Used}
+		{
+			Me.Fleet:GetMembers[FleetMembers]
+			FleetMembers:RemoveByQuery[${LavishScript.CreateQuery[ID == ${Me.CharID}]}]
+			FleetMembers:Collapse
+		}
+	
+		if ${FleetMembers.Get[1].ToEntity(exists)}
+		{
+			This:QueueState["PopulateTargetListAllCans", 2000]
+			This:QueueState["CheckTargetList", 50]
+			This:QueueState["LootCans", 1000, ${FleetMembers.Get[1].ToEntity.ID}]
+			This:QueueState["DepopulateTargetList", 2000]
+			This:QueueState["OpenCargoHold"]
+			This:QueueState["CheckCargoHold"]
+			FleetMembers:Remove[1]
+			FleetMembers:Collapse
+			return TRUE
+		}
+		else
+		{
+			Move:Fleetmember[${FleetMembers.Get[1].ID}, TRUE]
+			This:QueueState["Traveling"]
+			This:QueueState["FleetJetcan"]
+			return TRUE
+		}
+	}
+	
 	
 	
 	member:bool PopulateTargetList(int64 ID)
@@ -264,7 +299,28 @@ objectdef obj_Hauler inherits obj_State
 		OOR_Cans:ClearQueryString
 		OOR_Cans:AddQueryString[GroupID == GROUP_CARGOCONTAINER && OwnerID == ${CharID}]
 		OOR_Cans.DistanceTarget:Set[${ID}]
+		
+		OOR_Cans.MinRange:Set[LOOT_RANGE]
 
+		IR_Cans.AutoLock:Set[FALSE]
+		OOR_Cans.AutoLock:Set[FALSE]
+		
+		OOR_Cans:RequestUpdate
+		IR_Cans:RequestUpdate
+		
+		return TRUE
+	}
+	
+	member:bool PopulateTargetListAllCans()
+	{
+		IR_Cans:ClearQueryString
+		OOR_Cans:ClearQueryString
+		OOR_Cans:AddQueryString[GroupID == GROUP_CARGOCONTAINER && HaveLootRights]
+		
+		OOR_Cans.DistanceTarget:Set[${MyShip.ID}]
+		
+		OOR_Cans.MinRange:Set[0]
+		
 		IR_Cans.AutoLock:Set[FALSE]
 		OOR_Cans.AutoLock:Set[FALSE]
 		
