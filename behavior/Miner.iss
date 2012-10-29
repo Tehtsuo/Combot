@@ -304,7 +304,9 @@ objectdef obj_Miner inherits obj_State
 		if ${Drones.DronesInSpace}
 		{
 			Drones:Recall
-			return FALSE
+			This:InsertState["PrepareWarp"]
+			This:InsertState["Idle", 5000]
+			return TRUE
 		}
 		if ${Config.OrcaMode}
 		{
