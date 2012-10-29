@@ -109,9 +109,8 @@ objectdef obj_Salvage inherits obj_State
 		variable index:bookmark Bookmarks
 		variable iterator BookmarkIterator
 		variable string Target
-		variable string BookmarkTime="24:00"
+		variable int64 BookmarkTime=0
 		variable bool BookmarkFound
-		variable string BookmarkDate="9999.99.99"
 		variable int64 BookmarkCreator
 		variable iterator HoldOffIterator
 		variable index:int RemoveHoldOff
@@ -162,12 +161,16 @@ objectdef obj_Salvage inherits obj_State
 				while ${HoldOffIterator:Next(exists)}
 				if !${InHoldOff}
 				{
-					if (${BookmarkIterator.Value.TimeCreated.Compare[${BookmarkTime}]} < 0 && ${BookmarkIterator.Value.DateCreated.Compare[${BookmarkDate}]} <= 0) || ${BookmarkIterator.Value.DateCreated.Compare[${BookmarkDate}]} < 0
+					if ${BookmarkIterator.Value.Created} + 72000000000 < ${EVETime.AsInt64}
 					{
-						echo Next bookmark set - ${BookmarkIterator.Value} - ${BookmarkIterator.Value.JumpsTo} Jumps
+						UI:["Salvager", "Removing expired bookmark - ${BookmarkIterator.Value.Label}", "o", TRUE]
+						BookmarkIterator.Value: Remove
+						return FALSE
+					}
+					if ${BookmarkIterator.Value.Created} < ${BookmarkTime} || ${BookmarkTime} == 0
+					{
 						Target:Set[${BookmarkIterator.Value.Label}]
-						BookmarkTime:Set[${BookmarkIterator.Value.TimeCreated}]
-						BookmarkDate:Set[${BookmarkIterator.Value.DateCreated}]
+						BookmarkTime:Set[${BookmarkIterator.Value.Created.AsInt64}]
 						BookmarkCreator:Set[${BookmarkIterator.Value.CreatorID}]
 						BookmarkFound:Set[TRUE]
 					}
@@ -193,11 +196,16 @@ objectdef obj_Salvage inherits obj_State
 				while ${HoldOffIterator:Next(exists)}
 				if !${InHoldOff}
 				{
-					if (${BookmarkIterator.Value.TimeCreated.Compare[${BookmarkTime}]} < 0 && ${BookmarkIterator.Value.DateCreated.Compare[${BookmarkDate}]} <= 0) || ${BookmarkIterator.Value.DateCreated.Compare[${BookmarkDate}]} < 0
+					if ${BookmarkIterator.Value.Created} + 72000000000 < ${EVETime.AsInt64}
+					{
+						UI:["Salvager", "Removing expired bookmark - ${BookmarkIterator.Value.Label}", "o", TRUE]
+						BookmarkIterator.Value: Remove
+						return FALSE
+					}
+					if ${BookmarkIterator.Value.Created} < ${BookmarkTime} || ${BookmarkTime} == 0
 					{
 						Target:Set[${BookmarkIterator.Value.Label}]
-						BookmarkTime:Set[${BookmarkIterator.Value.TimeCreated}]
-						BookmarkDate:Set[${BookmarkIterator.Value.DateCreated}]
+						BookmarkTime:Set[${BookmarkIterator.Value.Created.AsInt64}]
 						BookmarkCreator:Set[${BookmarkIterator.Value.CreatorID}]
 						BookmarkFound:Set[TRUE]
 					}
