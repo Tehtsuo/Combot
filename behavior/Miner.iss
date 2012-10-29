@@ -623,7 +623,7 @@ objectdef obj_Miner inherits obj_State
 		}
 		else
 		{
-			EVE:QueryEntities[Roids]
+			EVE:QueryEntities[Roids, "GroupID==GROUP_HARVESTABLECLOUD || CategoryID==CATEGORYID_ORE"]
 			Roids:GetIterator[Roid]
 		}
 		if ${Config.OrcaMode}
