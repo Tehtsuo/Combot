@@ -161,13 +161,13 @@ objectdef obj_Salvage inherits obj_State
 				while ${HoldOffIterator:Next(exists)}
 				if !${InHoldOff}
 				{
-					if ${BookmarkIterator.Value.Created} + 72000000000 < ${EVETime.AsInt64}
+					if ${BookmarkIterator.Value.Created.AsInt64} + 72000000000 < ${EVETime.AsInt64}
 					{
 						UI:["Salvager", "Removing expired bookmark - ${BookmarkIterator.Value.Label}", "o", TRUE]
 						BookmarkIterator.Value: Remove
 						return FALSE
 					}
-					if ${BookmarkIterator.Value.Created} < ${BookmarkTime} || ${BookmarkTime} == 0
+					if ${BookmarkIterator.Value.Created.AsInt64} < ${BookmarkTime} || ${BookmarkTime} == 0
 					{
 						Target:Set[${BookmarkIterator.Value.Label}]
 						BookmarkTime:Set[${BookmarkIterator.Value.Created.AsInt64}]
@@ -196,13 +196,13 @@ objectdef obj_Salvage inherits obj_State
 				while ${HoldOffIterator:Next(exists)}
 				if !${InHoldOff}
 				{
-					if ${BookmarkIterator.Value.Created} + 72000000000 < ${EVETime.AsInt64}
+					if ${BookmarkIterator.Value.Created.AsInt64} + 72000000000 < ${EVETime.AsInt64}
 					{
 						UI:["Salvager", "Removing expired bookmark - ${BookmarkIterator.Value.Label}", "o", TRUE]
 						BookmarkIterator.Value: Remove
 						return FALSE
 					}
-					if ${BookmarkIterator.Value.Created} < ${BookmarkTime} || ${BookmarkTime} == 0
+					if ${BookmarkIterator.Value.Created.AsInt64} < ${BookmarkTime} || ${BookmarkTime} == 0
 					{
 						Target:Set[${BookmarkIterator.Value.Label}]
 						BookmarkTime:Set[${BookmarkIterator.Value.Created.AsInt64}]
