@@ -435,6 +435,7 @@ objectdef obj_TargetList inherits obj_State
 		Profiling:StartTrack["TargetList_PopulateList"]
 		This.TargetList:Clear
 		This.LockedTargetList:Clear
+		This.TargetLockPrioritys:Clear
 		
 		This:DeepCopyEntityIndex["This.TargetListBuffer", "This.TargetList"]
 		
@@ -444,13 +445,13 @@ objectdef obj_TargetList inherits obj_State
 		
 		This:DeepCopyEntityIndex["This.LockedTargetListBufferOOR", "This.LockedTargetList"]
 		
-		This:DeepCopyCollection["This.TargetLockPriorityBuffer", "This.TargetLockPriority"]
+		This:DeepCopyCollection["This.TargetLockPrioritysBuffer", "This.TargetLockPrioritys"]
 		
 		This.TargetListBuffer:Clear
 		This.TargetListBufferOOR:Clear
 		This.LockedTargetListBuffer:Clear
 		This.LockedTargetListBufferOOR:Clear
-		This.TargetLockPriorityBuffer:Clear
+		This.TargetLockPrioritysBuffer:Clear
 		AlreadyInList:Clear
 		Profiling:EndTrack
 		return TRUE
@@ -530,7 +531,6 @@ objectdef obj_TargetList inherits obj_State
 						{
 							if ${IPCExclusion.Element[${EntityIterator.Value.ID}](exists)}
 							{
-								TopLocks:Inc
 								IsTopLocked:Set[TRUE]
 							}
 						}
@@ -555,7 +555,7 @@ objectdef obj_TargetList inherits obj_State
 			}
 		}
 		
-		if ${NeedLock} && ${TopLock} && ${LockedAndLockingTargets.Used} >= ${MinLockCount}
+		if ${NeedLock} && ${LockTop} && ${LockedAndLockingTargets.Used} >= ${MinLockCount}
 		{
 			TargetLockPrioritys:GetIterator[LockIterator]
 			if ${LockIterator:First(exists)}
@@ -573,7 +573,9 @@ objectdef obj_TargetList inherits obj_State
 			if ${LowestPriority} < 1000
 			{
 				Entity[${LowestLock}]:UnlockTarget
-				return FALSE
+				This:InsertState["ManageLocks"]
+				This:InsertState["Idle", 1000]
+				return TRUE
 			}
 		}
 		

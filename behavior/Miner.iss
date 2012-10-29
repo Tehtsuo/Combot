@@ -629,8 +629,8 @@ objectdef obj_Miner inherits obj_State
 		if ${Config.OrcaMode}
 		{
 			Asteroids.AutoLock:Set[FALSE]
-			Asteroids.AutoRelock:Set[FALSE]
-			Asteroids.AutoRelockPriority:Set[FALSE]
+			Asteroids.LockTop:Set[FALSE]
+			
 			relay all -event ComBot_Orca_InBelt TRUE
 			relay all -event ComBot_Orca_Cargo ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipCorpHangar]}
 
@@ -653,8 +653,8 @@ objectdef obj_Miner inherits obj_State
 		else
 		{
 			Asteroids.AutoLock:Set[TRUE]
-			Asteroids.AutoRelock:Set[TRUE]
-			Asteroids.AutoRelockPriority:Set[TRUE]
+			Asteroids.LockTop:Set[TRUE]
+			
 			
 			if ${Roid:First(exists)}
 			{
