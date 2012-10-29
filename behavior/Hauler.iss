@@ -315,7 +315,7 @@ objectdef obj_Hauler inherits obj_State
 	{
 		IR_Cans:ClearQueryString
 		OOR_Cans:ClearQueryString
-		OOR_Cans:AddQueryString[((GroupID == GROUP_CARGOCONTAINER) || ((GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && !IsWreckEmpty)) && HaveLootRights]
+		OOR_Cans:AddQueryString[((GroupID == GROUP_CARGOCONTAINER) || (GroupID==GROUP_WRECK && !IsWreckEmpty)) && HaveLootRights]
 		
 		OOR_Cans.DistanceTarget:Set[${MyShip.ID}]
 		
