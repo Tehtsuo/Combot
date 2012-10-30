@@ -78,7 +78,7 @@ objectdef obj_UndockWarp inherits obj_State
 		}
 		if ${EVE.IsProgressWindowOpen}
 		{
-			if ${EVE.ProgressWindowTitle.Equal[Prepare to undock]} || ${EVE.ProgressWindowTitle.Equal[Entering Space]}
+			if ${EVE.ProgressWindowTitle.Equal[Prepare to undock]}
 			{
 				UI:Update["UndockWarp", "Triggering warp to undock bookmark, if available", "y"]
 				Client.Undock:Set[TRUE]
