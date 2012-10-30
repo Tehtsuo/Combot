@@ -251,6 +251,7 @@ objectdef obj_Miner inherits obj_State
 	
 	member:bool CheckCargoHold()
 	{
+		Profiling:StartTrack["Miner: CheckCargoHold"]
 		if 	${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]} >= ${Config.Threshold} * .01 && \
 			${MyShip.HasOreHold} && \
 			!${Config.Dropoff_Type.Equal[No Dropoff]} && \
@@ -263,6 +264,7 @@ objectdef obj_Miner inherits obj_State
 			This:QueueState["Traveling"]
 			This:QueueState["OpenCargoHold"]
 			This:QueueState["CheckCargoHold"]
+			Profiling:EndTrack
 			return TRUE
 		}
 		elseif ${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity} >= ${Config.Threshold} * .01 && \
@@ -277,6 +279,7 @@ objectdef obj_Miner inherits obj_State
 			This:QueueState["Traveling"]
 			This:QueueState["OpenCargoHold"]
 			This:QueueState["CheckCargoHold"]
+			Profiling:EndTrack
 			return TRUE
 		}
 		elseif ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipCorpHangar]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipCorpHangar]} >= ${Config.Threshold} * .01 && \
@@ -290,6 +293,7 @@ objectdef obj_Miner inherits obj_State
 			This:QueueState["Traveling"]
 			This:QueueState["OpenCargoHold"]
 			This:QueueState["CheckCargoHold"]
+			Profiling:EndTrack
 			return TRUE
 		}
 		else
@@ -301,17 +305,20 @@ objectdef obj_Miner inherits obj_State
 			This:QueueState["RequestUpdate"]
 			This:QueueState["Updated"]
 			This:QueueState["CheckForWork"]
+			Profiling:EndTrack
 			return TRUE
 		}
 	}
 	
 	member:bool PrepareWarp()
 	{
+		Profiling:StartTrack["Miner: PrepareWarp"]
 		if ${Drones.DronesInSpace}
 		{
 			Drones:Recall
 			This:InsertState["PrepareWarp"]
 			This:InsertState["Idle", 5000]
+			Profiling:EndTrack
 			return TRUE
 		}
 		if ${Config.OrcaMode}
@@ -323,11 +330,13 @@ objectdef obj_Miner inherits obj_State
 			Move:SaveSpot
 		}
 		Asteroids:ClearExclusions
+		Profiling:EndTrack
 		return TRUE
 	}
 	
 	member:bool Dropoff(string Source)
 	{
+		Profiling:StartTrack["Miner: Dropoff"]
 		variable string Dropoff_Type=${Config.Dropoff_Type}
 		variable string Bookmark=${Config.Dropoff}
 		if ${Dropoff_Type.Equal[Orca]}
@@ -340,26 +349,32 @@ objectdef obj_Miner inherits obj_State
 			}
 			else
 			{
+				Profiling:EndTrack
 				return TRUE
 			}
 		}
 		Cargo:At[${Bookmark},${Config.Dropoff_Type},${Config.Dropoff_SubType}, ${Config.Container_Name}]:Unload["", 0, ${Source}]
+		Profiling:EndTrack
 		return TRUE
 	}
 		
 	
 	member:bool Traveling()
 	{
+		Profiling:StartTrack["Miner: Traveling"]
 		if ${Cargo.Processing} || ${Move.Traveling} || ${Me.ToEntity.Mode} == 3
 		{
+			Profiling:EndTrack
 			return FALSE
 		}
+		Profiling:EndTrack
 		return TRUE
 	}
 	
 	
 	member:bool GoToMiningSystem()
 	{
+		Profiling:StartTrack["Miner: GoToMiningSystem"]
 		if !${EVE.Bookmark[${Config.MiningSystem}](exists)}
 		{
 			UI:Update["obj_Miner", "No mining system defined!  Check your settings", "r"]
@@ -368,15 +383,18 @@ objectdef obj_Miner inherits obj_State
 		{
 			Move:System[${EVE.Bookmark[${Config.MiningSystem}].SolarSystemID}]
 		}
+		Profiling:EndTrack
 		return TRUE
 	}
 	
 	member:bool Undock()
 	{
+		Profiling:StartTrack["Miner: Undock"]
 		if !${Client.InSpace}
 		{
 			Move:Undock
 		}
+		Profiling:EndTrack
 		return TRUE
 	}
 	
@@ -387,7 +405,9 @@ objectdef obj_Miner inherits obj_State
 	
 	member:bool RequestUpdate()
 	{
+		Profiling:StartTrack["Miner: RequestUpdate"]
 		Asteroids:RequestUpdate
+		Profiling:EndTrack
 		return TRUE
 	}
 	
@@ -398,6 +418,7 @@ objectdef obj_Miner inherits obj_State
 	
 	member:bool CheckForWork()
 	{
+		Profiling:StartTrack["Miner: CheckForWork"]
 		if !${Asteroids.TargetList.Used}
 		{
 			This:QueueState["MoveToBelt"]
@@ -411,16 +432,19 @@ objectdef obj_Miner inherits obj_State
 			This:QueueState["OpenCargoHold"]
 			This:QueueState["CheckCargoHold"]
 		}
+		Profiling:EndTrack
 		return TRUE
 	}
 	
 	
 	member:bool MoveToBelt()
 	{
+		Profiling:StartTrack["Miner: MoveToBelt"]
 		if ${Config.Tether} && ${Local[${Config.TetherName}](exists)}
 		{
 			Move:Fleetmember[${Local[${Config.TetherName}].ID}]
 			This:InsertState["Traveling"]
+			Profiling:EndTrack
 			return TRUE
 		}
 		
@@ -429,6 +453,7 @@ objectdef obj_Miner inherits obj_State
 			Move:GotoSavedSpot
 			This:InsertState["RemoveSavedSpot"]
 			This:InsertState["Traveling", 2000]
+			Profiling:EndTrack
 			return TRUE
 		}
 		
@@ -436,6 +461,7 @@ objectdef obj_Miner inherits obj_State
 		{
 			Move:Fleetmember[${Local[${Config.Container_Name}].ID}]
 			This:InsertState["Traveling"]
+			Profiling:EndTrack
 			return TRUE
 		}
 		
@@ -479,6 +505,7 @@ objectdef obj_Miner inherits obj_State
 			BookmarkIndex:Collapse
 			
 			This:InsertState["Traveling"]
+			Profiling:EndTrack
 			return TRUE
 		}
 		else
@@ -511,13 +538,13 @@ objectdef obj_Miner inherits obj_State
 			Belts:Remove[1]
 			Belts:Collapse
 			This:InsertState["Traveling"]
+			Profiling:EndTrack
 			return TRUE
 		}
 	}	
 	
 	member:bool RemoveSavedSpot()
 	{
-		echo Removing Save spot
 		Move:RemoveSavedSpot
 		return TRUE
 	}
@@ -535,9 +562,11 @@ objectdef obj_Miner inherits obj_State
 
 	member:bool Mine()
 	{
+		Profiling:StartTrack["Miner: MoveToBelt"]
 		
 		if ${Me.ToEntity.Mode} == 3
 		{
+			Profiling:EndTrack
 			return FALSE
 		}
 
@@ -666,13 +695,14 @@ objectdef obj_Miner inherits obj_State
 			This:InsertState["ActivateLasers", 2000]
 		}
 		
+		Profiling:EndTrack
 		return TRUE
 	}
 
 
 	member:bool ActivateLasers()
 	{
-		Profiling:StartTrack["Miner_ActivateLasers"]
+		Profiling:StartTrack["Miner: ActivateLasers"]
 		if  ${Ship.ModuleList_MiningLaser.ActiveCount} == ${Ship.ModuleList_MiningLaser.Count}
 		{
 			Profiling:EndTrack
@@ -788,6 +818,8 @@ objectdef obj_MinerUI inherits obj_State
 	
 	member:bool UpdateBookmarkLists()
 	{
+		Profiling:StartTrack["Miner: UI"]
+
 		variable index:bookmark Bookmarks
 		variable iterator BookmarkIterator
 
@@ -826,6 +858,7 @@ objectdef obj_MinerUI inherits obj_State
 			}
 			while ${BookmarkIterator:Next(exists)}
 			
+		Profiling:EndTrack
 		return FALSE
 	}
 
