@@ -72,6 +72,8 @@ objectdef obj_Hauler inherits obj_State
 	variable obj_HaulerUI LocalUI
 
 	variable index:obj_CargoAction HaulQueue
+	variable index:int64 AssetStations
+	variable index:bool AssetStationsEnabled
 	variable float OrcaCargo
 	variable index:fleetmember FleetMembers
 	variable int64 CurrentCan
@@ -556,6 +558,26 @@ objectdef obj_Hauler inherits obj_State
 		This.HaulQueue:Remove[${ID:Inc}]
 		This.HaulQueue:Collapse
 		LocalUI:UpdateQueueList
+	}
+	
+	method PopulateAssets()
+	{
+		echo Populate
+		variable iterator Station
+		Me:GetStationsWithAssets[AssetStations]
+		echo ${AssetStations.Used}
+		AssetStations:GetIterator[Station]
+		if ${Station:First(exists)}
+		do
+		{
+			echo ${Station.Value.ID}
+			AssetStationsEnabled:Insert[TRUE]
+			UIElement[PickupStations@PickupFrame@Assets@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[${EVE.Station[${Station.Value.ID}]}]
+			UIElement[PickupStations@PickupFrame@Assets@HaulerTab@Hauler_Frame@ComBot_Hauler].ItemByText[${EVE.Station[${Station.Value.ID}]}]:Select
+		}
+		while ${Station:Next(exists)}
+		
+		
 	}
 	
 	
