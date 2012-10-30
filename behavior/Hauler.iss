@@ -431,13 +431,13 @@ objectdef obj_Hauler inherits obj_State
 				Entity[${CurrentCan}]:OpenCargo
 				return FALSE
 			}
-			if !${EVEWindow[ByItemID, ${CurrentCan}](exists)}
-			{
-				EVEWindow[ByName, Inventory]:MakeChildActive[${CurrentCan}]
-				return FALSE
-			}
-			UI:Update["obj_Hauler", "Looting - ${Entity[${CurrentCan}].Name}", "g"]
+			; if !${EVEWindow[ByItemID, ${CurrentCan}](exists)}
+			; {
+				; EVEWindow[ByName, Inventory]:MakeChildActive[${CurrentCan}]
+				; return FALSE
+			; }
 			Cargo:PopulateCargoList[Container, ${CurrentCan}]
+			
 			if ${EVEWindow[ByItemID, ${CurrentCan}].UsedCapacity} > ${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}]}
 			{
 				if ${PopCan}
