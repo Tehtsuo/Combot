@@ -87,9 +87,15 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					<Height>20</Height>
 					<Text>Close</Text>
 					<OnLeftClick>
-						if !${EVE.Bookmark[${Script[ComBot].VariableScope.Miner.Config.Dropoff}](exists)}
+						switch ${Script[ComBot].VariableScope.Miner.Config.Dropoff_Type}
 						{
-							Script[ComBot].VariableScope.UI:Update["obj_Miner", "Unable to verify Dropoff bookmark", "r"]
+							case Corporate Hangar
+							case Personal Hangar
+								if 	!${EVE.Bookmark[${Script[ComBot].VariableScope.Miner.Config.Dropoff}](exists)}
+								{
+									Script[ComBot].VariableScope.UI:Update["obj_Miner", "Unable to verify Dropoff bookmark", "r"]
+								}
+								break
 						}
 						if !${EVE.Bookmark[${Script[ComBot].VariableScope.Miner.Config.MiningSystem}](exists)}
 						{
