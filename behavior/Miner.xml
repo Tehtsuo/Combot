@@ -1628,7 +1628,31 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<OnMouseExit>
 									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[""]
 								</OnMouseExit>
-							</Checkbox>							
+							</Checkbox>
+							<Checkbox name='DontMove'>
+								<X>34%</X>
+								<Y>85%</Y>
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Text>Don't Move</Text>
+								<OnLoad>
+									if ${Script[ComBot].VariableScope.Miner.Config.DontMove}
+									{
+										This:SetChecked
+									}
+									This:SetZOrder[movetop]
+								</OnLoad>
+								<OnLeftClick>
+									Script[ComBot].VariableScope.Miner.Config:SetDontMove[${This.Checked}]
+									This:SetZOrder[movetop]
+								</OnLeftClick>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText["When checked, ComBot will not move to approach asteroids."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[""]
+								</OnMouseExit>
+							</Checkbox>									
 						</Children>
 					</Frame>
 

@@ -126,6 +126,8 @@ objectdef obj_Configuration_Miner
 		This.CommonRef:AddSetting[Dropoff,""]
 		This.CommonRef:AddSetting[TetherName,""]
 		
+		This.CommonRef:AddSetting[DontMove,FALSE]
+		
 	}
 	
 	Setting(string, MiningSystem, SetMiningSystem)	
@@ -146,6 +148,8 @@ objectdef obj_Configuration_Miner
 	Setting(int, Threshold, SetThreshold)	
 	Setting(int, MaxLaserLocks, SetMaxLaserLocks)
 	Setting(string, JetcanPrefix, SetJetcanPrefix)
+	
+	Setting(bool, DontMove, SetDontMove)
 
 }
 
@@ -166,6 +170,7 @@ objectdef obj_Miner inherits obj_State
 		Event[ComBot_Orca_InBelt]:AttachAtom[This:OrcaInBelt]
 		PulseFrequency:Set[500]
 		Asteroids.LockOutOfRange:Set[FALSE]
+		Asteroids.MaxRange:Set[${Ship.ModuleList_MiningLaser.Range}]
 		Asteroids:SetIPCExclusion["MiningTargets"]
 		Asteroids.ForceLockExclusion:Set[TRUE]
 		DynamicAddBehavior("Miner", "Miner")
@@ -599,6 +604,8 @@ objectdef obj_Miner inherits obj_State
 			Asteroids.DistanceTarget:Set[${MyShip.ID}]
 		}
 		
+		
+		
 		variable index:entity Roids
 		variable iterator Roid
 		if ${Config.ApproachPriority}
@@ -617,20 +624,22 @@ objectdef obj_Miner inherits obj_State
 			
 			relay all -event ComBot_Orca_InBelt TRUE
 			relay all -event ComBot_Orca_Cargo ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipCorpHangar]}
-
-			if ${Roid:First(exists)}
+			if !${Config.DontMove}
 			{
-				if ${Config.IceMining}
+				if ${Roid:First(exists)}
 				{
-					Move:Approach[${Roid.Value.ID}, 10000]
-				}
-				elseif ${Config.GasHarvesting}
-				{
-					Move:Approach[${Roid.Value.ID}, 1000]
-				}
-				else
-				{
-					Move:Approach[${Roid.Value.ID}, 8000]
+					if ${Config.IceMining}
+					{
+						Move:Approach[${Roid.Value.ID}, 10000]
+					}
+					elseif ${Config.GasHarvesting}
+					{
+						Move:Approach[${Roid.Value.ID}, 1000]
+					}
+					else
+					{
+						Move:Approach[${Roid.Value.ID}, 8000]
+					}
 				}
 			}
 		}
@@ -639,12 +648,14 @@ objectdef obj_Miner inherits obj_State
 			Asteroids.AutoLock:Set[TRUE]
 			Asteroids.LockTop:Set[TRUE]
 			
-			
-			if ${Roid:First(exists)}
+			if !${Config.DontMove}
 			{
-				if ${Roid.Value.Distance} > ${Math.Calc[${Ship.ModuleList_MiningLaser.Range} * (3/4)]}
+				if ${Roid:First(exists)}
 				{
-					Move:Approach[${Roid.Value.ID}, ${Math.Calc[${Ship.ModuleList_MiningLaser.Range} * (1/2)]}]
+					if ${Roid.Value.Distance} > ${Math.Calc[${Ship.ModuleList_MiningLaser.Range} * (3/4)]}
+					{
+						Move:Approach[${Roid.Value.ID}, ${Math.Calc[${Ship.ModuleList_MiningLaser.Range} * (1/2)]}]
+					}
 				}
 			}
 		}
