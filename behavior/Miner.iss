@@ -478,6 +478,8 @@ objectdef obj_Miner inherits obj_State
 		}
 		else
 		{
+			variable string beltsubstring
+		
 			if !${Client.InSpace}
 			{
 				Move:Undock
