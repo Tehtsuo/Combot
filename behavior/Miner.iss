@@ -570,8 +570,6 @@ objectdef obj_Miner inherits obj_State
 			return FALSE
 		}
 
-		Asteroids:RequestUpdate
-		
 		variable int MaxTarget = ${MyShip.MaxLockedTargets}
 		if ${Me.MaxLockedTargets} < ${MaxTarget}
 		{
@@ -692,6 +690,7 @@ objectdef obj_Miner inherits obj_State
 
 		if ${Ship.ModuleList_MiningLaser.ActiveCount} < ${Ship.ModuleList_MiningLaser.Count}
 		{
+			Asteroids:RequestUpdate
 			This:InsertState["ActivateLasers", 2000]
 		}
 		
