@@ -489,7 +489,8 @@ objectdef obj_Miner inherits obj_State
 			if ${Belts.Used} == 0
 			{
 				EVE:QueryEntities[Belts, "GroupID = GROUP_ASTEROIDBELT"]
-
+				echo Loaded ${Belts.Used} belts
+				
 				if ${Config.IceMining}
 				{
 					beltsubstring:Set["ICE FIELD"]
@@ -500,6 +501,7 @@ objectdef obj_Miner inherits obj_State
 				}
 				
 				Belts:RemoveByQuery[${LavishScript.CreateQuery[Name =- "${beltsubstring}"]}, FALSE]
+				echo After filter, ${Belts.Used} belts remain
 			}
 
 			Move:Object[${Belts.Get[1].ID}]
