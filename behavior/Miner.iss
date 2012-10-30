@@ -157,6 +157,7 @@ objectdef obj_Miner inherits obj_State
 	variable obj_TargetList Asteroids
 	variable bool WarpToOrca=FALSE
 	variable index:bookmark BookmarkIndex
+	variable index:entity Belts
 
 	method Initialize()
 	{
@@ -482,37 +483,26 @@ objectdef obj_Miner inherits obj_State
 				Move:Undock
 				return FALSE
 			}
-			variable int curBelt
-			variable index:entity Belts
-			variable string beltsubstring
-			variable int TryCount
-			if ${Config.IceMining}
-			{
-				beltsubstring:Set["ICE FIELD"]
-			}
-			else
-			{
-				beltsubstring:Set["ASTEROID BELT"]
-			}
 
-			EVE:QueryEntities[Belts, "GroupID = GROUP_ASTEROIDBELT"]
-			Belts:GetIterator[BeltIterator]
-
-			do
+			if ${Belts.Used} == 0
 			{
-				curBelt:Set[${Math.Rand[${Belts.Used}]:Inc[1]}]
-				TryCount:Inc
-				if ${TryCount} > ${Math.Calc[${Belts.Used} * 10]}
+				EVE:QueryEntities[Belts, "GroupID = GROUP_ASTEROIDBELT"]
+
+				if ${Config.IceMining}
 				{
-					UI:Update["obj_Miner", "All belts empty!", "r"]
-
-					return TRUE
+					beltsubstring:Set["ICE FIELD"]
 				}
+				else
+				{
+					beltsubstring:Set["ASTEROID BELT"]
+				}
+				
+				Belts:RemoveByQuery[${LavishScript.CreateQuery[Name =- "${beltsubstring}"]}, FALSE]
 			}
-			while ( !${Belts[${curBelt}].Name.Find[${beltsubstring}](exists)} || \
-					${This.IsBeltEmpty[${Belts[${curBelt}].Name}]} )
 
-			Move:Object[${Entity[${Belts[${curBelt}].ID}]}]
+			Move:Object[${Entity[${Belts.Get[1].ID}]}]
+			Belts:Remove[1]
+			Belts:Collapse
 			This:InsertState["Traveling"]
 			return TRUE
 		}
