@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ISUI>
+
+<!--
+
+ComBot  Copyright © 2012  Tehtsuo and Vendan
+
+This file is part of ComBot.
+
+ComBot is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ComBot is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+
+	<template name='Information.Font'>	
+		<Name>Terminal</Name>
+		<Size>8</Size>
+		<Color>FFFFFFFF</Color>
+	</template>	
+
+	<window name='ComBot_UndockWarp'>
+		<Visible>1</Visible>
+		<BackGroundColor></BackGroundColor>
+		<Border>0</Border>
+		<X>200</X>
+		<Y>300</Y>
+		<Width>800</Width>
+		<Height>600</Height>
+		<TitleBar>
+			<Width>100%</Width>
+			<Height>20</Height>
+			<Border>0</Border>
+			<BackgroundColor>FF000000</BackgroundColor>
+			<Children>
+				<Text name='ComBot_UndockWarp_TitleBar_Title'>
+					<X>0</X>
+					<Y>3</Y>
+					<Width>100%</Width>
+					<Height>20</Height>
+					<Alignment>Center</Alignment>
+					<Text>UndockWarp Configuration</Text>
+				</Text>
+				<button	Name='Close'>
+					<X>r40</X>
+					<Y>0</Y>
+					<Width>40</Width>
+					<Height>20</Height>
+					<Text>Close</Text>
+					<OnLeftClick>
+						ui -unload "&filepath;/UndockWarp"
+					</OnLeftClick>
+				</button>
+			</Children>
+		</TitleBar>
+		<Children name="ComBot_UndockWarp_Children">
+			<Frame name="ComBot_UndockWarp_Frame">
+				<X>0</X>
+				<Y>5</Y>
+				<Width>100%</Width>
+				<Height>100%</Height>
+				<BackgroundColor>FF000000</BackgroundColor>
+				<Border>1</Border>
+				<BorderColor>FFFFFFFF</BorderColor>
+				<Children name="ComBot_UndockWarp_Frame_Children">
+					<Text name='obj_UndockWarpInformation'> 
+						<Font template='Information.Font' />
+						<X>1%</X> 
+						<Y>1%</Y> 
+						<Width>98%</Width> 
+						<Height>18%</Height> 
+						<Wrap />
+						<Text>UndockWarp is a MiniMode to perform a warp to an undock bookmark automatically.</Text>
+					</Text>
+					<Text name='UndockSuffixTitle'>
+						<X>1%</X>
+						<Y>41%</Y>
+						<Width>10%</Width> 
+						<Height>6%</Height> 
+						<Text>Substring:</Text>
+					</Text>
+					<Textentry name='UndockSuffix'>
+						<X>10%</X>
+						<Y>40%</Y>
+						<Width>38%</Width> 
+						<Height>6%</Height> 
+						<OnLoad>
+							This:SetText[${Script[ComBot].VariableScope.UndockWarp.Config.substring}]
+						</OnLoad>
+						<OnChange>
+							Script[ComBot].VariableScope.UndockWarp.Config:Setsubstring[${This.Text}]
+						</OnChange>
+					</Textentry>
+				</Children>
+			</Frame>
+		</Children>
+	</window>
+	
+</ISUI>

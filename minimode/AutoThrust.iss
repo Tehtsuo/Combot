@@ -119,7 +119,6 @@ objectdef obj_AutoThrust inherits obj_State
 				Ship.ModuleList_AB_MWD:Deactivate
 				return FALSE
 			}
-			echo ${Me.ToEntity.Mode}
 			if 	${Me.ToEntity.Mode} == 4
 			{
 				TurnOff:Set[FALSE]

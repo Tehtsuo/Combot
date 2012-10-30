@@ -155,6 +155,16 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							Script[ComBot].VariableScope.ComBot:Pause
 						}
 					</OnLeftClick>
+					<OnRightClick>
+						if ${Script[ComBot].VariableScope.ComBot.Paused}
+						{
+							relay all Script[ComBot].VariableScope.ComBot:Resume
+						}
+						else
+						{
+							relay all Script[ComBot].VariableScope.ComBot:Pause
+						}
+					</OnRightClick>
 				</button>
 			</Children>
 		</TitleBar>
@@ -252,6 +262,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								This:SetLeftClickThru[TRUE]
 							</OnLoad>
 						</frame>					
+
 						<Checkbox name='Disable3D'>
 							<X>1%</X>
 							<Y>50%</Y>

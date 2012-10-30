@@ -74,6 +74,12 @@ objectdef obj_Move inherits obj_State
 		This:ActivateAutoPilot
 	}
 
+	method Undock()
+	{
+		EVE:Execute[CmdExitStation]
+		Client:Wait[10000]
+	}	
+
 	method DockAtStation(int64 StationID)
 	{
 		if ${Entity[${StationID}](exists)}
@@ -89,15 +95,6 @@ objectdef obj_Move inherits obj_State
 			UI:Log["Redacted:  obj_Move - Station Requested does not exist.  StationID: XXXXXXX"]
 		}
 	}	
-	
-	method Undock()
-	{
-			EVE:Execute[CmdExitStation]
-			Client:Wait[10000]
-	}	
-	
-	
-	
 	
 	
 	

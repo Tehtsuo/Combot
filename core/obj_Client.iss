@@ -25,6 +25,7 @@ objectdef obj_Client
 	variable int NextPulse
 	
 	variable bool Ready=TRUE
+	variable bool Undock=FALSE
 	variable int64 SystemID=${Me.SolarSystemID}
 	
 	method Initialize()
@@ -55,7 +56,6 @@ objectdef obj_Client
 		{
 			if ${Me.SolarSystemID} != ${SystemID}
 			{
-				echo SolarSystemID:  ${Me.SolarSystemID}
 				SystemID:Set[${Me.SolarSystemID}]
 				This:Wait[5000]
 				return
@@ -65,6 +65,14 @@ objectdef obj_Client
 
 			This:ManageGraphics
 			
+			if ${This.Undock}
+			{
+				if ${This.InSpace}
+				{
+					This:Undock
+				}
+			}
+
 			if ${ComBot.Paused}
 			{
 				return
@@ -116,6 +124,28 @@ objectdef obj_Client
 		{
 			EVE:ToggleTextureLoading
 		}
+	}
+	
+	method Undock()
+	{
+		variable index:bookmark BookmarkIndex
+		variable string suffix
+		suffix:Set[${UndockWarp.Config.UndockSuffix}]
+		EVE:GetBookmarks[BookmarkIndex]
+		BookmarkIndex:RemoveByQuery[${LavishScript.CreateQuery[SolarSystemID == ${Me.SolarSystemID}]}, FALSE]
+		echo ${BookmarkIndex.Used}
+		BookmarkIndex:RemoveByQuery[${LavishScript.CreateQuery[Label =- "${UndockWarp.Config.substring}"]}, FALSE]
+		echo ${BookmarkIndex.Used}
+		BookmarkIndex:RemoveByQuery[${LavishScript.CreateQuery[Distance > 150000]}, FALSE]
+		echo ${BookmarkIndex.Used}
+		BookmarkIndex:RemoveByQuery[${LavishScript.CreateQuery[Distance < 250000]}, FALSE]
+		echo ${BookmarkIndex.Used}
+		BookmarkIndex:Collapse
+		
+		UI:Update["obj_Client", "Undock warping to ${BookmarkIndex.Get[1].Label}", "g"]
+		BookmarkIndex.Get[1]:WarpTo
+		Client:Wait[5000]
+		This.Undock:Set[FALSE]
 	}
 
 	method Wait(int delay)
