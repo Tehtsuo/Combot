@@ -500,7 +500,7 @@ objectdef obj_Miner inherits obj_State
 				Belts:RemoveByQuery[${LavishScript.CreateQuery[Name =- "${beltsubstring}"]}, FALSE]
 			}
 
-			Move:Object[${Entity[${Belts.Get[1].ID}]}]
+			Move:Object[${Belts.Get[1].ID}]
 			Belts:Remove[1]
 			Belts:Collapse
 			This:InsertState["Traveling"]
