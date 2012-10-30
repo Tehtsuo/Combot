@@ -250,7 +250,7 @@ objectdef obj_Cargo inherits obj_State
 						}
 					}
 					break
-				case SHIPOREHOLD
+				case OreHold
 					if ${Volume} < ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]} - ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]}
 					{
 						CargoItem:MoveTo[MyShip, OreHold, ${Quantity}]
@@ -349,7 +349,7 @@ objectdef obj_Cargo inherits obj_State
 						EVE:MoveItemsTo[TransferIndex, ${ID}, CorpHangars${TransferFolder}]
 					}
 					break
-				case SHIPOREHOLD
+				case OreHold
 					TransferIndex:Clear
 					if ${Cargo:First(exists)}
 						do
