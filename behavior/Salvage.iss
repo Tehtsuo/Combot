@@ -257,6 +257,10 @@ objectdef obj_Salvage inherits obj_State
 			UI:Update["obj_Salvage", "No salvage bookmark found - returning to station", "g"]
 			This:QueueState["Offload"]
 			This:QueueState["Traveling"]
+			This:QueueState["Log", 10, "Idling for 1 minute"]
+			This:QueueState["Idle", 60000]
+			This:QueueState["OpenCargoHold", 500]
+			This:QueueState["CheckCargoHold", 500]
 			return TRUE
 		}
 	}
