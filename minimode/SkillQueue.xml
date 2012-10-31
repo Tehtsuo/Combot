@@ -34,8 +34,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 		<Border>0</Border>
 		<X>200</X>
 		<Y>300</Y>
-		<Width>800</Width>
-		<Height>600</Height>
+		<Width>400</Width>
+		<Height>400</Height>
 		<TitleBar>
 			<Width>100%</Width>
 			<Height>20</Height>
@@ -79,9 +79,18 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Width>98%</Width> 
 						<Height>18%</Height> 
 						<Wrap />
-						<Text>SkillQueue is a MiniMode to automatically fill your skill queue whenever it drops below 24 hours.  Skills which are already at level 5 which are added to this queue will be ignored when they are processed.</Text>
+						<Text>SkillQueue is a MiniMode to automatically fill your skill queue whenever it drops below 24 hours.  Skills which are already at level 5 which are added to this queue will be ignored when they are processed.  Skill which are not injected will stay queued and will be injected and queued up whenever a book is found in your ship's cargo hold or the personal hangar of a station.</Text>
 					</Text>
 
+					<listbox name='SkillQueue'>
+						<X>1%</X> 
+						<Y>19%</Y> 
+						<Width>98%</Width> 
+						<Height>60%</Height> 
+						<OnLoad>
+							Script[ComBot].VariableScope.SkillQueue:PopulateIndex
+						</OnLoad>
+					</listbox
 				</Children>
 			</Frame>
 		</Children>

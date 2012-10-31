@@ -57,10 +57,12 @@ objectdef obj_Configuration_SkillQueue
 objectdef obj_SkillQueue inherits obj_State
 {
 	variable obj_Configuration_SkillQueue Config
+	variable index:string SkillIndex
 	
 	method Initialize()
 	{
 		This[parent]:Initialize
+		This:PopulateIndex
 		This.NonGameTiedPulse:Set[TRUE]
 		DynamicAddMiniMode("SkillQueue", "SkillQueue")
 	}
@@ -73,6 +75,21 @@ objectdef obj_SkillQueue inherits obj_State
 	method Stop()
 	{
 		This:Clear
+	}
+	
+	method PopulateIndex()
+	{
+		variable iterator Skills
+		Config.Skills:GetSettingIterator[Skills]
+		SkillIndex:Clear
+		
+		if ${Skills:First(exists)}
+		do
+		{
+			SkillIndex:Insert[${Skills.Value}]
+			UIElement[SkillQueue@ComBot_SkillQueue_Frame@ComBot_SkillQueue]:AddItem[${Skills.Value}]
+		}
+		while ${Skills:Next(exists)}
 	}
 	
 	member:bool SkillQueue()
