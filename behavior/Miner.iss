@@ -360,13 +360,13 @@ objectdef obj_Miner inherits obj_State
 		}
 		if ${MyShip.HasOreHold}
 		{
-			Cargo:At[${Bookmark},${Config.Dropoff_Type},${Config.Dropoff_SubType}, ${Config.Container_Name}]:Unload["", 0, OreHold]
+			Cargo:At[${Bookmark},${Config.Dropoff_Type},${Config.Dropoff_SubType}, ${Config.Container_Name}]:Unload["CategoryID == CATEGORYID_ORE || GroupID == GROUP_HARVESTABLECLOUD", 0, OreHold]
 		}
 		if ${Config.OrcaMode}
 		{
-			Cargo:At[${Bookmark},${Config.Dropoff_Type},${Config.Dropoff_SubType}, ${Config.Container_Name}]:Unload["", 0, ShipCorpHangar]
+			Cargo:At[${Bookmark},${Config.Dropoff_Type},${Config.Dropoff_SubType}, ${Config.Container_Name}]:Unload["CategoryID == CATEGORYID_ORE || GroupID == GROUP_HARVESTABLECLOUD", 0, ShipCorpHangar]
 		}
-		Cargo:At[${Bookmark},${Config.Dropoff_Type},${Config.Dropoff_SubType}, ${Config.Container_Name}]:Unload["", 0, Ship]
+		Cargo:At[${Bookmark},${Config.Dropoff_Type},${Config.Dropoff_SubType}, ${Config.Container_Name}]:Unload["CategoryID == CATEGORYID_ORE || GroupID == GROUP_HARVESTABLECLOUD", 0, Ship]
 		Profiling:EndTrack
 		return TRUE
 	}
