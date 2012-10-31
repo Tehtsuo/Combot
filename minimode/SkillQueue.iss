@@ -111,9 +111,9 @@ objectdef obj_SkillQueue inherits obj_State
 	}
 	method Remove(int Skill)
 	{
+		echo Removing #${Skill}
 		SkillIndex:Remove[${Skill}]
 		SkillIndex:Collapse
-		UIElement[SkillQueue@ComBot_SkillQueue_Frame@ComBot_SkillQueue].OrderedItem[$[Skill}]:Remove
 		This:UpdateUI
 	}
 	
