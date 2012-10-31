@@ -247,6 +247,17 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									{
 										case Jetcan
 											This:AddItem[Fleet Jetcan]
+											switch ${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType}
+											{
+												case Corporate Bookmark Jetcan
+													UIElement[Dropoff_Container@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+													UIElement[Dropoff_ContainerTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+													UIElement[Dropoff_ContainerTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[Jetcan Bookmark Prefix]
+													break
+												default
+												UIElement[Dropoff_Container@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+												UIElement[Dropoff_ContainerTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											}
 											break
 										case Corporation Hangar
 											This:AddItem[Corporation Folder 1]
@@ -277,31 +288,9 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											break
 									}
 									This.ItemByText["${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType}"]:Select
-									switch ${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType}
-									{
-										case Corporate Bookmark Jetcan
-											UIElement[Dropoff_Container@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
-											UIElement[Dropoff_ContainerTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
-											UIElement[Dropoff_ContainerTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[Jetcan Bookmark Prefix]
-											break
-										default
-											UIElement[Dropoff_Container@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
-											UIElement[Dropoff_ContainerTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
-									}
 								</OnLoad>
 								<OnSelect>
 									Script[ComBot].VariableScope.Miner.Config:SetDropoff_SubType[${This.SelectedItem.Text}]
-									switch ${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType}
-									{
-										case Corporate Bookmark Jetcan
-											UIElement[Dropoff_Container@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
-											UIElement[Dropoff_ContainerTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
-											UIElement[Dropoff_ContainerTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[Jetcan Bookmark Prefix]
-											break
-										default
-											UIElement[Dropoff_Container@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
-											UIElement[Dropoff_ContainerTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
-									}
 								</OnSelect>
 								<OnMouseEnter>
 									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText["This field is used to further configure your dropoff type for types that have additional options, like Corporate Hangars and Jetcans."]
@@ -423,7 +412,6 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											UIElement[DropoffTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
 											UIElement[Dropoff@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
 											UIElement[DropoffList@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
-											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner].ItemByText[${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType}]:Select
 											break
 										case Container
 											UIElement[Dropoff_Container@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
@@ -436,13 +424,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											UIElement[Threshold@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
 											UIElement[DropoffTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
 											UIElement[Dropoff@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
-											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner].ItemByText[${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType}]:Select
 											break
 										case Jetcan
-											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner].ItemByText[${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType}]:Select
 											UIElement[DropoffSubTypeTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
 											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
-											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner].ItemByText[${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType}]:Select
 											UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
 											UIElement[DropoffSubTypeTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[Jetcan Type]
 											UIElement[Threshold@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
@@ -465,7 +450,6 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											UIElement[DropoffTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[Station Bookmark]
 											UIElement[DropoffSubTypeTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
 											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
-											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner].ItemByText[${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType}]:Select
 											UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
 											UIElement[DropoffSubTypeTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[Corporate Folder]
 											UIElement[Threshold@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
@@ -539,13 +523,23 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner].ItemByText[${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType}]:Select
 											UIElement[DropoffSubTypeTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
 											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
-											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner].ItemByText[${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType}]:Select
 											UIElement[DropoffSubTypeTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[Jetcan Type]
 											UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
 											UIElement[Threshold@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
 											UIElement[DropoffTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
 											UIElement[Dropoff@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
 											UIElement[DropoffList@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											switch ${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType}
+											{
+												case Corporate Bookmark Jetcan
+													UIElement[Dropoff_Container@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+													UIElement[Dropoff_ContainerTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+													UIElement[Dropoff_ContainerTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[Jetcan Bookmark Prefix]
+													break
+												default
+												UIElement[Dropoff_Container@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+												UIElement[Dropoff_ContainerTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											}
 											break
 										case No Dropoff
 											UIElement[DropoffSubTypeTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide

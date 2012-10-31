@@ -133,18 +133,17 @@ objectdef obj_Client
 		suffix:Set[${UndockWarp.Config.UndockSuffix}]
 		EVE:GetBookmarks[BookmarkIndex]
 		BookmarkIndex:RemoveByQuery[${LavishScript.CreateQuery[SolarSystemID == ${Me.SolarSystemID}]}, FALSE]
-		echo ${BookmarkIndex.Used}
 		BookmarkIndex:RemoveByQuery[${LavishScript.CreateQuery[Label =- "${UndockWarp.Config.substring}"]}, FALSE]
-		echo ${BookmarkIndex.Used}
 		BookmarkIndex:RemoveByQuery[${LavishScript.CreateQuery[Distance > 150000]}, FALSE]
-		echo ${BookmarkIndex.Used}
 		BookmarkIndex:RemoveByQuery[${LavishScript.CreateQuery[Distance < 250000]}, FALSE]
-		echo ${BookmarkIndex.Used}
 		BookmarkIndex:Collapse
 		
-		UI:Update["obj_Client", "Undock warping to ${BookmarkIndex.Get[1].Label}", "g"]
-		BookmarkIndex.Get[1]:WarpTo
-		Client:Wait[5000]
+		if ${BookmarkIndex.Used}
+		{
+			UI:Update["obj_Client", "Undock warping to ${BookmarkIndex.Get[1].Label}", "g"]
+			BookmarkIndex.Get[1]:WarpTo
+			Client:Wait[5000]
+		}
 		This.Undock:Set[FALSE]
 	}
 

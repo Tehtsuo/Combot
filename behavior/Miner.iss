@@ -260,7 +260,7 @@ objectdef obj_Miner inherits obj_State
 		{
 			UI:Update["obj_Miner", "Unload trip required", "g"]
 			This:QueueState["PrepareWarp"]
-			This:QueueState["Dropoff", 1000, "OreHold"]
+			This:QueueState["Dropoff"]
 			This:QueueState["Traveling"]
 			This:QueueState["OpenCargoHold"]
 			This:QueueState["CheckCargoHold"]
@@ -275,7 +275,7 @@ objectdef obj_Miner inherits obj_State
 		{
 			UI:Update["obj_Miner", "Unload trip required", "g"]
 			This:QueueState["PrepareWarp"]
-			This:QueueState["Dropoff", 1000, "Ship"]
+			This:QueueState["Dropoff"]
 			This:QueueState["Traveling"]
 			This:QueueState["OpenCargoHold"]
 			This:QueueState["CheckCargoHold"]
@@ -289,7 +289,7 @@ objectdef obj_Miner inherits obj_State
 		{
 			UI:Update["obj_Miner", "Unload trip required", "g"]
 			This:QueueState["PrepareWarp"]
-			This:QueueState["Dropoff", 1000, "ShipCorpHangar"]
+			This:QueueState["Dropoff"]
 			This:QueueState["Traveling"]
 			This:QueueState["OpenCargoHold"]
 			This:QueueState["CheckCargoHold"]
@@ -334,7 +334,7 @@ objectdef obj_Miner inherits obj_State
 		return TRUE
 	}
 	
-	member:bool Dropoff(string Source)
+	member:bool Dropoff()
 	{
 		Profiling:StartTrack["Miner: Dropoff"]
 		variable string Dropoff_Type=${Config.Dropoff_Type}
@@ -353,7 +353,15 @@ objectdef obj_Miner inherits obj_State
 				return TRUE
 			}
 		}
-		Cargo:At[${Bookmark},${Config.Dropoff_Type},${Config.Dropoff_SubType}, ${Config.Container_Name}]:Unload["", 0, ${Source}]
+		if ${MyShip.HasOreHold}
+		{
+			Cargo:At[${Bookmark},${Config.Dropoff_Type},${Config.Dropoff_SubType}, ${Config.Container_Name}]:Unload["", 0, OreHold]
+		}
+		if ${Config.OrcaMode}
+		{
+			Cargo:At[${Bookmark},${Config.Dropoff_Type},${Config.Dropoff_SubType}, ${Config.Container_Name}]:Unload["", 0, ShipCorpHangar]
+		}
+		Cargo:At[${Bookmark},${Config.Dropoff_Type},${Config.Dropoff_SubType}, ${Config.Container_Name}]:Unload["", 0, Ship]
 		Profiling:EndTrack
 		return TRUE
 	}
@@ -570,8 +578,6 @@ objectdef obj_Miner inherits obj_State
 			return FALSE
 		}
 
-		Asteroids:RequestUpdate
-		
 		variable int MaxTarget = ${MyShip.MaxLockedTargets}
 		if ${Me.MaxLockedTargets} < ${MaxTarget}
 		{
@@ -653,6 +659,23 @@ objectdef obj_Miner inherits obj_State
 			
 			relay all -event ComBot_Orca_InBelt TRUE
 			relay all -event ComBot_Orca_Cargo ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipCorpHangar]}
+			Cargo:PopulateCargoList[ShipCorpHangar]
+			if ${Cargo.CargoList.Used} && !${Config.Dropoff_Type.Equal[No Dropoff]}
+			{
+				if ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]} < ${Config.Threshold} * .01
+				{
+					Cargo:Filter[CategoryID==CATEGORYID_ORE]
+					Cargo:MoveCargoList[OreHold]
+					return TRUE
+				}
+				elseif ${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity} < ${Config.Threshold} * .01
+				{
+					Cargo:Filter[GroupID==GROUP_HARVESTABLECLOUD || CategoryID==CATEGORYID_ORE]
+					Cargo:MoveCargoList[Ship]
+					return TRUE
+				}
+			}
+			
 			if !${Config.DontMove}
 			{
 				if ${Roid:First(exists)}
@@ -692,6 +715,7 @@ objectdef obj_Miner inherits obj_State
 
 		if ${Ship.ModuleList_MiningLaser.ActiveCount} < ${Ship.ModuleList_MiningLaser.Count}
 		{
+			Asteroids:RequestUpdate
 			This:InsertState["ActivateLasers", 2000]
 		}
 		

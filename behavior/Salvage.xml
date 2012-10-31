@@ -307,7 +307,63 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									UIElement[Information@InformationFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText[""]
 								</OnMouseExit>
 							</Checkbox>
-
+							
+							<Text name='SizeTitle'> 
+								<X>1%</X> 
+								<Y>27%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Salvage Size</Text>
+							</Text>						 
+							<Combobox name='Size'>
+								<X>1%</X> 
+								<Y>34%</Y> 
+								<Width>32%</Width> 
+								<Height>12%</Height>
+								<Items>
+									<Item>Small</Item>
+									<Item>Medium</Item>
+									<Item>Large</Item>
+								</Items>
+								<OnLoad>
+									This.ItemByText[${Script[ComBot].VariableScope.Salvage.Config.Size}]:Select
+								</OnLoad>
+								<OnSelect>
+									Script[ComBot].VariableScope.Salvage.Config:SetSize[${This.SelectedItem.Text}]
+								</OnSelect>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText["This selection can be used to specify what wreck sizes to salvage.  Anything smaller than your selection will be ignored.  For example, choosing Small will salvage everything, but choosing Medium will only salvage Medium and Large wrecks."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText[""]
+								</OnMouseExit>
+							</Combobox>
+							
+							<Checkbox name='FollowGates'> 
+								<X>1%</X> 
+								<Y>50%</Y> 
+								<Width>32%</Width> 
+								<Height>9%</Height> 
+								<Text>Follow Gates</Text>
+								<OnLoad>
+									if ${Script[ComBot].VariableScope.Salvage.Config.FollowGates}
+									{
+										This:SetChecked
+									}
+									This:SetZOrder[movetop]
+								</OnLoad>
+								<OnLeftClick>
+									Script[ComBot].VariableScope.Salvage.Config:SetFollowGates[${This.Checked}]
+									This:SetZOrder[movetop]
+								</OnLeftClick>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText["When this option is checked, ComBot will follow gates to continue salvaging from the same player as long as there are more bookmarks available from that player.  If there are not, ComBot will assume the next pocket in a deadspace chain still contains NPCs and skip to a different bookmark creator."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText[""]
+								</OnMouseExit>
+							</CheckBox>
 						</Children>
 					</Frame>
 				
