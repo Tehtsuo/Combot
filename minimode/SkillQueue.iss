@@ -165,9 +165,10 @@ objectdef obj_SkillQueue inherits obj_State
 		{
 			if !${Me.Skill[${Skill.Value}](exists)}
 			{
+			
 			}
-			echo ${Skill.Value} - ${Me.Skill[${Skill.Value}].Level}
-			if ${Me.Skill[${Skill.Value}].Level} = 5
+
+			if ${Me.Skill[${Skill.Value}].Level} == 5
 			{
 				SkillIndex:RemoveByQuery[${LavishScript.CreateQuery[ToString == "${Skill.Value}"]}]
 				SkillIndex:Collapse
@@ -175,6 +176,16 @@ objectdef obj_SkillQueue inherits obj_State
 				This:UpdateUI
 				return FALSE
 			}
+			if ${Me.Skill[${Skill.Value}](exists)}
+			{
+				Me.Skill[${Skill.Value}]:StartTraining
+				SkillIndex:Remove[${Count}]
+				SkillIndex:Collapse
+				This:SaveSkills
+				This:UpdateUI
+				return FALSE
+			}
+
 			Count:Dec
 		}
 		while ${Skill:Previous(exists)}
