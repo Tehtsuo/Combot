@@ -190,6 +190,11 @@ objectdef obj_Miner inherits obj_State
 		This:AssignStateQueueDisplay[DebugStateList@Debug@ComBotTab@ComBot]
 		if ${This.IsIdle}
 		{
+			if ${Client.InSpace}
+			{
+				This:QueueState["RequestUpdate"]
+				This:QueueState["Updated"]
+			}
 			This:QueueState["OpenCargoHold"]
 			This:QueueState["CheckCargoHold"]
 		}
@@ -451,6 +456,8 @@ objectdef obj_Miner inherits obj_State
 		if ${Config.Tether} && ${Local[${Config.TetherName}](exists)}
 		{
 			Move:Fleetmember[${Local[${Config.TetherName}].ID}]
+			This:InsertState["Updated"]
+			This:InsertState["RequestUpdate"]
 			This:InsertState["Traveling"]
 			Profiling:EndTrack
 			return TRUE
@@ -459,6 +466,8 @@ objectdef obj_Miner inherits obj_State
 		if ${Move.SavedSpotExists}
 		{
 			Move:GotoSavedSpot
+			This:InsertState["Updated"]
+			This:InsertState["RequestUpdate"]
 			This:InsertState["RemoveSavedSpot"]
 			This:InsertState["Traveling", 2000]
 			Profiling:EndTrack
@@ -468,6 +477,8 @@ objectdef obj_Miner inherits obj_State
 		if ${Config.Dropoff_Type.Equal[Orca]} && ${This.WarpToOrca} && ${Local[${Config.Container_Name}](exists)}
 		{
 			Move:Fleetmember[${Local[${Config.Container_Name}].ID}]
+			This:InsertState["Updated"]
+			This:InsertState["RequestUpdate"]
 			This:InsertState["Traveling"]
 			Profiling:EndTrack
 			return TRUE
