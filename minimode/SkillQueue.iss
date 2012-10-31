@@ -45,7 +45,7 @@ objectdef obj_Configuration_SkillQueue
 		This.CommonRef:AddSet[Skills]
 	}
 
-	member:settingsetref Skills
+	member:settingsetref Skills()
 	{
 		return ${This.CommonRef.FindSet[Skills]}
 	}
