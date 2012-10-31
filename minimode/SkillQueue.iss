@@ -142,6 +142,7 @@ objectdef obj_SkillQueue inherits obj_State
 	method Remove(int Skill)
 	{
 		SkillIndex:Remove[${Skill:Inc}]
+		echo Removed #${Skill}
 		SkillIndex:Collapse
 		This:UpdateUI
 		This:SaveSkills
@@ -149,6 +150,7 @@ objectdef obj_SkillQueue inherits obj_State
 	
 	member:bool SkillQueue()
 	{
+		variable int Count=${SkillIndex.Used}
 		variable iterator Skill
 	
 		if ${Me.SkillQueueLength} > 864000000000
@@ -161,7 +163,7 @@ objectdef obj_SkillQueue inherits obj_State
 		if ${Skill:Last(exists)}
 		do
 		{
-			if !${Me.Skill[${Skill.Value}](exists)
+			if !${Me.Skill[${Skill.Value}](exists)}
 			{
 			}
 			
@@ -173,7 +175,7 @@ objectdef obj_SkillQueue inherits obj_State
 				This:UpdateUI
 				return FALSE
 			}
-			
+			Count:Dec
 		}
 		while ${Skill:Previous(exists)}
 		
