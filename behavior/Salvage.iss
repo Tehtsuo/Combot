@@ -203,7 +203,9 @@ objectdef obj_Salvage inherits obj_State
 					{
 						UI:Update["Salvager", "Removing expired bookmark - ${BookmarkIterator.Value.Label}", "o", TRUE]
 						BookmarkIterator.Value:Remove
-						return FALSE
+						This:InsertState["CheckBookmarks"]
+						This:InsertState["Idle", 5000]
+						return TRUE
 					}
 					if ${BookmarkIterator.Value.Created.AsInt64} < ${BookmarkTime} || ${BookmarkTime} == 0
 					{
