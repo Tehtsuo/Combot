@@ -522,7 +522,8 @@ objectdef obj_Miner inherits obj_State
 			Move:Bookmark[${BookmarkIndex.Get[1].Label}]
 			BookmarkIndex:Remove[1]
 			BookmarkIndex:Collapse
-			
+			This:InsertState["Updated"]
+			This:InsertState["RequestUpdate"]
 			This:InsertState["Traveling"]
 			Profiling:EndTrack
 			return TRUE
@@ -556,6 +557,8 @@ objectdef obj_Miner inherits obj_State
 			Move:Object[${Belts.Get[1].ID}]
 			Belts:Remove[1]
 			Belts:Collapse
+			This:InsertState["Updated"]
+			This:InsertState["RequestUpdate"]
 			This:InsertState["Traveling"]
 			Profiling:EndTrack
 			return TRUE
