@@ -163,6 +163,7 @@ objectdef obj_SkillQueue inherits obj_State
 		if ${Skill:First(exists)}
 		do
 		{
+			echo Me.Skill[${Skill.Value}](exists) - ${Me.Skill[${Skill.Value}](exists)}
 			if !${Me.Skill[${Skill.Value}](exists)}
 			{
 				echo Me.Skill[${Skill.Value}](exists) - ${Me.Skill[${Skill.Value}](exists)}
