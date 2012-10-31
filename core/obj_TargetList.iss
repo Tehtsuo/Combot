@@ -287,6 +287,7 @@ objectdef obj_TargetList inherits obj_State
 						{
 							This.TargetListBuffer:Insert[${entity_iterator.Value.ID}]
 							AlreadyInList:Add[${entity_iterator.Value.ID}]
+							TargetLockPrioritysBuffer:Set[${entity_iterator.Value.ID}, ${Priority}]
 							if ${entity_iterator.Value.IsLockedTarget}
 							{
 								This.LockedTargetListBuffer:Insert[${entity_iterator.Value.ID}]
@@ -314,10 +315,11 @@ objectdef obj_TargetList inherits obj_State
 					{
 						This.TargetListBufferOOR:Insert[${entity_iterator.Value.ID}]
 						AlreadyInList:Add[${entity_iterator.Value.ID}]
+						TargetLockPrioritysBuffer:Set[${entity_iterator.Value.ID}, ${Math.Calc[${Priority}-1000]}]
 						if ${entity_iterator.Value.IsLockedTarget}
 						{
 							This.LockedTargetListBufferOOR:Insert[${entity_iterator.Value.ID}]
-							TargetLockPrioritysBuffer:Set[${entity_iterator.Value.ID}, ${Math.Calc[${Priority} + ${Ship.ModuleList_TargetModules.ActiveCountOn[${entity_iterator.Value.ID}]}*100]}]
+							TargetLockPrioritysBuffer:Set[${entity_iterator.Value.ID}, ${Math.Calc[(${Priority}-1000) + ${Ship.ModuleList_TargetModules.ActiveCountOn[${entity_iterator.Value.ID}]}*100]}]
 						}
 					}
 				}
@@ -396,9 +398,11 @@ objectdef obj_TargetList inherits obj_State
 						{
 							AlreadyInList:Add[${entity_iterator.Value.ID}]
 							This.TargetListBuffer:Insert[${EntityIterator.Key}]
+							TargetLockPrioritysBuffer:Set[${entity_iterator.Value.ID}, ${Priority}]
 							if ${Entity[${EntityIterator.Key}].IsLockedTarget}
 							{
 								This.LockedTargetListBuffer:Insert[${EntityIterator.Key}]
+								TargetLockPrioritysBuffer:Set[${entity_iterator.Value.ID}, ${Math.Calc[${Priority} + ${Ship.ModuleList_TargetModules.ActiveCountOn[${entity_iterator.Value.ID}]}*100]}]
 							}
 						}
 					}
@@ -408,9 +412,11 @@ objectdef obj_TargetList inherits obj_State
 						{
 							AlreadyInList:Add[${entity_iterator.Value.ID}]
 							This.TargetListBufferOOR:Insert[${EntityIterator.Key}]
+							TargetLockPrioritysBuffer:Set[${entity_iterator.Value.ID}, ${Math.Calc[${Priority}-1000]}]
 							if ${Entity[${EntityIterator.Key}].IsLockedTarget}
 							{
 								This.LockedTargetListBufferOOR:Insert[${EntityIterator.Key}]
+								TargetLockPrioritysBuffer:Set[${entity_iterator.Value.ID}, ${Math.Calc[(${Priority}-1000) + ${Ship.ModuleList_TargetModules.ActiveCountOn[${entity_iterator.Value.ID}]}*100]}]
 							}
 						}
 					}
@@ -557,12 +563,12 @@ objectdef obj_TargetList inherits obj_State
 		
 		if ${NeedLock} && ${LockTop} && ${LockedAndLockingTargets.Used} >= ${MinLockCount}
 		{
-			TargetLockPrioritys:GetIterator[LockIterator]
+			LockedTargetList:GetIterator[LockIterator]
 			if ${LockIterator:First(exists)}
 			{
 				do
 				{
-					if ${LockIterator.Value} < ${LowestPriority}
+					if ${TargetLockPrioritys.Element[${LockIterator.Value}]} < ${LowestPriority}
 					{
 						LowestLock:Set[${LockIterator.Key}]
 						LowestPriority:Set[${LockIterator.Value}]
@@ -570,16 +576,9 @@ objectdef obj_TargetList inherits obj_State
 				}
 				while ${LockIterator:Next(exists)}
 			}
-			if ${LowestPriority} < 1000
-			{
-				Entity[${LowestLock}]:UnlockTarget
-				This:InsertState["ManageLocks"]
-				This:InsertState["Idle", 1000]
-				return TRUE
-			}
 		}
 		
-		if ${NeedLock} && ${LockedAndLockingTargets.Used} < ${MinLockCount}
+		if ${NeedLock}
 		{
 			if ${EntityIterator:First(exists)}
 			{
@@ -587,6 +586,13 @@ objectdef obj_TargetList inherits obj_State
 				{
 					if ${EntityIterator.Value.ID(exists)}
 					{
+						if !${EntityIterator.Value.IsLockedTarget} && !${EntityIterator.Value.BeingTargeted} && ${LockedAndLockingTargets.Used} >= ${MinLockCount} ${TargetLockPrioritys.Element[${EntityIterator.Value.ID}]} > ${LowestPriority}
+						{
+							Entity[${LowestLock}]:UnlockTarget
+							This:InsertState["ManageLocks"]
+							This:InsertState["Idle", 1000]
+							return TRUE							
+						}
 						if !${EntityIterator.Value.IsLockedTarget} && !${EntityIterator.Value.BeingTargeted} && ${LockedAndLockingTargets.Used} < ${MinLockCount} && ${MaxTarget} > (${Me.TargetCount} + ${Me.TargetingCount}) && ${EntityIterator.Value.Distance} < ${MyShip.MaxTargetRange} && (${EntityIterator.Value.Distance} < ${MaxRange} || ${LockOutOfRange}) && ${TargetList_DeadDelay.Element[${EntityIterator.Value.ID}]} < ${LavishScript.RunningTime}
 						{
 							if ${UseIPCExclusion}
