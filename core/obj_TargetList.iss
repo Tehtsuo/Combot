@@ -570,8 +570,8 @@ objectdef obj_TargetList inherits obj_State
 				{
 					if ${TargetLockPrioritys.Element[${LockIterator.Value}]} < ${LowestPriority}
 					{
-						LowestLock:Set[${LockIterator.Key}]
-						LowestPriority:Set[${LockIterator.Value}]
+						LowestLock:Set[${LockIterator.Value.ID}]
+						LowestPriority:Set[${TargetLockPrioritys.Element[${LockIterator.Value}]}]
 					}
 				}
 				while ${LockIterator:Next(exists)}
@@ -586,12 +586,12 @@ objectdef obj_TargetList inherits obj_State
 				{
 					if ${EntityIterator.Value.ID(exists)}
 					{
-						if !${EntityIterator.Value.IsLockedTarget} && !${EntityIterator.Value.BeingTargeted} && ${LockedAndLockingTargets.Used} >= ${MinLockCount} && ${TargetLockPrioritys.Element[${EntityIterator.Value.ID}]} > ${LowestPriority}
+						if ${LockTop} && !${EntityIterator.Value.IsLockedTarget} && !${EntityIterator.Value.BeingTargeted} && ${LockedAndLockingTargets.Used} >= ${MinLockCount} && ${TargetLockPrioritys.Element[${EntityIterator.Value.ID}]} > ${LowestPriority} && ${EntityIterator.Value.Distance} < ${MyShip.MaxTargetRange} && (${EntityIterator.Value.Distance} < ${MaxRange} || ${LockOutOfRange}) && ${TargetList_DeadDelay.Element[${EntityIterator.Value.ID}]} < ${LavishScript.RunningTime}
 						{
 							Entity[${LowestLock}]:UnlockTarget
 							This:InsertState["ManageLocks"]
 							This:InsertState["Idle", 1000]
-							return TRUE							
+							return TRUE
 						}
 						if !${EntityIterator.Value.IsLockedTarget} && !${EntityIterator.Value.BeingTargeted} && ${LockedAndLockingTargets.Used} < ${MinLockCount} && ${MaxTarget} > (${Me.TargetCount} + ${Me.TargetingCount}) && ${EntityIterator.Value.Distance} < ${MyShip.MaxTargetRange} && (${EntityIterator.Value.Distance} < ${MaxRange} || ${LockOutOfRange}) && ${TargetList_DeadDelay.Element[${EntityIterator.Value.ID}]} < ${LavishScript.RunningTime}
 						{
