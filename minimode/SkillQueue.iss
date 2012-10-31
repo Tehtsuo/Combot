@@ -158,7 +158,7 @@ objectdef obj_SkillQueue inherits obj_State
 			return FALSE
 		}
 		
-		SkillIndex:GetIterator[Skill]
+		This.SkillIndex:GetIterator[Skill]
 		
 		if ${Skill:First(exists)}
 		do
