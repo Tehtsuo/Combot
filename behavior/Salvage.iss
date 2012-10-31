@@ -299,15 +299,15 @@ objectdef obj_Salvage inherits obj_State
 		variable string Size
 		if ${Config.Size.Equal[Small]}
 		{
-			Size:Set["&& Type =- Small && Type =- Medium && Type =- Large"]
+			Size:Set["&& Type =- \"Small\" && Type =- \"Medium\" && Type =- \"Large\""]
 		}
 		elseif ${Config.Size.Equal[Medium]}
 		{
-			Size:Set["&& Type =- Medium && Type =- Large"]
+			Size:Set["&& Type =- \"Medium\" && Type =- \"Large\""]
 		}
 		else
 		{
-			Size:Set["&& Type =- Large"]
+			Size:Set["&& Type =- \"Large\""]
 		}
 		
 		Wrecks:ClearTargetExceptions
@@ -315,11 +315,11 @@ objectdef obj_Salvage inherits obj_State
 		
 		if ${Config.SalvageYellow}
 		{
-			Wrecks:AddQueryString["(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && !IsMoribund ${Size}"]
+			Wrecks:AddQueryString["(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && !IsMoribund ${Size.Escape}"]
 		}
 		else
 		{
-			Wrecks:AddQueryString["(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && HaveLootRights && !IsMoribund ${Size}"]
+			Wrecks:AddQueryString["(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && HaveLootRights && !IsMoribund ${Size.Escape}"]
 		}
 	
 		Wrecks:RequestUpdate
