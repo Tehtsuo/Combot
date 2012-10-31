@@ -435,8 +435,8 @@ objectdef obj_Miner inherits obj_State
 		if !${Asteroids.TargetList.Used}
 		{
 			This:QueueState["MoveToBelt"]
-;			This:QueueState["RequestUpdate"]
-;			This:QueueState["Updated"]
+			This:QueueState["RequestUpdate"]
+			This:QueueState["Updated"]
 			This:QueueState["CheckForWork"]
 		}
 		else
