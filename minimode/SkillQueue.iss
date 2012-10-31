@@ -178,6 +178,7 @@ objectdef obj_SkillQueue inherits obj_State
 				if ${Cargo.CargoList.Used} > 0
 				{
 					UI:Update["SkillQueue", "Injecting ${Skill.Value} - skill will queue after 1 minute", "o"]
+					echo Injecting ${Cargo.CargoList.Get[1].Name}
 					Cargo.CargoList.Get[1]:InjectSkill
 					return FALSE
 				}
