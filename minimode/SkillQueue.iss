@@ -171,7 +171,7 @@ objectdef obj_SkillQueue inherits obj_State
 			if ${Me.Skill[${Skill.Value}].Level} == 5
 			{
 				UI:Update["SkillQueue", "Removing ${Skill.Value} from the queue, already at level 5", "o"]
-				SkillIndex:RemoveByQuery[${LavishScript.CreateQuery[ToString == "${Skill.Value}"]}]
+				SkillIndex:RemoveByQuery[${LavishScript.CreateQuery[unistring = "${Skill.Value}"]}]
 				SkillIndex:Collapse
 				This:SaveSkills
 				This:UpdateUI
