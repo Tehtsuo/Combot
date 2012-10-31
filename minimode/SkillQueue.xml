@@ -90,7 +90,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Height>60%</Height> 
 						<OnLoad>
 							Script[ComBot].VariableScope.SkillQueue:UpdateUI
-							This.SortType:Set[user]
+							This:SetSortType[user]
 						</OnLoad>
 						<OnSelect>
 							UIElement[Skill@ComBot_SkillQueue_Frame@ComBot_SkillQueue]:SetText[${This.SelectedItem.Text}]
@@ -107,6 +107,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Y>90%</Y> 
 						<Width>49%</Width> 
 						<Height>9%</Height> 
+						<Text>Add</Text>
 						<OnLeftClick>
 							Script[ComBot].VariableScope.SkillQueue:Add[${UIElement[Skill@ComBot_SkillQueue_Frame@ComBot_SkillQueue].Text}]
 						</OnLeftClick>
@@ -116,6 +117,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Y>90%</Y> 
 						<Width>49%</Width> 
 						<Height>9%</Height> 
+						<Text>Remove</Text>
+						<OnLeftClick>
+							Script[ComBot].VariableScope.SkillQueue:Remove[${UIElement[SkillQueue@ComBot_SkillQueue_Frame@ComBot_SkillQueue].SelectedItem.Order}]
+						</OnLeftClick>
 					</button>
 				</Children>
 			</Frame>
