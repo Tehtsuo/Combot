@@ -299,15 +299,15 @@ objectdef obj_Salvage inherits obj_State
 		variable string Size
 		if ${Config.Size.Equal[Small]}
 		{
-			Size:Set["&& (Type =- \"Small\" || Type =- \"Medium\" || Type =- \"Large\"")]
+			Size:Set[&& (Type =- \"Small\" || Type =- \"Medium\" || Type =- \"Large\")]
 		}
 		elseif ${Config.Size.Equal[Medium]}
 		{
-			Size:Set["&& (Type =- \"Medium\" || Type =- \"Large\"")]
+			Size:Set[&& (Type =- \"Medium\" || Type =- \"Large\")]
 		}
 		else
 		{
-			Size:Set["&& Type =- \"Large\""]
+			Size:Set[&& Type =- \"Large\"]
 		}
 		
 		Wrecks:ClearTargetExceptions
