@@ -79,6 +79,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Width>98%</Width> 
 						<Height>18%</Height> 
 						<Wrap />
+						<VerticalAlignment>Center</VerticalAlignment>
 						<Text>SkillQueue is a MiniMode to automatically fill your skill queue whenever it drops below 24 hours.  Skills which are already at level 5 which are added to this queue will be ignored when they are processed.  Skill which are not injected will stay queued and will be injected and queued up whenever a book is found in your ship's cargo hold or the personal hangar of a station.</Text>
 					</Text>
 
@@ -88,9 +89,34 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Width>98%</Width> 
 						<Height>60%</Height> 
 						<OnLoad>
-							Script[ComBot].VariableScope.SkillQueue:PopulateIndex
+							Script[ComBot].VariableScope.SkillQueue:UpdateUI
+							This.SortType:Set[user]
 						</OnLoad>
+						<OnSelect>
+							UIElement[Skill@ComBot_SkillQueue_Frame@ComBot_SkillQueue]:SetText[${This.SelectedItem.Text}]
+						</OnSelect>
 					</listbox
+					<textentry name='Skill'>
+						<X>1%</X> 
+						<Y>80%</Y> 
+						<Width>98%</Width> 
+						<Height>9%</Height> 
+					</textentry>
+					<button name='Add'>
+						<X>1%</X> 
+						<Y>90%</Y> 
+						<Width>49%</Width> 
+						<Height>9%</Height> 
+						<OnLeftClick>
+							Script[ComBot].VariableScope.SkillQueue:Add[${UIElement[Skill@ComBot_SkillQueue_Frame@ComBot_SkillQueue].Text}]
+						</OnLeftClick>
+					</button>
+					<button name='Remove'>
+						<X>50%</X> 
+						<Y>90%</Y> 
+						<Width>49%</Width> 
+						<Height>9%</Height> 
+					</button>
 				</Children>
 			</Frame>
 		</Children>
