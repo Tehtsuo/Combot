@@ -111,8 +111,7 @@ objectdef obj_SkillQueue inherits obj_State
 	}
 	method Remove(int Skill)
 	{
-		echo Removing #${Skill}
-		SkillIndex:Remove[${Skill}]
+		SkillIndex:Remove[${Skill:Inc}]
 		SkillIndex:Collapse
 		This:UpdateUI
 	}
