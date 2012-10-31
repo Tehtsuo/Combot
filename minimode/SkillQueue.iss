@@ -150,7 +150,7 @@ objectdef obj_SkillQueue inherits obj_State
 	
 	member:bool SkillQueue()
 	{
-		variable int Count=${SkillIndex.Used}
+		variable int Count=1
 		variable iterator Skill
 	
 		if ${Me.SkillQueueLength} > 864000000000
@@ -160,7 +160,7 @@ objectdef obj_SkillQueue inherits obj_State
 		
 		SkillIndex:GetIterator[Skill]
 		
-		if ${Skill:Last(exists)}
+		if ${Skill:First(exists)}
 		do
 		{
 			if !${Me.Skill[${Skill.Value}](exists)}
@@ -203,9 +203,9 @@ objectdef obj_SkillQueue inherits obj_State
 				return FALSE
 			}
 
-			Count:Dec
+			Count:Inc
 		}
-		while ${Skill:Previous(exists)}
+		while ${Skill:Next(exists)}
 		
 		
 		return FALSE
