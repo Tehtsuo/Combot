@@ -165,8 +165,11 @@ objectdef obj_SkillQueue inherits obj_State
 		{
 			if !${Me.Skill[${Skill.Value}](exists)}
 			{
+				echo Me.Skill[${Skill.Value}](exists) - ${Me.Skill[${Skill.Value}](exists)}
 				Cargo:PopulateCargoList[Ship]
-				Cargo:Filter[Name == "${Skill.Value}"]
+				echo Unfiltered Ship: ${Cargo.CargoList.Used}
+				Cargo:Filter[Name = "${Skill.Value}"]
+				echo Filtered Ship: ${Cargo.CargoList.Used}
 				if ${Cargo.CargoList.Used} > 0
 				{
 					UI:Update["SkillQueue", "Injecting ${Skill.Value} - skill will queue after 1 minute", "o"]
@@ -174,7 +177,7 @@ objectdef obj_SkillQueue inherits obj_State
 					return FALSE
 				}
 				Cargo:PopulateCargoList[Personal Hangar]
-				Cargo:Filter[Name == "${Skill.Value}"]
+				Cargo:Filter[Name = "${Skill.Value}"]
 				if ${Cargo.CargoList.Used} > 0
 				{
 					UI:Update["SkillQueue", "Injecting ${Skill.Value} - skill will queue after 1 minute", "o"]
