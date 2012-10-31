@@ -242,7 +242,7 @@ objectdef obj_TargetList inherits obj_State
 	
 	member:bool GetQueryString(string QueryString, int Priority = 0)
 	{
-		Profiling:StartTrack["TargetList_GetQueryString"]
+		Profiling:StartTrack["${This.ObjectName}: TargetList_GetQueryString"]
 		variable index:entity entity_index
 		variable iterator entity_iterator
 		if !${Client.InSpace}

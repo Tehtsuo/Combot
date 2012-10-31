@@ -302,8 +302,8 @@ objectdef obj_Miner inherits obj_State
 			This:QueueState["Traveling"]
 			This:QueueState["Undock"]
 			This:QueueState["WaitForSpace"]
-			This:QueueState["RequestUpdate"]
-			This:QueueState["Updated"]
+;			This:QueueState["RequestUpdate"]
+;			This:QueueState["Updated"]
 			This:QueueState["CheckForWork"]
 			Profiling:EndTrack
 			return TRUE
@@ -430,8 +430,8 @@ objectdef obj_Miner inherits obj_State
 		if !${Asteroids.TargetList.Used}
 		{
 			This:QueueState["MoveToBelt"]
-			This:QueueState["RequestUpdate"]
-			This:QueueState["Updated"]
+;			This:QueueState["RequestUpdate"]
+;			This:QueueState["Updated"]
 			This:QueueState["CheckForWork"]
 		}
 		else
@@ -715,8 +715,9 @@ objectdef obj_Miner inherits obj_State
 
 		if ${Ship.ModuleList_MiningLaser.ActiveCount} < ${Ship.ModuleList_MiningLaser.Count}
 		{
-			Asteroids:RequestUpdate
 			This:InsertState["ActivateLasers", 2000]
+			This:InsertState["Updated"]
+			This:InsertState["RequestUpdate"]
 		}
 		
 		Profiling:EndTrack
