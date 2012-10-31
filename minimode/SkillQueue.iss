@@ -165,7 +165,22 @@ objectdef obj_SkillQueue inherits obj_State
 		{
 			if !${Me.Skill[${Skill.Value}](exists)}
 			{
-			
+				Cargo:PopulateCargoList[Ship]
+				Cargo:Filter[Name == "${Skill.Value}"]
+				if ${Cargo.CargoList.Used} > 0
+				{
+					UI:Update["SkillQueue", "Injecting ${Skill.Value} - skill will queue after 1 minute", "o"]
+					Cargo.CargoList.Get[1]:InjectSkill
+					return FALSE
+				}
+				Cargo:PopulateCargoList[Personal Hangar]
+				Cargo:Filter[Name == "${Skill.Value}"]
+				if ${Cargo.CargoList.Used} > 0
+				{
+					UI:Update["SkillQueue", "Injecting ${Skill.Value} - skill will queue after 1 minute", "o"]
+					Cargo.CargoList.Get[1]:InjectSkill
+					return FALSE
+				}
 			}
 
 			if ${Me.Skill[${Skill.Value}].Level} == 5
@@ -180,7 +195,7 @@ objectdef obj_SkillQueue inherits obj_State
 			if ${Me.Skill[${Skill.Value}](exists)}
 			{
 				UI:Update["SkillQueue", "Adding ${Skill.Value} to the queue", "g"]
-				Me.Skill[${Skill.Value}]:StartTraining
+				Me.Skill[${Skill.Value}]:AddToQueue[${Math.Calc[${Skill[${Skill.Value}].Level}+1]}]
 				SkillIndex:Remove[${Count}]
 				SkillIndex:Collapse
 				This:SaveSkills
