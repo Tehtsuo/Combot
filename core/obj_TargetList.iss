@@ -586,7 +586,7 @@ objectdef obj_TargetList inherits obj_State
 				{
 					if ${EntityIterator.Value.ID(exists)}
 					{
-						if !${EntityIterator.Value.IsLockedTarget} && !${EntityIterator.Value.BeingTargeted} && ${LockedAndLockingTargets.Used} >= ${MinLockCount} ${TargetLockPrioritys.Element[${EntityIterator.Value.ID}]} > ${LowestPriority}
+						if !${EntityIterator.Value.IsLockedTarget} && !${EntityIterator.Value.BeingTargeted} && ${LockedAndLockingTargets.Used} >= ${MinLockCount} && ${TargetLockPrioritys.Element[${EntityIterator.Value.ID}]} > ${LowestPriority}
 						{
 							Entity[${LowestLock}]:UnlockTarget
 							This:InsertState["ManageLocks"]
