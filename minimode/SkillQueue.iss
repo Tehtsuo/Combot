@@ -63,6 +63,7 @@ objectdef obj_SkillQueue inherits obj_State
 	{
 		This[parent]:Initialize
 		This:LoadSkills
+		This.PulseFrequency:Set[2000]
 		This.NonGameTiedPulse:Set[TRUE]
 		DynamicAddMiniMode("SkillQueue", "SkillQueue")
 	}
@@ -148,7 +149,34 @@ objectdef obj_SkillQueue inherits obj_State
 	
 	member:bool SkillQueue()
 	{
-
+		variable iterator Skill
+	
+		if ${Me.SkillQueueLength} > 864000000000
+		{
+			return FALSE
+		}
+		
+		SkillIndex:GetIterator[Skill]
+		
+		if ${Skill:Last(exists)}
+		do
+		{
+			if !${Me.Skill[${Skill.Value}](exists)
+			{
+			}
+			
+			if ${Me.Skill[${Skill.Value}].Level} = 5
+			{
+				SkillIndex:RemoveByQuery[${LavishScript.CreateQuery[ToString == "${Skill.Value}"]}]
+				SkillIndex:Collapse
+				This:SaveSkills
+				This:UpdateUI
+				return FALSE
+			}
+			
+		}
+		while ${Skill:Previous(exists)}
+		
 		
 		return FALSE
 	}
