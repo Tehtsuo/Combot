@@ -190,8 +190,11 @@ objectdef obj_Miner inherits obj_State
 		This:AssignStateQueueDisplay[DebugStateList@Debug@ComBotTab@ComBot]
 		if ${This.IsIdle}
 		{
-			This:QueueState["RequestUpdate"]
-			This:QueueState["Updated"]
+			if ${Client.InSpace}
+			{
+				This:QueueState["RequestUpdate"]
+				This:QueueState["Updated"]
+			}
 			This:QueueState["OpenCargoHold"]
 			This:QueueState["CheckCargoHold"]
 		}
