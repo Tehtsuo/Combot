@@ -94,6 +94,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						</OnLoad>
 						<OnSelect>
 							UIElement[Skill@ComBot_SkillQueue_Frame@ComBot_SkillQueue]:SetText[${This.SelectedItem.Text}]
+							Script[ComBot].VariableScope.SkillQueue:UpdateIndex
 						</OnSelect>
 					</listbox
 					<textentry name='Skill'>

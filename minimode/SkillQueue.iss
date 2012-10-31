@@ -90,6 +90,21 @@ objectdef obj_SkillQueue inherits obj_State
 		}
 		while ${Skills:Next(exists)}
 	}
+	method SaveSkills()
+	{
+		variable iterator Skills
+		variable int Count=0
+		SkillIndex:GetIterator[Skills]
+		Config.Skills:Clear
+		
+		if ${Skills:First(exists)}
+		do
+		{
+			Config.Skills:AddSetting[${Count},${Skills.Value}]
+			Count:Inc
+		}
+		while ${Skills:Next(exists)}
+	}
 	
 	method UpdateUI()
 	{
@@ -104,16 +119,31 @@ objectdef obj_SkillQueue inherits obj_State
 		while ${Skills:Next(exists)}
 	}
 	
+	method UpdateIndex()
+	{
+		variable int Count
+		SkillIndex:Clear
+		
+		for (Count:Set[0] ; ${Count}<${UIElement[SkillQueue@ComBot_SkillQueue_Frame@ComBot_SkillQueue].Items:Dec} ; Count:Inc)
+		{
+			SkillIndex:Insert[${UIElement[SkillQueue@ComBot_SkillQueue_Frame@ComBot_SkillQueue].OrderedItem[${Count}].Text}]
+		}
+	
+		This:SaveSkills
+	}
+	
 	method Add(string Skill)
 	{
 		SkillIndex:Insert[${Skill}]
 		This:UpdateUI
+		This:SaveSkills
 	}
 	method Remove(int Skill)
 	{
 		SkillIndex:Remove[${Skill:Inc}]
 		SkillIndex:Collapse
 		This:UpdateUI
+		This:SaveSkills
 	}
 	
 	member:bool SkillQueue()
