@@ -233,7 +233,7 @@ objectdef obj_DroneControl inherits obj_State
 			}
 			while ${typeIterator:Next(exists)}
 		}
-		return ${Drones.GetActiveCount["GroupID == 100 && (${types})"]}
+		return ${Drones.GetActiveCount["ToEntity.GroupID == 100 && (${types})"]}
 	}
 	
 	method RecallAllNonSentry()
@@ -254,7 +254,7 @@ objectdef obj_DroneControl inherits obj_State
 			}
 			while ${typeIterator:Next(exists)}
 		}
-		return Drones:Recall["GroupID == 100 && (${types})", ${Drones.GetActiveCount["GroupID == 100 && (${types})"]}]
+		return Drones:Recall["ToEntity.GroupID == 100 && (${types})", ${Drones.GetActiveCount["ToEntity.GroupID == 100 && (${types})"]}]
 	}
 	
 	method Start()
