@@ -67,6 +67,7 @@ objectdef obj_Configuration_DroneData
 	{
 		variable iterator DroneTypeIDs
 		BaseRef.FindSet[${TypeName}]:GetSettingIterator[DroneTypeIDs]
+		echo ${TypeName}
 		if ${DroneTypeIDs:First(exists)}
 		{
 			do

@@ -123,14 +123,13 @@ objectdef obj_DroneControl inherits obj_State
 		variable string TargetClass
 		variable int DroneType
 		TargetClass:Set[${NPCData.NPCType[${TargetGroupID}]}]
-		
+		echo ${TargetClass}
 		switch ${TargetClass}
 		{
-			default
 			case Frigate
 			case Destroyer
 			
-				DroneType:Set[${Drones.FindType["Light Scout Drones"]}]
+				DroneType:Set[${Drones.Data.FindType["Light Scout Drones"]}]
 				if ${DroneType} != -1
 				{
 					return ${DroneType}
@@ -139,13 +138,13 @@ objectdef obj_DroneControl inherits obj_State
 			case Cruiser
 			case BattleCruiser
 			
-				DroneType:Set[${Drones.FindType["Medium Scout Drones"]}]
+				DroneType:Set[${Drones.Data.FindType["Medium Scout Drones"]}]
 				if ${DroneType} != -1
 				{
 					return ${DroneType}
 				}
 				
-				DroneType:Set[${Drones.FindType["Light Scout Drones"]}]
+				DroneType:Set[${Drones.Data.FindType["Light Scout Drones"]}]
 				if ${DroneType} != -1
 				{
 					return ${DroneType}
@@ -154,19 +153,19 @@ objectdef obj_DroneControl inherits obj_State
 			case Battleship
 			
 			
-				DroneType:Set[${Drones.FindType["Heavy Attack Drones"]}]
+				DroneType:Set[${Drones.Data.FindType["Heavy Attack Drones"]}]
 				if ${DroneType} != -1
 				{
 					return ${DroneType}
 				}
 				
-				DroneType:Set[${Drones.FindType["Medium Scout Drones"]}]
+				DroneType:Set[${Drones.Data.FindType["Medium Scout Drones"]}]
 				if ${DroneType} != -1
 				{
 					return ${DroneType}
 				}
 				
-				DroneType:Set[${Drones.FindType["Light Scout Drones"]}]
+				DroneType:Set[${Drones.Data.FindType["Light Scout Drones"]}]
 				if ${DroneType} != -1
 				{
 					return ${DroneType}
@@ -284,9 +283,9 @@ objectdef obj_DroneControl inherits obj_State
 		}
 		if ${Me.ToEntity.Mode} == 3
 		{
-			if ${Drones.ActiveCount["GroupID == 100"]} > 0
+			if ${Drones.ActiveCount["ToEntity.GroupID == 100"]} > 0
 			{
-				Drones:Recall["GroupID == 100"]
+				Drones:Recall["ToEntity.GroupID == 100"]
 			}
 			return FALSE
 		}
@@ -345,19 +344,21 @@ objectdef obj_DroneControl inherits obj_State
 					return TRUE
 				}
 			}
-			if ${Drones.ActiveDroneCount["GroupID == 100"]} == ${DroneCount}
+			if ${Drones.ActiveDroneCount["ToEntity.GroupID == 100"]} > 0
 			{
-				Drones:Engage["GroupID == 100", ${CurrentTarget}, ${DroneCount}]
+				echo Engage Target
+				Drones:Engage["ToEntity.GroupID == 100", ${CurrentTarget}, ${DroneCount}]
 			}
 			else
 			{
 				if ${Entity[${CurrentTarget}].Distance} > (${Config.SentryRange} * 1000) && ${Config.Sentries}
 				{
-					Drones:Deploy["TypeID == ${Drones.FindType[Sentry Drones]}}", ${Math.Calc[${DroneCount} - ${Drones.DronesInSpace}]}]
+					Drones:Deploy["TypeID == ${Drones.FindType[Sentry Drones]}}", ${Math.Calc[${DroneCount} - ${Drones.ActiveDroneCount["ToEntity.GroupID == 100"]}]}]
 				}
 				else
 				{
-					Drones:Deploy["TypeID == ${This.FindBestType[${Entity[${CurrentTarget}].GroupID}]}", ${Math.Calc[${DroneCount} - ${Drones.DronesInSpace}]}]
+					echo Deploy Drones: ${This.FindBestType[${Entity[${CurrentTarget}].GroupID}]} - ${Math.Calc[${DroneCount} - ${Drones.ActiveDroneCount["ToEntity.GroupID == 100"]}
+					Drones:Deploy["TypeID == ${This.FindBestType[${Entity[${CurrentTarget}].GroupID}]}", ${Math.Calc[${DroneCount} - ${Drones.ActiveDroneCount["ToEntity.GroupID == 100"]}]}]
 				}
 				IsBusy:Set[TRUE]
 				Busy:SetBusy["DroneControl"]
@@ -377,9 +378,9 @@ objectdef obj_DroneControl inherits obj_State
 		}
 		else
 		{
-			if !${Drones.ActiveCount["GroupID == 100"]} && ${LavishScript.RunningTime} > ${RecallDelay}
+			if ${Drones.ActiveDroneCount["ToEntity.GroupID == 100"]} > 0 && ${LavishScript.RunningTime} > ${RecallDelay}
 			{
-				Drones:Recall["GroupID == 100"]
+				Drones:Recall["ToEntity.GroupID == 100"]
 				This:QueueState["Idle", 5000]
 				This:QueueState["DroneControl"]
 				return TRUE

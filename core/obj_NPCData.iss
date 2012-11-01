@@ -19,7 +19,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-objectdef obj_Configuration_NPCData
+objectdef obj_NPCData
 {
 	variable string SetName = "NPC Data"
 
@@ -36,7 +36,7 @@ objectdef obj_Configuration_NPCData
 		{
 			LavishSettings[NPCData]:Import["${CONFIG_PATH}/${CONFIG_FILE}"]
 		}
-		BaseRef:Set[${LavishSettings[NPCData].FindSet[DroneTypes]}]
+		BaseRef:Set[${LavishSettings[NPCData].FindSet[NPCTypes]}]
 
 		UI:Update["obj_Configuration", " ${This.SetName}: Initialized", "-g"]
 	}
