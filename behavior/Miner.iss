@@ -680,21 +680,21 @@ objectdef obj_Miner inherits obj_State
 			Cargo:PopulateCargoList[ShipCorpHangar]
 			if ${Cargo.CargoList.Used} && !${Config.Dropoff_Type.Equal[No Dropoff]}
 			{
+				if ${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity} < ${Config.Threshold} * .01
+				{
+					Cargo:Filter[GroupID==GROUP_HARVESTABLECLOUD || CategoryID==CATEGORYID_ORE]
+					if ${Cargo.CargoList.Used}
+					{
+						Cargo:MoveCargoList[Ship]
+						return TRUE
+					}
+				}
 				if ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]} < ${Config.Threshold} * .01
 				{
 					Cargo:Filter[CategoryID==CATEGORYID_ORE]
 					if ${Cargo.CargoList.Used}
 					{
 						Cargo:MoveCargoList[OreHold]
-						return TRUE
-					}
-				}
-				elseif ${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity} < ${Config.Threshold} * .01
-				{
-					Cargo:Filter[GroupID==GROUP_HARVESTABLECLOUD || CategoryID==CATEGORYID_ORE]
-					if ${Cargo.CargoList.Used}
-					{
-						Cargo:MoveCargoList[Ship]
 						return TRUE
 					}
 				}
