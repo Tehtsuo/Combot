@@ -1,6 +1,6 @@
 /*
 
-ComBot  Copyright Â© 2012  Tehtsuo and Vendan
+ComBot  Copyright © 2012  Tehtsuo and Vendan
 
 This file is part of ComBot.
 
