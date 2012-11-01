@@ -45,6 +45,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 #include core/obj_Login.iss
 #include core/obj_Dynamic.iss
 #include core/obj_Busy.iss
+#include core/obj_NPCData.iss
 
 #include temp/behaviorincludes.iss
 
@@ -104,6 +105,7 @@ function main(string Character="")
 	declarevariable Fleets obj_Fleet script
 	declarevariable Dynamic obj_Dynamic script
 	declarevariable Busy obj_Busy script
+	declarevariable NPCData obj_NPCData script
 	
 	#include temp/behaviordeclares.iss
 	

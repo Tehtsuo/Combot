@@ -319,12 +319,8 @@ objectdef obj_Miner inherits obj_State
 	member:bool PrepareWarp()
 	{
 		Profiling:StartTrack["Miner: PrepareWarp"]
-		if ${Drones.DronesInSpace}
+		if ${Busy.IsBusy}
 		{
-			Drones:Recall
-			This:InsertState["PrepareWarp"]
-			This:InsertState["Idle", 5000]
-			Profiling:EndTrack
 			return TRUE
 		}
 		if ${Config.OrcaMode}

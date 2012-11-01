@@ -78,6 +78,7 @@ objectdef obj_Configuration_DroneData
 			}
 			while ${DroneTypeIDs:Next(exists)}
 		}
+		return -1
 	}
 }
 
@@ -85,6 +86,7 @@ objectdef obj_Configuration_DroneData
 objectdef obj_Drones inherits obj_State
 {
 	variable obj_Configuration_DroneData Data
+	variable Set ActiveTypes
 	
 	method Initialize()
 	{
@@ -98,8 +100,24 @@ objectdef obj_Drones inherits obj_State
 		EVE:Execute[CmdDronesReturnToBay]
 		DronesOut:Set[FALSE]
 	}
+	
+	method RefreshActiveTypes()
+	{
+		ActiveTypes:Clear
+		variable index:activedrone ActiveDrones
+		Me:GetActiveDrones[ActiveDrones]
+		ActiveDrones:GetIterator[DroneIterator]
+		if ${DroneIterator:First(exists)}
+		{
+			do
+			{
+				ActiveTypes:Add[${DroneIterator.Value.TypeID}]
+			}
+			while ${DroneIterator:Next(exists)}
+		}
+	}
 
-	method Deploy(string TypeQuery, int Count=1)
+	method Deploy(string TypeQuery, int Count=-1)
 	{
 		variable index:item DroneBayDrones
 		variable index:int64 DronesToLaunch
@@ -113,10 +131,11 @@ objectdef obj_Drones inherits obj_State
 		{
 			do
 			{
-				if ${Selected} >= ${Count}
+				if ${Selected} >= ${Count} && ${Count} > 0
 				{
 					break
 				}
+				ActiveTypes:Add[${DroneIterator.Value.TypeID}]
 				DronesToLaunch:Insert[${DroneIterator.Value.ID}]
 				Selected:Inc
 			}
@@ -125,7 +144,7 @@ objectdef obj_Drones inherits obj_State
 		EVE:LaunchDrones[DronesToLaunch]
 	}
 	
-	method Recall(string TypeQuery, int Count=1)
+	method Recall(string TypeQuery, int Count=-1)
 	{
 		variable index:activedrone ActiveDrones
 		variable index:int64 DronesToRecall
@@ -139,7 +158,7 @@ objectdef obj_Drones inherits obj_State
 		{
 			do
 			{
-				if ${Selected} >= ${Count}
+				if ${Selected} >= ${Count} && ${Count} > 0
 				{
 					break
 				}
@@ -172,7 +191,7 @@ objectdef obj_Drones inherits obj_State
 		return ${Targeting}
 	}
 	
-	method Engage(string TypeQuery, int64 TargetID, int Count = 1)
+	method Engage(string TypeQuery, int64 TargetID, int Count = -1)
 	{
 		if ${Entity[${TargetID}].IsLockedTarget}
 		{
@@ -208,7 +227,7 @@ objectdef obj_Drones inherits obj_State
 		return TRUE
 	}
 	
-	member:bool EngageTarget(string TypeQuery, int64 TargetID, int Count = 1)
+	member:bool EngageTarget(string TypeQuery, int64 TargetID, int Count = -1)
 	{
 		if ${Entity[${TargetID}].IsLockedTarget} && ${Entity[${TargetID}].IsActiveTarget}
 		{
@@ -224,7 +243,7 @@ objectdef obj_Drones inherits obj_State
 			{
 				do
 				{
-					if ${Selected} >= ${Count}
+					if ${Selected} >= ${Count} && ${Count} > 0
 					{
 						break
 					}

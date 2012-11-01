@@ -89,73 +89,6 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Alignment>Center</Alignment>
 						<Text>Drone List</Text>
 					</Text>
-					<listbox Name="DroneList">
-						<BackgroundColor>FF000000</BackgroundColor>
-						<Border>1</Border>
-						<BorderColor>FFFFFFFF</BorderColor>
-						<X>1%</X>
-						<Y>15%</Y>
-						<Width>32%</Width>
-						<Height>30%</Height>
-						<OnLoad>
-							variable index:item drones
-							variable iterator drone
-							MyShip:GetDrones[drones]
-							drones:GetIterator[drone]
-							if ${drone:First(exists)}
-							{
-								do
-								{
-									if !${This.ItemByValue[${drone.Value.TypeID}](exists)}
-									{
-										This:AddItem[${drone.Value.Name}, ${drone.Value.TypeID}]
-									}
-								}
-								while ${drone:Next(exists)}
-							}
-							
-							This.ItemByValue[${Script[ComBot].VariableScope.DroneControl.Config.DroneType}]:Select
-							
-						</OnLoad>
-						<OnSelect>
-							Script[ComBot].VariableScope.DroneControl.Config:SetDroneType[${This.SelectedItem.Value}]
-						</OnSelect>
-					</listbox>
-					<listbox Name="SentryList">
-						<BackgroundColor>FF000000</BackgroundColor>
-						<Border>1</Border>
-						<BorderColor>FFFFFFFF</BorderColor>
-						<X>35%</X>
-						<Y>15%</Y>
-						<Width>32%</Width>
-						<Height>30%</Height>
-						<OnLoad>
-							variable index:item drones
-							variable iterator drone
-							MyShip:GetDrones[drones]
-							drones:GetIterator[drone]
-							if ${drone:First(exists)}
-							{
-								do
-								{
-									if ${Script[ComBot].VariableScope.Drones.Data.DroneType[${drone.Value.TypeID}].Equal[Sentry Drones]}
-									{
-										if !${This.ItemByValue[${drone.Value.TypeID}](exists)}
-										{
-											This:AddItem[${drone.Value.Name}, ${drone.Value.TypeID}]
-										}
-									}
-								}
-								while ${drone:Next(exists)}
-							}
-							
-							This.ItemByValue[${Script[ComBot].VariableScope.DroneControl.Config.SentryType}]:Select
-							
-						</OnLoad>
-						<OnSelect>
-							Script[ComBot].VariableScope.DroneControl.Config:SetSentryType[${This.SelectedItem.Value}]
-						</OnSelect>
-					</listbox>
 					<Checkbox name='Sentries'>
 						<X>1%</X>
 						<Y>50%</Y>
@@ -186,6 +119,105 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							Script[ComBot].VariableScope.DroneControl.Config:SetSentryRange[${This.Value}]
 						</OnChange>
 					</Slider>
+					<Text name='DroneCountLabel'>
+						<X>1%</X>
+						<Y>60%</Y>
+						<Width>30%</Width> 
+						<Height>3%</Height> 
+						<Text>Use ${Script[ComBot].VariableScope.DroneControl.Config.DroneCount} Drones</Text>
+					</Checkbox>
+					<Slider name='DroneCount'> 
+						<X>70%</X>
+						<Y>60%</Y>
+						<Width>20%</Width> 
+						<Height>3%</Height> 
+						<Border>1</Border>
+						<Range>25</Range>
+						<OnLoad>
+							This:SetValue[${Script[ComBot].VariableScope.DroneControl.Config.DroneCount}]
+						</OnLoad>
+						<OnChange>
+							Script[ComBot].VariableScope.DroneControl.Config:SetDroneCount[${This.Value}]
+						</OnChange>
+					</Slider>
+					
+					<Text name='LockCountLabel'>
+						<X>1%</X>
+						<Y>60%</Y>
+						<Width>30%</Width> 
+						<Height>3%</Height> 
+						<Text>Use ${Script[ComBot].VariableScope.DroneControl.Config.DroneCount} Locks</Text>
+					</Checkbox>
+					<Slider name='LockCount'> 
+						<X>70%</X>
+						<Y>60%</Y>
+						<Width>20%</Width> 
+						<Height>3%</Height> 
+						<Border>1</Border>
+						<Range>10</Range>
+						<OnLoad>
+							This:SetValue[${Script[ComBot].VariableScope.DroneControl.Config.LockCount}]
+						</OnLoad>
+						<OnChange>
+							Script[ComBot].VariableScope.DroneControl.Config:SetLockCount[${This.Value}]
+						</OnChange>
+					</Slider>
+					
+					<Text name='OutDelayLabel'>
+						<X>1%</X>
+						<Y>70%</Y>
+						<Width>30%</Width> 
+						<Height>3%</Height> 
+						<Text>Leave Drones out for ${Script[ComBot].VariableScope.DroneControl.Config.OutDelay} seconds</Text>
+					</Checkbox>
+					<Slider name='OutDelay'> 
+						<X>70%</X>
+						<Y>70%</Y>
+						<Width>20%</Width> 
+						<Height>3%</Height> 
+						<Border>1</Border>
+						<Range>60</Range>
+						<OnLoad>
+							This:SetValue[${Script[ComBot].VariableScope.DroneControl.Config.OutDelay}]
+						</OnLoad>
+						<OnChange>
+							Script[ComBot].VariableScope.DroneControl.Config:SetOutDelay[${This.Value}]
+						</OnChange>
+					</Slider>
+					
+					<Checkbox name='Aggressive'>
+						<X>1%</X>
+						<Y>90%</Y>
+						<Width>30%</Width> 
+						<Height>3%</Height> 
+						<Text>Attack all potentially hostile NPC's</Text>
+						<OnLoad>
+							if ${Script[ComBot].VariableScope.DroneControl.Config.Aggressive}
+							{
+								This:SetChecked
+							}
+						</OnLoad>
+						<OnLeftClick>
+							Script[ComBot].VariableScope.DroneControl.Config:SetAggressive[${This.Checked}]
+						</OnLeftClick>
+					</Checkbox>
+					
+					<Checkbox name='UseIPC'>
+						<X>50%</X>
+						<Y>90%</Y>
+						<Width>30%</Width> 
+						<Height>3%</Height> 
+						<Text>Use IPC to coordinate attacks</Text>
+						<OnLoad>
+							if ${Script[ComBot].VariableScope.DroneControl.Config.UseIPC}
+							{
+								This:SetChecked
+							}
+						</OnLoad>
+						<OnLeftClick>
+							Script[ComBot].VariableScope.DroneControl.Config:SetUseIPC[${This.Checked}]
+						</OnLeftClick>
+					</Checkbox>
 				</Children>
 			</Frame>
 		</Children>
