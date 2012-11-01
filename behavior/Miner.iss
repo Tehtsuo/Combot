@@ -683,14 +683,20 @@ objectdef obj_Miner inherits obj_State
 				if ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]} < ${Config.Threshold} * .01
 				{
 					Cargo:Filter[CategoryID==CATEGORYID_ORE]
-					Cargo:MoveCargoList[OreHold]
-					return TRUE
+					if ${Cargo.CargoList.Used}
+					{
+						Cargo:MoveCargoList[OreHold]
+						return TRUE
+					}
 				}
 				elseif ${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity} < ${Config.Threshold} * .01
 				{
 					Cargo:Filter[GroupID==GROUP_HARVESTABLECLOUD || CategoryID==CATEGORYID_ORE]
-					Cargo:MoveCargoList[Ship]
-					return TRUE
+					if ${Cargo.CargoList.Used}
+					{
+						Cargo:MoveCargoList[Ship]
+						return TRUE
+					}
 				}
 			}
 			
