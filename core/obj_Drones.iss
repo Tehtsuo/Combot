@@ -86,7 +86,7 @@ objectdef obj_Configuration_DroneData
 objectdef obj_Drones inherits obj_State
 {
 	variable obj_Configuration_DroneData Data
-	variable Set ActiveTypes
+	variable set ActiveTypes
 	
 	method Initialize()
 	{
