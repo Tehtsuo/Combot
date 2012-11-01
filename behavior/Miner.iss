@@ -671,6 +671,7 @@ objectdef obj_Miner inherits obj_State
 		}
 		if ${Config.OrcaMode}
 		{
+			Asteroids:RequestUpdate
 			Asteroids.AutoLock:Set[FALSE]
 			Asteroids.LockTop:Set[FALSE]
 			
