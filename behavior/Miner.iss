@@ -269,6 +269,7 @@ objectdef obj_Miner inherits obj_State
 			This:QueueState["Traveling"]
 			This:QueueState["OpenCargoHold"]
 			This:QueueState["CheckCargoHold"]
+			This:QueueState["RequestUpdate"]
 			Profiling:EndTrack
 			return TRUE
 		}
@@ -284,6 +285,7 @@ objectdef obj_Miner inherits obj_State
 			This:QueueState["Traveling"]
 			This:QueueState["OpenCargoHold"]
 			This:QueueState["CheckCargoHold"]
+			This:QueueState["RequestUpdate"]
 			Profiling:EndTrack
 			return TRUE
 		}
@@ -298,6 +300,7 @@ objectdef obj_Miner inherits obj_State
 			This:QueueState["Traveling"]
 			This:QueueState["OpenCargoHold"]
 			This:QueueState["CheckCargoHold"]
+			This:QueueState["RequestUpdate"]
 			Profiling:EndTrack
 			return TRUE
 		}
