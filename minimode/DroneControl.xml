@@ -125,7 +125,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Width>30%</Width> 
 						<Height>3%</Height> 
 						<Text>Use ${Script[ComBot].VariableScope.DroneControl.Config.DroneCount} Drones</Text>
-					</Checkbox>
+					</Text>
 					<Slider name='DroneCount'> 
 						<X>70%</X>
 						<Y>60%</Y>
@@ -147,7 +147,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Width>30%</Width> 
 						<Height>3%</Height> 
 						<Text>Use ${Script[ComBot].VariableScope.DroneControl.Config.DroneCount} Locks</Text>
-					</Checkbox>
+					</Text>
 					<Slider name='LockCount'> 
 						<X>70%</X>
 						<Y>60%</Y>
@@ -169,7 +169,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Width>30%</Width> 
 						<Height>3%</Height> 
 						<Text>Leave Drones out for ${Script[ComBot].VariableScope.DroneControl.Config.OutDelay} seconds</Text>
-					</Checkbox>
+					</Text>
 					<Slider name='OutDelay'> 
 						<X>70%</X>
 						<Y>70%</Y>
