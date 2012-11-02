@@ -235,7 +235,6 @@ objectdef obj_Hauler inherits obj_State
 			Me.Fleet:GetMembers[FleetMembers]
 			FleetMembers:RemoveByQuery[${LavishScript.CreateQuery[ID == ${Me.CharID}]}]
 			FleetMembers:Collapse
-			echo Built new fleet member list.  Used: ${FleetMembers.Used}
 		}
 	
 		if ${FleetMembers.Get[1].ToEntity(exists)}
@@ -248,14 +247,12 @@ objectdef obj_Hauler inherits obj_State
 			This:QueueState["CheckCargoHold"]
 			FleetMembers:Remove[1]
 			FleetMembers:Collapse
-			echo Removed a fleet member after queueing jetcan operation.  Used: ${FleetMembers.Used}
 			return TRUE
 		}
 		elseif !${FleetMembers.Get[1].ToPilot(exists)}
 		{
 			FleetMembers:Remove[1]
 			FleetMembers:Collapse
-			echo Removed a fleet member because it is not in system.  Used: ${FleetMembers.Used}
 			return FALSE
 		}
 		else
@@ -263,7 +260,6 @@ objectdef obj_Hauler inherits obj_State
 			Move:Fleetmember[${FleetMembers.Get[1].ID}, TRUE]
 			This:QueueState["Traveling"]
 			This:QueueState["FleetJetcan"]
-			echo Warping to fleet member.  Used: ${FleetMembers.Used}
 			return TRUE
 		}
 	}
