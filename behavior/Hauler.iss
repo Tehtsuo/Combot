@@ -249,6 +249,12 @@ objectdef obj_Hauler inherits obj_State
 			FleetMembers:Collapse
 			return TRUE
 		}
+		elseif ${FleetMembers.Get[1].ToPilot(exists)}
+		{
+			FleetMembers:Remove[1]
+			FleetMembers:Collapse
+			return FALSE
+		}
 		else
 		{
 			Move:Fleetmember[${FleetMembers.Get[1].ID}, TRUE]
@@ -278,6 +284,12 @@ objectdef obj_Hauler inherits obj_State
 			FleetMembers:Remove[1]
 			FleetMembers:Collapse
 			return TRUE
+		}
+		elseif ${FleetMembers.Get[1].ToPilot(exists)}
+		{
+			FleetMembers:Remove[1]
+			FleetMembers:Collapse
+			return FALSE
 		}
 		else
 		{
