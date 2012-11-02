@@ -251,7 +251,7 @@ objectdef obj_Hauler inherits obj_State
 			echo Removed a fleet member after queueing jetcan operation.  Used: ${FleetMembers.Used}
 			return TRUE
 		}
-		elseif ${FleetMembers.Get[1].ToPilot(exists)}
+		elseif !${FleetMembers.Get[1].ToPilot(exists)}
 		{
 			FleetMembers:Remove[1]
 			FleetMembers:Collapse
@@ -289,7 +289,7 @@ objectdef obj_Hauler inherits obj_State
 			FleetMembers:Collapse
 			return TRUE
 		}
-		elseif ${FleetMembers.Get[1].ToPilot(exists)}
+		elseif !${FleetMembers.Get[1].ToPilot(exists)}
 		{
 			FleetMembers:Remove[1]
 			FleetMembers:Collapse
