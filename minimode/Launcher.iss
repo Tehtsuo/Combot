@@ -56,7 +56,6 @@ objectdef obj_Launcher inherits obj_State
 	method Initialize()
 	{
 		This[parent]:Initialize
-		This.NonGameTiedPulse:Set[TRUE]
 		DynamicAddMiniMode("Launcher", "Launcher")
 	}
 	
@@ -72,10 +71,11 @@ objectdef obj_Launcher inherits obj_State
 	
 	member:bool Launcher()
 	{
-		if !${Script.CurrentDirectory.Equal[${LavishScript.HomeDirectory}]
-		{
-			cd
-		}
+		echo ${Script.CurrentDirectory} - ${LavishScript.HomeDirectory}
+		; if !${Script.CurrentDirectory.Equal["${LavishScript.HomeDirectory}"]}
+		; {
+			; cd
+		; }
 		${Config.CommandLine}
 		return TRUE
 	}
