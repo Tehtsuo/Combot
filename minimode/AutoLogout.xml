@@ -279,7 +279,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							<Text name='obj_AutoLogout_Minute_Label'> 
 								<X>17%</X> 
 								<Y>33%</Y> 
-								<Width>16%</Width> 
+								<Width>15%</Width> 
 								<Height>10%</Height> 
 								<Alignment>Center</Alignment>
 								<Text>Start Minute</Text>
@@ -287,7 +287,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							<Textentry name='obj_AutoLogout_Minute'> 
 								<X>17%</X> 
 								<Y>40%</Y> 
-								<Width>16%</Width> 
+								<Width>15%</Width> 
 								<Height>15%</Height> 
 								<OnLoad>
 									This:SetText[${Script[Combot].VariableScope.AutoLogout.Config.StartMinute}]
@@ -297,6 +297,32 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								</OnChange>
 								<OnMouseEnter>
 									UIElement[Information@InformationFrame@ComBot_AutoLogout_Frame@ComBot_AutoLogout]:SetText["This field needs to contain the minute which you would like to turn ComBot on."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@ComBot_AutoLogout_Frame@ComBot_AutoLogout]:SetText[""]
+								</OnMouseExit>
+							</Textentry>
+							<Text name='obj_AutoLogout_Delta_Label'> 
+								<X>33%</X> 
+								<Y>33%</Y> 
+								<Width>15%</Width> 
+								<Height>10%</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Delta Minute</Text>
+							</Text>
+							<Textentry name='obj_AutoLogout_Delta'> 
+								<X>33%</X> 
+								<Y>40%</Y> 
+								<Width>15%</Width> 
+								<Height>15%</Height> 
+								<OnLoad>
+									This:SetText[${Script[Combot].VariableScope.AutoLogout.Config.StartDelta}]
+								</OnLoad>
+								<OnChange>
+									Script[Combot].VariableScope.AutoLogout.Config:SetStartDelta[${This.Text}]
+								</OnChange>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@ComBot_AutoLogout_Frame@ComBot_AutoLogout]:SetText["This field needs to contain the random delta you want added to the start time, in minutes."]
 								</OnMouseEnter>
 								<OnMouseExit>
 									UIElement[Information@InformationFrame@ComBot_AutoLogout_Frame@ComBot_AutoLogout]:SetText[""]

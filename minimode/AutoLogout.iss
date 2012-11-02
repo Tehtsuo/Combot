@@ -49,6 +49,7 @@ objectdef obj_Configuration_AutoLogout
 	Setting(int, Minute, SetMinute)
 	Setting(int, StartHour, SetStartHour)
 	Setting(int, StartMinute, SetStartMinute)
+	Setting(int, StartDelta, SetStartDelta)
 	Setting(string, Bookmark, SetBookmark)
 }
 
@@ -57,6 +58,7 @@ objectdef obj_AutoLogout inherits obj_State
 {
 	variable obj_Configuration_AutoLogout Config
 	variable obj_AutoLogoutUI LocalUI
+	variable bool StartComplete=FALSE
 	
 	method Initialize()
 	{
@@ -69,6 +71,7 @@ objectdef obj_AutoLogout inherits obj_State
 	method Start()
 	{
 		UI:Update["Automate", "Starting Automate", "g"]
+		StartComplete:Set[FALSE]
 		This:QueueState["AutoLogout"]
 	}
 	
@@ -88,11 +91,19 @@ objectdef obj_AutoLogout inherits obj_State
 			This:QueueState["Logout"]
 			return TRUE
 		}
-		if ${Time.Hour} == ${Config.StartHour} && ${Time.Minute} == ${Config.StartMinute}
+		if ${Time.Hour} == ${Config.StartHour} && ${Time.Minute} == ${Config.StartMinute} && !${StartComplete}
 		{
-			ComBot:Resume
+			StartComplete:Set[TRUE]
+			This:QueueState["Start", ${Math.Calc[${Math.Rand[${Config.StartDelta} + 1]} * 60000].Int}]
+			This:QueueState["AutoLogout"]
+			return TRUE
 		}
 		return FALSE
+	}
+	
+	member:bool AutoStart()
+	{
+		ComBot:Resume
 	}
 	
 	method LogoutNow()
