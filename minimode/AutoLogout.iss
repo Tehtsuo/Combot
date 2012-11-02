@@ -27,10 +27,10 @@ objectdef obj_Configuration_AutoLogout
 	{
 		if !${BaseConfig.BaseRef.FindSet[${This.SetName}](exists)}
 		{
-			UI:Update["obj_AutoLogout", " ${This.SetName} settings missing - initializing", "o"]
+			UI:Update["Automate", " ${This.SetName} settings missing - initializing", "o"]
 			This:Set_Default_Values[]
 		}
-		UI:Update["obj_AutoLogout", " ${This.SetName}: Initialized", "-g"]
+		UI:Update["Automate", " ${This.SetName}: Initialized", "-g"]
 	}
 
 	member:settingsetref CommonRef()
@@ -47,6 +47,8 @@ objectdef obj_Configuration_AutoLogout
 
 	Setting(int, Hour, SetHour)
 	Setting(int, Minute, SetMinute)
+	Setting(int, StartHour, SetStartHour)
+	Setting(int, StartMinute, SetStartMinute)
 	Setting(string, Bookmark, SetBookmark)
 }
 
@@ -61,19 +63,19 @@ objectdef obj_AutoLogout inherits obj_State
 		This[parent]:Initialize
 		This.NonGameTiedPulse:Set[TRUE]
 		PulseFrequency:Set[500]
-		DynamicAddMiniMode("AutoLogout", "AutoLogout")
+		DynamicAddMiniMode("AutoLogout", "Automate")
 	}
 	
 	method Start()
 	{
-		UI:Update["obj_AutoLogout", "Starting AutoLogout", "g"]
+		UI:Update["Automate", "Starting Automate", "g"]
 		This:QueueState["AutoLogout"]
 	}
 	
 	method Stop()
 	{
 		This:Clear
-		UI:Update["obj_AutoLogout", "Stopping AutoLogout", "g"]
+		UI:Update["Automate", "Stopping Automate", "g"]
 	}
 	
 	member:bool AutoLogout()
@@ -85,6 +87,10 @@ objectdef obj_AutoLogout inherits obj_State
 			This:QueueState["Traveling"]
 			This:QueueState["Logout"]
 			return TRUE
+		}
+		if ${Time.Hour} == ${Config.StartHour} && ${Time.Minute} == ${Config.StartMinute}
+		{
+			ComBot:Resume
 		}
 		return FALSE
 	}
@@ -108,7 +114,7 @@ objectdef obj_AutoLogout inherits obj_State
 	member:bool MoveToLogout()
 	{
 		variable iterator Behaviors
-		UI:Update["obj_AutoLogout", "Logout time!", "r"]
+		UI:Update["Automate", "Logout time!", "r"]
 		Dynamic.Behaviors:GetIterator[Behaviors]
 		if ${Behaviors:First(exists)}
 		{

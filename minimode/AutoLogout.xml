@@ -175,7 +175,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									Script[Combot].VariableScope.AutoLogout.Config:SetHour[${This.Text}]
 								</OnChange>
 								<OnMouseEnter>
-									UIElement[Information@InformationFrame@ComBot_AutoLogout_Frame@ComBot_AutoLogout]:SetText["This field needs to contain the hour (EVE Time) which you would like to perform the log out operation."]
+									UIElement[Information@InformationFrame@ComBot_AutoLogout_Frame@ComBot_AutoLogout]:SetText["This field needs to contain the hour which you would like to perform the log out operation."]
 								</OnMouseEnter>
 								<OnMouseExit>
 									UIElement[Information@InformationFrame@ComBot_AutoLogout_Frame@ComBot_AutoLogout]:SetText[""]
@@ -201,13 +201,13 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									Script[Combot].VariableScope.AutoLogout.Config:SetMinute[${This.Text}]
 								</OnChange>
 								<OnMouseEnter>
-									UIElement[Information@InformationFrame@ComBot_AutoLogout_Frame@ComBot_AutoLogout]:SetText["This field needs to contain the minute (EVE Time) which you would like to perform the log out operation."]
+									UIElement[Information@InformationFrame@ComBot_AutoLogout_Frame@ComBot_AutoLogout]:SetText["This field needs to contain the minute which you would like to perform the log out operation."]
 								</OnMouseEnter>
 								<OnMouseExit>
 									UIElement[Information@InformationFrame@ComBot_AutoLogout_Frame@ComBot_AutoLogout]:SetText[""]
 								</OnMouseExit>
 							</Textentry>
-							
+
 							<Button	Name='LogoutNow'>
 								<BackgroundColor>FF000000</BackgroundColor>
 								<X>1%</X>
@@ -228,7 +228,84 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 				
 						</Children>
 					</Frame>
+
+					<Text name='AutoStartFrameTitle'> 
+						<X>1%</X> 
+						<Y>2%</Y> 
+						<Width>32%</Width> 
+						<Height>4%</Height> 
+						<Text>AutoStart Configuration</Text>
+						<OnLoad>
+							This.Font:SetColor[FFFFFF00]
+						</OnLoad>
+					</Text>
+					<Frame name="AutoStartFrame">
+						<X>0%</X>
+						<Y>4%</Y>
+						<Width>100%</Width>
+						<Height>30%</Height>
+						<BackgroundColor>FF000000</BackgroundColor>
+						<Border>1</Border>
+						<BorderColor>FFFFFFFF</BorderColor>
+						<Children>
 				
+						
+							<Text name='obj_AutoLogout_Hour_Label'> 
+								<X>1%</X> 
+								<Y>33%</Y> 
+								<Width>15%</Width> 
+								<Height>10%</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Start Hour</Text>
+							</Text>
+							<Textentry name='obj_AutoLogout_Hour'> 
+								<X>1%</X> 
+								<Y>40%</Y> 
+								<Width>15%</Width> 
+								<Height>15%</Height> 
+								<OnLoad>
+									This:SetText[${Script[Combot].VariableScope.AutoLogout.Config.StartHour}]
+								</OnLoad>
+								<OnChange>
+									Script[Combot].VariableScope.AutoLogout.Config:SetStartHour[${This.Text}]
+								</OnChange>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@ComBot_AutoLogout_Frame@ComBot_AutoLogout]:SetText["This field needs to contain the hour which you would like to turn ComBot on."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@ComBot_AutoLogout_Frame@ComBot_AutoLogout]:SetText[""]
+								</OnMouseExit>
+							</Textentry>
+							<Text name='obj_AutoLogout_Minute_Label'> 
+								<X>17%</X> 
+								<Y>33%</Y> 
+								<Width>16%</Width> 
+								<Height>10%</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Start Minute</Text>
+							</Text>
+							<Textentry name='obj_AutoLogout_Minute'> 
+								<X>17%</X> 
+								<Y>40%</Y> 
+								<Width>16%</Width> 
+								<Height>15%</Height> 
+								<OnLoad>
+									This:SetText[${Script[Combot].VariableScope.AutoLogout.Config.StartMinute}]
+								</OnLoad>
+								<OnChange>
+									Script[Combot].VariableScope.AutoLogout.Config:SetStartMinute[${This.Text}]
+								</OnChange>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@ComBot_AutoLogout_Frame@ComBot_AutoLogout]:SetText["This field needs to contain the minute which you would like to turn ComBot on."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@ComBot_AutoLogout_Frame@ComBot_AutoLogout]:SetText[""]
+								</OnMouseExit>
+							</Textentry>
+
+						</Children>
+					</Frame>
+					
 					<Text name='InformationFrameTitle'> 
 						<X>1%</X> 
 						<Y>80%</Y> 
