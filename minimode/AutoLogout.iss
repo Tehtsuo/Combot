@@ -93,8 +93,10 @@ objectdef obj_AutoLogout inherits obj_State
 		}
 		if ${Time.Hour} == ${Config.StartHour} && ${Time.Minute} == ${Config.StartMinute} && !${StartComplete}
 		{
+			variable int Delta=${Math.Rand[${Config.StartDelta} + 1].Int}
 			StartComplete:Set[TRUE]
-			This:QueueState["Start", ${Math.Calc[${Math.Rand[${Config.StartDelta} + 1]} * 60000].Int}]
+			UI:Update["Automate", "Starting in ${Delta} minutes", "g"]
+			This:QueueState["Start", ${Math.Calc[${Delta} * 60000].Int}]
 			This:QueueState["AutoLogout"]
 			return TRUE
 		}
