@@ -96,6 +96,17 @@ objectdef obj_ComBotUI
 		This:WriteQueueToLog
 		This.Reloaded:Set[TRUE]
 		UIElement[ComBotTab@ComBot].Tab[${Config.Common.ActiveTab}]:Select
+		if ${Config.Common.Hidden}
+		{
+			UIElement[ComBotTab@ComBot]:Hide
+			This:SetText[Show]
+		}
+		else
+		{
+			UIElement[ComBotTab@ComBot]:Show
+			This:SetText[Hide]
+		}
+		
 	}
 	
 	method WriteQueueToLog()

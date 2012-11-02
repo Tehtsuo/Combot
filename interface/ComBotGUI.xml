@@ -112,8 +112,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					<Width>40</Width>
 					<Height>20</Height>
 					<Text>Hide</Text>
-					<OnLeftClick>
-						if ${UIElement[ComBotTab@ComBot].Visible}
+					<OnLoad>
+						if ${Script[ComBot].VariableScope.Config.Common.Hidden}
 						{
 							UIElement[ComBotTab@ComBot]:Hide
 							This:SetText[Show]
@@ -122,6 +122,20 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						{
 							UIElement[ComBotTab@ComBot]:Show
 							This:SetText[Hide]
+						}
+					</OnLoad>
+					<OnLeftClick>
+						if ${UIElement[ComBotTab@ComBot].Visible}
+						{
+							UIElement[ComBotTab@ComBot]:Hide
+							This:SetText[Show]
+							Script[ComBot].VariableScope.Config.Common:SetHidden[TRUE]
+						}
+						else
+						{
+							UIElement[ComBotTab@ComBot]:Show
+							This:SetText[Hide]
+							Script[ComBot].VariableScope.Config.Common:SetHidden[FALSE]
 						}
 					</OnLeftClick>
 				</button>
