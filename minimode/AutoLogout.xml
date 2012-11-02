@@ -231,9 +231,9 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 					<Text name='AutoStartFrameTitle'> 
 						<X>1%</X> 
-						<Y>2%</Y> 
+						<Y>40%</Y> 
 						<Width>32%</Width> 
-						<Height>4%</Height> 
+						<Height>42%</Height> 
 						<Text>AutoStart Configuration</Text>
 						<OnLoad>
 							This.Font:SetColor[FFFFFF00]
@@ -241,7 +241,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					</Text>
 					<Frame name="AutoStartFrame">
 						<X>0%</X>
-						<Y>4%</Y>
+						<Y>42%</Y>
 						<Width>100%</Width>
 						<Height>30%</Height>
 						<BackgroundColor>FF000000</BackgroundColor>
