@@ -76,7 +76,7 @@ objectdef obj_Launcher inherits obj_State
 		; {
 			; cd
 		; }
-		${Config.CommandLine}
+		execute ${Config.CommandLine}
 		return TRUE
 	}
 
