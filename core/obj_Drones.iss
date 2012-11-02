@@ -19,6 +19,58 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
+/*
+Drone states
+
+[22:55] <@CyberTech> STATE_OFFLINING = -7
+[22:55] <@CyberTech> STATE_ANCHORING = -6
+[22:55] <@CyberTech> STATE_ONLINING = -5
+[22:55] <@CyberTech> STATE_ANCHORED = -4
+[22:55] <@CyberTech> STATE_UNANCHORING = -3
+[22:55] <@CyberTech> STATE_UNANCHORED = -2
+[22:55] <@CyberTech> STATE_INCAPACITATED = -1
+[22:55] <@CyberTech> STATE_IDLE = 0
+[22:55] <@CyberTech> STATE_COMBAT = 1
+[22:55] <@CyberTech> STATE_MINING = 2
+[22:55] <@CyberTech> STATE_APPROACHING = 3
+[22:55] <@CyberTech> STATE_DEPARTING = 4
+[22:55] <@CyberTech> STATE_DEPARTING_2 = 5
+[22:55] <@CyberTech> STATE_PURSUIT = 6
+[22:55] <@CyberTech> STATE_FLEEING = 7
+[22:55] <@CyberTech> STATE_REINFORCED = 8
+[22:55] <@CyberTech> STATE_OPERATING = 9
+[22:55] <@CyberTech> STATE_ENGAGE = 10
+[22:55] <@CyberTech> STATE_VULNERABLE = 11
+[22:55] <@CyberTech> STATE_SHIELD_REINFORCE = 12
+[22:55] <@CyberTech> STATE_ARMOR_REINFORCE = 13
+[22:55] <@CyberTech> STATE_INVULNERABLE = 14
+[22:55] <@CyberTech> STATE_WARPAWAYANDDIE = 15
+[22:55] <@CyberTech> STATE_WARPAWAYANDCOMEBACK = 16
+[22:55] <@CyberTech> STATE_WARPTOPOSITION = 17
+[22:55] <@CyberTech> You will not see all of those.
+[22:56] <Vendan> hem
+[22:56] <Vendan> I was hoping there was a returning state
+[22:56] <Vendan> maybe it goes by a different name
+[22:57] <@CyberTech>         droneStates = {const.entityIdle: 'UI/Inflight/Drone/Idle',
+[22:57] <@CyberTech>          const.entityCombat: 'UI/Inflight/Drone/Fighting',
+[22:57] <@CyberTech>          const.entityMining: 'UI/Inflight/Drone/Mining',
+[22:57] <@CyberTech>          const.entityApproaching: 'UI/Inflight/Drone/Approaching',
+[22:57] <@CyberTech>          const.entityDeparting: 'UI/Inflight/Drone/ReturningToShip',
+[22:57] <@CyberTech>          const.entityDeparting2: 'UI/Inflight/Drone/ReturningToShip',
+[22:57] <@CyberTech>          const.entityOperating: 'UI/Inflight/Drone/Operating',
+[22:57] <@CyberTech>          const.entityPursuit: 'UI/Inflight/Drone/Following',
+[22:57] <@CyberTech>          const.entityFleeing: 'UI/Inflight/Drone/Fleeing',
+[22:57] <@CyberTech>          const.entityEngage: 'UI/Inflight/Drone/Repairing',
+[22:57] <@CyberTech>          None: 'UI/Inflight/Drone/NoState'}
+[22:57] <@CyberTech> if it's not in ^ list it's incapacitated
+
+
+
+
+
+
+*/
+
 objectdef obj_Configuration_DroneData
 {
 	variable string SetName = "Drone Data"
@@ -72,7 +124,7 @@ objectdef obj_Configuration_DroneData
 		{
 			do
 			{
-				if ${Drones.InactiveDroneCount[${DroneTypeIDs.Key}]} > 0
+				if ${Drones.InactiveDroneCount[TypeID = ${DroneTypeIDs.Key}]} > 0
 				{
 					return ${DroneTypeIDs.Key}
 				}
@@ -88,6 +140,7 @@ objectdef obj_Drones inherits obj_State
 {
 	variable obj_Configuration_DroneData Data
 	variable set ActiveTypes
+	variable collection:queue TypeQueues
 	
 	method Initialize()
 	{
@@ -117,13 +170,16 @@ objectdef obj_Drones inherits obj_State
 			while ${DroneIterator:Next(exists)}
 		}
 	}
-
+	
 	method Deploy(string TypeQuery, int Count=-1)
 	{
 		variable index:item DroneBayDrones
 		variable index:int64 DronesToLaunch
 		variable iterator DroneIterator
 		variable int Selected = 0
+		
+		echo ${TypeQuery} - ${Count}
+		
 		MyShip:GetDrones[DroneBayDrones]
 		DroneBayDrones:RemoveByQuery[${LavishScript.CreateQuery[${TypeQuery}]}, FALSE]
 		DroneBayDrones:Collapse[]
@@ -136,6 +192,7 @@ objectdef obj_Drones inherits obj_State
 				{
 					break
 				}
+				echo ${DroneIterator.Value.ID}
 				ActiveTypes:Add[${DroneIterator.Value.TypeID}]
 				DronesToLaunch:Insert[${DroneIterator.Value.ID}]
 				Selected:Inc
@@ -240,6 +297,9 @@ objectdef obj_Drones inherits obj_State
 			ActiveDrones:RemoveByQuery[${LavishScript.CreateQuery[${TypeQuery}]}, FALSE]
 			ActiveDrones:Collapse[]
 			ActiveDrones:GetIterator[DroneIterator]
+			
+			Count:Dec[${This.GetTargetting[${TargetID}]}]
+			
 			if ${DroneIterator:First(exists)}
 			{
 				do
@@ -248,7 +308,7 @@ objectdef obj_Drones inherits obj_State
 					{
 						break
 					}
-					if !${DroneIterator.Value.Target.ID.Equal[${TargetID}]}
+					if ${DroneIterator.Value.State} == 0
 					{
 						DronesToEngage:Insert[${DroneIterator.Value.ID}]
 					}
