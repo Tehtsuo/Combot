@@ -49,11 +49,15 @@ objectdef obj_Configuration_Automate
 
 	Setting(int, Hour, SetHour)
 	Setting(int, Minute, SetMinute)
+	Setting(int, LogoutDelta, SetLogoutDelta)
 	Setting(int, StartHour, SetStartHour)
 	Setting(int, StartMinute, SetStartMinute)
 	Setting(int, StartDelta, SetStartDelta)
 	Setting(bool, DelayLogin, SetDelayLogin)
 	Setting(bool, DelayLoginDelta, SetDelayLoginDelta)
+	Setting(bool, Questor, SetQuestor)
+	Setting(bool, TimedLogout, SetTimedLogout)
+	Setting(bool, ScheduleLogout, SetScheduleLogout)
 	Setting(string, Bookmark, SetBookmark)
 	Setting(bool, Launch, SetLaunch)
 	Setting(string, LaunchCommand, SetLaunchCommand)
@@ -80,22 +84,42 @@ objectdef obj_Automate inherits obj_State
 	{
 		UI:Update["Automate", "Starting Automate", "g"]
 		StartComplete:Set[FALSE]
-		if ${Config.DelayLogin}
+		if !${Me(exists)} && !${MyShip(exists)} && !(${Me.InSpace} || ${Me.InStation})
 		{
-			UI:Update["Automate", "Login will proceed at \ag${Config.StartHour}:${Config.StartMinute}\ay plus ~\ag${Config.StartDelta}\ay minutes", "y"]
-			ComBotLogin.Wait:Set[TRUE]
+			if ${Config.DelayLogin}
+			{
+				UI:Update["Automate", "Login will proceed at \ag${Config.StartHour}:${Config.StartMinute}\ay plus ~\ag${Config.StartDelta}\ay minutes", "y"]
+				ComBotLogin.Wait:Set[TRUE]
+			}
+			if ${Config.DelayLoginDelta}
+			{
+				UI:Update["Automate", "Login will proceed in ~\ag${Config.StartDelta}\ay minutes", "y"]
+				ComBotLogin.Wait:Set[TRUE]
+				variable int Delta=${Math.Rand[${Config.StartDelta} + 1]}
+				StartComplete:Set[TRUE]
+				UI:Update["Automate", "Starting in \ao${Delta}\ag minutes", "g"]
+				This:QueueState["AllowLogin", ${Math.Calc[${Delta} * 60000]}.Int]
+				This:QueueState["WaitForLogin"]
+				This:QueueState["AutoStart"]
+				This:QueueState["Launch"]
+			}
 		}
-		if ${Config.DelayLoginDelta}
+		if ${Config.TimedLogout}
 		{
-			UI:Update["Automate", "Login will proceed in ~\ag${Config.StartDelta}\ay minutes", "y"]
-			ComBotLogin.Wait:Set[TRUE]
-			variable int Delta=${Math.Rand[${Config.StartDelta} + 1]}
-			StartComplete:Set[TRUE]
-			UI:Update["Automate", "Starting in \ao${Delta}\ag minutes", "g"]
-			This:QueueState["AllowLogin", ${Math.Calc[${Delta} * 60000]}]
-			This:QueueState["WaitForLogin"]
-			This:QueueState["AutoStart"]
-			This:QueueState["Launch"]
+			variable int Logout=${Math.Calc[${Config.Hour} * 60 + ${Config.Minute} + ${Math.Rand[${Config.LogoutDelta} + 1]}]}
+			UI:Update["Automate", "Logout in \ag${Config.Hour}\ay hours \ag${Config.Minute}\ay minutes plus ~\ag${Config.LogoutDelta}\ay minutes", "y"]
+			echo  This:QueueState["Idle", ${Math.Calc[${Logout} * 60000].Int}]
+			This:QueueState["Idle", ${Math.Calc[${Logout} * 60000].Int}]
+			if ${Config.Questor}
+			{
+				This:QueueState["LogoutQuestor"]
+			}
+			else
+			{
+				This:QueueState["MoveToLogout"]
+				This:QueueState["Traveling"]
+				This:QueueState["Logout"]
+			}
 		}
 		This:QueueState["Automate"]
 	}
@@ -110,10 +134,19 @@ objectdef obj_Automate inherits obj_State
 	{
 		if ${Time.Hour} == ${Config.Hour} && ${Time.Minute} == ${Config.Minute}
 		{
-			Move:NonGameTiedPulse:Set[TRUE]
-			This:QueueState["MoveToLogout"]
-			This:QueueState["Traveling"]
-			This:QueueState["Logout"]
+			variable int Logout=${Math.Rand[${Config.LogoutDelta} + 1]}
+			UI:Update["Automate", "Logout will proceed in \ao${Logout}\ag minutes", "g"]
+			This:QueueState["Idle", ${Math.Calc[${Logout} * 60000].Int}
+			if ${Config.Questor}
+			{
+				This:QueueState["LogoutQuestor"]
+			}
+			else
+			{
+				This:QueueState["MoveToLogout"]
+				This:QueueState["Traveling"]
+				This:QueueState["Logout"]
+			}
 			return TRUE
 		}
 		if ${Time.Hour} == ${Config.StartHour} && ${Time.Minute} == ${Config.StartMinute} && !${StartComplete}
@@ -183,6 +216,7 @@ objectdef obj_Automate inherits obj_State
 	member:bool MoveToLogout()
 	{
 		variable iterator Behaviors
+		Move:NonGameTiedPulse:Set[TRUE]
 		UI:Update["Automate", "Logout time!", "r"]
 		Dynamic.Behaviors:GetIterator[Behaviors]
 		if ${Behaviors:First(exists)}
@@ -211,6 +245,11 @@ objectdef obj_Automate inherits obj_State
 	member:bool Logout()
 	{
 		EVE:Execute[CmdQuitGame]
+		endscript combot
+	}
+	member:bool LogoutQuestor()
+	{
+		execute SetExitWhenIdle TRUE
 		endscript combot
 	}
 }
