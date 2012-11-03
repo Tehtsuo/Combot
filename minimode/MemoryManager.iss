@@ -62,11 +62,18 @@ objectdef obj_MemoryManager inherits obj_State
 	
 	method Start()
 	{
-		echo execute dotnet memmanager memmanager ${Math.Calc[(${Config.Size}) * 1048576].Int}
 		execute dotnet memmanager memmanager ${Math.Calc[(${Config.Size}) * 1048576].Int}
+		This:QueueState["Manage", 300000]
 	}
 	
 	method Stop()
 	{
+		This:Clear
+	}
+	
+	member:bool Manage()
+	{
+		execute dotnet memmanager memmanager ${Math.Calc[(${Config.Size}) * 1048576].Int}
+		return FALSE
 	}
 }
