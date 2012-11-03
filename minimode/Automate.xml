@@ -100,15 +100,55 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<Y>10%</Y>
 								<Width>30%</Width> 
 								<Height>20%</Height> 
-								<Text>Delay login until start time</Text>
+								<Text>Delay login until start time plus delta</Text>
 								<OnLoad>
 									if ${Script[ComBot].VariableScope.Automate.Config.DelayLogin}
 									{
 										This:SetChecked
 									}
+									if ${Script[ComBot].VariableScope.Automate.Config.DelayLoginDelta}
+									{
+										This:Hide
+									}
 								</OnLoad>
 								<OnLeftClick>
 									Script[ComBot].VariableScope.Automate.Config:SetDelayLogin[${This.Checked}]
+									if ${This.Checked}
+									{
+										UIElement[DelayLoginDelta@AutoStartFrame@ComBot_Automate_Frame@ComBot_Automate]:Hide
+									}
+									else
+									{
+										UIElement[DelayLoginDelta@AutoStartFrame@ComBot_Automate_Frame@ComBot_Automate]:Show
+									}
+								</OnLeftClick>
+							</Checkbox>
+							<Checkbox name='DelayLoginDelta'>
+								<X>30%</X>
+								<Y>10%</Y>
+								<Width>30%</Width> 
+								<Height>20%</Height> 
+								<Text>Only delay login by delta</Text>
+								<OnLoad>
+									if ${Script[ComBot].VariableScope.Automate.Config.DelayLoginDelta}
+									{
+										This:SetChecked
+									}
+									if ${Script[ComBot].VariableScope.Automate.Config.DelayLogin}
+									{
+										This:Hide
+									}
+								</OnLoad>
+								<OnLeftClick>
+									Script[ComBot].VariableScope.Automate.Config:SetDelayLoginDelta[${This.Checked}]
+									if ${This.Checked}
+									{
+										UIElement[DelayLogin@AutoStartFrame@ComBot_Automate_Frame@ComBot_Automate]:Hide
+									}
+									else
+									{
+										UIElement[DelayLogin@AutoStartFrame@ComBot_Automate_Frame@ComBot_Automate]:Show
+									}
 								</OnLeftClick>
 							</Checkbox>
 				

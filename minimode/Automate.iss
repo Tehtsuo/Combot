@@ -53,6 +53,7 @@ objectdef obj_Configuration_Automate
 	Setting(int, StartMinute, SetStartMinute)
 	Setting(int, StartDelta, SetStartDelta)
 	Setting(bool, DelayLogin, SetDelayLogin)
+	Setting(bool, DelayLoginDelta, SetDelayLoginDelta)
 	Setting(string, Bookmark, SetBookmark)
 	Setting(bool, Launch, SetLaunch)
 	Setting(string, LaunchCommand, SetLaunchCommand)
@@ -79,8 +80,20 @@ objectdef obj_Automate inherits obj_State
 		StartComplete:Set[FALSE]
 		if ${Config.DelayLogin}
 		{
-			UI:Update["Automate", "Login will proceed at ${Config.StartHour}:${Config.StartMinute} plus ~${Config.StartDelta} minutes", "y"]
+			UI:Update["Automate", "Login will proceed at \ag${Config.StartHour}:${Config.StartMinute}\ay plus ~\ag${Config.StartDelta}\ay minutes", "y"]
 			ComBotLogin.Wait:Set[TRUE]
+		}
+		if ${Config.DelayLoginDelta}
+		{
+			UI:Update["Automate", "Login will proceed in ~\ag${Config.StartDelta}\ay minutes", "y"]
+			ComBotLogin.Wait:Set[TRUE]
+			variable int Delta=${Math.Rand[${Config.StartDelta} + 1]}
+			StartComplete:Set[TRUE]
+			UI:Update["Automate", "Starting in \ao${Delta}\ag minutes", "g"]
+			This:QueueState["AllowLogin", ${Math.Calc[${Delta} * 60000]}]
+			This:QueueState["WaitForLogin"]
+			This:QueueState["AutoStart"]
+			This:QueueState["Launch"]
 		}
 		This:QueueState["Automate"]
 	}
