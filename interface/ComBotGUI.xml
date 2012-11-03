@@ -247,9 +247,9 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						</button>
 						<Checkbox name='AutoStart'>
 							<X>75%</X>
-							<Y>92%</Y>
+							<Y>257</Y>
 							<Width>48%</Width> 
-							<Height>6%</Height> 
+							<Height>33</Height> 
 							<Text>Start automatically</Text>
 							<OnLoad>
 								if ${Script[ComBot].VariableScope.Config.Common.AutoStart}
