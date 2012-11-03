@@ -19,9 +19,9 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-objectdef obj_Configuration_AutoLogout
+objectdef obj_Configuration_Automate
 {
-	variable string SetName = "AutoLogout"
+	variable string SetName = "Automate"
 
 	method Initialize()
 	{
@@ -43,6 +43,8 @@ objectdef obj_Configuration_AutoLogout
 		BaseConfig.BaseRef:AddSet[${This.SetName}]
 		This.CommonRef:AddSetting[Hour, 20]
 		This.CommonRef:AddSetting[Minute, 0]
+		This.CommonRef:AddSetting[Bookmark, ""]
+		This.CommonRef:AddSetting[LaunchCommand, ""]
 	}
 
 	Setting(int, Hour, SetHour)
@@ -50,14 +52,17 @@ objectdef obj_Configuration_AutoLogout
 	Setting(int, StartHour, SetStartHour)
 	Setting(int, StartMinute, SetStartMinute)
 	Setting(int, StartDelta, SetStartDelta)
+	Setting(bool, DelayLogin, SetDelayLogin)
 	Setting(string, Bookmark, SetBookmark)
+	Setting(bool, Launch, SetLaunch)
+	Setting(string, LaunchCommand, SetLaunchCommand)
 }
 
 
-objectdef obj_AutoLogout inherits obj_State
+objectdef obj_Automate inherits obj_State
 {
-	variable obj_Configuration_AutoLogout Config
-	variable obj_AutoLogoutUI LocalUI
+	variable obj_Configuration_Automate Config
+	variable obj_AutomateUI LocalUI
 	variable bool StartComplete=FALSE
 	
 	method Initialize()
@@ -65,14 +70,19 @@ objectdef obj_AutoLogout inherits obj_State
 		This[parent]:Initialize
 		This.NonGameTiedPulse:Set[TRUE]
 		PulseFrequency:Set[500]
-		DynamicAddMiniMode("AutoLogout", "Automate")
+		DynamicAddMiniMode("Automate", "Automate")
 	}
 	
 	method Start()
 	{
 		UI:Update["Automate", "Starting Automate", "g"]
 		StartComplete:Set[FALSE]
-		This:QueueState["AutoLogout"]
+		if ${Config.DelayLogin}
+		{
+			UI:Update["Automate", "Login will proceed at ${Config.StartHour}:${Config.StartMinute} plus ~${Config.StartDelta} minutes", "y"]
+			ComBotLogin.Wait:Set[TRUE]
+		}
+		This:QueueState["Automate"]
 	}
 	
 	method Stop()
@@ -81,7 +91,7 @@ objectdef obj_AutoLogout inherits obj_State
 		UI:Update["Automate", "Stopping Automate", "g"]
 	}
 	
-	member:bool AutoLogout()
+	member:bool Automate()
 	{
 		if ${Time.Hour} == ${Config.Hour} && ${Time.Minute} == ${Config.Minute}
 		{
@@ -95,9 +105,27 @@ objectdef obj_AutoLogout inherits obj_State
 		{
 			variable int Delta=${Math.Rand[${Config.StartDelta} + 1]}
 			StartComplete:Set[TRUE]
-			UI:Update["Automate", "Starting in ${Delta} minutes", "g"]
-			This:QueueState["Start", ${Math.Calc[${Delta} * 60000]}]
-			This:QueueState["AutoLogout"]
+			UI:Update["Automate", "Starting in \ao${Delta}\ag minutes", "g"]
+			This:QueueState["AllowLogin", ${Math.Calc[${Delta} * 60000]}]
+			This:QueueState["WaitForLogin"]
+			This:QueueState["AutoStart"]
+			This:QueueState["Launch"]
+			This:QueueState["Automate"]
+			return TRUE
+		}
+		return FALSE
+	}
+	
+	member:bool AllowLogin()
+	{
+		ComBotLogin.Wait:Set[FALSE]
+		return TRUE
+	}
+	
+	member:bool WaitForLogin()
+	{
+		if ${Me(exists)} && ${MyShip(exists)} && (${Me.InSpace} || ${Me.InStation})
+		{
 			return TRUE
 		}
 		return FALSE
@@ -106,6 +134,14 @@ objectdef obj_AutoLogout inherits obj_State
 	member:bool AutoStart()
 	{
 		ComBot:Resume
+		return TRUE
+	}
+	
+	member:bool Launch()
+	{
+		if ${Config.Launch}
+		execute ${Config.LaunchCommand}
+		return TRUE
 	}
 	
 	method LogoutNow()
@@ -160,7 +196,7 @@ objectdef obj_AutoLogout inherits obj_State
 }
 
 
-objectdef obj_AutoLogoutUI inherits obj_State
+objectdef obj_AutomateUI inherits obj_State
 {
 
 
@@ -189,18 +225,18 @@ objectdef obj_AutoLogoutUI inherits obj_State
 		Bookmarks:GetIterator[BookmarkIterator]
 		
 
-		UIElement[BookmarkList@AutoLogoutFrame@ComBot_AutoLogout_Frame@ComBot_AutoLogout]:ClearItems
+		UIElement[BookmarkList@AutoLogout@ComBot_Automate_Frame@ComBot_Automate]:ClearItems
 		if ${BookmarkIterator:First(exists)}
 			do
 			{	
-				if ${UIElement[Bookmark@AutoLogoutFrame@ComBot_AutoLogout_Frame@ComBot_AutoLogout].Text.Length}
+				if ${UIElement[Bookmark@AutoLogout@ComBot_Automate_Frame@ComBot_Automate].Text.Length}
 				{
-					if ${BookmarkIterator.Value.Label.Left[${AutoLogout.Config.Bookmark.Length}].Equal[${AutoLogout.Config.Bookmark}]}
-						UIElement[BookmarkList@AutoLogoutFrame@ComBot_AutoLogout_Frame@ComBot_AutoLogout]:AddItem[${BookmarkIterator.Value.Label.Escape}]
+					if ${BookmarkIterator.Value.Label.Left[${Automate.Config.Bookmark.Length}].Equal[${Automate.Config.Bookmark}]}
+						UIElement[BookmarkList@AutoLogout@ComBot_Automate_Frame@ComBot_Automate]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 				else
 				{
-					UIElement[BookmarkList@AutoLogoutFrame@ComBot_AutoLogout_Frame@ComBot_AutoLogout]:AddItem[${BookmarkIterator.Value.Label.Escape}]
+					UIElement[BookmarkList@AutoLogout@ComBot_Automate_Frame@ComBot_Automate]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 			}
 			while ${BookmarkIterator:Next(exists)}

@@ -1,0 +1,455 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ISUI>
+
+<!--
+
+ComBot  Copyright © 2012  Tehtsuo and Vendan
+
+This file is part of ComBot.
+
+ComBot is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ComBot is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+
+	<template name='Information.Font'>	
+		<Name>Terminal</Name>
+		<Size>8</Size>
+		<Color>FFFFFFFF</Color>
+	</template>	
+
+	<window name='ComBot_Automate'>
+		<Visible>1</Visible>
+		<BackGroundColor></BackGroundColor>
+		<Border>0</Border>
+		<X>200</X>
+		<Y>300</Y>
+		<Width>800</Width>
+		<Height>600</Height>
+		<TitleBar>
+			<Width>100%</Width>
+			<Height>20</Height>
+			<Border>0</Border>
+			<BackgroundColor>FF000000</BackgroundColor>
+			<Children>
+				<Text name='ComBot_Automate_TitleBar_Title'>
+					<X>0</X>
+					<Y>3</Y>
+					<Width>100%</Width>
+					<Height>20</Height>
+					<Alignment>Center</Alignment>
+					<Text>Automate Configuration</Text>
+				</Text>
+				<button	Name='Close'>
+					<X>r40</X>
+					<Y>0</Y>
+					<Width>40</Width>
+					<Height>20</Height>
+					<Text>Close</Text>
+					<OnLeftClick>
+						Script[ComBot].VariableScope.Salvage.LocalUI:Stop
+						ui -unload "&filepath;/Automate"
+					</OnLeftClick>
+				</button>
+			</Children>
+		</TitleBar>
+		<Children name="ComBot_Automate_Children">
+			<Frame name="ComBot_Automate_Frame">
+				<X>0</X>
+				<Y>5</Y>
+				<Width>100%</Width>
+				<Height>100%</Height>
+				<BackgroundColor>FF000000</BackgroundColor>
+				<Border>1</Border>
+				<BorderColor>FFFFFFFF</BorderColor>
+				<Children name="ComBot_Automate_Frame_Children">
+				
+
+
+					<Text name='AutoStartFrameTitle'> 
+						<X>1%</X> 
+						<Y>1%</Y> 
+						<Width>32%</Width> 
+						<Height>3%</Height> 
+						<Text>AutoStart Configuration</Text>
+						<OnLoad>
+							This.Font:SetColor[FFFFFF00]
+						</OnLoad>
+					</Text>
+					<Frame name="AutoStartFrame">
+						<X>0%</X>
+						<Y>3%</Y>
+						<Width>100%</Width>
+						<Height>15%</Height>
+						<BackgroundColor>FF000000</BackgroundColor>
+						<Border>1</Border>
+						<BorderColor>FFFFFFFF</BorderColor>
+						<Children>
+							<Checkbox name='DelayLogin'>
+								<X>1%</X>
+								<Y>10%</Y>
+								<Width>30%</Width> 
+								<Height>20%</Height> 
+								<Text>Delay login until start time</Text>
+								<OnLoad>
+									if ${Script[ComBot].VariableScope.Automate.Config.DelayLogin}
+									{
+										This:SetChecked
+									}
+								</OnLoad>
+								<OnLeftClick>
+									Script[ComBot].VariableScope.Automate.Config:SetDelayLogin[${This.Checked}]
+								</OnLeftClick>
+							</Checkbox>
+				
+							<Text name='obj_Automate_Hour_Label'> 
+								<X>1%</X> 
+								<Y>40%</Y> 
+								<Width>15%</Width> 
+								<Height>10%</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Start Hour</Text>
+							</Text>
+							<Textentry name='obj_Automate_Hour'> 
+								<X>1%</X> 
+								<Y>55%</Y> 
+								<Width>15%</Width> 
+								<Height>25%</Height> 
+								<OnLoad>
+									This:SetText[${Script[Combot].VariableScope.Automate.Config.StartHour}]
+								</OnLoad>
+								<OnChange>
+									Script[Combot].VariableScope.Automate.Config:SetStartHour[${This.Text}]
+								</OnChange>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@ComBot_Automate_Frame@ComBot_Automate]:SetText["This field needs to contain the hour which you would like to turn ComBot on."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@ComBot_Automate_Frame@ComBot_Automate]:SetText[""]
+								</OnMouseExit>
+							</Textentry>
+							<Text name='obj_Automate_Minute_Label'> 
+								<X>17%</X> 
+								<Y>40%</Y> 
+								<Width>15%</Width> 
+								<Height>10%</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Start Minute</Text>
+							</Text>
+							<Textentry name='obj_Automate_Minute'> 
+								<X>17%</X> 
+								<Y>55%</Y> 
+								<Width>15%</Width> 
+								<Height>25%</Height> 
+								<OnLoad>
+									This:SetText[${Script[Combot].VariableScope.Automate.Config.StartMinute}]
+								</OnLoad>
+								<OnChange>
+									Script[Combot].VariableScope.Automate.Config:SetStartMinute[${This.Text}]
+								</OnChange>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@ComBot_Automate_Frame@ComBot_Automate]:SetText["This field needs to contain the minute which you would like to turn ComBot on."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@ComBot_Automate_Frame@ComBot_Automate]:SetText[""]
+								</OnMouseExit>
+							</Textentry>
+							<Text name='obj_Automate_Delta_Label'> 
+								<X>33%</X> 
+								<Y>40%</Y> 
+								<Width>15%</Width> 
+								<Height>10%</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Delta Minute</Text>
+							</Text>
+							<Textentry name='obj_Automate_Delta'> 
+								<X>33%</X> 
+								<Y>55%</Y> 
+								<Width>15%</Width> 
+								<Height>25%</Height> 
+								<OnLoad>
+									This:SetText[${Script[Combot].VariableScope.Automate.Config.StartDelta}]
+								</OnLoad>
+								<OnChange>
+									Script[Combot].VariableScope.Automate.Config:SetStartDelta[${This.Text}]
+								</OnChange>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@ComBot_Automate_Frame@ComBot_Automate]:SetText["This field needs to contain the random delta you want added to the start time, in minutes."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@ComBot_Automate_Frame@ComBot_Automate]:SetText[""]
+								</OnMouseExit>
+							</Textentry>
+
+						</Children>
+					</Frame>
+					
+					<Text name='LauncherFrameTitle'> 
+						<X>1%</X> 
+						<Y>19%</Y> 
+						<Width>32%</Width> 
+						<Height>3%</Height> 
+						<Text>Launcher Configuration</Text>
+						<OnLoad>
+							This.Font:SetColor[FFFFFF00]
+						</OnLoad>
+					</Text>
+					<Frame name="LauncherFrame">
+						<X>0%</X>
+						<Y>21%</Y>
+						<Width>100%</Width>
+						<Height>15%</Height>
+						<BackgroundColor>FF000000</BackgroundColor>
+						<Border>1</Border>
+						<BorderColor>FFFFFFFF</BorderColor>
+						<Children>
+							<Checkbox name='Launch'>
+								<X>1%</X>
+								<Y>10%</Y>
+								<Width>30%</Width> 
+								<Height>20%</Height> 
+								<Text>Run the command below after login</Text>
+								<OnLoad>
+									if ${Script[ComBot].VariableScope.Automate.Config.Launch}
+									{
+										This:SetChecked
+									}
+								</OnLoad>
+								<OnLeftClick>
+									Script[ComBot].VariableScope.Automate.Config:SetLaunch[${This.Checked}]
+								</OnLeftClick>
+							</Checkbox>
+				
+							<Text name='obj_Automate_Launch_Label'> 
+								<X>1%</X> 
+								<Y>40%</Y> 
+								<Width>47%</Width> 
+								<Height>10%</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Command</Text>
+							</Text>
+							<Textentry name='obj_Automate_Launch'> 
+								<X>1%</X> 
+								<Y>55%</Y> 
+								<Width>47%</Width> 
+								<Height>25%</Height> 
+								<OnLoad>
+									This:SetText[${Script[Combot].VariableScope.Automate.Config.LaunchCommand}]
+								</OnLoad>
+								<OnChange>
+									Script[Combot].VariableScope.Automate.Config:SetLaunchCommand[${This.Text}]
+								</OnChange>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@ComBot_Automate_Frame@ComBot_Automate]:SetText["This field needs to contain the command you want to be launched after starting."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@ComBot_Automate_Frame@ComBot_Automate]:SetText[""]
+								</OnMouseExit>
+							</Textentry>
+
+						</Children>
+					</Frame>
+					
+					<Text name='AutoLogoutFrameTitle'> 
+						<X>1%</X> 
+						<Y>40%</Y> 
+						<Width>32%</Width> 
+						<Height>4%</Height> 
+						<Text>AutoLogout Configuration</Text>
+						<OnLoad>
+							This.Font:SetColor[FFFFFF00]
+						</OnLoad>
+					</Text>
+					<Frame name="AutoLogoutFrame">
+						<X>0%</X>
+						<Y>42%</Y>
+						<Width>100%</Width>
+						<Height>30%</Height>
+						<BackgroundColor>FF000000</BackgroundColor>
+						<Border>1</Border>
+						<BorderColor>FFFFFFFF</BorderColor>
+						<Children>
+				
+							<Text name='BookmarkTitle'> 
+								<X>1%</X> 
+								<Y>3%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Logout Bookmark</Text>
+							</Text>						 
+							<Textentry Name="Bookmark">
+								<X>1%</X> 
+								<Y>10%</Y> 
+								<Width>32%</Width> 
+								<Height>15%</Height> 
+								<OnLoad>
+									This:SetText[${Script[ComBot].VariableScope.Automate.Config.Bookmark}]
+								</OnLoad>
+								<OnChange>
+									if ${This.Text.Length}
+									{
+										Script[ComBot].VariableScope.Automate.Config:SetBookmark[${This.Text}]
+									}
+									else
+									{
+										Script[ComBot].VariableScope.Automate.Config:SetBookmark[\"\"]
+									}
+									UIElement[BookmarkList@AutomateFrame@ComBot_Automate_Frame@ComBot_Automate]:Show
+									Script[ComBot].VariableScope.Automate.LocalUI:Start
+								</OnChange>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@ComBot_Automate_Frame@ComBot_Automate]:SetText["This field needs to contain the exact name of the bookmark you would like the module to fly you to before logging out."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@ComBot_Automate_Frame@ComBot_Automate]:SetText[""]
+								</OnMouseExit>
+							</Textentry>
+							<listbox Name="BookmarkList">
+								<BackgroundColor>FF000000</BackgroundColor>
+								<Border>1</Border>
+								<BorderColor>FFFFFFFF</BorderColor>
+								<X>1%</X>
+								<Y>25%</Y>
+								<Width>32%</Width>
+								<Height>70%</Height>
+								<OnLoad>
+									This:SetZOrder[alwaysontop]
+									This:Hide
+								</OnLoad>
+								<OnSelect>
+									UIElement[Bookmark@AutomateFrame@ComBot_Automate_Frame@ComBot_Automate]:SetText[${This.SelectedItem.Text}]
+									Script[ComBot].VariableScope.Automate.Config:SetBookmark[${This.SelectedItem.Text}]
+									Script[ComBot].VariableScope.Automate.LocalUI:Stop
+									This:Hide
+								</OnSelect>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@ComBot_Automate_Frame@ComBot_Automate]:SetText["This field needs to contain the exact name of the bookmark you would like the module to fly you to before logging out."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@ComBot_Automate_Frame@ComBot_Automate]:SetText[""]
+								</OnMouseExit>
+							</listbox>					
+						
+							<Text name='obj_Automate_Hour_Label'> 
+								<X>1%</X> 
+								<Y>33%</Y> 
+								<Width>15%</Width> 
+								<Height>10%</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Logout Hour</Text>
+							</Text>
+							<Textentry name='obj_Automate_Hour'> 
+								<X>1%</X> 
+								<Y>40%</Y> 
+								<Width>15%</Width> 
+								<Height>15%</Height> 
+								<OnLoad>
+									This:SetText[${Script[Combot].VariableScope.Automate.Config.Hour}]
+								</OnLoad>
+								<OnChange>
+									Script[Combot].VariableScope.Automate.Config:SetHour[${This.Text}]
+								</OnChange>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@ComBot_Automate_Frame@ComBot_Automate]:SetText["This field needs to contain the hour which you would like to perform the log out operation."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@ComBot_Automate_Frame@ComBot_Automate]:SetText[""]
+								</OnMouseExit>
+							</Textentry>
+							<Text name='obj_Automate_Minute_Label'> 
+								<X>17%</X> 
+								<Y>33%</Y> 
+								<Width>16%</Width> 
+								<Height>10%</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Logout Minute</Text>
+							</Text>
+							<Textentry name='obj_Automate_Minute'> 
+								<X>17%</X> 
+								<Y>40%</Y> 
+								<Width>16%</Width> 
+								<Height>15%</Height> 
+								<OnLoad>
+									This:SetText[${Script[Combot].VariableScope.Automate.Config.Minute}]
+								</OnLoad>
+								<OnChange>
+									Script[Combot].VariableScope.Automate.Config:SetMinute[${This.Text}]
+								</OnChange>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@ComBot_Automate_Frame@ComBot_Automate]:SetText["This field needs to contain the minute which you would like to perform the log out operation."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@ComBot_Automate_Frame@ComBot_Automate]:SetText[""]
+								</OnMouseExit>
+							</Textentry>
+
+							<Button	Name='LogoutNow'>
+								<BackgroundColor>FF000000</BackgroundColor>
+								<X>1%</X>
+								<Y>60%</Y>
+								<Width>32%</Width>
+								<Height>15%</Height>
+								<Text>Perform Now</Text>
+								<OnLeftClick>
+									Script[Combot].VariableScope.Automate:LogoutNow
+								</OnLeftClick>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@ComBot_Automate_Frame@ComBot_Automate]:SetText["Use this button to perform the log out operation now."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@ComBot_Automate_Frame@ComBot_Automate]:SetText[""]
+								</OnMouseExit>
+							</Button>						
+				
+						</Children>
+					</Frame>					
+					
+					<Text name='InformationFrameTitle'> 
+						<X>1%</X> 
+						<Y>80%</Y> 
+						<Width>32%</Width> 
+						<Height>4%</Height> 
+						<Text>Information</Text>
+						<OnLoad>
+							This.Font:SetColor[FFFFFF00]
+						</OnLoad>
+					</Text>
+					<Frame name="InformationFrame">
+						<X>0%</X>
+						<Y>82%</Y>
+						<Width>100%</Width>
+						<Height>18%</Height>
+						<BackgroundColor>FF000000</BackgroundColor>
+						<Border>1</Border>
+						<BorderColor>FFFFFFFF</BorderColor>
+						<Children>
+							<Text name='Information'> 
+								<X>5%</X> 
+								<Y>5%</Y> 
+								<Width>90%</Width> 
+								<Height>90%</Height> 
+								<Wrap />
+								<VerticalAlignment>Center</VerticalAlignment>
+							</Text>
+						</Children>
+					</Frame>
+				
+				
+					
+				</Children>
+			</Frame>
+		</Children>
+	</window>
+	
+</ISUI>
