@@ -554,7 +554,7 @@ objectdef obj_Cargo inherits obj_State
 			case Personal Hangar
 				EVE:StackItems[MyStationHangar, Hangar]
 				break
-			case Corporation Folder
+			case Corporation Hangar
 				EVE:StackItems[MyStationCorporateHangar, StationCorporateHangar]
 				break
 		}

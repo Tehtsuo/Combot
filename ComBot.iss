@@ -78,12 +78,24 @@ function main(string Character="")
 	declarevariable Config obj_Configuration script
 	UI:Reload
 	
+	
+
 	declarevariable ComBotLogin obj_Login script
+	declarevariable Dynamic obj_Dynamic script
+	#include temp/behaviordeclares.iss
+	
+	#include temp/minimodedeclares.iss
+
+	#include temp/thirdpartybehaviordeclares.iss
+	
+	#include temp/thirdpartyminimodedeclares.iss
+	
+	Dynamic:PopulateBehaviors
+	Dynamic:PopulateMiniModes
 	while TRUE
 	{
 		if ${Me(exists)} && ${MyShip(exists)} && (${Me.InSpace} || ${Me.InStation})
 		{
-			echo Logged in
 			break
 		}
 		wait 10
@@ -102,18 +114,7 @@ function main(string Character="")
 	declarevariable Jetcan obj_Jetcan script
 	declarevariable Delay obj_Delay script
 	declarevariable Fleets obj_Fleet script
-	declarevariable Dynamic obj_Dynamic script
 	
-	#include temp/behaviordeclares.iss
-	
-	#include temp/minimodedeclares.iss
-
-	#include temp/thirdpartybehaviordeclares.iss
-	
-	#include temp/thirdpartyminimodedeclares.iss
-	
-	Dynamic:PopulateBehaviors
-	Dynamic:PopulateMiniModes
 	
 	UI:Update["ComBot", "Module initialization complete", "y"]
 	
