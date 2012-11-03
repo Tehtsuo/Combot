@@ -71,6 +71,8 @@ objectdef obj_Automate inherits obj_State
 		This[parent]:Initialize
 		This.NonGameTiedPulse:Set[TRUE]
 		PulseFrequency:Set[500]
+		LavishScript:RegisterEvent[QuestorIdle]
+		Event[QuestorIdle]:AttachAtom[This:QuestorIdle]
 		DynamicAddMiniMode("Automate", "Automate")
 	}
 	
@@ -127,6 +129,11 @@ objectdef obj_Automate inherits obj_State
 			return TRUE
 		}
 		return FALSE
+	}
+	
+	method QuestorIdle()
+	{
+		echo Automate found Questor is Idle!
 	}
 	
 	member:bool AllowLogin()
