@@ -219,7 +219,7 @@ objectdef obj_Move inherits obj_State
 			return FALSE
 		}
 
-		if ${Entity[${ID}].Distance} < -5000
+		if ${Entity[${ID}].Distance} < -6000
 		{
 			UI:Update["obj_Move", "Too close!  Orbiting ${Entity[${ID}].Name}", "g"]
 			Client:Wait[5000]
