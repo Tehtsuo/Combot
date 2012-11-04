@@ -514,7 +514,8 @@ objectdef obj_Salvage inherits obj_State
 					}
 					if  ${TargetIterator.Value.Distance} < ${Ship.ModuleList_Salvagers.Range} &&\
 						${Ship.ModuleList_Salvagers.InactiveCount} > 0 &&\
-						${TargetIterator.Value.IsLockedTarget}
+						${TargetIterator.Value.IsLockedTarget} &&\
+						${TargetIterator.Value.GroupID} != GROUP_CARGOCONTAINER
 					{
 						SalvageMultiTarget:Set[${TargetIterator.Value.ID}]
 					}
