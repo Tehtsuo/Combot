@@ -222,8 +222,8 @@ objectdef obj_Move inherits obj_State
 		if ${Entity[${ID}].Distance} < -8000
 		{
 			UI:Update["obj_Move", "Too close!  Orbiting ${Entity[${ID}].Name}", "g"]
-			Client:Wait[5000]
 			Entity[${ID}]:Orbit
+			Client:Wait[10000]
 			return FALSE
 		}
 		if ${Entity[${ID}].Distance} > 3000
