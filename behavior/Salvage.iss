@@ -499,7 +499,7 @@ objectdef obj_Salvage inherits obj_State
 						${TargetIterator.Value.Distance} < ${Ship.ModuleList_Salvagers.Range} &&\
 						${Ship.ModuleList_Salvagers.InactiveCount} > 0 &&\
 						${TargetIterator.Value.IsLockedTarget} && ${Ship.ModuleList_Salvagers.Count} > 0 &&\
-						${TargetIterator.Value.TypeID} != GROUP_CARGOCONTAINER
+						${TargetIterator.Value.GroupID} != GROUP_CARGOCONTAINER
 					{
 						UI:Update["obj_Salvage", "Activating salvager - ${TargetIterator.Value.Name}", "g"]
 						Ship.ModuleList_Salvagers:Activate[${TargetIterator.Value.ID}]
