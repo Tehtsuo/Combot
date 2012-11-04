@@ -610,6 +610,7 @@ objectdef obj_Approach inherits obj_State
 	method Initialize()
 	{
 		This[parent]:Initialize
+		This.PulseFrequency:3000
 		This.NonGameTiedPulse:Set[TRUE]
 	}
 
@@ -639,20 +640,6 @@ objectdef obj_Approach inherits obj_State
 			EVE:Execute[CmdStopShip]
 			Ship.ModuleList_AB_MWD:Deactivate
 			return TRUE
-		}
-		
-		if ${Config.Common.Propulsion}
-		{
-			if !${Ship.ModuleList_AB_MWD.ActiveCount} && ${MyShip.CapacitorPct} > ${Config.Common.Propulsion_Threshold}
-			{
-				Ship.ModuleList_AB_MWD:Activate
-				return FALSE
-			}
-			if ${Ship.ModuleList_AB_MWD.ActiveCount} && ${MyShip.CapacitorPct} <= ${Config.Common.Propulsion_Threshold}
-			{
-				Ship.ModuleList_AB_MWD:Deactivate
-				return FALSE
-			}
 		}
 		
 		return FALSE
