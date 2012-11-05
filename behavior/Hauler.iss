@@ -48,7 +48,7 @@ objectdef obj_Configuration_Hauler
 		This.CommonRef:AddSetting[Pickup,""]
 		This.CommonRef:AddSetting[Move,""]
 		This.CommonRef:AddSetting[Repeat,FALSE]
-		This.CommonRef:AddSetting[Mode,Continuous]
+		This.CommonRef:AddSetting[Mode,"Continuous"]
 	}
 	
 	Setting(string, PickupSubType, SetPickupSubType)
@@ -116,6 +116,10 @@ objectdef obj_Hauler inherits obj_State
 				case Queue
 					This:QueueState["ProcessQueue"]
 					This:QueueState["Traveling"]
+					break
+				default
+					This:QueueState["OpenCargoHold"]
+					This:QueueState["CheckCargoHold"]
 				break
 			}
 		}
