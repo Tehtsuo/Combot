@@ -151,7 +151,6 @@ objectdef obj_Hauler inherits obj_State
 			if ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]} < ${Config.Threshold} * .01
 			{
 				Cargo:PopulateCargoList[Ship]
-				Cargo:Filter[CategoryID==CATEGORYID_ORE]
 				Cargo:MoveCargoList[OreHold]
 				This:InsertState["CheckCargoHold", 500, "TRUE"]
 				return TRUE

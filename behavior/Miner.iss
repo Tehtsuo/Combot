@@ -691,7 +691,6 @@ objectdef obj_Miner inherits obj_State
 				}
 				if ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]} < ${Config.Threshold} * .01
 				{
-					Cargo:Filter[CategoryID==CATEGORYID_ORE]
 					if ${Cargo.CargoList.Used}
 					{
 						Cargo:MoveCargoList[OreHold]
