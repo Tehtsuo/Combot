@@ -45,15 +45,18 @@ objectdef obj_Configuration_HangarSale
 		This.CommonRef:AddSetting[PriceMode,Undercut Lowest]
 		This.CommonRef:AddSetting[UndercutPercent,1]
 		This.CommonRef:AddSetting[UndercutValue,1000]
+		This.CommonRef:AddSetting[Duration,1]
 	}
 	
 	Setting(string, SellSystem, SetSellSystem)
 	Setting(string, PriceMode, SetPriceMode)
 	Setting(int, UndercutPercent, SetUndercutPercent)
 	Setting(int, UndercutValue, SetUndercutValue)
+	Setting(int, Duration, SetDuration)
 	Setting(bool, RePrice, SetRePrice)
 	Setting(bool, Sell, SetSell)
 	Setting(bool, MoveRefine, SetMoveRefine)
+	Setting(bool, Logout, SetLogout)
 	Setting(int64, MoveRefinesTarget, SetMoveRefinesTarget)
 }
 
@@ -200,9 +203,9 @@ objectdef obj_HangarSale inherits obj_State
 			Seperator:Set["&"]
 		}
 		
-		if ${EVE.Bookmark[${Config.SellSystem]}](exists)}
+		if ${EVE.Bookmark[${Config.SellSystem}](exists)}
 		{
-			SystemID:Set[${EVE.Bookmark[${Config.SellSystem]}].SolarSystemID}]
+			SystemID:Set[${EVE.Bookmark[${Config.SellSystem}].SolarSystemID}]
 		}
 		
 		UI:Log["GetURL http://api.eve-central.com/api/marketstat?${TypeIDQuery}"]
@@ -294,6 +297,12 @@ objectdef obj_HangarSale inherits obj_State
 		}
 		else
 		{
+			if ${Config.Logout}
+			{
+				This:Clear
+				AutoLogout:StationaryLogoutNow
+			}
+		
 			TimeToNextRun:Set[${Math.Calc[60000 * ${Math.Rand[11]} + 1800000]}]
 			UI:Update["obj_HangarSale", "Operations complete - Beginning again in ${Math.Calc[${TimeToNextRun} / 60000]} minutes", "o"]
 			MineralNames:Clear
@@ -349,7 +358,7 @@ objectdef obj_HangarSale inherits obj_State
 				else
 				{
 					UI:Update["obj_HangarSale", "Selling \ar${HangarIterator.Value.Quantity}\ag at \ao${ComBot.ISK_To_Str[${sellLowestPrice}]}", "g"]
-					HangarIterator.Value:PlaceSellOrder[${sellLowestPrice}, ${HangarIterator.Value.Quantity}, 1]
+					HangarIterator.Value:PlaceSellOrder[${sellLowestPrice}, ${HangarIterator.Value.Quantity}, ${Config.Duration}]
 					This:QueueState["UpdateCurrentOrderCount"]
 					This:QueueState["CheckItem", 10000]
 				}
@@ -372,7 +381,7 @@ objectdef obj_HangarSale inherits obj_State
 				else
 				{
 					UI:Update["obj_HangarSale", "Selling \ar${HangarIterator.Value.Quantity}\ag at \ao${ComBot.ISK_To_Str[${sellBuyoutPrice}]}", "g"]
-					HangarIterator.Value:PlaceSellOrder[${sellBuyoutPrice}, ${HangarIterator.Value.Quantity}, 1]
+					HangarIterator.Value:PlaceSellOrder[${sellBuyoutPrice}, ${HangarIterator.Value.Quantity}, ${Config.Duration}]
 					This:QueueState["UpdateCurrentOrderCount"]
 					This:QueueState["CheckItem", 10000]
 				}
@@ -400,7 +409,7 @@ objectdef obj_HangarSale inherits obj_State
 				else
 				{
 					UI:Update["obj_HangarSale", "Selling \ar${HangarIterator.Value.Quantity}\ag at \ao${ComBot.ISK_To_Str[${sellAveragePrice}]}", "g"]
-					HangarIterator.Value:PlaceSellOrder[${sellAveragePrice}, ${HangarIterator.Value.Quantity}, 1]
+					HangarIterator.Value:PlaceSellOrder[${sellAveragePrice}, ${HangarIterator.Value.Quantity}, ${Config.Duration}]
 					This:QueueState["UpdateCurrentOrderCount"]
 					This:QueueState["CheckItem", 10000]
 				}
@@ -687,18 +696,18 @@ objectdef obj_HangarSaleUI inherits obj_State
 		Bookmarks:GetIterator[BookmarkIterator]
 		
 
-		UIElement[SellSystemList@ComBot_HangarSale_Frame@ComBot_HangarSale]:ClearItems
+		UIElement[SellSystemList@SellingFrame@ComBot_HangarSale_Frame@ComBot_HangarSale]:ClearItems
 		if ${BookmarkIterator:First(exists)}
 			do
 			{	
-				if ${UIElement[SellSystem@ComBot_HangarSale_Frame@ComBot_HangarSale].Text.Length}
+				if ${UIElement[SellSystem@SellingFrame@ComBot_HangarSale_Frame@ComBot_HangarSale].Text.Length}
 				{
 					if ${BookmarkIterator.Value.Label.Left[${HangarSale.Config.SellSystem.Length}].Equal[${HangarSale.Config.SellSystem}]}
-						UIElement[SellSystemList@ComBot_HangarSale_Frame@ComBot_HangarSale]:AddItem[${BookmarkIterator.Value.Label.Escape}]
+						UIElement[SellSystemList@SellingFrame@ComBot_HangarSale_Frame@ComBot_HangarSale]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 				else
 				{
-					UIElement[SellSystemList@ComBot_HangarSale_Frame@ComBot_HangarSale]:AddItem[${BookmarkIterator.Value.Label.Escape}]
+					UIElement[SellSystemList@SellingFrame@ComBot_HangarSale_Frame@ComBot_HangarSale]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 			}
 			while ${BookmarkIterator:Next(exists)}

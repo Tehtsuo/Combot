@@ -68,7 +68,7 @@ objectdef obj_AutoThrust inherits obj_State
 	method Initialize()
 	{
 		This[parent]:Initialize
-		PulseFrequency:Set[2000]
+		PulseFrequency:Set[100]
 		This.NonGameTiedPulse:Set[TRUE]
 		DynamicAddMiniMode("AutoThrust", "AutoThrust")
 	}
@@ -96,7 +96,6 @@ objectdef obj_AutoThrust inherits obj_State
 			return FALSE
 		}
 		
-		echo Mode - ${Me.ToEntity.Mode}: ${Me.ToEntity.FollowRange}
 
 		if 	${Config.Approach}
 		{
@@ -120,10 +119,8 @@ objectdef obj_AutoThrust inherits obj_State
 				Ship.ModuleList_AB_MWD:Deactivate
 				return FALSE
 			}
-			echo ${Me.ToEntity.Mode}
 			if 	${Me.ToEntity.Mode} == 4
 			{
-				echo Disable TurnOff
 				TurnOff:Set[FALSE]
 			}
 		}
@@ -143,7 +140,6 @@ objectdef obj_AutoThrust inherits obj_State
 		}
 		if 	${Config.Velocity}
 		{
-			
 			if 	${Ship.ModuleList_AB_MWD.ActiveCount} &&\
 				${MyShip.CapacitorPct} <= ${Config.Velocity_Threshold}
 			{
@@ -151,11 +147,10 @@ objectdef obj_AutoThrust inherits obj_State
 				return FALSE
 			}
 			
-			; if	${Me.ToEntity.Velocity} 
-			; {
-				; echo Trigger
-				; TurnOff:Set[FALSE]
-			; }
+			if	${Me.ToEntity.Mode} != 2
+			{
+				TurnOff:Set[FALSE]
+			}
 		}
 
 		if ${TurnOff}
@@ -197,14 +192,15 @@ objectdef obj_AutoThrust inherits obj_State
 				Ship.ModuleList_AB_MWD:Activate
 				return FALSE
 		}
-		; if 	${Config.Velocity} &&\
-			; !${Ship.ModuleList_AB_MWD.ActiveCount} &&\
-			; ${MyShip.CapacitorPct} > ${Config.Velocity_Threshold} &&\
-			; ${Math.Calc[${Me.ToEntity.Velocity} / ${Me.ToEntity.MaxVelocity}]} > ${Math.Calc[${Config.Velocity_Trigger} * .01]}
-		; {
-				; Ship.ModuleList_AB_MWD:Activate
-				; return FALSE
-		; }
+		
+		if 	${Config.Velocity} &&\
+			!${Ship.ModuleList_AB_MWD.ActiveCount} &&\
+			${MyShip.CapacitorPct} > ${Config.Velocity_Threshold} &&\
+			${Math.Calc[${Me.ToEntity.Velocity} / ${Me.ToEntity.MaxVelocity}]} >= ${Math.Calc[${Config.Velocity_Trigger} * .01]}
+		{
+				Ship.ModuleList_AB_MWD:Activate
+				return FALSE
+		}
 		
 		
 		return FALSE

@@ -77,7 +77,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					<Height>20</Height>
 					<Text>Help</Text>
 					<OnLeftClick>
-						timedcommand 0 "OSExecute http://eve.isxgames.com/wiki/index.php?title=ComBot_Miner"
+						timedcommand 0 "OSExecute http://combot.vendaria.net/index.php?title=Miner"
 					</OnLeftClick>
 				</button>
 				<button	Name='Close'>
@@ -87,9 +87,15 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					<Height>20</Height>
 					<Text>Close</Text>
 					<OnLeftClick>
-						if !${EVE.Bookmark[${Script[ComBot].VariableScope.Miner.Config.Dropoff}](exists)}
+						switch ${Script[ComBot].VariableScope.Miner.Config.Dropoff_Type}
 						{
-							Script[ComBot].VariableScope.UI:Update["obj_Miner", "Unable to verify Dropoff bookmark", "r"]
+							case Corporate Hangar
+							case Personal Hangar
+								if 	!${EVE.Bookmark[${Script[ComBot].VariableScope.Miner.Config.Dropoff}](exists)}
+								{
+									Script[ComBot].VariableScope.UI:Update["obj_Miner", "Unable to verify Dropoff bookmark", "r"]
+								}
+								break
 						}
 						if !${EVE.Bookmark[${Script[ComBot].VariableScope.Miner.Config.MiningSystem}](exists)}
 						{
@@ -112,1040 +118,1567 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 				<BorderColor>FFFFFFFF</BorderColor>
 				<Children name="ComBot_Miner_Frame_Children">
 
-					<Text name='DropoffTitle'> 
+					<Text name='DropoffFrameTitle'> 
 						<X>1%</X> 
-						<Y>1%</Y> 
+						<Y>2%</Y> 
 						<Width>32%</Width> 
-						<Height>2%</Height> 
-						<Alignment>Center</Alignment>
-						<Text>Dropoff Bookmark</Text>
-					</Text>
-					<Textentry name='Dropoff'> 
-						<X>1%</X> 
-						<Y>3%</Y> 
-						<Width>32%</Width> 
-						<Height>3%</Height> 
+						<Height>4%</Height> 
+						<Text>Dropoff Configuration</Text>
 						<OnLoad>
-							This:SetText[${Script[ComBot].VariableScope.Miner.Config.Dropoff}]
+							This.Font:SetColor[FFFFFF00]
 						</OnLoad>
-						<OnChange>
-							if ${This.Text.Length}
-							{
-								Script[ComBot].VariableScope.Miner.Config:SetDropoff[${This.Text}]
-							}
-							else
-							{
-								Script[ComBot].VariableScope.Miner.Config:SetDropoff[\"\"]
-							}
-							UIElement[DropoffList@Miner_Frame@ComBot_Miner]:Show
-							Script[ComBot].VariableScope.Miner.LocalUI:Start
-						</OnChange>
-					</Textentry>
-					<listbox Name="DropoffList">
+					</Text>
+					<Frame name="DropoffFrame">
+						<X>0%</X>
+						<Y>4%</Y>
+						<Width>100%</Width>
+						<Height>30%</Height>
 						<BackgroundColor>FF000000</BackgroundColor>
 						<Border>1</Border>
 						<BorderColor>FFFFFFFF</BorderColor>
-						<X>1%</X>
-						<Y>6%</Y>
-						<Width>32%</Width>
-						<Height>17%</Height>
-						<OnLoad>
-							This:SetZOrder[alwaysontop]
-							This:Hide
-						</OnLoad>
-						<OnSelect>
-							UIElement[Dropoff@Miner_Frame@ComBot_Miner]:SetText[${This.SelectedItem.Text}]
-							Script[ComBot].VariableScope.Miner.Config:SetDropoff[${This.SelectedItem.Text}]
-							This:Hide
-							Script[ComBot].VariableScope.Miner.LocalUI:Stop
-						</OnSelect>
-					</listbox>
-					
-					<Text name='Dropoff_ContainerTitle'> 
-						<X>67%</X> 
-						<Y>18%</Y> 
-						<Width>32%</Width> 
-						<Height>2%</Height> 
-						<Alignment>Center</Alignment>
-						<Text>Container Name</Text>
-					</Text>
-					<TextEntry name='Dropoff_Container'> 
-						<X>67%</X> 
-						<Y>20%</Y> 
-						<Width>32%</Width> 
-						<Height>3%</Height> 
-						<OnLoad>
-							This:SetText[${Script[ComBot].VariableScope.Miner.Config.Container_Name}]
-						</OnLoad>
-						<OnChange>
-							Script[ComBot].VariableScope.Miner.Config:SetContainer_Name[${This.Text}]
-						</OnChange>
-					</TextEntry>
-					
-					<Text name='ThresholdTitle'> 
-						<X>67%</X> 
-						<Y>25%</Y> 
-						<Width>32%</Width> 
-						<Height>2%</Height> 
-						<Alignment>Center</Alignment>
-						<OnLoad>
-							if ${MyShip.HasOreHold}
-							{
-								if ${Script[ComBot].VariableScope.Miner.Config.OrcaMode}
-								{
-									This:SetText[Corp Hangar Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${EVEWindow[ByName, Inventory].ChildCapacity[ShipCorpHangar]}].Round} m3]
-								}
-								else
-								{
-									This:SetText[OreHold Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]}].Round} m3]
-								}
-							}
-							else
-							{
-								This:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${MyShip.CargoCapacity}].Round} m3]
-							}
-						</OnLoad>
-					</Text>						 
-					<Slider name='Threshold'> 
-						<X>67%</X> 
-						<Y>27%</Y> 
-						<Width>32%</Width> 
-						<Height>5%</Height> 
-						<Border>1</Border>
-						<OnLoad>
-							This:SetRange[100]
-							This:SetValue[${Script[ComBot].VariableScope.Miner.Config.Threshold}]
-						</OnLoad>
-						<OnChange>
-							Script[ComBot].VariableScope.Miner.Config:SetThreshold[${This.Value}]
-							if ${MyShip.HasOreHold}
-							{
-								if ${Script[ComBot].VariableScope.Miner.Config.OrcaMode}
-								{
-									UIElement[ThresholdTitle@Miner_Frame@ComBot_Miner]:SetText[Corp Hangar Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${EVEWindow[ByName, Inventory].ChildCapacity[ShipCorpHangar]}].Round} m3]
-								}
-								else
-								{
-									UIElement[ThresholdTitle@Miner_Frame@ComBot_Miner]:SetText[OreHold Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]}].Round} m3]
-								}
-							}
-							else
-							{
-								UIElement[ThresholdTitle@Miner_Frame@ComBot_Miner]:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${MyShip.CargoCapacity}].Round} m3]
-							}
-						</OnChange>
-					</Slider>						 
-
-					<Text name='DropoffSubTypeTitle'> 
-						<X>67%</X> 
-						<Y>1%</Y> 
-						<Width>32%</Width> 
-						<Height>2%</Height> 
-						<Alignment>Center</Alignment>
-						<Text>Dropoff Sub-Type</Text>
-					</Text>
-					<listbox Name="DropoffSubType">
-						<BackgroundColor>FF000000</BackgroundColor>
-						<Border>1</Border>
-						<BorderColor>FFFFFFFF</BorderColor>
-						<X>67%</X>
-						<Y>3%</Y>
-						<Width>32%</Width>
-						<Height>15%</Height>
-						<OnLoad>
-							switch ${Script[ComBot].VariableScope.Miner.Config.Dropoff_Type}
-							{
-								case Jetcan
-									This:AddItem[Fleet Jetcan]
-									This:AddItem[Corporate Bookmark Jetcan]
-									This:AddItem[On-Demand Jetcan]
-									break
-								case Corporation Folder
-									This:AddItem[Corporation Folder 1]
-									This:AddItem[Corporation Folder 2]
-									This:AddItem[Corporation Folder 3]
-									This:AddItem[Corporation Folder 4]
-									This:AddItem[Corporation Folder 5]
-									This:AddItem[Corporation Folder 6]
-									This:AddItem[Corporation Folder 7]
-									break
-							}
-							echo Setting ${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType}
-							This.ItemByText["${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType}"]:Select
-							if ${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType.Equal[Corporate Bookmark Jetcan]}
-							{
-								UIElement[Dropoff_Container@Miner_Frame@ComBot_Miner]:Show
-								UIElement[Dropoff_ContainerTitle@Miner_Frame@ComBot_Miner]:Show
-								UIElement[Dropoff_ContainerTitle@Miner_Frame@ComBot_Miner]:SetText[Jetcan Bookmark Prefix]
-							}
-							else
-							{
-								UIElement[Dropoff_Container@Miner_Frame@ComBot_Miner]:Hide
-								UIElement[Dropoff_ContainerTitle@Miner_Frame@ComBot_Miner]:Hide
-							}
-						</OnLoad>
-						<OnSelect>
-							Script[ComBot].VariableScope.Miner.Config:SetDropoff_SubType[${This.SelectedItem.Text}]
-							if ${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType.Equal[Corporate Bookmark Jetcan]}
-							{
-								UIElement[Dropoff_Container@Miner_Frame@ComBot_Miner]:Show
-								UIElement[Dropoff_ContainerTitle@Miner_Frame@ComBot_Miner]:Show
-								UIElement[Dropoff_ContainerTitle@Miner_Frame@ComBot_Miner]:SetText[Jetcan Bookmark Prefix]
-							}
-							else
-							{
-								UIElement[Dropoff_Container@Miner_Frame@ComBot_Miner]:Hide
-								UIElement[Dropoff_ContainerTitle@Miner_Frame@ComBot_Miner]:Hide
-							}
-						</OnSelect>
-					</listbox>
-					
-					<Text name='DropoffTypeTitle'> 
-						<X>34%</X> 
-						<Y>1%</Y> 
-						<Width>32%</Width> 
-						<Height>2%</Height> 
-						<Alignment>Center</Alignment>
-						<Text>Dropoff Type</Text>
-					</Text>
-					<listbox Name="DropoffType">
-						<BackgroundColor>FF000000</BackgroundColor>
-						<Border>1</Border>
-						<BorderColor>FFFFFFFF</BorderColor>
-						<X>34%</X>
-						<Y>3%</Y>
-						<Width>32%</Width>
-						<Height>20%</Height>
-						<Items>
-							<Item>Personal Hangar</Item>
-							<Item>Orca</Item>
-							<Item>Container</Item>
-							<Item>Jetcan</Item>
-							<Item>No Dropoff</Item>
-							<Item>Corporation Folder</Item>
-						</Items>
-						<OnLoad>
-							This.ItemByText[${Script[ComBot].VariableScope.Miner.Config.Dropoff_Type}]:Select
-							switch ${This.SelectedItem.Text}
-							{
-								case Jetcan
-									UIElement[DropoffSubType@Miner_Frame@ComBot_Miner].ItemByText[${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType}]:Select
-									UIElement[DropoffSubTypeTitle@Miner_Frame@ComBot_Miner]:Show
-									UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:Show
-									UIElement[DropoffSubType@Miner_Frame@ComBot_Miner].ItemByText[${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType}]:Select
-									break
-								case Orca
-									UIElement[Dropoff_Container@Miner_Frame@ComBot_Miner]:Show
-									UIElement[Dropoff_ContainerTitle@Miner_Frame@ComBot_Miner]:SetText[Orca Name]
-									UIElement[Dropoff_ContainerTitle@Miner_Frame@ComBot_Miner]:Show
-									UIElement[DropoffSubTypeTitle@Miner_Frame@ComBot_Miner]:Hide
-									UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:Hide
-									break
-								case Container
-									UIElement[Dropoff_Container@Miner_Frame@ComBot_Miner]:Show
-									UIElement[Dropoff_ContainerTitle@Miner_Frame@ComBot_Miner]:SetText[Container Name]
-									UIElement[Dropoff_ContainerTitle@Miner_Frame@ComBot_Miner]:Show
-									UIElement[DropoffSubTypeTitle@Miner_Frame@ComBot_Miner]:Hide
-									UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:Hide
-									break
-								case Corporation Folder
-									UIElement[DropoffSubTypeTitle@Miner_Frame@ComBot_Miner]:Show
-									UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:Show
-									UIElement[DropoffSubType@Miner_Frame@ComBot_Miner].ItemByText[${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType}]:Select
-								default
-									UIElement[Dropoff_Container@Miner_Frame@ComBot_Miner]:Hide
-									UIElement[Dropoff_ContainerTitle@Miner_Frame@ComBot_Miner]:Hide
-							}
-						</OnLoad>
-						<OnSelect>
-							Script[ComBot].VariableScope.Miner.Config:SetDropoff_Type[${This.SelectedItem.Text}]
-							UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:ClearItems
-							switch ${This.SelectedItem.Text}
-							{
-								case Jetcan
-									UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:AddItem[Fleet Jetcan]
-									UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:AddItem[Corporate Bookmark Jetcan]
-									UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:AddItem[On-Demand Jetcan]
-									UIElement[DropoffSubType@Miner_Frame@ComBot_Miner].ItemByText[${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType}]:Select
-									UIElement[DropoffSubTypeTitle@Miner_Frame@ComBot_Miner]:Show
-									UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:Show
-									break
-								case Orca
-									UIElement[Dropoff_Container@Miner_Frame@ComBot_Miner]:Show
-									UIElement[Dropoff_ContainerTitle@Miner_Frame@ComBot_Miner]:SetText[Orca Name]
-									UIElement[Dropoff_ContainerTitle@Miner_Frame@ComBot_Miner]:Show
-									UIElement[DropoffSubTypeTitle@Miner_Frame@ComBot_Miner]:Hide
-									UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:Hide
-									break
-								case Container
-									UIElement[Dropoff_Container@Miner_Frame@ComBot_Miner]:Show
-									UIElement[Dropoff_ContainerTitle@Miner_Frame@ComBot_Miner]:SetText[Container Name]
-									UIElement[Dropoff_ContainerTitle@Miner_Frame@ComBot_Miner]:Show
-									UIElement[DropoffSubTypeTitle@Miner_Frame@ComBot_Miner]:Hide
-									UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:Hide
-									break
-								case Corporation Folder
-									UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 1]
-									UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 2]
-									UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 3]
-									UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 4]
-									UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 5]
-									UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 6]
-									UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 7]
-									UIElement[Dropoff_Container@Miner_Frame@ComBot_Miner]:Hide
-									UIElement[Dropoff_ContainerTitle@Miner_Frame@ComBot_Miner]:Hide
-									UIElement[DropoffSubTypeTitle@Miner_Frame@ComBot_Miner]:Show
-									UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:Show
-									break
-								case No Dropoff
-									UIElement[DropoffSubTypeTitle@Miner_Frame@ComBot_Miner]:Hide
-									UIElement[DropoffSubType@Miner_Frame@ComBot_Miner]:Hide
-									break
-								default
-									UIElement[Dropoff_Container@Miner_Frame@ComBot_Miner]:Hide
-									UIElement[Dropoff_ContainerTitle@Miner_Frame@ComBot_Miner]:Hide
-							}
+						<Children>
+						
+							<Text name='DropoffTitle'> 
+								<X>34%</X> 
+								<Y>3%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Dropoff Bookmark</Text>
+							</Text>
+							<Textentry name='Dropoff'> 
+								<X>34%</X> 
+								<Y>10%</Y> 
+								<Width>32%</Width> 
+								<Height>15%</Height> 
+								<OnLoad>
+									This:SetText[${Script[ComBot].VariableScope.Miner.Config.Dropoff}]
+								</OnLoad>
+								<OnChange>
+									if ${This.Text.Length}
+									{
+										Script[ComBot].VariableScope.Miner.Config:SetDropoff[${This.Text}]
+									}
+									else
+									{
+										Script[ComBot].VariableScope.Miner.Config:SetDropoff[\"\"]
+									}
+									UIElement[DropoffList@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+									Script[ComBot].VariableScope.Miner.LocalUI:Start
+								</OnChange>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText["This field needs to contain the exact name of your dropoff location bookmark.  If you are delivering to a personal or corporate hangar in a station, the bookmark needs to be a station.  If you are delivering to a POS structure, the bookmark should be near the structure."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[""]
+								</OnMouseExit>
+							</Textentry>
+							<listbox Name="DropoffList">
+								<BackgroundColor>FF000000</BackgroundColor>
+								<Border>1</Border>
+								<BorderColor>FFFFFFFF</BorderColor>
+								<X>34%</X>
+								<Y>25%</Y>
+								<Width>32%</Width>
+								<Height>70%</Height>
+								<OnLoad>
+									This:SetZOrder[alwaysontop]
+									This:Hide
+								</OnLoad>
+								<OnSelect>
+									UIElement[Dropoff@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[${This.SelectedItem.Text}]
+									Script[ComBot].VariableScope.Miner.Config:SetDropoff[${This.SelectedItem.Text}]
+									This:Hide
+									Script[ComBot].VariableScope.Miner.LocalUI:Stop
+								</OnSelect>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText["This field needs to contain the exact name of your dropoff location bookmark.  If you are delivering to a personal or corporate hangar in a station, the bookmark needs to be a station.  If you are delivering to a POS structure, the bookmark should be near the structure."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[""]
+								</OnMouseExit>
+							</listbox>
 							
+							<Text name='Dropoff_ContainerTitle'> 
+								<X>34%</X> 
+								<Y>73%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Container Name</Text>
+							</Text>
+							<TextEntry name='Dropoff_Container'> 
+								<X>34%</X> 
+								<Y>80%</Y> 
+								<Width>32%</Width> 
+								<Height>15%</Height> 
+								<OnLoad>
+									This:SetText[${Script[ComBot].VariableScope.Miner.Config.Container_Name}]
+								</OnLoad>
+								<OnChange>
+									Script[ComBot].VariableScope.Miner.Config:SetContainer_Name[${This.Text}]
+								</OnChange>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText["This field is used to supply ComBot with an identifier for your dropoff location.  If you are delivering to an Orca, this needs to contain the name of the pilot flying your Orca.  If you are delivering to a Player Owned Station structure, this needs to contain the structure's name.  This field is also used to specify the prefix for corporate bookmarks created using the Corporate Jetcan mode."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[""]
+								</OnMouseExit>
+							</TextEntry>
 							
-						</OnSelect>
-					</listbox>
+							<Text name='DropoffSubTypeTitle'> 
+								<X>67%</X> 
+								<Y>3%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Dropoff Sub-Type</Text>
+							</Text>
+							<listbox Name="DropoffSubType">
+								<BackgroundColor>FF000000</BackgroundColor>
+								<Border>1</Border>
+								<BorderColor>FFFFFFFF</BorderColor>
+								<X>67%</X>
+								<Y>10%</Y>
+								<Width>32%</Width>
+								<Height>85%</Height>
+								<OnLoad>
+									switch ${Script[ComBot].VariableScope.Miner.Config.Dropoff_Type}
+									{
+										case Jetcan
+											This:AddItem[Fleet Jetcan]
+											switch ${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType}
+											{
+												case Corporate Bookmark Jetcan
+													UIElement[Dropoff_Container@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+													UIElement[Dropoff_ContainerTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+													UIElement[Dropoff_ContainerTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[Jetcan Bookmark Prefix]
+													break
+												default
+												UIElement[Dropoff_Container@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+												UIElement[Dropoff_ContainerTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											}
+											break
+										case Corporation Hangar
+											This:AddItem[Corporation Folder 1]
+											This:AddItem[Corporation Folder 2]
+											This:AddItem[Corporation Folder 3]
+											This:AddItem[Corporation Folder 4]
+											This:AddItem[Corporation Folder 5]
+											This:AddItem[Corporation Folder 6]
+											This:AddItem[Corporation Folder 7]
+											break
+										case Container
+											This:AddItem[Corporation Folder 1]
+											This:AddItem[Corporation Folder 2]
+											This:AddItem[Corporation Folder 3]
+											This:AddItem[Corporation Folder 4]
+											This:AddItem[Corporation Folder 5]
+											This:AddItem[Corporation Folder 6]
+											This:AddItem[Corporation Folder 7]
+											break
+										case Orca
+											This:AddItem[Corporation Folder 1]
+											This:AddItem[Corporation Folder 2]
+											This:AddItem[Corporation Folder 3]
+											This:AddItem[Corporation Folder 4]
+											This:AddItem[Corporation Folder 5]
+											This:AddItem[Corporation Folder 6]
+											This:AddItem[Corporation Folder 7]
+											break
+									}
+									This.ItemByText["${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType}"]:Select
+								</OnLoad>
+								<OnSelect>
+									Script[ComBot].VariableScope.Miner.Config:SetDropoff_SubType[${This.SelectedItem.Text}]
+								</OnSelect>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText["This field is used to further configure your dropoff type for types that have additional options, like Corporate Hangars and Jetcans."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[""]
+								</OnMouseExit>
+							</listbox>
 
-
-					
-
-		
-
-					<Text name='MiningSystemTitle'> 
-						<X>1%</X> 
-						<Y>7%</Y> 
-						<Width>32%</Width> 
-						<Height>2%</Height> 
-						<Alignment>Center</Alignment>
-						<Text>Mining System Bookmark</Text>
-					</Text>						 
-					<TextEntry name='MiningSystem'> 
-						<X>1%</X> 
-						<Y>9%</Y> 
-						<Width>32%</Width> 
-						<Height>3%</Height> 
-						<OnLoad>
-							This:SetText[${Script[ComBot].VariableScope.Miner.Config.MiningSystem}]
-						</OnLoad>
-						<OnChange>
-							if ${This.Text.Length}
-							{
-								Script[ComBot].VariableScope.Miner.Config:SetMiningSystem[${This.Text}]
-							}
-							else
-							{
-								Script[ComBot].VariableScope.Miner.Config:SetMiningSystem[\"\"]
-							}
-							UIElement[MiningSystemList@Miner_Frame@ComBot_Miner]:Show
-							Script[ComBot].VariableScope.Miner.LocalUI:Start
-						</OnChange>
-					</TextEntry>						 
-					<listbox Name="MiningSystemList">
-						<BackgroundColor>FF000000</BackgroundColor>
-						<Border>1</Border>
-						<BorderColor>FFFFFFFF</BorderColor>
-						<X>1%</X>
-						<Y>12%</Y>
-						<Width>32%</Width>
-						<Height>17%</Height>
-						<OnLoad>
-							This:SetZOrder[alwaysontop]
-							This:Hide
-						</OnLoad>
-						<OnSelect>
-							UIElement[MiningSystem@Miner_Frame@ComBot_Miner]:SetText[${This.SelectedItem.Text}]
-							Script[ComBot].VariableScope.Miner.Config:SetMiningSystem[${This.SelectedItem.Text}]
-							This:Hide
-							Script[ComBot].VariableScope.Miner.LocalUI:Stop
-						</OnSelect>
-					</listbox>
-
-				
-					<Text name='OrePrefixTitle'>
-						<X>1%</X>
-						<Y>16.5%</Y>
-						<Width>20%</Width> 
-						<Height>2%</Height> 
-						<Text>Belt Prefix:</Text>
-					</Text>
-					<Textentry name='OrePrefix'>
-						<X>13%</X>
-						<Y>16%</Y>
-						<Width>20%</Width> 
-						<Height>3%</Height> 
-						<OnLoad>
-							This:SetText[${Script[ComBot].VariableScope.Miner.Config.BeltPrefix}]
-						</OnLoad>
-						<OnChange>
-							if ${This.Text.Length} > 0
-							{
-								Script[ComBot].VariableScope.Miner.Config:SetBeltPrefix[${This.Text}]
-							}
-						</OnChange>
-					</Textentry>
-					
-					<Text name='IcePrefixTitle'>
-						<X>1%</X>
-						<Y>20.5%</Y>
-						<Width>20%</Width> 
-						<Height>2%</Height> 
-						<Text>Ice Belt Prefix:</Text>
-					</Text>
-					<Textentry name='IcePrefix'>
-						<X>13%</X>
-						<Y>20%</Y>
-						<Width>20%</Width> 
-						<Height>3%</Height> 
-						<OnLoad>
-							This:SetText[${Script[ComBot].VariableScope.Miner.Config.IceBeltPrefix}]
-						</OnLoad>
-						<OnChange>
-							if ${This.Text.Length} > 0
-							{
-								Script[ComBot].VariableScope.Miner.Config:SetIceBeltPrefix[${This.Text}]
-							}
-						</OnChange>
-					</Textentry>
-					
-					<Checkbox name='obj_MinerUseBookmarks'>
-						<X>1%</X>
-						<Y>13%</Y>
-						<Width>20%</Width> 
-						<Height>3%</Height> 
-						<Text>Use belt bookmarks</Text>
-						<OnLoad>
-							if ${Script[ComBot].VariableScope.Miner.Config.UseBookmarks}
-							{
-								This:SetChecked
-								UIElement[OrePrefixTitle@Miner_Frame@ComBot_Miner]:Show
-								UIElement[OrePrefix@Miner_Frame@ComBot_Miner]:Show
-								UIElement[IcePrefixTitle@Miner_Frame@ComBot_Miner]:Show
-								UIElement[IcePrefix@Miner_Frame@ComBot_Miner]:Show
-							}
-							else
-							{
-								UIElement[OrePrefixTitle@Miner_Frame@ComBot_Miner]:Hide
-								UIElement[OrePrefix@Miner_Frame@ComBot_Miner]:Hide
-								UIElement[IcePrefixTitle@Miner_Frame@ComBot_Miner]:Hide
-								UIElement[IcePrefix@Miner_Frame@ComBot_Miner]:Hide
-							}
-							This:SetZOrder[movetop]
-						</OnLoad>
-						<OnLeftClick>
-							Script[ComBot].VariableScope.Miner.Config:SetUseBookmarks[${This.Checked}]
-							if ${This.Checked}
-							{
-								UIElement[OrePrefixTitle@Miner_Frame@ComBot_Miner]:Show
-								UIElement[OrePrefix@Miner_Frame@ComBot_Miner]:Show
-								UIElement[IcePrefixTitle@Miner_Frame@ComBot_Miner]:Show
-								UIElement[IcePrefix@Miner_Frame@ComBot_Miner]:Show
-							}
-							else
-							{
-								UIElement[OrePrefixTitle@Miner_Frame@ComBot_Miner]:Hide
-								UIElement[OrePrefix@Miner_Frame@ComBot_Miner]:Hide
-								UIElement[IcePrefixTitle@Miner_Frame@ComBot_Miner]:Hide
-								UIElement[IcePrefix@Miner_Frame@ComBot_Miner]:Hide
-							}
-							This:SetZOrder[movetop]
-						</OnLeftClick>
-					</Checkbox>
-					
-					<Text name='MaxLockTitle'> 
-						<X>34%</X> 
-						<Y>25%</Y> 
-						<Width>32%</Width> 
-						<Height>2%</Height> 
-						<Alignment>Center</Alignment>
-						<OnLoad>
-							This:SetText[Lock ${Script[ComBot].VariableScope.Miner.Config.MaxLaserLocks} targets for mining]
-						</OnLoad>
-					</Text>						 
-					<Slider name='MaxLock'> 
-						<X>34%</X> 
-						<Y>27%</Y> 
-						<Width>32%</Width> 
-						<Height>5%</Height> 
-						<Border>1</Border>
-						<OnLoad>
-							This:SetRange[10]
-							This:SetValue[${Script[ComBot].VariableScope.Miner.Config.MaxLaserLocks}]
-						</OnLoad>
-						<OnChange>
-							Script[ComBot].VariableScope.Miner.Config:SetMaxLaserLocks[${This.Value}]
-							UIElement[MaxLockTitle@Miner_Frame@ComBot_Miner]:SetText[Lock ${Script[ComBot].VariableScope.Miner.Config.MaxLaserLocks} targets for mining]
-						</OnChange>
-					</Slider>						 
-					
-					<Checkbox name='obj_MinerOrcaMode'>
-						<X>1%</X>
-						<Y>28%</Y>
-						<Width>32%</Width> 
-						<Height>3%</Height> 
-						<Text>Orca Mode</Text>
-							<OnLoad>
-							if ${Script[ComBot].VariableScope.Miner.Config.OrcaMode}
-							{
-								This:SetChecked
-								if ${This.Checked}
-								{
-									UIElement[MaxLockTitle@Miner_Frame@ComBot_Miner]:Hide
-									UIElement[MaxLock@Miner_Frame@ComBot_Miner]:Hide
-								}
-								else
-								{
-									UIElement[MaxLockTitle@Miner_Frame@ComBot_Miner]:Show
-									UIElement[MaxLock@Miner_Frame@ComBot_Miner]:Show
-								}
-							}
-							This:SetZOrder[movetop]
-						</OnLoad>
-						<OnLeftClick>
-							Script[ComBot].VariableScope.Miner.Config:SetOrcaMode[${This.Checked}]
-							if ${This.Checked}
-							{
-								UIElement[MaxLockTitle@Miner_Frame@ComBot_Miner]:Hide
-								UIElement[MaxLock@Miner_Frame@ComBot_Miner]:Hide
-							}
-							else
-							{
-								UIElement[MaxLockTitle@Miner_Frame@ComBot_Miner]:Show
-								UIElement[MaxLock@Miner_Frame@ComBot_Miner]:Show
-							}
-							if ${MyShip.HasOreHold}
-							{
-								if ${Script[ComBot].VariableScope.Miner.Config.OrcaMode}
-								{
-									UIElement[ThresholdTitle@Miner_Frame@ComBot_Miner]:SetText[Corp Hangar Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${EVEWindow[ByName, Inventory].ChildCapacity[ShipCorpHangar]}].Round} m3]
-								}
-								else
-								{
-									UIElement[ThresholdTitle@Miner_Frame@ComBot_Miner]:SetText[OreHold Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]}].Round} m3]
-								}
-							}
-							else
-							{
-								UIElement[ThresholdTitle@Miner_Frame@ComBot_Miner]:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${MyShip.CargoCapacity}].Round} m3]
-							}
-							This:SetZOrder[movetop]
-						</OnLeftClick>
-					</Checkbox>
-					
-					<Text name='obj_MinerOrePriorityTitle'> 
-						<X>67%</X> 
-						<Y>50%</Y> 
-						<Width>32%</Width> 
-						<Height>2%</Height> 
-						<Alignment>Center</Alignment>
-						<Text>Ore/Ice Priority</Text>
-					</Text>
-					<listbox Name="obj_MinerOrePriority">
-						<BackgroundColor>FF000000</BackgroundColor>
-						<Border>1</Border>
-						<BorderColor>FFFFFFFF</BorderColor>
-						<X>67%</X>
-						<Y>53%</Y>
-						<Width>32%</Width>
-						<Height>40%</Height>
-						<SelectMultiple>1</SelectMultiple>
-						<Sort>User</Sort>
-						<OnLeftClick>
-							variable settingsetref Ores
-							variable int counter
-							variable collection:bool selected
-
-							if ${UIElement[obj_MinerIceMining@@Miner_Frame@ComBot_Miner].Checked}
-							{
-								Ores:Set[${LavishSettings[ComBotSettings].FindSet[${Me.Name}].FindSet[Miner].FindSet[ICE_Types]}]
-								Ores:Clear
-								for ( counter:Set[1] ; ${counter} &lt;= ${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].SelectedItems} ; counter:Inc )
-								{
-									selected:Set[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].SelectedItem[${counter}]},TRUE]
-								}
-								for ( counter:Set[1] ; ${counter} &lt;= ${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items} ; counter:Inc )
-								{
-									if ${selected[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].OrderedItem[${counter}]}]}
-										Ores:AddSetting[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].OrderedItem[${counter}]},1]
-								}							
-							}
-							else
-							{
-								Ores:Set[${LavishSettings[ComBotSettings].FindSet[${Me.Name}].FindSet[Miner].FindSet[Ore_Types]}]
-								Ores:Clear
-								for ( counter:Set[1] ; ${counter} &lt;= ${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].SelectedItems} ; counter:Inc )
-								{
-									selected:Set[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].SelectedItem[${counter}]},TRUE]
-								}
-								for ( counter:Set[1] ; ${counter} &lt;= ${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items} ; counter:Inc )
-								{
-									if ${selected[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].OrderedItem[${counter}]}]}
-										switch ${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].OrderedItem[${counter}]}
+							<Text name='ThresholdTitle'> 
+								<X>34%</X> 
+								<Y>33%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Alignment>Center</Alignment>
+								<OnLoad>
+									Script[ComBot].VariableScope.Miner.LocalUI:Start
+									if ${MyShip.HasOreHold}
+									{
+										if ${Script[ComBot].VariableScope.Miner.Config.OrcaMode}
 										{
-											case Mercoxit
-											Ores:AddSetting[Vitreous Mercoxit,1]
-											Ores:AddSetting[Magma Mercoxit,1]
-											Ores:AddSetting[Mercoxit,1]
-											break
-											case Arkonor
-											Ores:AddSetting[Prime Arkonor,1]
-											Ores:AddSetting[Crimson Arkonor,1]
-											Ores:AddSetting[Arkonor,1]
-											break
-											case Bistot
-											Ores:AddSetting[Monoclinic Bistot,1]
-											Ores:AddSetting[Triclinic Bistot,1]
-											Ores:AddSetting[Bistot,1]
-											break
-											case Crokite
-											Ores:AddSetting[Crystalline Crokite,1]
-											Ores:AddSetting[Sharp Crokite,1]
-											Ores:AddSetting[Crokite,1]
-											break
-											case Spodumain
-											Ores:AddSetting[Gleaming Spodumain,1]
-											Ores:AddSetting[Bright Spodumain,1]
-											Ores:AddSetting[Spodumain,1]
-											break
-											case Dark Ochre
-											Ores:AddSetting[Obsidian Ochre,1]
-											Ores:AddSetting[Onyx Ochre,1]
-											Ores:AddSetting[Dark Ochre,1]
-											break
-											case Gneiss
-											Ores:AddSetting[Prismatic Gneiss,1]
-											Ores:AddSetting[Iridescent Gneiss,1]
-											Ores:AddSetting[Gneiss,1]
-											break
-											case Hedbergite
-											Ores:AddSetting[Glazed Hedbergite,1]
-											Ores:AddSetting[Vitric Hedbergite,1]
-											Ores:AddSetting[Hedbergite,1]
-											break
-											case Hemorphite
-											Ores:AddSetting[Radiant Hemorphite,1]
-											Ores:AddSetting[Vivid Hemorphite,1]
-											Ores:AddSetting[Hemorphite,1]
-											break
-											case Jaspet
-											Ores:AddSetting[Pristine Jaspet,1]
-											Ores:AddSetting[Pure Jaspet,1]
-											Ores:AddSetting[Jaspet,1]
-											break
-											case Kernite
-											Ores:AddSetting[Fiery Kernite,1]
-											Ores:AddSetting[Luminous Kernite,1]
-											Ores:AddSetting[Kernite,1]
-											break
-											case Omber
-											Ores:AddSetting[Golden Omber,1]
-											Ores:AddSetting[Silvery Omber,1]
-											Ores:AddSetting[Omber,1]
-											break
-											case Plagioclase
-											Ores:AddSetting[Rich Plagioclase,1]
-											Ores:AddSetting[Azure Plagioclase,1]
-											Ores:AddSetting[Plagioclase,1]
-											break
-											case Pyroxeres
-											Ores:AddSetting[Viscous Pyroxeres,1]
-											Ores:AddSetting[Solid Pyroxeres,1]
-											Ores:AddSetting[Pyroxeres,1]
-											break
-											case Scordite
-											Ores:AddSetting[Massive Scordite,1]
-											Ores:AddSetting[Condensed Scordite,1]
-											Ores:AddSetting[Scordite,1]
-											break
-											case Veldspar
-											Ores:AddSetting[Dense Veldspar,1]
-											Ores:AddSetting[Concentrated Veldspar,1]
-											Ores:AddSetting[Veldspar,1]
-											break
+											This:SetText[Corp Hangar Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${EVEWindow[ByName, Inventory].ChildCapacity[ShipCorpHangar]}].Round} m3]
 										}
-								}
-							}
-						</OnLeftClick>
-					</listbox>
-					<Checkbox name='obj_MinerIceMining'>
-						<X>67%</X>
-						<Y>95%</Y>
+										else
+										{
+											This:SetText[OreHold Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]}].Round} m3]
+										}
+									}
+									else
+									{
+										This:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${MyShip.CargoCapacity}].Round} m3]
+									}
+								</OnLoad>
+							</Text>						 
+							<Slider name='Threshold'> 
+								<X>34%</X> 
+								<Y>40%</Y> 
+								<Width>32%</Width> 
+								<Height>15%</Height> 
+								<Border>1</Border>
+								<OnLoad>
+									This:SetRange[100]
+									This:SetValue[${Script[ComBot].VariableScope.Miner.Config.Threshold}]
+								</OnLoad>
+								<OnChange>
+									Script[ComBot].VariableScope.Miner.Config:SetThreshold[${This.Value}]
+									if ${MyShip.HasOreHold}
+									{
+										if ${Script[ComBot].VariableScope.Miner.Config.OrcaMode}
+										{
+											UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[Corp Hangar Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${EVEWindow[ByName, Inventory].ChildCapacity[ShipCorpHangar]}].Round} m3]
+										}
+										else
+										{
+											UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[OreHold Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]}].Round} m3]
+										}
+									}
+									else
+									{
+										UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${MyShip.CargoCapacity}].Round} m3]
+									}
+								</OnChange>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText["This field is used to determine when ComBot should perform a dropoff."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[""]
+								</OnMouseExit>
+							</Slider>						 
+							
+							<Text name='DropoffTypeTitle'> 
+								<X>1%</X> 
+								<Y>3%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Dropoff Type</Text>
+							</Text>
+							<Listbox Name="DropoffType">
+								<BackgroundColor>FF000000</BackgroundColor>
+								<Border>1</Border>
+								<BorderColor>FFFFFFFF</BorderColor>
+								<X>1%</X>
+								<Y>10%</Y>
+								<Width>32%</Width>
+								<Height>85%</Height>
+								<Items>
+									<Item>Personal Hangar</Item>
+									<Item>Orca</Item>
+									<Item>Container</Item>
+									<Item>Jetcan</Item>
+									<Item>No Dropoff</Item>
+									<Item>Corporation Hangar</Item>
+								</Items>
+								<OnLoad>
+									This.ItemByText[${Script[ComBot].VariableScope.Miner.Config.Dropoff_Type}]:Select
+									switch ${This.SelectedItem.Text}
+									{
+										case Personal Hangar
+											UIElement[DropoffTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[Station Bookmark]
+											UIElement[DropoffSubTypeTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[Threshold@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[DropoffTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[Dropoff@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[Dropoff_Container@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[Dropoff_ContainerTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											break
+										case Orca
+											UIElement[Dropoff_Container@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[Dropoff_ContainerTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[Orca Pilot Name]
+											UIElement[DropoffSubTypeTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[Corporate Folder]
+											UIElement[Dropoff_ContainerTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[DropoffSubTypeTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[Threshold@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[DropoffTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[Dropoff@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[DropoffList@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											break
+										case Container
+											UIElement[Dropoff_Container@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[Dropoff_ContainerTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[Container Name]
+											UIElement[DropoffSubTypeTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[Corporate Folder]
+											UIElement[Dropoff_ContainerTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[DropoffSubTypeTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[Threshold@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[DropoffTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[Dropoff@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											break
+										case Jetcan
+											UIElement[DropoffSubTypeTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[DropoffSubTypeTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[Jetcan Type]
+											UIElement[Threshold@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[DropoffTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[Dropoff@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[DropoffList@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											break
+										case No Dropoff
+											UIElement[DropoffSubTypeTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[Threshold@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[DropoffTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[Dropoff@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[DropoffList@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[Dropoff_Container@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[Dropoff_ContainerTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											break
+										case Corporation Folder
+											UIElement[DropoffTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[Station Bookmark]
+											UIElement[DropoffSubTypeTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[DropoffSubTypeTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[Corporate Folder]
+											UIElement[Threshold@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[Dropoff_Container@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[Dropoff_ContainerTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[DropoffTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[Dropoff@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											break
+									}
+								</OnLoad>
+								<OnSelect>
+									Script[ComBot].VariableScope.Miner.Config:SetDropoff_Type[${This.SelectedItem.Text}]
+									UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:ClearItems
+									switch ${This.SelectedItem.Text}
+									{
+										case Personal Hangar
+											UIElement[DropoffTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[Station Bookmark]
+											UIElement[DropoffSubTypeTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[Threshold@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[DropoffTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[Dropoff@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[Dropoff_Container@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[Dropoff_ContainerTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											break
+										case Orca
+											UIElement[Dropoff_Container@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 1]
+											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 2]
+											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 3]
+											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 4]
+											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 5]
+											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 6]
+											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 7]
+											UIElement[Dropoff_ContainerTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[Orca PilotName]
+											UIElement[DropoffSubTypeTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[Corporate Folder]
+											UIElement[Dropoff_ContainerTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[DropoffSubTypeTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[Threshold@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[DropoffTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[Dropoff@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[DropoffList@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner].ItemByText[${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType}]:Select
+											break
+										case Container
+											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 1]
+											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 2]
+											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 3]
+											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 4]
+											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 5]
+											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 6]
+											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 7]
+											UIElement[Dropoff_Container@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[Dropoff_ContainerTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[Container Name]
+											UIElement[DropoffSubTypeTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[Corporate Folder]
+											UIElement[Dropoff_ContainerTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[DropoffSubTypeTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[Threshold@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[DropoffTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[DropoffTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[Container Bookmark]
+											UIElement[Dropoff@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner].ItemByText[${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType}]:Select
+											break
+										case Jetcan
+											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:AddItem[Fleet Jetcan]
+											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner].ItemByText[${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType}]:Select
+											UIElement[DropoffSubTypeTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[DropoffSubTypeTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[Jetcan Type]
+											UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[Threshold@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[DropoffTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[Dropoff@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[DropoffList@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											switch ${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType}
+											{
+												case Corporate Bookmark Jetcan
+													UIElement[Dropoff_Container@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+													UIElement[Dropoff_ContainerTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+													UIElement[Dropoff_ContainerTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[Jetcan Bookmark Prefix]
+													break
+												default
+												UIElement[Dropoff_Container@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+												UIElement[Dropoff_ContainerTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											}
+											break
+										case No Dropoff
+											UIElement[DropoffSubTypeTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[Threshold@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[DropoffTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[Dropoff@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[DropoffList@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[Dropoff_Container@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[Dropoff_ContainerTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											break
+										case Corporation Hangar
+											UIElement[DropoffTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[Station Bookmark]
+											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 1]
+											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 2]
+											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 3]
+											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 4]
+											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 5]
+											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 6]
+											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:AddItem[Corporation Folder 7]
+											UIElement[DropoffSubTypeTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[Corporate Folder]
+											UIElement[DropoffSubTypeTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[DropoffSubType@DropoffFrame@Miner_Frame@ComBot_Miner].ItemByText[${Script[ComBot].VariableScope.Miner.Config.Dropoff_SubType}]:Select
+											UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[Threshold@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[Dropoff_Container@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[Dropoff_ContainerTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[DropoffTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[Dropoff@DropoffFrame@Miner_Frame@ComBot_Miner]:Show
+											break
+									}
+								</OnSelect>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText["This field determines how ComBot should drop off ore after it is mined."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[""]
+								</OnMouseExit>
+							</Listbox>
+						</Children>
+					</Frame>
+					
+					<Text name='MiningFrameTitle'> 
+						<X>1%</X> 
+						<Y>36%</Y> 
 						<Width>32%</Width> 
-						<Height>20</Height> 
-						<Text>Ice Mining</Text>
-							<OnLoad>
-								variable int count
-								variable settingsetref Ores
+						<Height>4%</Height> 
+						<Text>Mining Configuration</Text>
+						<OnLoad>
+							This.Font:SetColor[FFFFFF00]
+						</OnLoad>
+					</Text>
+					<Frame name="MiningFrame">
+						<X>0%</X>
+						<Y>38%</Y>
+						<Width>100%</Width>
+						<Height>41%</Height>
+						<BackgroundColor>FF000000</BackgroundColor>
+						<Border>1</Border>
+						<BorderColor>FFFFFFFF</BorderColor>
+						<Children>
+							<Text name='MiningSystemTitle'> 
+								<X>1%</X> 
+								<Y>1%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Mining System Bookmark</Text>
+							</Text>						 
+							<TextEntry name='MiningSystem'> 
+								<X>1%</X> 
+								<Y>7%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<OnLoad>
+									This:SetText[${Script[ComBot].VariableScope.Miner.Config.MiningSystem}]
+								</OnLoad>
+								<OnChange>
+									if ${This.Text.Length}
+									{
+										Script[ComBot].VariableScope.Miner.Config:SetMiningSystem[${This.Text}]
+									}
+									else
+									{
+										Script[ComBot].VariableScope.Miner.Config:SetMiningSystem[\"\"]
+									}
+									UIElement[MiningSystemList@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+									Script[ComBot].VariableScope.Miner.LocalUI:Start
+								</OnChange>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText["This field needs to contain the name of a bookmark in the system in which you would like ComBot to mine.  The bookmark can be a station, entity, or location - therefore if you are mining in the same system as your dropoff bookmark, you can use that here as well."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[""]
+								</OnMouseExit>
+							</TextEntry>						 
+							<listbox Name="MiningSystemList">
+								<BackgroundColor>FF000000</BackgroundColor>
+								<Border>1</Border>
+								<BorderColor>FFFFFFFF</BorderColor>
+								<X>1%</X>
+								<Y>20%</Y>
+								<Width>32%</Width>
+								<Height>70%</Height>
+								<OnLoad>
+									This:SetZOrder[alwaysontop]
+									This:Hide
+								</OnLoad>
+								<OnSelect>
+									UIElement[MiningSystem@MiningFrame@Miner_Frame@ComBot_Miner]:SetText[${This.SelectedItem.Text}]
+									Script[ComBot].VariableScope.Miner.Config:SetMiningSystem[${This.SelectedItem.Text}]
+									This:Hide
+									Script[ComBot].VariableScope.Miner.LocalUI:Stop
+								</OnSelect>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText["This field needs to contain the name of a bookmark in the system in which you would like ComBot to mine.  The bookmark can be a station, entity, or location - therefore if you are mining in the same system as your dropoff bookmark, you can use that here as well."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[""]
+								</OnMouseExit>
+							</listbox>
+							
+							<Text name='OrePrefixTitle'>
+								<X>1%</X>
+								<Y>52%</Y>
+								<Width>20%</Width> 
+								<Height>10%</Height> 
+								<Text>Belt Prefix:</Text>
+								<OnLoad>
+								if ${Script[ComBot].VariableScope.Miner.Config.GasHarvesting}
+									{
+										This:Hide
+									}
+								</OnLoad>
+							</Text>
+							<Textentry name='OrePrefix'>
+								<X>13%</X>
+								<Y>50%</Y>
+								<Width>20%</Width> 
+								<Height>9%</Height> 
+								<OnLoad>
+									This:SetText[${Script[ComBot].VariableScope.Miner.Config.BeltPrefix}]
+									if ${Script[ComBot].VariableScope.Miner.Config.GasHarvesting}
+									{
+										This:Hide
+									}
+								</OnLoad>
+								<OnChange>
+									if ${This.Text.Length} > 0
+									{
+										Script[ComBot].VariableScope.Miner.Config:SetBeltPrefix[${This.Text}]
+									}
+								</OnChange>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText["This field is to specify the prefix to use for your ore belt bookmarks.  Any bookmark in the mining system which starts with this prefix will be used as a mining location for ore mining."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[""]
+								</OnMouseExit>
+							</Textentry>
+							
+							<Text name='IcePrefixTitle'>
+								<X>1%</X>
+								<Y>62%</Y>
+								<Width>20%</Width> 
+								<Height>10%</Height> 
+								<Text>Ice Belt Prefix:</Text>
+								<OnLoad>
+								if ${Script[ComBot].VariableScope.Miner.Config.GasHarvesting}
+									{
+										This:Hide
+									}
+								</OnLoad>
+							</Text>
+							<Textentry name='IcePrefix'>
+								<X>13%</X>
+								<Y>60%</Y>
+								<Width>20%</Width> 
+								<Height>9%</Height> 
+								<OnLoad>
+									This:SetText[${Script[ComBot].VariableScope.Miner.Config.IceBeltPrefix}]
+									if ${Script[ComBot].VariableScope.Miner.Config.GasHarvesting}
+									{
+										This:Hide
+									}
+								</OnLoad>
+								<OnChange>
+									if ${This.Text.Length} > 0
+									{
+										Script[ComBot].VariableScope.Miner.Config:SetIceBeltPrefix[${This.Text}]
+									}
+								</OnChange>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText["This field is to specify the prefix to use for your ice belt bookmarks.  Any bookmark in the mining system which starts with this prefix will be used as a mining location for ice mining."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[""]
+								</OnMouseExit>
+							</Textentry>
+							
+							<Checkbox name='obj_MinerUseBookmarks'>
+								<X>1%</X>
+								<Y>40%</Y>
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Text>Use belt bookmarks</Text>
+								<OnLoad>
+									if ${Script[ComBot].VariableScope.Miner.Config.UseBookmarks}
+									{
+										This:SetChecked
+										UIElement[OrePrefixTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+										UIElement[OrePrefix@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+										UIElement[IcePrefixTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+										UIElement[IcePrefix@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+									}
+									else
+									{
+										UIElement[OrePrefixTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										UIElement[OrePrefix@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										UIElement[IcePrefixTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										UIElement[IcePrefix@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+									}
+									if ${Script[ComBot].VariableScope.Miner.Config.GasHarvesting}
+									{
+										This:Hide
+									}
+									This:SetZOrder[movetop]
+								</OnLoad>
+								<OnLeftClick>
+									Script[ComBot].VariableScope.Miner.Config:SetUseBookmarks[${This.Checked}]
+									if ${This.Checked}
+									{
+										UIElement[OrePrefixTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+										UIElement[OrePrefix@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+										UIElement[IcePrefixTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+										UIElement[IcePrefix@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+									}
+									else
+									{
+										UIElement[OrePrefixTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										UIElement[OrePrefix@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										UIElement[IcePrefixTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										UIElement[IcePrefix@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+									}
+									This:SetZOrder[movetop]
+								</OnLeftClick>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText["When this is checked, ComBot will warp to bookmarks instead of warping to the belts themselves.  This usually results in greater productivity as you can determine where your miners will start operations in a belt instead of using the default warp-in, which is usually some distance away from the ore field.  To use this option, you must have belt bookmarks created in your mining system and they must begin with the prefix specified below."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[""]
+								</OnMouseExit>
+							</Checkbox>
+							
+							<Text name='MaxLockTitle'> 
+								<X>34%</X> 
+								<Y>33%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Alignment>Center</Alignment>
+								<OnLoad>
+									This:SetText[Lock ${Script[ComBot].VariableScope.Miner.Config.MaxLaserLocks} targets for mining]
+									if ${Script[ComBot].VariableScope.Miner.Config.GasHarvesting}
+									{
+										This:Hide
+									}
+								</OnLoad>
+							</Text>						 
+							<Slider name='MaxLock'> 
+								<X>34%</X> 
+								<Y>40%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Border>1</Border>
+								<OnLoad>
+									This:SetRange[10]
+									This:SetValue[${Script[ComBot].VariableScope.Miner.Config.MaxLaserLocks}]
+									if ${Script[ComBot].VariableScope.Miner.Config.GasHarvesting}
+									{
+										This:Hide
+									}
+								</OnLoad>
+								<OnChange>
+									Script[ComBot].VariableScope.Miner.Config:SetMaxLaserLocks[${This.Value}]
+									UIElement[MaxLockTitle@MiningFrame@Miner_Frame@ComBot_Miner]:SetText[Lock ${Script[ComBot].VariableScope.Miner.Config.MaxLaserLocks} targets for mining]
+								</OnChange>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText["This value is used to determine how many asteroids ComBot will lock when mining.  It is usually best to set the value to correspond with how many mining lasers your ship is equipped with.  However, if you have 8 mining lasers but can only lock 8 targets, it is usually best to set the value lower so the Drone module has target slots available to attack rats."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[""]
+								</OnMouseExit>
+							</Slider>						 
 
-								if ${Script[ComBot].VariableScope.Miner.Config.IceMining}
-								{
-									This:SetChecked
-								}
+							<Text name='OrePriorityTitle'> 
+								<X>67%</X> 
+								<Y>1%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Ore Priority</Text>
+							</Text>						 
+							<listbox Name="obj_MinerOrePriority">
+								<BackgroundColor>FF000000</BackgroundColor>
+								<Border>1</Border>
+								<BorderColor>FFFFFFFF</BorderColor>
+								<X>67%</X>
+								<Y>7%</Y>
+								<Width>32%</Width>
+								<Height>90%</Height>
+								<SelectMultiple>1</SelectMultiple>
+								<Sort>User</Sort>
+								<OnLoad>
+									if ${Script[ComBot].VariableScope.Miner.Config.GasHarvesting}
+									{
+										This:Hide
+									}
+								</OnLoad>
+								<OnLeftClick>
+									variable settingsetref Ores
+									variable int counter
+									variable collection:bool selected
+
+									if ${UIElement[obj_MinerIceMining@@Miner_Frame@ComBot_Miner].Checked}
+									{
+										Ores:Set[${LavishSettings[ComBotSettings].FindSet[${Me.Name}].FindSet[Miner].FindSet[ICE_Types]}]
+										Ores:Clear
+										for ( counter:Set[1] ; ${counter} &lt;= ${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].SelectedItems} ; counter:Inc )
+										{
+											selected:Set[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].SelectedItem[${counter}]},TRUE]
+										}
+										for ( counter:Set[1] ; ${counter} &lt;= ${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items} ; counter:Inc )
+										{
+											if ${selected[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].OrderedItem[${counter}]}]}
+												Ores:AddSetting[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].OrderedItem[${counter}]},1]
+										}							
+									}
+									else
+									{
+										Ores:Set[${LavishSettings[ComBotSettings].FindSet[${Me.Name}].FindSet[Miner].FindSet[Ore_Types]}]
+										Ores:Clear
+										for ( counter:Set[1] ; ${counter} &lt;= ${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].SelectedItems} ; counter:Inc )
+										{
+											selected:Set[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].SelectedItem[${counter}]},TRUE]
+										}
+										for ( counter:Set[1] ; ${counter} &lt;= ${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items} ; counter:Inc )
+										{
+											if ${selected[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].OrderedItem[${counter}]}]}
+												switch ${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].OrderedItem[${counter}]}
+												{
+													case Mercoxit
+													Ores:AddSetting[Vitreous Mercoxit,1]
+													Ores:AddSetting[Magma Mercoxit,1]
+													Ores:AddSetting[Mercoxit,1]
+													break
+													case Arkonor
+													Ores:AddSetting[Prime Arkonor,1]
+													Ores:AddSetting[Crimson Arkonor,1]
+													Ores:AddSetting[Arkonor,1]
+													break
+													case Bistot
+													Ores:AddSetting[Monoclinic Bistot,1]
+													Ores:AddSetting[Triclinic Bistot,1]
+													Ores:AddSetting[Bistot,1]
+													break
+													case Crokite
+													Ores:AddSetting[Crystalline Crokite,1]
+													Ores:AddSetting[Sharp Crokite,1]
+													Ores:AddSetting[Crokite,1]
+													break
+													case Spodumain
+													Ores:AddSetting[Gleaming Spodumain,1]
+													Ores:AddSetting[Bright Spodumain,1]
+													Ores:AddSetting[Spodumain,1]
+													break
+													case Dark Ochre
+													Ores:AddSetting[Obsidian Ochre,1]
+													Ores:AddSetting[Onyx Ochre,1]
+													Ores:AddSetting[Dark Ochre,1]
+													break
+													case Gneiss
+													Ores:AddSetting[Prismatic Gneiss,1]
+													Ores:AddSetting[Iridescent Gneiss,1]
+													Ores:AddSetting[Gneiss,1]
+													break
+													case Hedbergite
+													Ores:AddSetting[Glazed Hedbergite,1]
+													Ores:AddSetting[Vitric Hedbergite,1]
+													Ores:AddSetting[Hedbergite,1]
+													break
+													case Hemorphite
+													Ores:AddSetting[Radiant Hemorphite,1]
+													Ores:AddSetting[Vivid Hemorphite,1]
+													Ores:AddSetting[Hemorphite,1]
+													break
+													case Jaspet
+													Ores:AddSetting[Pristine Jaspet,1]
+													Ores:AddSetting[Pure Jaspet,1]
+													Ores:AddSetting[Jaspet,1]
+													break
+													case Kernite
+													Ores:AddSetting[Fiery Kernite,1]
+													Ores:AddSetting[Luminous Kernite,1]
+													Ores:AddSetting[Kernite,1]
+													break
+													case Omber
+													Ores:AddSetting[Golden Omber,1]
+													Ores:AddSetting[Silvery Omber,1]
+													Ores:AddSetting[Omber,1]
+													break
+													case Plagioclase
+													Ores:AddSetting[Rich Plagioclase,1]
+													Ores:AddSetting[Azure Plagioclase,1]
+													Ores:AddSetting[Plagioclase,1]
+													break
+													case Pyroxeres
+													Ores:AddSetting[Viscous Pyroxeres,1]
+													Ores:AddSetting[Solid Pyroxeres,1]
+													Ores:AddSetting[Pyroxeres,1]
+													break
+													case Scordite
+													Ores:AddSetting[Massive Scordite,1]
+													Ores:AddSetting[Condensed Scordite,1]
+													Ores:AddSetting[Scordite,1]
+													break
+													case Veldspar
+													Ores:AddSetting[Dense Veldspar,1]
+													Ores:AddSetting[Concentrated Veldspar,1]
+													Ores:AddSetting[Veldspar,1]
+													break
+												}
+										}
+									}
+								</OnLeftClick>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText["This list is used to determine priority for mining asteroids.  Asteroid types which are higher on the list will receive higher priority for the targeting module."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[""]
+								</OnMouseExit>
+							</listbox>	
+							
+							<Text name='GasPrefixTitle'>
+								<X>34%</X>
+								<Y>24%</Y>
+								<Width>20%</Width> 
+								<Height>10%</Height> 
+								<Text>Gas Cloud Prefix:</Text>
+								<OnLoad>
+									if !${Script[ComBot].VariableScope.Miner.Config.GasHarvesting}
+									{
+										This:Hide
+									}
+								</OnLoad>
+							</Text>
+							<Textentry name='GasPrefix'>
+								<X>46%</X>
+								<Y>22%</Y>
+								<Width>20%</Width> 
+								<Height>9%</Height> 
+								<OnLoad>
+									if !${Script[ComBot].VariableScope.Miner.Config.GasHarvesting}
+									{
+										This:Hide
+									}
+									This:SetText[${Script[ComBot].VariableScope.Miner.Config.GasPrefix}]
+								</OnLoad>
+								<OnChange>
+									if ${This.Text.Length} > 0
+									{
+										Script[ComBot].VariableScope.Miner.Config:SetGasPrefix[${This.Text}]
+									}
+								</OnChange>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText["This field is to specify the prefix to use for your gas bookmarks.  Any bookmark in the mining system which starts with this prefix will be used as a mining location for gas harvesting."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[""]
+								</OnMouseExit>
+							</Textentry>
+
+							<Checkbox name='GasHarvesting'>
+								<X>34%</X>
+								<Y>13%</Y>
+								<Width>32%</Width> 
+								<Height>9%</Height> 
+								<Text>Gas Harvesting</Text>
+								<OnLoad>
+									if ${Script[ComBot].VariableScope.Miner.Config.IceMining}
+									{
+										This:Hide
+									}
+									if ${Script[ComBot].VariableScope.Miner.Config.GasHarvesting}
+									{
+										This:SetChecked
+										UIElement[MaxLockTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										UIElement[MaxLock@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										UIElement[obj_MinerIceMining@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+									}
+								</OnLoad>
+								<OnLeftClick>
+									Script[ComBot].VariableScope.Miner.Config:SetGasHarvesting[${This.Checked}]
+
+									if ${This.Checked}
+									{
+										UIElement[GasPrefixTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+										UIElement[GasPrefix@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+										UIElement[MaxLockTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										UIElement[MaxLock@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										UIElement[OrePriorityTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										UIElement[obj_MinerIceMining@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										UIElement[obj_MinerUseBookmarks@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										UIElement[OrePrefixTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										UIElement[OrePrefix@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										UIElement[IcePrefixTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										UIElement[IcePrefix@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+									}
+									else
+									{
+										UIElement[GasPrefixTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										UIElement[GasPrefix@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										UIElement[MaxLockTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+										UIElement[MaxLock@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+										UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+										UIElement[OrePriorityTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+										UIElement[obj_MinerIceMining@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+										UIElement[obj_MinerUseBookmarks@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+										if ${Script[ComBot].VariableScope.Miner.Config.UseBookmarks}
+										{
+											UIElement[OrePrefixTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[OrePrefix@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[IcePrefixTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[IcePrefix@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+										}
+									}
+								</OnLeftClick>
+							</Checkbox>
 								
-								if ${This.Checked}
-								{
+							<Checkbox name='obj_MinerIceMining'>
+								<X>34%</X>
+								<Y>3%</Y>
+								<Width>32%</Width> 
+								<Height>9%</Height> 
+								<Text>Ice Mining</Text>
+								<OnLoad>
+									variable int count
+									variable settingsetref Ores
+									
+									if ${Script[ComBot].VariableScope.Miner.Config.GasHarvesting}
+									{
+										This:Hide
+									}
+
+									if ${Script[ComBot].VariableScope.Miner.Config.IceMining}
+									{
+										This:SetChecked
+									}
+									
+									if ${This.Checked}
+									{
+										UIElement[MaxLockTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										UIElement[MaxLock@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										UIElement[OrePriorityTitle@MiningFrame@Miner_Frame@ComBot_Miner]:SetText[Ice Priority]
+										variable collection:bool MineOre
+										variable iterator iter
+										Ores:Set[${LavishSettings[ComBotSettings].FindSet[${Me.Name}].FindSet[Miner].FindSet[ICE_Types]}]
+										if ${Ores(exists)}
+										{
+											variable int iceupdated[12]
+											Ores:GetSettingIterator[iter]
+											if ${iter:First(exists)}
+											{
+												do
+												{
+													MineOre:Set[${iter.Value.Name},TRUE]
+													switch ${iter.Value.Name}
+													{
+													case Dark Glitter
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Dark Glitter]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case Gelidus
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Gelidus]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case Glare Crust
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Glare Crust]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case Krystallos
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Krystallos]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case Clear Icicle
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Clear Icicle]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case Smooth Glacial Mass
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Smooth Glacial Mass]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case Glacial Mass
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Glacial Mass]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case Pristine White Glaze
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Pristine White Glaze]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case White Glaze
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[White Glaze]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case Thick Blue Ice
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Thick Blue Ice]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case Enriched Clear Icicle
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Enriched Clear Icicle]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case Blue Ice
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Blue Ice]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+														
+													default
+														break
+													}
+												}
+												while ${iter:Next(exists)}
+											}
+											variable string IceTypes="Dark Glitter,Gelidus,Glare Crust,Krystallos,Clear Icicle,Smooth Glacial Mass,Glacial Mass,Pristine White Glaze,White Glaze,Thick Blue Ice,Enriched Clear Icicle,Blue Ice"
+											for ( count:Set[1] ; ${count} &lt;= 12 ; count:Inc )
+											{
+												if !${MineOre[${Arg[${count},${IceTypes}]}](exists)}
+												{
+													UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[${Arg[${count},${IceTypes}]}]
+												}
+											}
+										}									
+									}
+									else
+									{
+										UIElement[MaxLockTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+										UIElement[MaxLock@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+										UIElement[OrePriorityTitle@MiningFrame@Miner_Frame@ComBot_Miner]:SetText[Ore Priority]
+										Ores:Set[${LavishSettings[ComBotSettings].FindSet[${Me.Name}].FindSet[Miner].FindSet[Ore_Types]}]
+										if ${Ores(exists)}
+										{
+											Ores:GetSettingIterator[iter]
+											if ${iter:First(exists)}
+											{
+												do
+												{
+													MineOre:Set[${iter.Value.Name},TRUE]
+													switch ${iter.Value.Name}
+													{
+													case Mercoxit
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Mercoxit]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case Arkonor
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Arkonor]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case Bistot
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Bistot]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case Crokite
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Crokite]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case Spodumain
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Spodumain]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case Dark Ochre
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Dark Ochre]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case Gneiss
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Gneiss]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case Hedbergite
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Hedbergite]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case Hemorphite
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Hemorphite]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case Jaspet
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Jaspet]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case Kernite
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Kernite]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case Omber
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Omber]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case Plagioclase
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Plagioclase]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case Pyroxeres
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Pyroxeres]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case Scordite
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Scordite]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case Veldspar
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Veldspar]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													default
+														break
+													}
+												}
+												while ${iter:Next(exists)}
+											}
+											variable string OreTypes="Mercoxit,Arkonor,Bistot,Crokite,Spodumain,Dark Ochre,Gneiss,Hedbergite,Hemorphite,Jaspet,Pyroxeres,Kernite,Plagioclase,Omber,Scordite,Veldspar"
+											for ( count:Set[1] ; ${count} &lt;= 16 ; count:Inc )
+											{
+												if !${MineOre[${Arg[${count},${OreTypes}]}](exists)}
+												{
+													UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[${Arg[${count},${OreTypes}]}]
+												}
+											}
+										}
+									}								
+									This:SetZOrder[movetop]
+								</OnLoad>
+								<OnLeftClick>
+									Script[ComBot].VariableScope.Miner.Config:SetIceMining[${This.Checked}]
+									UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:ClearItems
+
+									variable int count
+									variable settingsetref Ores
 									variable collection:bool MineOre
 									variable iterator iter
-									Ores:Set[${LavishSettings[ComBotSettings].FindSet[${Me.Name}].FindSet[Miner].FindSet[ICE_Types]}]
-									if ${Ores(exists)}
+
+									if ${This.Checked}
 									{
-										variable int iceupdated[12]
-										Ores:GetSettingIterator[iter]
-										if ${iter:First(exists)}
+										UIElement[GasHarvesting@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										UIElement[OrePriorityTitle@MiningFrame@Miner_Frame@ComBot_Miner]:SetText[Ice Priority]
+										UIElement[MaxLockTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										UIElement[MaxLock@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										Ores:Set[${LavishSettings[ComBotSettings].FindSet[${Me.Name}].FindSet[Miner].FindSet[ICE_Types]}]
+										if ${Ores(exists)}
 										{
-											do
+											Ores:GetSettingIterator[iter]
+											if ${iter:First(exists)}
 											{
-												MineOre:Set[${iter.Value.Name},TRUE]
-												switch ${iter.Value.Name}
+												do
 												{
-												case Dark Glitter
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Dark Glitter]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case Gelidus
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Gelidus]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case Glare Crust
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Glare Crust]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case Krystallos
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Krystallos]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case Clear Icicle
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Clear Icicle]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case Smooth Glacial Mass
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Smooth Glacial Mass]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case Glacial Mass
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Glacial Mass]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case Pristine White Glaze
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Pristine White Glaze]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case White Glaze
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[White Glaze]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case Thick Blue Ice
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Thick Blue Ice]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case Enriched Clear Icicle
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Enriched Clear Icicle]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case Blue Ice
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Blue Ice]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-													
-												default
-													break
+													MineOre:Set[${iter.Value.Name},TRUE]
+													switch ${iter.Value.Name}
+													{
+													case Dark Glitter
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Dark Glitter]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case Gelidus
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Gelidus]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case Glare Crust
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Glare Crust]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case Krystallos
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Krystallos]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case Clear Icicle
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Clear Icicle]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case Smooth Glacial Mass
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Smooth Glacial Mass]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case Glacial Mass
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Glacial Mass]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case Pristine White Glaze
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Pristine White Glaze]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case White Glaze
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[White Glaze]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case Thick Blue Ice
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Thick Blue Ice]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case Enriched Clear Icicle
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Enriched Clear Icicle]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case Blue Ice
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Blue Ice]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+														
+													default
+														break
+													}
+												}
+												while ${iter:Next(exists)}
+											}
+											variable string IceTypes="Dark Glitter,Gelidus,Glare Crust,Krystallos,Clear Icicle,Smooth Glacial Mass,Glacial Mass,Pristine White Glaze,White Glaze,Thick Blue Ice,Enriched Clear Icicle,Blue Ice"
+											for ( count:Set[1] ; ${count} &lt;= 12 ; count:Inc )
+											{
+												if !${MineOre[${Arg[${count},${IceTypes}]}](exists)}
+												{
+													UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[${Arg[${count},${IceTypes}]}]
 												}
 											}
-											while ${iter:Next(exists)}
-										}
-										variable string IceTypes="Dark Glitter,Gelidus,Glare Crust,Krystallos,Clear Icicle,Smooth Glacial Mass,Glacial Mass,Pristine White Glaze,White Glaze,Thick Blue Ice,Enriched Clear Icicle,Blue Ice"
-										for ( count:Set[1] ; ${count} &lt;= 12 ; count:Inc )
-										{
-											if !${MineOre[${Arg[${count},${IceTypes}]}](exists)}
-											{
-												UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[${Arg[${count},${IceTypes}]}]
-											}
-										}
-									}									
-								}
-								else
-								{
-									Ores:Set[${LavishSettings[ComBotSettings].FindSet[${Me.Name}].FindSet[Miner].FindSet[Ore_Types]}]
-									if ${Ores(exists)}
+										}									
+									}
+									else
 									{
-										Ores:GetSettingIterator[iter]
-										if ${iter:First(exists)}
+										UIElement[GasHarvesting@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+										UIElement[MaxLockTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+										UIElement[MaxLock@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+										UIElement[OrePriorityTitle@MiningFrame@Miner_Frame@ComBot_Miner]:SetText[Ore Priority]
+										Ores:Set[${LavishSettings[ComBotSettings].FindSet[${Me.Name}].FindSet[Miner].FindSet[Ore_Types]}]
+										if ${Ores(exists)}
 										{
-											do
+											Ores:GetSettingIterator[iter]
+											if ${iter:First(exists)}
 											{
-												MineOre:Set[${iter.Value.Name},TRUE]
-												switch ${iter.Value.Name}
+												do
 												{
-												case Mercoxit
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Mercoxit]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case Arkonor
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Arkonor]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case Bistot
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Bistot]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case Crokite
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Crokite]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case Spodumain
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Spodumain]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case Dark Ochre
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Dark Ochre]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case Gneiss
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Gneiss]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case Hedbergite
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Hedbergite]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case Hemorphite
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Hemorphite]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case Jaspet
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Jaspet]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case Kernite
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Kernite]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case Omber
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Omber]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case Plagioclase
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Plagioclase]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case Pyroxeres
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Pyroxeres]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case Scordite
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Scordite]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case Veldspar
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Veldspar]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												default
-													break
+													MineOre:Set[${iter.Value.Name},TRUE]
+													switch ${iter.Value.Name}
+													{
+													case Mercoxit
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Mercoxit]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case Arkonor
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Arkonor]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case Bistot
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Bistot]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case Crokite
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Crokite]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case Spodumain
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Spodumain]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case Dark Ochre
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Dark Ochre]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case Gneiss
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Gneiss]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case Hedbergite
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Hedbergite]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case Hemorphite
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Hemorphite]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case Jaspet
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Jaspet]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case Kernite
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Kernite]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case Omber
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Omber]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case Plagioclase
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Plagioclase]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case Pyroxeres
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Pyroxeres]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case Scordite
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Scordite]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													case Veldspar
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[Veldspar]
+														UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].Items}]:Select
+														break
+													default
+														break
+													}
 												}
+												while ${iter:Next(exists)}
 											}
-											while ${iter:Next(exists)}
-										}
-										variable string OreTypes="Mercoxit,Arkonor,Bistot,Crokite,Spodumain,Dark Ochre,Gneiss,Hedbergite,Hemorphite,Jaspet,Pyroxeres,Kernite,Plagioclase,Omber,Scordite,Veldspar"
-										for ( count:Set[1] ; ${count} &lt;= 16 ; count:Inc )
-										{
-											if !${MineOre[${Arg[${count},${OreTypes}]}](exists)}
+											variable string OreTypes="Mercoxit,Arkonor,Bistot,Crokite,Spodumain,Dark Ochre,Gneiss,Hedbergite,Hemorphite,Jaspet,Pyroxeres,Kernite,Plagioclase,Omber,Scordite,Veldspar"
+											for ( count:Set[1] ; ${count} &lt;= 16 ; count:Inc )
 											{
-												UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[${Arg[${count},${OreTypes}]}]
+												if !${MineOre[${Arg[${count},${OreTypes}]}](exists)}
+												{
+													UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner]:AddItem[${Arg[${count},${OreTypes}]}]
+												}
 											}
 										}
 									}
-								}								
-								This:SetZOrder[movetop]
-							</OnLoad>
-							<OnLeftClick>
-								Script[ComBot].VariableScope.Miner.Config:SetIceMining[${This.Checked}]
-								UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:ClearItems
+									Script[ComBot].VariableScope.Miner:PopulateTargetList
+									This:SetZOrder[movetop]
+								</OnLeftClick>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText["This toggles ice mining mode on or off.  The ore priority list will change to correspond."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[""]
+								</OnMouseExit>
+							</Checkbox>							
 
-								variable int count
-								variable settingsetref Ores
-								variable collection:bool MineOre
-								variable iterator iter
-
-								if ${This.Checked}
-								{
-									Ores:Set[${LavishSettings[ComBotSettings].FindSet[${Me.Name}].FindSet[Miner].FindSet[ICE_Types]}]
-									if ${Ores(exists)}
+							<Checkbox name='obj_MinerOrcaMode'>
+								<X>1%</X>
+								<Y>25%</Y>
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Text>Orca Mode</Text>
+								<OnLoad>
+									if ${Script[ComBot].VariableScope.Miner.Config.OrcaMode}
 									{
-										Ores:GetSettingIterator[iter]
-										if ${iter:First(exists)}
+										This:SetChecked
+										if ${This.Checked}
 										{
-											do
-											{
-												MineOre:Set[${iter.Value.Name},TRUE]
-												switch ${iter.Value.Name}
-												{
-												case Dark Glitter
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Dark Glitter]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case Gelidus
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Gelidus]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case Glare Crust
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Glare Crust]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case Krystallos
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Krystallos]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case Clear Icicle
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Clear Icicle]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case Smooth Glacial Mass
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Smooth Glacial Mass]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case Glacial Mass
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Glacial Mass]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case Pristine White Glaze
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Pristine White Glaze]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case White Glaze
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[White Glaze]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case Thick Blue Ice
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Thick Blue Ice]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case Enriched Clear Icicle
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Enriched Clear Icicle]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case Blue Ice
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Blue Ice]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-													
-												default
-													break
-												}
-											}
-											while ${iter:Next(exists)}
+											UIElement[MaxLockTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+											UIElement[MaxLock@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
 										}
-										variable string IceTypes="Dark Glitter,Gelidus,Glare Crust,Krystallos,Clear Icicle,Smooth Glacial Mass,Glacial Mass,Pristine White Glaze,White Glaze,Thick Blue Ice,Enriched Clear Icicle,Blue Ice"
-										for ( count:Set[1] ; ${count} &lt;= 12 ; count:Inc )
+										else
 										{
-											if !${MineOre[${Arg[${count},${IceTypes}]}](exists)}
-											{
-												UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[${Arg[${count},${IceTypes}]}]
-											}
-										}
-									}									
-								}
-								else
-								{
-									Ores:Set[${LavishSettings[ComBotSettings].FindSet[${Me.Name}].FindSet[Miner].FindSet[Ore_Types]}]
-									if ${Ores(exists)}
-									{
-										Ores:GetSettingIterator[iter]
-										if ${iter:First(exists)}
-										{
-											do
-											{
-												MineOre:Set[${iter.Value.Name},TRUE]
-												switch ${iter.Value.Name}
-												{
-												case Mercoxit
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Mercoxit]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case Arkonor
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Arkonor]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case Bistot
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Bistot]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case Crokite
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Crokite]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case Spodumain
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Spodumain]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case Dark Ochre
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Dark Ochre]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case Gneiss
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Gneiss]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case Hedbergite
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Hedbergite]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case Hemorphite
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Hemorphite]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case Jaspet
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Jaspet]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case Kernite
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Kernite]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case Omber
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Omber]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case Plagioclase
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Plagioclase]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case Pyroxeres
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Pyroxeres]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case Scordite
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Scordite]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												case Veldspar
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[Veldspar]
-													UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Item[${UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner].Items}]:Select
-													break
-												default
-													break
-												}
-											}
-											while ${iter:Next(exists)}
-										}
-										variable string OreTypes="Mercoxit,Arkonor,Bistot,Crokite,Spodumain,Dark Ochre,Gneiss,Hedbergite,Hemorphite,Jaspet,Pyroxeres,Kernite,Plagioclase,Omber,Scordite,Veldspar"
-										for ( count:Set[1] ; ${count} &lt;= 16 ; count:Inc )
-										{
-											if !${MineOre[${Arg[${count},${OreTypes}]}](exists)}
-											{
-												UIElement[obj_MinerOrePriority@Miner_Frame@ComBot_Miner]:AddItem[${Arg[${count},${OreTypes}]}]
-											}
+											UIElement[MaxLockTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+											UIElement[MaxLock@MiningFrame@Miner_Frame@ComBot_Miner]:Show
 										}
 									}
-								}
-								Script[ComBot].VariableScope.Miner:PopulateTargetList
-								This:SetZOrder[movetop]
-							</OnLeftClick>
-					</Checkbox>
-					
+									This:SetZOrder[movetop]
+								</OnLoad>
+								<OnLeftClick>
+									Script[ComBot].VariableScope.Miner.Config:SetOrcaMode[${This.Checked}]
+									if ${This.Checked}
+									{
+										UIElement[MaxLockTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+										UIElement[MaxLock@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+									}
+									else
+									{
+										UIElement[MaxLockTitle@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+										UIElement[MaxLock@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+									}
+									if ${MyShip.HasOreHold}
+									{
+										if ${Script[ComBot].VariableScope.Miner.Config.OrcaMode}
+										{
+											UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[Corp Hangar Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${EVEWindow[ByName, Inventory].ChildCapacity[ShipCorpHangar]}].Round} m3]
+										}
+										else
+										{
+											UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[OreHold Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]}].Round} m3]
+										}
+									}
+									else
+									{
+										UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${MyShip.CargoCapacity}].Round} m3]
+									}
+									This:SetZOrder[movetop]
+								</OnLeftClick>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText["When checked, this changes how the Miner module behaves.  Instead of mining asteroids, ComBot will simply attempt to keep within 8km (10km for ice mining) of the nearest asteroid.  It will still follow the same behavior for dropoffs as it would if it were configured as a normal miner."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[""]
+								</OnMouseExit>
+							</Checkbox>							
+							<Checkbox name='Tether'>
+								<X>1%</X>
+								<Y>75%</Y>
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Text>Tether</Text>
+								<OnLoad>
+									if ${Script[ComBot].VariableScope.Miner.Config.Tether}
+									{
+										This:SetChecked
+									}
+									This:SetZOrder[movetop]
+								</OnLoad>
+								<OnLeftClick>
+									Script[ComBot].VariableScope.Miner.Config:SetTether[${This.Checked}]
+									if ${This.Checked}
+									{
+										UIElement[TetherName@MiningFrame@Miner_Frame@ComBot_Miner]:Show
+									}
+									else
+									{
+										UIElement[TetherName@MiningFrame@Miner_Frame@ComBot_Miner]:Hide
+									}
+									This:SetZOrder[movetop]
+								</OnLeftClick>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText["When checked, this enables tether mode, allowing ComBot to tether your miner to another fleet member."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[""]
+								</OnMouseExit>
+							</Checkbox>							
+							<Textentry name='TetherName'>
+								<X>1%</X>
+								<Y>85%</Y>
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Text>Tether</Text>
+								<OnLoad>
+									if !${Script[ComBot].VariableScope.Miner.Config.Tether}
+									{
+										This:Hide
+									}
+									This:SetText[${Script[ComBot].VariableScope.Miner.Config.TetherName}]
+								</OnLoad>
+								<OnChange>
+									if ${This.Text.Length} > 0
+									{
+										Script[ComBot].VariableScope.Miner.Config:SetTetherName[${This.Text}]
+									}
+								</OnChange>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText["This field should contain the exact name of the fleet member to whom you would like to tether."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[""]
+								</OnMouseExit>
+							</Textentry>							
+							<Checkbox name='ApproachPriority'>
+								<X>34%</X>
+								<Y>75%</Y>
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Text>Approach by Priority</Text>
+								<OnLoad>
+									if ${Script[ComBot].VariableScope.Miner.Config.ApproachPriority}
+									{
+										This:SetChecked
+									}
+									This:SetZOrder[movetop]
+								</OnLoad>
+								<OnLeftClick>
+									Script[ComBot].VariableScope.Miner.Config:SetApproachPriority[${This.Checked}]
+									This:SetZOrder[movetop]
+								</OnLeftClick>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText["When checked, ComBot will approachs asteroids based on your priority. When unchecked, ComBot will keep the nearest asteroid in range."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[""]
+								</OnMouseExit>
+							</Checkbox>
+							<Checkbox name='DontMove'>
+								<X>34%</X>
+								<Y>85%</Y>
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Text>Don't Move</Text>
+								<OnLoad>
+									if ${Script[ComBot].VariableScope.Miner.Config.DontMove}
+									{
+										This:SetChecked
+									}
+									This:SetZOrder[movetop]
+								</OnLoad>
+								<OnLeftClick>
+									Script[ComBot].VariableScope.Miner.Config:SetDontMove[${This.Checked}]
+									This:SetZOrder[movetop]
+								</OnLeftClick>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText["When checked, ComBot will not move to approach asteroids."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[""]
+								</OnMouseExit>
+							</Checkbox>									
+						</Children>
+					</Frame>
+
+					<Text name='InformationFrameTitle'> 
+						<X>1%</X> 
+						<Y>80%</Y> 
+						<Width>32%</Width> 
+						<Height>4%</Height> 
+						<Text>Information</Text>
+						<OnLoad>
+							This.Font:SetColor[FFFFFF00]
+						</OnLoad>
+					</Text>
+					<Frame name="InformationFrame">
+						<X>0%</X>
+						<Y>82%</Y>
+						<Width>100%</Width>
+						<Height>18%</Height>
+						<BackgroundColor>FF000000</BackgroundColor>
+						<Border>1</Border>
+						<BorderColor>FFFFFFFF</BorderColor>
+						<Children>
+							<Text name='Information'> 
+								<X>5%</X> 
+								<Y>5%</Y> 
+								<Width>90%</Width> 
+								<Height>90%</Height> 
+								<Wrap />
+								<VerticalAlignment>Center</VerticalAlignment>
+							</Text>
+						</Children>
+					</Frame>
 					
 				</Children>
 			</Frame>

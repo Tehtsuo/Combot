@@ -124,7 +124,12 @@ objectdef obj_Drones inherits obj_State
 		DroneTargets:RequestUpdate
 		if ${This.DronesInBay.Equal[0]} && ${This.DronesInSpace.Equal[0]}
 		{
+			DroneTargets.MinLockCount:Set[0]
 			return FALSE
+		}
+		else
+		{
+			DroneTargets.MinLockCount:Set[2]
 		}
 		
 		Me:GetActiveDrones[drones]

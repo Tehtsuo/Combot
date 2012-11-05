@@ -133,9 +133,29 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							Script[ComBot].VariableScope.AutoModule.Config:SetActiveShieldBoost[${This.Value}]
 						</OnChange>
 					</Slider>						 
+					<Text name='ActiveShieldCapText'>
+						<X>19%</X>
+						<Y>32%</Y>
+						<Width>40%</Width> 
+						<Height>3%</Height> 
+						<Text>but only if Capacitor is above ${Script[ComBot].VariableScope.AutoModule.Config.ActiveShieldCap}%</Text>
+					</Text>
+					<Slider name='ActiveShieldCap'> 
+						<X>41%</X> 
+						<Y>31%</Y> 
+						<Width>30%</Width> 
+						<Height>4%</Height> 
+						<Border>1</Border>
+						<OnLoad>
+							This:SetValue[${Script[ComBot].VariableScope.AutoModule.Config.ActiveShieldCap}]
+						</OnLoad>
+						<OnChange>
+							Script[ComBot].VariableScope.AutoModule.Config:SetActiveShieldCap[${This.Value}]
+						</OnChange>
+					</Slider>						 
 					<Checkbox name='ArmorRepair'>
 						<X>1%</X>
-						<Y>32%</Y>
+						<Y>35%</Y>
 						<Width>30%</Width> 
 						<Height>3%</Height> 
 						<Text>Armor Repairers</Text>
@@ -151,14 +171,14 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					</Checkbox>
 					<Text name='ActiveArmorRepairText'>
 						<X>1%</X>
-						<Y>36%</Y>
+						<Y>39%</Y>
 						<Width>40%</Width> 
 						<Height>3%</Height> 
 						<Text>If above is false, run armor repairers if armor drops below ${Script[ComBot].VariableScope.AutoModule.Config.ActiveArmorRepair}%</Text>
 					</Text>
 					<Slider name='ActiveArmorRepair'> 
 						<X>41%</X> 
-						<Y>35%</Y> 
+						<Y>38%</Y> 
 						<Width>30%</Width> 
 						<Height>4%</Height> 
 						<Border>1</Border>
@@ -169,9 +189,29 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							Script[ComBot].VariableScope.AutoModule.Config:SetActiveArmorRepair[${This.Value}]
 						</OnChange>
 					</Slider>						 
+					<Text name='ActiveArmorCapText'>
+						<X>19%</X>
+						<Y>43%</Y>
+						<Width>40%</Width> 
+						<Height>3%</Height> 
+						<Text>but only if Capacitor is above ${Script[ComBot].VariableScope.AutoModule.Config.ActiveArmorCap}%</Text>
+					</Text>
+					<Slider name='ActiveArmorCap'> 
+						<X>41%</X> 
+						<Y>42%</Y> 
+						<Width>30%</Width> 
+						<Height>4%</Height> 
+						<Border>1</Border>
+						<OnLoad>
+							This:SetValue[${Script[ComBot].VariableScope.AutoModule.Config.ActiveArmorCap}]
+						</OnLoad>
+						<OnChange>
+							Script[ComBot].VariableScope.AutoModule.Config:SetActiveArmorCap[${This.Value}]
+						</OnChange>
+					</Slider>						 
 					<Checkbox name='Cloaks'>
 						<X>1%</X>
-						<Y>40%</Y>
+						<Y>46%</Y>
 						<Width>30%</Width> 
 						<Height>3%</Height> 
 						<Text>Cloaking Devices</Text>
@@ -187,7 +227,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					</Checkbox>
 					<Checkbox name='GangLinks'>
 						<X>1%</X>
-						<Y>44%</Y>
+						<Y>50%</Y>
 						<Width>30%</Width> 
 						<Height>3%</Height> 
 						<Text>Gang Links</Text>
@@ -203,7 +243,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					</Checkbox>
 					<Checkbox name='SensorBoosters'>
 						<X>1%</X>
-						<Y>48%</Y>
+						<Y>54%</Y>
 						<Width>30%</Width> 
 						<Height>3%</Height> 
 						<Text>Sensor Boosters</Text>
@@ -219,7 +259,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					</Checkbox>
 					<Checkbox name='TrackingComputers'>
 						<X>1%</X>
-						<Y>52%</Y>
+						<Y>58%</Y>
 						<Width>30%</Width> 
 						<Height>3%</Height> 
 						<Text>Tracking Computers</Text>
@@ -231,6 +271,22 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						</OnLoad>
 						<OnLeftClick>
 							Script[ComBot].VariableScope.AutoModule.Config:SetTrackingComputers[${This.Checked}]
+						</OnLeftClick>
+					</Checkbox>
+					<Checkbox name='ECCM'>
+						<X>1%</X>
+						<Y>62%</Y>
+						<Width>30%</Width> 
+						<Height>3%</Height> 
+						<Text>ECCM Modules</Text>
+						<OnLoad>
+							if ${Script[ComBot].VariableScope.AutoModule.Config.ECCM}
+							{
+								This:SetChecked
+							}
+						</OnLoad>
+						<OnLeftClick>
+							Script[ComBot].VariableScope.AutoModule.Config:SetECCM[${This.Checked}]
 						</OnLeftClick>
 					</Checkbox>
 					

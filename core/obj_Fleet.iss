@@ -131,48 +131,43 @@ objectdef obj_Fleet inherits obj_State
 			{
 				if ${Member.Value.RoleID} == 4
 				{
-					echo Adding Member
 					Config.Fleets.GetFleet[${name.Escape}].GetWing[${Member.Value.WingID}].GetSquad[${Member.Value.SquadID}].GetMember[${Member.Value.ID}]:SetCreated[TRUE]
 				}
 				if ${Member.Value.RoleID} == 1
 				{
-					echo Adding Fleet Commander
 					Config.Fleets.GetFleet[${name.Escape}]:SetCommander[${Member.Value.ID}]
 				}
 				if ${Member.Value.RoleID} == 2
 				{
-					echo Adding Wing Commander
 					Config.Fleets.GetFleet[${name.Escape}].GetWing[${Member.Value.WingID}]:SetCommander[${Member.Value.ID}]
 				}
 				if ${Member.Value.RoleID} == 3
 				{
-					echo Adding Squad Commander
 					Config.Fleets.GetFleet[${name.Escape}].GetWing[${Member.Value.WingID}].GetSquad[${Member.Value.SquadID}]:SetCommander[${Member.Value.ID}]
 				}
 				if ${Member.Value.Boosting} == 1
 				{
-					echo Adding Fleet Booster
 					Config.Fleets.GetFleet[${name.Escape}]:SetBooster[${Member.Value.ID}]
 				}
 				if ${Member.Value.Boosting} == 2
 				{
-					echo Adding Wing Booster
 					Config.Fleets.GetFleet[${name.Escape}].GetWing[${Member.Value.WingID}]:SetBooster[${Member.Value.ID}]
 				}
 				if ${Member.Value.Boosting} == 3
 				{
-					echo Adding Squad Booster
 					Config.Fleets.GetFleet[${name.Escape}].GetWing[${Member.Value.WingID}].GetSquad[${Member.Value.SquadID}]:SetBooster[${Member.Value.ID}]
 				}
 			}
 			while ${Member:Next(exists)}
 
+		Config.Fleets:SetActive[${name.Escape}]
 		This:UpdateFleetUI
 	}
 	
 	method DeleteFleet(string name)
 	{
-		Config.Fleets:ClearFleet[${name}]
+		Config.Fleets:ClearFleet[${name.Escape}]
+		Config.Fleets:SetActive[No Fleet]
 		This:UpdateFleetUI
 	}
 	
@@ -190,7 +185,7 @@ objectdef obj_Fleet inherits obj_State
 			}
 			while ${FleetIterator:Next(exists)}
 		}
-		UIElement[FleetSelection@Settings@ComBotTab@ComBot].ItemByText[No Fleet]:Select
+		UIElement[FleetSelection@Settings@ComBotTab@ComBot].ItemByText[${Config.Fleets.Active}]:Select
 		
 	}
 
@@ -229,7 +224,7 @@ objectdef obj_Fleet inherits obj_State
 	
 	member:string ResolveName(int64 value)
 	{
-		variable index:pilot CorpMembers
+		variable index:being CorpMembers
 		variable iterator CorpMember
 
 		EVE:GetOnlineCorpMembers[CorpMembers]
@@ -287,7 +282,6 @@ objectdef obj_Fleet inherits obj_State
 		{
 			if ${Me.Fleet.Member[${Config.Fleets.GetFleet[${Config.Fleets.Active}].Commander}].RoleID} != 1
 			{
-				echo ${Config.Fleets.GetFleet[${Config.Fleets.Active}].Commander} should be Fleet Commander
 				Me.Fleet.Member[${Config.Fleets.GetFleet[${Config.Fleets.Active}].Commander}]:MoveToFleetCommander
 				return TRUE
 			}
@@ -307,7 +301,6 @@ objectdef obj_Fleet inherits obj_State
 				{
 					if ${Me.Fleet.Member[${Wing.Value.FindSetting[Commander]}].RoleID} != 2 || ${Me.Fleet.Member[${Wing.Value.FindSetting[Commander]}].WingID} != ${This.WingTranslation.Element[${Wing.Key}]}
 					{
-						echo ${Wing.Value.FindSetting[Commander]} should be Wing Commander
 						Me.Fleet.Member[${Wing.Value.FindSetting[Commander]}]:MoveToWingCommander[${This.WingTranslation.Element[${Wing.Key}]}]
 						return TRUE
 					}
@@ -326,7 +319,6 @@ objectdef obj_Fleet inherits obj_State
 						{
 							if ${Me.Fleet.Member[${Squad.Value.FindSetting[Commander]}].RoleID} != 3 || ${Me.Fleet.Member[${Squad.Value.FindSetting[Commander]}].WingID} != ${This.WingTranslation.Element[${Wing.Key}]} || ${Me.Fleet.Member[${Squad.Value.FindSetting[Commander]}].SquadID} != ${This.SquadTranslation.Element[${Squad.Key}]}
 							{
-								echo ${Squad.Value.FindSetting[Commander]} should be Squad Commander
 								Me.Fleet.Member[${Squad.Value.FindSetting[Commander]}]:MoveToSquadCommander[${This.WingTranslation.Element[${Wing.Key}]}, ${This.SquadTranslation.Element[${Squad.Key}]}]
 								return TRUE
 							}
@@ -339,7 +331,6 @@ objectdef obj_Fleet inherits obj_State
 								{
 									if ${This.MoveMember[${Wing.Key}, ${Squad.Key}, ${Member.Key}]}
 									{
-										echo Member ${Member.Key} is supposed to be in Wing ${Wing.Key}, Squad ${Squad.Key}
 										return TRUE
 									}
 								}
@@ -359,7 +350,6 @@ objectdef obj_Fleet inherits obj_State
 									Me.Fleet.Member[${Squad.Value.FindSetting[Booster]}]:SetBooster[0]
 									return TRUE
 								}
-								echo ${Squad.Value.FindSetting[Booster]} should be Squad Booster
 								Me.Fleet.Member[${Squad.Value.FindSetting[Booster]}]:SetBooster[3]
 								return TRUE
 							}
@@ -381,7 +371,6 @@ objectdef obj_Fleet inherits obj_State
 							Me.Fleet.Member[${Wing.Value.FindSetting[Booster]}]:SetBooster[0]
 							return TRUE
 						}
-						echo ${Wing.Value.FindSetting[Booster]} should be Wing Booster
 						Me.Fleet.Member[${Wing.Value.FindSetting[Booster]}]:SetBooster[2]
 						return TRUE
 					}
@@ -403,7 +392,6 @@ objectdef obj_Fleet inherits obj_State
 					Me.Fleet.Member[${Config.Fleets.GetFleet[${Config.Fleets.Active}].Booster}]:SetBooster[0]
 					return TRUE
 				}
-				echo ${Config.Fleets.GetFleet[${Config.Fleets.Active}].Booster} should be Fleet Booster
 				Me.Fleet.Member[${Config.Fleets.GetFleet[${Config.Fleets.Active}].Booster}]:SetBooster[1]
 				return TRUE
 			}
@@ -548,7 +536,7 @@ objectdef obj_Fleet inherits obj_State
 		}
 		
 	
-		variable index:pilot CorpMembers
+		variable index:being CorpMembers
 		variable iterator CorpMember
 
 		EVE:GetOnlineCorpMembers[CorpMembers]

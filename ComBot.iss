@@ -21,6 +21,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 
 
+#include temp/version.iss
 #include core/Defines.iss
 #include core/Macros.iss
 #include core/obj_ComBot.iss
@@ -30,6 +31,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 #include core/obj_ComBotUI.iss
 #include core/obj_Client.iss
 #include core/obj_Move.iss
+#include core/obj_ModuleBase.iss
 #include core/obj_Module.iss
 #include core/obj_ModuleList.iss
 #include core/obj_Ship.iss
@@ -76,12 +78,24 @@ function main(string Character="")
 	declarevariable Config obj_Configuration script
 	UI:Reload
 	
+	
+
 	declarevariable ComBotLogin obj_Login script
+	declarevariable Dynamic obj_Dynamic script
+	#include temp/behaviordeclares.iss
+	
+	#include temp/minimodedeclares.iss
+
+	#include temp/thirdpartybehaviordeclares.iss
+	
+	#include temp/thirdpartyminimodedeclares.iss
+	
+	Dynamic:PopulateBehaviors
+	Dynamic:PopulateMiniModes
 	while TRUE
 	{
 		if ${Me(exists)} && ${MyShip(exists)} && (${Me.InSpace} || ${Me.InStation})
 		{
-			echo Logged in
 			break
 		}
 		wait 10
@@ -100,18 +114,7 @@ function main(string Character="")
 	declarevariable Jetcan obj_Jetcan script
 	declarevariable Delay obj_Delay script
 	declarevariable Fleets obj_Fleet script
-	declarevariable Dynamic obj_Dynamic script
 	
-	#include temp/behaviordeclares.iss
-	
-	#include temp/minimodedeclares.iss
-
-	#include temp/thirdpartybehaviordeclares.iss
-	
-	#include temp/thirdpartyminimodedeclares.iss
-	
-	Dynamic:PopulateBehaviors
-	Dynamic:PopulateMiniModes
 	
 	UI:Update["ComBot", "Module initialization complete", "y"]
 	

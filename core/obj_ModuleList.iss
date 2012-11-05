@@ -186,6 +186,24 @@ objectdef obj_ModuleList
 		return -1
 	}
 	
+	member:int GetActiveNotOn(int64 target)
+	{
+		variable iterator ModuleIterator
+		Modules:GetIterator[ModuleIterator]
+		if ${ModuleIterator:First(exists)}
+		{
+			do
+			{
+				if !${ModuleIterator.Value.IsActiveOn[${target}]} && ${ModuleIterator.Value.IsActive}
+				{
+					return ${ModuleIterator.Key}
+				}
+			}
+			while ${ModuleIterator:Next(exists)}
+		}
+		return -1
+	}
+	
 	member:int InactiveCount()
 	{
 		variable iterator ModuleIterator

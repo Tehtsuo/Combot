@@ -112,8 +112,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					<Width>40</Width>
 					<Height>20</Height>
 					<Text>Hide</Text>
-					<OnLeftClick>
-						if ${UIElement[ComBotTab@ComBot].Visible}
+					<OnLoad>
+						if ${Script[ComBot].VariableScope.Config.Common.Hidden}
 						{
 							UIElement[ComBotTab@ComBot]:Hide
 							This:SetText[Show]
@@ -122,6 +122,20 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						{
 							UIElement[ComBotTab@ComBot]:Show
 							This:SetText[Hide]
+						}
+					</OnLoad>
+					<OnLeftClick>
+						if ${UIElement[ComBotTab@ComBot].Visible}
+						{
+							UIElement[ComBotTab@ComBot]:Hide
+							This:SetText[Show]
+							Script[ComBot].VariableScope.Config.Common:SetHidden[TRUE]
+						}
+						else
+						{
+							UIElement[ComBotTab@ComBot]:Show
+							This:SetText[Hide]
+							Script[ComBot].VariableScope.Config.Common:SetHidden[FALSE]
 						}
 					</OnLeftClick>
 				</button>
@@ -134,7 +148,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					<Height>20</Height>
 					<Text>Help</Text>
 					<OnLeftClick>
-						timedcommand 0 "OSExecute http://eve.isxgames.com/wiki/index.php?title=ComBot#Experimental_Installation"
+						timedcommand 0 "OSExecute http://combot.vendaria.net"
 					</OnLeftClick>
 				</button>
 				<button	Name='Run'>
@@ -155,6 +169,16 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							Script[ComBot].VariableScope.ComBot:Pause
 						}
 					</OnLeftClick>
+					<OnRightClick>
+						if ${Script[ComBot].VariableScope.ComBot.Paused}
+						{
+							relay all Script[ComBot].VariableScope.ComBot:Resume
+						}
+						else
+						{
+							relay all Script[ComBot].VariableScope.ComBot:Pause
+						}
+					</OnRightClick>
 				</button>
 			</Children>
 		</TitleBar>
@@ -252,6 +276,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								This:SetLeftClickThru[TRUE]
 							</OnLoad>
 						</frame>					
+
 						<Checkbox name='Disable3D'>
 							<X>1%</X>
 							<Y>50%</Y>
@@ -564,7 +589,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Checkbox name='Verbose'>
 							<X>1%</X>
 							<Y>93%</Y>
-							<Width>60%</Width> 
+							<Width>20%</Width> 
 							<Height>6%</Height> 
 							<Text>Verbose logging</Text>
 							<OnLoad>

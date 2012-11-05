@@ -3,7 +3,7 @@
 
 <!--
 
-ComBot  Copyright © 2012  Tehtsuo and Vendan
+ComBot  Copyright Â© 2012  Tehtsuo and Vendan
 
 This file is part of ComBot.
 
@@ -27,26 +27,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 		<Size>8</Size>
 		<Color>FFFFFFFF</Color>
 	</template>	
-	<template name='Text.Font'>	
-		<Name>Verdana</Name>
-		<Size>12</Size>
-		<Color>FFFFFFFF</Color>
-		<Bold />
-	</template>	
-	<template name='Checkbox.Font'>	
-		<Name>Verdana</Name>
-		<Size>12</Size>
-		<Color>FFFFFFFF</Color>
-		<Bold />
-	</template>	
-	<template name='Button.Font'>	
-		<Name>Verdana</Name>
-		<Size>12</Size>
-		<Color>FF000000</Color>
-		<Bold />
-	</template>	
 
-	<window name='ComBot_MiniMode'>
+	<window name='ComBot_UndockWarp'>
 		<Visible>1</Visible>
 		<BackGroundColor></BackGroundColor>
 		<Border>0</Border>
@@ -60,26 +42,14 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 			<Border>0</Border>
 			<BackgroundColor>FF000000</BackgroundColor>
 			<Children>
-				<Text name='ComBot_MiniMode_TitleBar_Title'>
+				<Text name='ComBot_UndockWarp_TitleBar_Title'>
 					<X>0</X>
 					<Y>3</Y>
 					<Width>100%</Width>
 					<Height>20</Height>
 					<Alignment>Center</Alignment>
-					<Text>MiniMode Only Configuration</Text>
+					<Text>UndockWarp Configuration</Text>
 				</Text>
-				<button	Name='Help'>
-					<Font template='Button.Font' />
-					<BackgroundColor>FF000000</BackgroundColor>
-					<X>r80</X>
-					<Y>0</Y>
-					<Width>40</Width>
-					<Height>20</Height>
-					<Text>Help</Text>
-					<OnLeftClick>
-						timedcommand 0 "OSExecute http://combot.vendaria.net/index.php?title=MiniMode"
-					</OnLeftClick>
-				</button>
 				<button	Name='Close'>
 					<X>r40</X>
 					<Y>0</Y>
@@ -87,13 +57,13 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					<Height>20</Height>
 					<Text>Close</Text>
 					<OnLeftClick>
-						ui -unload "&filepath;/MiniMode"
+						ui -unload "&filepath;/UndockWarp"
 					</OnLeftClick>
 				</button>
 			</Children>
 		</TitleBar>
-		<Children name="ComBot_MiniMode_Children">
-			<Frame name="ComBot_MiniMode_Frame">
+		<Children name="ComBot_UndockWarp_Children">
+			<Frame name="ComBot_UndockWarp_Frame">
 				<X>0</X>
 				<Y>5</Y>
 				<Width>100%</Width>
@@ -101,8 +71,35 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 				<BackgroundColor>FF000000</BackgroundColor>
 				<Border>1</Border>
 				<BorderColor>FFFFFFFF</BorderColor>
-				<Children name="ComBot_MiniMode_Frame_Children">
-
+				<Children name="ComBot_UndockWarp_Frame_Children">
+					<Text name='obj_UndockWarpInformation'> 
+						<Font template='Information.Font' />
+						<X>1%</X> 
+						<Y>1%</Y> 
+						<Width>98%</Width> 
+						<Height>18%</Height> 
+						<Wrap />
+						<Text>UndockWarp is a MiniMode to perform a warp to an undock bookmark automatically.</Text>
+					</Text>
+					<Text name='UndockSuffixTitle'>
+						<X>1%</X>
+						<Y>41%</Y>
+						<Width>10%</Width> 
+						<Height>6%</Height> 
+						<Text>Substring:</Text>
+					</Text>
+					<Textentry name='UndockSuffix'>
+						<X>10%</X>
+						<Y>40%</Y>
+						<Width>38%</Width> 
+						<Height>6%</Height> 
+						<OnLoad>
+							This:SetText[${Script[ComBot].VariableScope.UndockWarp.Config.substring}]
+						</OnLoad>
+						<OnChange>
+							Script[ComBot].VariableScope.UndockWarp.Config:Setsubstring[${This.Text}]
+						</OnChange>
+					</Textentry>
 				</Children>
 			</Frame>
 		</Children>

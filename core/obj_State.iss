@@ -251,6 +251,7 @@ objectdef obj_State
 		CurState:Set["Idle", 100, ""]
 		UIElement[${QueueListbox}]:ClearItems
 		UIElement[${QueueListbox}]:AddItem[${CurState.Name}]
+		This.IsIdle:Set[TRUE]
 	}
 
 	member:bool Idle()

@@ -1,6 +1,6 @@
 /*
 
-ComBot  Copyright ? 2012  Tehtsuo and Vendan
+ComBot  Copyright © 2012  Tehtsuo and Vendan
 
 This file is part of ComBot.
 
@@ -47,15 +47,21 @@ objectdef obj_Configuration_Salvager
 		This.CommonRef:AddSetting[Dropoff_Type,Personal Hangar]
 		This.CommonRef:AddSetting[Prefix,Salvage:]
 		This.CommonRef:AddSetting[Dropoff,""]
+		This.CommonRef:AddSetting[Size,"Small"]
+		This.CommonRef:AddSetting[FollowGates,TRUE]
 	}
 
 	Setting(string, Prefix, SetPrefix)
 	Setting(string, Dropoff, SetDropoff)
 	Setting(string, Dropoff_Type, SetDropoff_Type)
+	Setting(string, Dropoff_SubType, SetDropoff_SubType)
 	Setting(bool, BeltPatrolEnabled, SetBeltPatrolEnabled)
 	Setting(bool, SalvageYellow, SetSalvageYellow)
 	Setting(bool, AvoidShips, SetAvoidShips)
+	Setting(bool, FollowGates, SetFollowGates)
 	Setting(string, BeltPatrol, SetBeltPatrol)
+	Setting(string, DropoffContainer, SetDropoffContainer)
+	Setting(string, Size, SetSize)
 }
 
 objectdef obj_Salvage inherits obj_State
@@ -80,7 +86,6 @@ objectdef obj_Salvage inherits obj_State
 	method Initialize()
 	{
 		This[parent]:Initialize
-		Wrecks:AddQueryString["(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && HaveLootRights && !IsAbandoned && !IsMoribund"]
 		NPCs:AddAllNPCs
 		DynamicAddBehavior("Salvage", "Dedicated Salvager")
 	}
@@ -107,9 +112,8 @@ objectdef obj_Salvage inherits obj_State
 		variable index:bookmark Bookmarks
 		variable iterator BookmarkIterator
 		variable string Target
-		variable string BookmarkTime="24:00"
+		variable int64 BookmarkTime=0
 		variable bool BookmarkFound
-		variable string BookmarkDate="9999.99.99"
 		variable int64 BookmarkCreator
 		variable iterator HoldOffIterator
 		variable index:int RemoveHoldOff
@@ -160,12 +164,16 @@ objectdef obj_Salvage inherits obj_State
 				while ${HoldOffIterator:Next(exists)}
 				if !${InHoldOff}
 				{
-					if (${BookmarkIterator.Value.TimeCreated.Compare[${BookmarkTime}]} < 0 && ${BookmarkIterator.Value.DateCreated.Compare[${BookmarkDate}]} <= 0) || ${BookmarkIterator.Value.DateCreated.Compare[${BookmarkDate}]} < 0
+					if ${BookmarkIterator.Value.Created.AsInt64} + 72000000000 < ${EVETime.AsInt64}
 					{
-						echo Next bookmark set - ${BookmarkIterator.Value} - ${BookmarkIterator.Value.JumpsTo} Jumps
+						UI:["Salvager", "Removing expired bookmark - ${BookmarkIterator.Value.Label}", "o", TRUE]
+						BookmarkIterator.Value:Remove
+						return FALSE
+					}
+					if ${BookmarkIterator.Value.Created.AsInt64} < ${BookmarkTime} || ${BookmarkTime} == 0
+					{
 						Target:Set[${BookmarkIterator.Value.Label}]
-						BookmarkTime:Set[${BookmarkIterator.Value.TimeCreated}]
-						BookmarkDate:Set[${BookmarkIterator.Value.DateCreated}]
+						BookmarkTime:Set[${BookmarkIterator.Value.Created.AsInt64}]
 						BookmarkCreator:Set[${BookmarkIterator.Value.CreatorID}]
 						BookmarkFound:Set[TRUE]
 					}
@@ -191,11 +199,18 @@ objectdef obj_Salvage inherits obj_State
 				while ${HoldOffIterator:Next(exists)}
 				if !${InHoldOff}
 				{
-					if (${BookmarkIterator.Value.TimeCreated.Compare[${BookmarkTime}]} < 0 && ${BookmarkIterator.Value.DateCreated.Compare[${BookmarkDate}]} <= 0) || ${BookmarkIterator.Value.DateCreated.Compare[${BookmarkDate}]} < 0
+					if ${BookmarkIterator.Value.Created.AsInt64} + 72000000000 < ${EVETime.AsInt64}
+					{
+						UI:Update["Salvager", "Removing expired bookmark - ${BookmarkIterator.Value.Label}", "o", TRUE]
+						BookmarkIterator.Value:Remove
+						This:InsertState["CheckBookmarks"]
+						This:InsertState["Idle", 5000]
+						return TRUE
+					}
+					if ${BookmarkIterator.Value.Created.AsInt64} < ${BookmarkTime} || ${BookmarkTime} == 0
 					{
 						Target:Set[${BookmarkIterator.Value.Label}]
-						BookmarkTime:Set[${BookmarkIterator.Value.TimeCreated}]
-						BookmarkDate:Set[${BookmarkIterator.Value.DateCreated}]
+						BookmarkTime:Set[${BookmarkIterator.Value.Created.AsInt64}]
 						BookmarkCreator:Set[${BookmarkIterator.Value.CreatorID}]
 						BookmarkFound:Set[TRUE]
 					}
@@ -240,21 +255,19 @@ objectdef obj_Salvage inherits obj_State
 		else
 		{
 			UI:Update["obj_Salvage", "No salvage bookmark found - returning to station", "g"]
-			Move:Bookmark[${Config.Dropoff}, TRUE]
-			This:QueueState["Traveling"]
-			This:QueueState["PrepOffload"]
 			This:QueueState["Offload"]
+			This:QueueState["Traveling"]
+			This:QueueState["Log", 10, "Idling for 1 minute"]
+			This:QueueState["Idle", 60000]
+			This:QueueState["OpenCargoHold", 500]
+			This:QueueState["CheckCargoHold", 500]
 			return TRUE
 		}
 	}
 
 	member:bool Traveling()
 	{
-		if !${Client.InSpace}
-		{
-			return TRUE
-		}
-		if ${Move.Traveling} || ${Me.ToEntity.Mode} == 3
+		if ${Cargo.Processing} || ${Move.Traveling} || ${Me.ToEntity.Mode} == 3
 		{
 			return FALSE
 		}
@@ -287,14 +300,31 @@ objectdef obj_Salvage inherits obj_State
 	
 	member:bool InitialUpdate()
 	{
-		Wrecks:ClearQueryString
-		if ${Config.SalvageYellow}
+		variable string Size
+		if ${Config.Size.Equal[Small]}
 		{
-			Wrecks:AddQueryString["(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && !IsAbandoned && !IsMoribund"]
+			Size:Set[&& (Type =- \"Small\" || Type =- \"Medium\" || Type =- \"Large\" || Type =- \"Cargo Container\")]
+		}
+		elseif ${Config.Size.Equal[Medium]}
+		{
+			Size:Set[&& (Type =- \"Medium\" || Type =- \"Large\" || Type =- \"Cargo Container\")]
 		}
 		else
 		{
-			Wrecks:AddQueryString["(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && HaveLootRights && !IsAbandoned && !IsMoribund"]
+			Size:Set[&& (Type =- \"Large\" || Type =- \"Cargo Container\")]
+		}
+		
+		Wrecks:ClearTargetExceptions
+		Wrecks:ClearQueryString
+		
+		if ${Config.SalvageYellow}
+		{
+			Wrecks:AddQueryString["(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && !IsMoribund ${Size}"]
+		}
+		else
+		{
+			echo "(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && HaveLootRights && !IsMoribund ${Size}"
+			Wrecks:AddQueryString["(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && HaveLootRights && !IsMoribund ${Size}"]
 		}
 	
 		Wrecks:RequestUpdate
@@ -337,12 +367,9 @@ objectdef obj_Salvage inherits obj_State
 		
 		if ${Config.AvoidShips}
 		{
-			variable index:entity Ships
-			EVE:QueryEntities[Ships, "CategoryID == CATEGORYID_SHIP && !IsFleetMember"]
-			echo ${Ships.Used}
-			if 	${Entity[GroupID == GROUP_ASTEROIDBELT](exists)} &&\
-				${Entity[GroupID == GROUP_ASTEROIDBELT].Distance} < WARP_RANGE &&\
-				${Ships.Used} > 1
+			if 	${Entity[CategoryID == CATEGORYID_SHIP && !IsFleetMember]} && \
+				${Entity[GroupID == GROUP_ASTEROIDBELT](exists)} &&\
+				${Entity[GroupID == GROUP_ASTEROIDBELT].Distance} < WARP_RANGE
 			{
 				UI:Update["obj_Salvage", "There's another ship in this belt, warping to next", "g"]
 				LootCans:Disable
@@ -403,11 +430,9 @@ objectdef obj_Salvage inherits obj_State
 			LootCans:Disable
 			if ${Dedicated}
 			{
-				Move:Bookmark[${Config.Dropoff}]
 				This:Clear
-				This:QueueState["Traveling"]
-				This:QueueState["PrepOffload"]
 				This:QueueState["Offload"]
+				This:QueueState["Traveling"]
 				This:QueueState["RefreshBookmarks", 3000]
 				This:QueueState["CheckBookmarks"]
 			}
@@ -473,7 +498,8 @@ objectdef obj_Salvage inherits obj_State
 					if  !${Ship.ModuleList_Salvagers.IsActiveOn[${TargetIterator.Value.ID}]} &&\
 						${TargetIterator.Value.Distance} < ${Ship.ModuleList_Salvagers.Range} &&\
 						${Ship.ModuleList_Salvagers.InactiveCount} > 0 &&\
-						${TargetIterator.Value.IsLockedTarget} && ${Ship.ModuleList_Salvagers.Count} > 0
+						${TargetIterator.Value.IsLockedTarget} && ${Ship.ModuleList_Salvagers.Count} > 0 &&\
+						${TargetIterator.Value.GroupID} != GROUP_CARGOCONTAINER
 					{
 						UI:Update["obj_Salvage", "Activating salvager - ${TargetIterator.Value.Name}", "g"]
 						Ship.ModuleList_Salvagers:Activate[${TargetIterator.Value.ID}]
@@ -488,7 +514,8 @@ objectdef obj_Salvage inherits obj_State
 					}
 					if  ${TargetIterator.Value.Distance} < ${Ship.ModuleList_Salvagers.Range} &&\
 						${Ship.ModuleList_Salvagers.InactiveCount} > 0 &&\
-						${TargetIterator.Value.IsLockedTarget}
+						${TargetIterator.Value.IsLockedTarget} &&\
+						${TargetIterator.Value.GroupID} != GROUP_CARGOCONTAINER
 					{
 						SalvageMultiTarget:Set[${TargetIterator.Value.ID}]
 					}
@@ -533,6 +560,16 @@ objectdef obj_Salvage inherits obj_State
 		variable bool UseJumpGate=FALSE
 		if ${Entity[GroupID == GROUP_WARPGATE](exists)}
 		{
+			if !${Config.FollowGates}
+			{
+				HoldOffPlayer:Insert[${BookmarkCreator}]
+				HoldOffTimer:Insert[${Math.Calc[${LavishScript.RunningTime} + 600000]}]
+				This:Clear
+				This:QueueState["RefreshBookmarks", 3000]
+				This:QueueState["CheckBookmarks"]
+				return TRUE
+			}
+			
 			EVE:GetBookmarks[Bookmarks]
 			Bookmarks:GetIterator[BookmarkIterator]
 			if ${BookmarkIterator:First(exists)}
@@ -554,8 +591,6 @@ objectdef obj_Salvage inherits obj_State
 				HoldOffPlayer:Insert[${BookmarkCreator}]
 				HoldOffTimer:Insert[${Math.Calc[${LavishScript.RunningTime} + 600000]}]
 				This:Clear
-				This:QueueState["JumpToCelestial"]
-				This:QueueState["Traveling"]
 				This:QueueState["RefreshBookmarks", 3000]
 				This:QueueState["CheckBookmarks"]
 				return TRUE
@@ -624,12 +659,6 @@ objectdef obj_Salvage inherits obj_State
 	
 	member:bool OpenCargoHold()
 	{
-		if ${EVEWindow[byCaption, "wreck"](exists)}
-		{
-			UI:Update["obj_Salvage", "Bugged inventory window found, ignoring", "y"]
-			/*EVEWindow[byCaption, "wreck"]:Close
-			return FALSE*/
-		}
 		if !${EVEWindow[ByName, "Inventory"](exists)}
 		{
 			UI:Update["obj_Salvage", "Opening inventory", "g"]
@@ -648,10 +677,8 @@ objectdef obj_Salvage inherits obj_State
 		if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) > 0.75
 		{
 			UI:Update["obj_Salvage", "Unload trip required", "g"]
-			Move:Bookmark[${Config.Dropoff}]
-			This:QueueState["Traveling"]
-			This:QueueState["PrepOffload"]
 			This:QueueState["Offload"]
+			This:QueueState["Traveling"]
 		}
 		else
 		{
@@ -662,80 +689,8 @@ objectdef obj_Salvage inherits obj_State
 		return TRUE;
 	}
 
-	member:bool PrepOffload()
-	{
-		if ${Client.InSpace}
-		{
-			return TRUE
-		}
-		if !${EVEWindow[ByName, "Inventory"](exists)}
-		{
-			UI:Update["obj_Salvage", "Opening inventory", "g"]
-			MyShip:OpenCargo[]
-			return FALSE
-		}
-		switch ${Config.Dropoff_Type}
-		{
-			case Personal Hangar
-				break
-			default
-				if !${EVEWindow[ByName, Inventory].ChildWindowExists[Corporation Hangars]}
-				{
-					UI:Update["obj_Salvage", "Delivery Location: Corporate Hangars child not found", "r"]
-					UI:Update["obj_Salvage", "Closing inventory to fix possible EVE bug", "y"]
-					EVEWindow[ByName, Inventory]:Close
-					return FALSE
-				}
-				EVEWindow[ByName, Inventory]:MakeChildActive[Corporation Hangars]
-				break
-		}
-		return TRUE
-	}
 	
-	member:bool Offload()
-	{
-		UI:Update["obj_Salvage", "Unloading cargo", "g"]
-		Cargo:PopulateCargoList[SHIP]
-		switch ${Config.Dropoff_Type}
-		{
-			case Personal Hangar
-				Cargo:MoveCargoList[HANGAR]
-				break
-			default
-				Cargo:MoveCargoList[CORPORATEHANGAR, ${Config.Dropoff_Type}]
-				break
-		}
-		This:Clear
-		This:QueueState["StackItemHangar"]
-		This:QueueState["Log", 1000, "Idling for 1 minute"]
-		This:QueueState["Idle", 60000]
-		This:QueueState["RefreshBookmarks", 3000]
-		This:QueueState["CheckBookmarks"]
-		return TRUE
-	}
 	
-	member:bool StackItemHangar()
-	{
-		if !${EVEWindow[ByName, "Inventory"](exists)}
-		{
-			UI:Update["obj_Salvage", "Making sure inventory is open", "g"]
-			MyShip:Open
-			return FALSE
-		}
-
-		UI:Update["obj_Salvage", "Stacking dropoff container", "g"]
-		switch ${Config.Dropoff_Type}
-		{
-			case Personal Hangar
-				EVE:StackItems[MyStationHangar, Hangar]
-				break
-			default
-				EVE:StackItems[MyStationCorporateHangar, StationCorporateHangar, "${Config.Dropoff_Type.Escape}"]
-				break
-		}
-		
-		return TRUE
-	}
 
 	member:bool RefreshBookmarks()
 	{
@@ -773,6 +728,19 @@ objectdef obj_Salvage inherits obj_State
 		return TRUE
 	}	
 	
+	member:bool Offload()
+	{
+		switch ${Config.Dropoff_Type}
+		{
+			case Personal Hangar
+				Cargo:At[${Config.Dropoff}]:Unload
+				break
+			default
+				Cargo:At[${Config.Dropoff},${Config.Dropoff_Type},${Config.Dropoff_SubType},${Config.DropoffContainer}]:Unload
+				break
+		}
+		return TRUE
+	}
 
 }
 
@@ -816,24 +784,24 @@ objectdef obj_LootCans inherits obj_State
 			return FALSE
 		}
 
-		if ${Entity[(GroupID==GROUP_CARGOCONTAINER) && IsAbandoned](exists)}
-		{
-			Entity[(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && IsAbandoned]:UnlockTarget
-		}
-		
 		if ${Salvage.Config.SalvageYellow}
 		{
-			EVE:QueryEntities[Targets, "(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && !IsWreckEmpty && Distance<LOOT_RANGE && !IsAbandoned"]
+			EVE:QueryEntities[Targets, "(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && !IsWreckEmpty && Distance<LOOT_RANGE"]
 		}
 		else
 		{
-			EVE:QueryEntities[Targets, "(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && HaveLootRights && !IsWreckEmpty && Distance<LOOT_RANGE && !IsAbandoned"]
+			EVE:QueryEntities[Targets, "(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && HaveLootRights && !IsWreckEmpty && Distance<LOOT_RANGE"]
 		}
 		Targets:GetIterator[TargetIterator]
 		if ${TargetIterator:First(exists)} && ${EVEWindow[ByName, Inventory](exists)}
 		{
 			do
 			{
+				if ${Salvage.Wrecks.TargetExceptions.Contains[${TargetIterator.Value.ID}]}
+				{
+					continue
+				}
+			
 				if ${EVEWindow[ByName, Inventory].ChildWindowExists[${TargetIterator.Value}]}
 				{
 					if !${EVEWindow[ByItemID, ${TargetIterator.Value}](exists)}
@@ -850,7 +818,7 @@ objectdef obj_LootCans inherits obj_State
 						{
 							if ${CargoIterator.Value.IsContraband}
 							{
-								TargetIterator.Value:Abandon
+								Salvage.Wrecks:AddTargetException[${TargetIterator.Value.ID}]
 								return FALSE
 							}
 						}
@@ -902,34 +870,34 @@ objectdef obj_SalvageUI inherits obj_State
 		Bookmarks:GetIterator[BookmarkIterator]
 		
 
-		UIElement[DropoffList@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:ClearItems
+		UIElement[DropoffList@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:ClearItems
 		if ${BookmarkIterator:First(exists)}
 			do
 			{	
-				if ${UIElement[Dropoff@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager].Text.Length}
+				if ${UIElement[Dropoff@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager].Text.Length}
 				{
 					if ${BookmarkIterator.Value.Label.Left[${Salvage.Config.Dropoff.Length}].Equal[${Salvage.Config.Dropoff}]}
-						UIElement[DropoffList@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[${BookmarkIterator.Value.Label.Escape}]
+						UIElement[DropoffList@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 				else
 				{
-					UIElement[DropoffList@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[${BookmarkIterator.Value.Label.Escape}]
+					UIElement[DropoffList@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 			}
 			while ${BookmarkIterator:Next(exists)}
 
-		UIElement[BeltPatrolBookmarkList@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:ClearItems
+		UIElement[BeltPatrolBookmarkList@SalvageFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:ClearItems
 		if ${BookmarkIterator:First(exists)}
 			do
 			{	
-				if ${UIElement[BeltPatrolBookmark@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager].Text.Length}
+				if ${UIElement[BeltPatrolBookmark@SalvageFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager].Text.Length}
 				{
 					if ${BookmarkIterator.Value.Label.Left[${Salvage.Config.BeltPatrol.Length}].Equal[${Salvage.Config.BeltPatrol}]}
-						UIElement[BeltPatrolBookmarkList@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[${BookmarkIterator.Value.Label.Escape}]
+						UIElement[BeltPatrolBookmarkList@SalvageFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 				else
 				{
-					UIElement[BeltPatrolBookmarkList@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[${BookmarkIterator.Value.Label.Escape}]
+					UIElement[BeltPatrolBookmarkList@SalvageFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 			}
 			while ${BookmarkIterator:Next(exists)}

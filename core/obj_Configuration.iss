@@ -20,6 +20,34 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
+objectdef obj_Base_Configuration
+{
+	variable string SetName = ""
+
+	method Initialize(string name)
+	{
+		SetName:Set[${name}]
+		if !${BaseConfig.BaseRef.FindSet[${This.SetName}](exists)}
+		{
+			UI:Update["obj_Configuration", " ${This.SetName} settings missing - initializing", "o"]
+			This:Set_Default_Values[]
+		}
+		UI:Update["obj_Configuration", " ${This.SetName}: Initialized", "-g"]
+	}
+
+	member:settingsetref CommonRef()
+	{
+		return ${BaseConfig.BaseRef.FindSet[${This.SetName}]}
+	}
+	
+	method Set_Default_Values()
+	{
+		
+	}
+
+}
+
+
 objectdef obj_Configuration_BaseConfig
 {
 	variable string CONFIG_FILE = "${Me.Name} Config.xml"
@@ -49,7 +77,6 @@ objectdef obj_Configuration_BaseConfig
 		if !${CONFIG_PATH.FileExists["${CONFIG_PATH}/${CONFIG_FILE}"]}
 		{
 			UI:Update["obj_Configuration", "Configuration file is ${CONFIG_FILE}", "g", TRUE]
-			UI:Log["Redacted:  obj_Configuration - Configuration file is XXXXXXX"]
 			LavishSettings[ComBotSettings]:Import["${CONFIG_PATH}/${CONFIG_FILE}"]
 		}
 
@@ -132,10 +159,12 @@ objectdef obj_Configuration_Common
 	Setting(bool, AutoStart, SetAutoStart)
 	Setting(bool, Propulsion, SetPropulsion)
 	Setting(int, Propulsion_Threshold, SetPropulsion_Threshold)
+	Setting(bool, Undock, SetUndock)
 	Setting(bool, Disable3D, SetDisable3D)
 	Setting(bool, DisableUI, SetDisableUI)
 	Setting(bool, DisableTexture, SetDisableTexture)
 	Setting(string, ActiveTab, SetActiveTab)
+	Setting(bool, Hidden, SetHidden)
 	Setting(int64, CharID, SetCharID)
 	Setting(string, Account, SetAccount)
 	Setting(string, Password, SetPassword)

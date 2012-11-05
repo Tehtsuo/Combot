@@ -19,184 +19,57 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-objectdef obj_Module inherits obj_State
+variable collection:obj_ModuleBase ModuleBaseModules
+
+objectdef obj_Module
 {
-	variable bool Activated = FALSE
-	variable bool Deactivated = FALSE
-	variable int64 CurrentTarget = -1
 	variable int64 ModuleID
-	
 	method Initialize(int64 ID)
 	{
-		This[parent]:Initialize
-		This.NonGameTiedPulse:Set[TRUE]
-		ModuleID:Set[${ID}]
-		NonGameTiedPulse:Set[TRUE]
-		PulseFrequency:Set[50]
+		ModuleID:Set[${MyShip.Module[${ID}].ID}]
+		if !${ModuleBaseModules[${ModuleID}](exists)}
+		{
+			ModuleBaseModules:Set[${ModuleID}, ${ModuleID}]
+		}
 	}
 	
 	member:bool IsActive()
 	{
-		return ${Activated}
+		return ${ModuleBaseModules[${ModuleID}].IsActive}
 	}
 	
 	member:bool IsDeactivating()
 	{
-		return ${Deactivated}
+		return ${ModuleBaseModules[${ModuleID}].IsDeactivating}
 	}
 	
 	member:bool IsActiveOn(int64 checkTarget)
 	{
-		if (${This.CurrentTarget.Equal[${checkTarget}]})
-		{
-			if ${This.IsActive}
-			{
-				return TRUE
-			}
-		}
-		return FALSE
+		return ${ModuleBaseModules[${ModuleID}].IsActiveOn[${checkTarget}]}
 	}
 	
 	method Deactivate()
 	{
-		if !${Deactivated}
-		{
-			MyShip.Module[${ModuleID}]:Deactivate
-			Deactivated:Set[TRUE]
-			This:Clear
-			This:QueueState["WaitTillInactive"]
-		}
+		ModuleBaseModules[${ModuleID}]:Deactivate
 	}
 	
 	method Activate(int64 newTarget=-1, bool DoDeactivate=TRUE)
 	{
-		if ${DoDeactivate} && ${This.IsActive}
-		{
-			This:Deactivate
-		}
-		if ${newTarget} == -1
-		{
-			newTarget:Set[${Me.ActiveTarget.ID}]
-		}
-		if ${Entity[${newTarget}].CategoryID} == CATEGORYID_ORE && ${MyShip.Module[${ModuleID}].ToItem.GroupID} == GROUP_FREQUENCY_MINING_LASER
-		{
-			This:QueueState["LoadMiningCrystal", 50, ${Entity[${newTarget}].Type}]
-		}
-		This:QueueState["ActivateOn", 50, "${newTarget}"]
-		This:QueueState["WaitTillActive", 50, 20]
-		This:QueueState["WaitTillInactive"]
-		if ${DoDeactivate}
-		{
-			CurrentTarget:Set[${newTarget}]
-			Activated:Set[TRUE]
-		}
+		ModuleBaseModules[${ModuleID}]:Activate[${newTarget}, ${DoDeactivate}]
 	}
 	
 	member:bool LoadMiningCrystal(string OreType)
 	{
-		variable index:item Crystals
-		variable iterator Crystal
-		if ${OreType.Find[${MyShip.Module[${ModuleID}].Charge.Name.Token[1," "]}]}
-		{
-			return TRUE
-		}
-		else
-		{
-			MyShip.Module[${ModuleID}]:GetAvailableAmmo[Crystals]
-			
-			if ${Crystals.Used} == 0
-			{
-				UI:Update["obj_Module", "No crystals available - mining ouput decreased", "o"]
-			}
-			
-			Crystals:GetIterator[Crystal]
-			
-			if ${Crystal:First(exists)}
-			do
-			{
-				if ${OreType.Find[${Crystal.Value.Name.Token[1, " "]}](exists)}
-				{
-					UI:Update["obj_Module", "Switching Crystal to ${Crystal.Value.Name}"]
-					Me.Ship.Module[${ModuleID}]:ChangeAmmo[${Crystal.Value.ID},1]
-					return TRUE
-				}
-			}
-			while ${Crystal:Next(exists)}
-		}
-		
-		return TRUE
-	}
-	
-	member:bool ActivateOn(int64 newTarget)
-	{
-		if ${newTarget} == -1 || ${newTarget} == 0
-		{
-			MyShip.Module[${ModuleID}]:Activate
-		}
-		else
-		{
-			if ${Entity[${newTarget}](exists)} && ${Entity[${newTarget}].IsLockedTarget}
-			{
-				MyShip.Module[${ModuleID}]:Activate[${newTarget}]
-			}
-			else
-			{
-				Activated:Set[FALSE]
-				CurrentTarget:Set[-1]
-				This:Clear
-				return TRUE
-			}
-		}
-		Activated:Set[TRUE]
-		CurrentTarget:Set[${newTarget}]
-		return TRUE
-	}
-	
-	member:bool WaitTillActive(int countdown)
-	{
-		if ${countdown} > 0
-		{
-			This:SetStateArgs[${Math.Calc[${countdown}-1]}]
-			return ${MyShip.Module[${ModuleID}].IsActive}
-		}
-		return TRUE
-	}
-	
-	member:bool WaitTillInactive()
-	{
-		if ${MyShip.Module[${ModuleID}].IsActive}
-		{
-			return FALSE
-		}
-		Activated:Set[FALSE]
-		Deactivated:Set[FALSE]
-		CurrentTarget:Set[-1]
-		return TRUE
+		return ${ModuleBaseModules[${ModuleID}].LoadMiningCrystal[${OreType.Escape}]}
 	}
 	
 	member:float Range()
 	{
-		if ${MyShip.Module[${ModuleID}].TransferRange(exists)}
-		{
-			return ${MyShip.Module[${ModuleID}].TransferRange}
-		}
-		if ${MyShip.Module[${ModuleID}].ShieldTransferRange(exists)}
-		{
-			return ${MyShip.Module[${ModuleID}].ShieldTransferRange}
-		}
-		if ${MyShip.Module[${ModuleID}].OptimalRange(exists)}
-		{
-			return ${MyShip.Module[${ModuleID}].OptimalRange}
-		}
-		else
-		{
-			return ${Math.Calc[${MyShip.Module[${ModuleID}].Charge.MaxFlightTime} * ${MyShip.Module[${ModuleID}].Charge.MaxVelocity}]}
-		}
+		return ${ModuleBaseModules[${ModuleID}].Range}
 	}
 	
 	member:string GetFallthroughObject()
 	{
 		return "MyShip.Module[${ModuleID}]"
 	}
-
 }

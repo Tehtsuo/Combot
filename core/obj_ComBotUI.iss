@@ -29,6 +29,9 @@ objectdef obj_ComBotUI
 	variable queue:string ConsoleBuffer
 	variable bool Reloaded = FALSE
 	variable string LogFile
+	
+	variable string Branch = COMBOT_BRANCH
+	variable string Version = COMBOT_VERSION
 
 
 	method Initialize()
@@ -52,6 +55,8 @@ objectdef obj_ComBotUI
 		This:Update["ComBot", "under certain conditions.  See gpl.txt for details", "o"]
 
 		
+		This:Update["ComBot", "Current Branch: \ay${Branch}", "g"]
+		This:Update["ComBot", "Current Version: \ay${Version}", "g"]
 		This:Update["ComBot", "Initializing modules", "y"]
 
 		Event[ISXEVE_onFrame]:AttachAtom[This:Pulse]
@@ -96,6 +101,17 @@ objectdef obj_ComBotUI
 		This:WriteQueueToLog
 		This.Reloaded:Set[TRUE]
 		UIElement[ComBotTab@ComBot].Tab[${Config.Common.ActiveTab}]:Select
+		if ${Config.Common.Hidden}
+		{
+			UIElement[ComBotTab@ComBot]:Hide
+			This:SetText[Show]
+		}
+		else
+		{
+			UIElement[ComBotTab@ComBot]:Show
+			This:SetText[Hide]
+		}
+		
 	}
 	
 	method WriteQueueToLog()

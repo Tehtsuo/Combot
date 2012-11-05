@@ -74,6 +74,12 @@ objectdef obj_Move inherits obj_State
 		This:ActivateAutoPilot
 	}
 
+	method Undock()
+	{
+		EVE:Execute[CmdExitStation]
+		Client:Wait[10000]
+	}	
+
 	method DockAtStation(int64 StationID)
 	{
 		if ${Entity[${StationID}](exists)}
@@ -89,15 +95,6 @@ objectdef obj_Move inherits obj_State
 			UI:Log["Redacted:  obj_Move - Station Requested does not exist.  StationID: XXXXXXX"]
 		}
 	}	
-	
-	method Undock()
-	{
-			EVE:Execute[CmdExitStation]
-			Client:Wait[10000]
-	}	
-	
-	
-	
 	
 	
 	
@@ -216,12 +213,17 @@ objectdef obj_Move inherits obj_State
 			}
 			return TRUE	
 		}
+		
+		if ${Me.ToEntity.Mode} == 3
+		{
+			return FALSE
+		}
 
-		if ${Entity[${ID}].Distance} < -3000
+		if ${Entity[${ID}].Distance} < -8000
 		{
 			UI:Update["obj_Move", "Too close!  Orbiting ${Entity[${ID}].Name}", "g"]
-			Client:Wait[5000]
 			Entity[${ID}]:Orbit
+			Client:Wait[10000]
 			return FALSE
 		}
 		if ${Entity[${ID}].Distance} > 3000
@@ -570,7 +572,7 @@ objectdef obj_Move inherits obj_State
 	method SaveSpot()
 	{
 		UI:Update["obj_Move", "Storing current location", "y"]
-		This.SavedSpot:Set["Saved Spot ${EVETime.Time}"]
+		This.SavedSpot:Set["Saved Spot ${EVETime.Time.Left[-3]}"]
 		EVE:CreateBookmark["${This.SavedSpot}"]
 	}
 	
@@ -608,6 +610,7 @@ objectdef obj_Approach inherits obj_State
 	method Initialize()
 	{
 		This[parent]:Initialize
+		This.PulseFrequency:Set[3000]
 		This.NonGameTiedPulse:Set[TRUE]
 	}
 
@@ -637,20 +640,6 @@ objectdef obj_Approach inherits obj_State
 			EVE:Execute[CmdStopShip]
 			Ship.ModuleList_AB_MWD:Deactivate
 			return TRUE
-		}
-		
-		if ${Config.Common.Propulsion}
-		{
-			if !${Ship.ModuleList_AB_MWD.ActiveCount} && ${MyShip.CapacitorPct} > ${Config.Common.Propulsion_Threshold}
-			{
-				Ship.ModuleList_AB_MWD:Activate
-				return FALSE
-			}
-			if ${Ship.ModuleList_AB_MWD.ActiveCount} && ${MyShip.CapacitorPct} <= ${Config.Common.Propulsion_Threshold}
-			{
-				Ship.ModuleList_AB_MWD:Deactivate
-				return FALSE
-			}
 		}
 		
 		return FALSE
