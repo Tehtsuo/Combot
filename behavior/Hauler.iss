@@ -140,12 +140,30 @@ objectdef obj_Hauler inherits obj_State
 		return TRUE
 	}
 	
-	member:bool CheckCargoHold()
+	member:bool CheckCargoHold(bool OreHold=FALSE, bool CorpHangar=FALSE)
 	{
+		if ${EVEWindow[ByName, Inventory].ChildWindowExists[ShipOreHold]} && !${OreHold}
+		{
+			Cargo:PopulateCargoList[Ship]
+			Cargo:Filter[CategoryID==CATEGORYID_ORE]
+			Cargo:MoveCargoList[OreHold]
+			This:InsertState["CheckCargoHold", 500, "TRUE"]
+			return TRUE
+		}
+		if ${EVEWindow[ByName, Inventory].ChildWindowExists[ShipCorpHangar]} && !${CorpHangar}
+		{
+			Cargo:PopulateCargoList[Ship]
+			Cargo:Filter[GroupID==GROUP_HARVESTABLECLOUD || CategoryID==CATEGORYID_ORE]
+			Cargo:MoveCargoList[Container]
+			This:InsertState["CheckCargoHold", 500, "TRUE, TRUE"]
+			return TRUE
+		}
+		
+	
 		if ${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity} >= ${Config.Threshold} * .01
 		{
 			UI:Update["obj_Hauler", "Unload trip required", "g"]
-			Cargo:At[${Config.Dropoff},${Config.DropoffType},${Config.DropoffSubType}, ${Config.DropoffContainer}]:Unload
+			Cargo:At[${Config.Dropoff},${Config.DropoffType},${Config.DropoffSubType}, ${Config.DropoffContainer}]:Unload:Unload["",0,ShipCorpHangar]:Unload["",0,OreHold]
 			This:QueueState["Traveling"]
 			This:QueueState["OpenCargoHold"]
 			This:QueueState["CheckCargoHold"]
