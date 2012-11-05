@@ -43,7 +43,7 @@ objectdef obj_Configuration_Ratter
 	{
 		BaseConfig.BaseRef:AddSet[${This.SetName}]
 
-		This.CommonRef:AddSetting[Prefix,"Anom:"]
+		This.CommonRef:AddSetting[Substring,"Anom:"]
 		This.CommonRef:AddSetting[RattingSystem,""]
 		This.CommonRef:AddSetting[Dropoff,""]
 		This.CommonRef:AddSetting[DropoffType,""]
@@ -52,8 +52,9 @@ objectdef obj_Configuration_Ratter
 		
 	}
 	
+	Setting(int, Threshold, SetThreshold)
 	Setting(string, RattingSystem, SetRattingSystem)	
-	Setting(string, Prefix, SetPrefix)
+	Setting(string, Substring, SetSubstring)
 	Setting(string, Dropoff, SetDropoff)
 	Setting(string, DropoffType, SetDropoffType)
 	Setting(string, DropoffSubType, SetDropoffSubType)
@@ -166,48 +167,42 @@ objectdef obj_Ratter inherits obj_State
 	
 	member:bool MoveToBelt()
 	{
-		if 1==1
+		if ${Bookmarks.Used} == 0
 		{
-			variable string prefix
-			prefix:Set[${Config.BeltPrefix}]
-			
+			EVE:GetBookmarks[Bookmarks]
+			Bookmarks:RemoveByQuery[${LavishScript.CreateQuery[SolarSystemID == ${Me.SolarSystemID}]}, FALSE]
+			Bookmarks:RemoveByQuery[${LavishScript.CreateQuery[Label =- "${Config.Substring}"]}, FALSE]
+			Bookmarks:Collapse
 			if ${Bookmarks.Used} == 0
 			{
-				EVE:GetBookmarks[Bookmarks]
-				Bookmarks:RemoveByQuery[${LavishScript.CreateQuery[SolarSystemID == ${Me.SolarSystemID}]}, FALSE]
-				Bookmarks:RemoveByQuery[${LavishScript.CreateQuery[Label =- "${prefix}"]}, FALSE]
-				Bookmarks:Collapse
-				
+				if !${Client.InSpace}
+				{
+					Move:Undock
+					return FALSE
+				}
+
+				if ${Belts.Used} == 0
+				{
+					EVE:QueryEntities[Belts, "GroupID = GROUP_ASTEROIDBELT"]
+				}
+
+				Move:Object[${Entity[${Belts[1].ID}]}, 150000]
+				Belts:Remove[1]
+				Belts:Collapse
+				return TRUE
 			}
-			else
-			{
-				Bookmarks.Get[1]:Remove
-				Bookmarks:Remove[1]
-				Bookmarks:Collapse
-			}
-		
-			Move:Bookmark[${Bookmarks.Get[1].Label}]
-			Bookmarks:Remove[1]
-			Bookmarks:Collapse
-			return TRUE
 		}
 		else
 		{
-			if !${Client.InSpace}
-			{
-				Move:Undock
-				return FALSE
-			}
-
-			if ${Belts.Used} == 0
-			{
-				EVE:QueryEntities[Belts, "GroupID = GROUP_ASTEROIDBELT"]
-			}
-
-			Move:Object[${Entity[${Belts[1].ID}]}, 150000]
-			Belts:Remove[1]
-			Belts:Collapse
-			return TRUE
+			Bookmarks.Get[1]:Remove
+			Bookmarks:Remove[1]
+			Bookmarks:Collapse
+		}
+	
+		Move:Bookmark[${Bookmarks.Get[1].Label}]
+		Bookmarks:Remove[1]
+		Bookmarks:Collapse
+		return TRUE
 		}
 	}
 
