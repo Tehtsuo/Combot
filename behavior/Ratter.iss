@@ -59,14 +59,13 @@ objectdef obj_Ratter inherits obj_State
 	
 	variable obj_TargetList Rats
 	variable index:entity Belts
+	variable index:bookmark Bookmarks
 
 	method Initialize()
 	{
 		This[parent]:Initialize
-		LavishScript:RegisterEvent[ComBot_Orca_InBelt]
 		PulseFrequency:Set[500]
-		Rats.LockOutOfRange:Set[FALSE]
-		Dynamic:AddBehavior["Ratter", "Belt Ratter", FALSE]
+		Dynamic:AddBehavior["Ratter", "Ratter", FALSE]
 	}
 
 	method Shutdown()
@@ -75,15 +74,12 @@ objectdef obj_Ratter inherits obj_State
 	
 	method Start()
 	{
-		This:PopulateTargetList
-		Drones:StayDeployed
-		Drones:Aggressive
-		Drones.DroneTargets.MinLockCount:Set[5]
 		UI:Update["obj_Ratter", "Started", "g"]
 		This:AssignStateQueueDisplay[DebugStateList@Debug@ComBotTab@ComBot]
 		if ${This.IsIdle}
 		{
-			This:QueueState["Rat"]
+			This:QueueState["OpenCargoHold"]
+			This:QueueState["CheckCargoHold"]
 		}
 	}
 	
@@ -93,22 +89,58 @@ objectdef obj_Ratter inherits obj_State
 		This:Clear
 	}
 	
-	method PopulateTargetList()
+	member:bool OpenCargoHold()
 	{
-		Rats:ClearQueryString
-		variable string QueryString="CategoryID = CATEGORYID_ENTITY && IsNPC && !IsMoribund && Bounty > 100000 && !("
-		
-		;Exclude Groups here
-		QueryString:Concat["GroupID = GROUP_CONCORDDRONE ||"]
-		QueryString:Concat["GroupID = GROUP_CONVOYDRONE ||"]
-		QueryString:Concat["GroupID = GROUP_CONVOY ||"]
-		QueryString:Concat["GroupID = GROUP_LARGECOLLIDABLEOBJECT ||"]
-		QueryString:Concat["GroupID = GROUP_LARGECOLLIDABLESHIP ||"]
-		QueryString:Concat["GroupID = GROUP_SPAWNCONTAINER ||"]
-		QueryString:Concat["GroupID = CATEGORYID_ORE ||"]
-		QueryString:Concat["GroupID = GROUP_LARGECOLLIDABLESTRUCTURE)"]
-		
-		Rats:AddQueryString["${QueryString.Escape}"]
+		if !${EVEWindow[ByName, "Inventory"](exists)}
+		{
+			UI:Update["Ratter", "Opening inventory", "g"]
+			MyShip:Open
+			return FALSE
+		}
+		return TRUE
+	}
+	
+	member:bool CheckCargoHold()
+	{
+		if ${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity} >= ${Config.Threshold} * .01
+		{
+			UI:Update["Ratter", "Unload trip required", "g"]
+			Cargo:At[${Config.Dropoff},${Config.DropoffType},${Config.DropoffSubType}, ${Config.DropoffContainer}]:Unload
+			This:QueueState["Traveling"]
+			This:QueueState["OpenCargoHold"]
+			This:QueueState["CheckCargoHold"]
+			return TRUE
+		}
+		else
+		{
+			This:QueueState["GoToRattingSystem"]
+			This:QueueState["Traveling"]
+			This:QueueState["MoveToBelt"]
+			This:QueueState["Traveling"]
+			This:QueueState["Log", 10, "Waiting for rats to spawn, g"]
+			This:QueueState["Idle", 5000]
+			This:QueueState["Rat"]
+			return TRUE
+		}
+	}
+	
+	member:bool Log(string text, string color)
+	{
+		UI:Update["Ratter", "${text}", "${color}"]
+		return TRUE
+	}
+	
+	member:bool GoToRattingSystem()
+	{
+		if !${EVE.Bookmark[${Config.RattingSystem}](exists)}
+		{
+			UI:Update["Ratter", "No ratting system defined!  Check your settings", "r"]
+		}
+		if ${EVE.Bookmark[${Config.RattingSystem}].SolarSystemID} != ${Me.SolarSystemID}
+		{
+			Move:System[${EVE.Bookmark[${Config.RattingSystem}].SolarSystemID}]
+		}
+		return TRUE
 	}
 	
 	
@@ -124,8 +156,38 @@ objectdef obj_Ratter inherits obj_State
 	
 	member:bool MoveToBelt()
 	{
-			variable int curBelt
-			variable int TryCount
+		if 1==1
+		{
+			variable string prefix
+			prefix:Set[${Config.BeltPrefix}]
+			
+			if ${Bookmarks.Used} == 0
+			{
+				EVE:GetBookmarks[Bookmarks]
+				Bookmarks:RemoveByQuery[${LavishScript.CreateQuery[SolarSystemID == ${Me.SolarSystemID}]}, FALSE]
+				Bookmarks:RemoveByQuery[${LavishScript.CreateQuery[Label =- "${prefix}"]}, FALSE]
+				Bookmarks:Collapse
+				
+			}
+			else
+			{
+				Bookmarks.Get[1]:Remove
+				Bookmarks:Remove[1]
+				Bookmarks:Collapse
+			}
+		
+			Move:Bookmark[${Bookmarks.Get[1].Label}]
+			Bookmarks:Remove[1]
+			Bookmarks:Collapse
+			return TRUE
+		}
+		else
+		{
+			if !${Client.InSpace}
+			{
+				Move:Undock
+				return FALSE
+			}
 
 			if ${Belts.Used} == 0
 			{
@@ -136,13 +198,9 @@ objectdef obj_Ratter inherits obj_State
 			Belts:Remove[1]
 			Belts:Collapse
 			return TRUE
+		}
 	}
 
-	member:bool Undock()
-	{
-		Move:Undock
-		return TRUE
-	}
 	member:bool InitialUpdate()
 	{
 		Rats:RequestUpdate
@@ -155,25 +213,11 @@ objectdef obj_Ratter inherits obj_State
 	}
 	member:bool Rat()
 	{
-		if !${Client.InSpace}
-		{
-			This:QueueState["Undock"]
-			This:QueueState["MoveToBelt"]
-			This:QueueState["Traveling"]
-			This:QueueState["InitialUpdate"]
-			This:QueueState["Updated"]
-			This:QueueState["Rat"]
-			return TRUE
-		}
-		
 		if !${Drones.DronesInSpace} && !${Drones.DroneTargets.TargetList.Used}
 		{
 			echo ${Drones.DroneTargets.TargetList.Used} drone targets
-			This:QueueState["MoveToBelt"]
-			This:QueueState["Traveling"]
-			This:QueueState["InitialUpdate"]
-			This:QueueState["Updated"]
-			This:QueueState["Rat"]
+			This:QueueState["OpenCargoHold"]
+			This:QueueState["CheckCargoHold"]
 			return TRUE
 		}
 		
