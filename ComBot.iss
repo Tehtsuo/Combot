@@ -116,7 +116,6 @@ function main(string Character="")
 	declarevariable Jetcan obj_Jetcan script
 	declarevariable Delay obj_Delay script
 	declarevariable Fleets obj_Fleet script
-	declarevariable Dynamic obj_Dynamic script
 	declarevariable Busy obj_Busy script
 	declarevariable NPCData obj_NPCData script
 	
