@@ -52,6 +52,7 @@ objectdef obj_Configuration_Ratter
 		
 	}
 	
+	Setting(int, Warp, SetWarp)
 	Setting(int, Threshold, SetThreshold)
 	Setting(string, RattingSystem, SetRattingSystem)	
 	Setting(string, Substring, SetSubstring)
@@ -74,6 +75,7 @@ objectdef obj_Ratter inherits obj_State
 	{
 		This[parent]:Initialize
 		PulseFrequency:Set[500]
+		Rats:AddAllNPCs
 		DynamicAddBehavior("Ratter", "Ratter")
 	}
 
@@ -130,6 +132,9 @@ objectdef obj_Ratter inherits obj_State
 			This:QueueState["Traveling"]
 			This:QueueState["Log", 10, "Waiting for rats to spawn, g"]
 			This:QueueState["Idle", 5000]
+			This:QueueState["InitialUpdate"]
+			This:QueueState["Updated"]
+			This:QueueState["Log", 10, "Ratting, g"]
 			This:QueueState["Rat"]
 			return TRUE
 		}
@@ -167,6 +172,8 @@ objectdef obj_Ratter inherits obj_State
 	
 	member:bool MoveToBelt()
 	{
+		variable int Distance
+		Distance:Set[${Math.Calc[${Config.Warp} * 1000]}]
 		if ${Bookmarks.Used} == 0
 		{
 			EVE:GetBookmarks[Bookmarks]
@@ -186,7 +193,7 @@ objectdef obj_Ratter inherits obj_State
 					EVE:QueryEntities[Belts, "GroupID = GROUP_ASTEROIDBELT"]
 				}
 
-				Move:Object[${Entity[${Belts[1].ID}]}, 150000]
+				Move:Object[${Entity[${Belts[1].ID}]}, ${Distance}]
 				Belts:Remove[1]
 				Belts:Collapse
 				return TRUE
@@ -199,7 +206,7 @@ objectdef obj_Ratter inherits obj_State
 			Bookmarks:Collapse
 		}
 	
-		Move:Bookmark[${Bookmarks.Get[1].Label}]
+		Move:Bookmark[${Bookmarks.Get[1].Label}, TRUE, ${Distance}]
 		Bookmarks:Remove[1]
 		Bookmarks:Collapse
 		return TRUE
@@ -218,9 +225,8 @@ objectdef obj_Ratter inherits obj_State
 	}
 	member:bool Rat()
 	{
-		if !${Drones.DronesInSpace} && !${Drones.DroneTargets.TargetList.Used}
+		if !${Busy.IsBusy} && !${Rats.TargetList.Used}
 		{
-			echo ${Drones.DroneTargets.TargetList.Used} drone targets
 			This:QueueState["OpenCargoHold"]
 			This:QueueState["CheckCargoHold"]
 			return TRUE

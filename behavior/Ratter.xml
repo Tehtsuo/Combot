@@ -218,7 +218,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							</listbox>
 							<Text name='ThresholdTitle'> 
 								<X>34%</X> 
-								<Y>33%</Y> 
+								<Y>3%</Y> 
 								<Width>32%</Width> 
 								<Height>10%</Height> 
 								<Alignment>Center</Alignment>
@@ -229,7 +229,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							</Text>						 
 							<Slider name='Threshold'> 
 								<X>34%</X> 
-								<Y>40%</Y> 
+								<Y>10%</Y> 
 								<Width>32%</Width> 
 								<Height>15%</Height> 
 								<Border>1</Border>
@@ -243,6 +243,34 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								</OnChange>
 								<OnMouseEnter>
 									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText["This field is used to determine when ComBot should perform a dropoff."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText[""]
+								</OnMouseExit>
+							</Slider>						 
+							<Text name='WarpTitle'> 
+								<X>34%</X> 
+								<Y>33%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Warp to: ${Script[ComBot].VariableScope.Ratter.Config.Warp} km</Text>
+							</Text>						 
+							<Slider name='Warp'> 
+								<X>34%</X> 
+								<Y>40%</Y> 
+								<Width>32%</Width> 
+								<Height>15%</Height> 
+								<Border>1</Border>
+								<OnLoad>
+									This:SetRange[100]
+									This:SetValue[${Script[ComBot].VariableScope.Ratter.Config.Warp}]
+								</OnLoad>
+								<OnChange>
+									Script[ComBot].VariableScope.Ratter.Config:SetWarp[${This.Value}]
+								</OnChange>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText["This field is used to instruct ComBot at what range it should warp to the ratting area."]
 								</OnMouseEnter>
 								<OnMouseExit>
 									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText[""]
