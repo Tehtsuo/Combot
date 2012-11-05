@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ISUI>
+
+<!--
+
+ComBot  Copyright © 2012  Tehtsuo and Vendan
+
+This file is part of ComBot.
+
+ComBot is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ComBot is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+
+	<template name='Information.Font'>	
+		<Name>Terminal</Name>
+		<Size>8</Size>
+		<Color>FFFFFFFF</Color>
+	</template>	
+
+	<window name='ComBot_DroneControl'>
+		<Visible>1</Visible>
+		<BackGroundColor></BackGroundColor>
+		<Border>0</Border>
+		<X>200</X>
+		<Y>300</Y>
+		<Width>800</Width>
+		<Height>600</Height>
+		<TitleBar>
+			<Width>100%</Width>
+			<Height>20</Height>
+			<Border>0</Border>
+			<BackgroundColor>FF000000</BackgroundColor>
+			<Children>
+				<Text name='ComBot_DroneControl_TitleBar_Title'>
+					<X>0</X>
+					<Y>3</Y>
+					<Width>100%</Width>
+					<Height>20</Height>
+					<Alignment>Center</Alignment>
+					<Text>DroneControl Configuration</Text>
+				</Text>
+				<button	Name='Close'>
+					<X>r40</X>
+					<Y>0</Y>
+					<Width>40</Width>
+					<Height>20</Height>
+					<Text>Close</Text>
+					<OnLeftClick>
+						ui -unload "&filepath;/DroneControl"
+					</OnLeftClick>
+				</button>
+			</Children>
+		</TitleBar>
+		<Children name="ComBot_DroneControl_Children">
+			<Frame name="ComBot_DroneControl_Frame">
+				<X>0</X>
+				<Y>5</Y>
+				<Width>100%</Width>
+				<Height>100%</Height>
+				<BackgroundColor>FF000000</BackgroundColor>
+				<Border>1</Border>
+				<BorderColor>FFFFFFFF</BorderColor>
+				<Children name="ComBot_DroneControl_Frame_Children">
+					<Text name='obj_DroneControlInformation'> 
+						<Font template='Information.Font' />
+						<X>1%</X> 
+						<Y>1%</Y> 
+						<Width>98%</Width> 
+						<Height>18%</Height> 
+						<Wrap />
+						<Text>DroneControl is a mini-mode that continously scans surrounding space for enemies and attacks them with the selected drones.  DroneControl also handles interfacing with other sessions running ComBot to collaborate on killing targets</Text>
+					</Text>
+					<Text name="EntityListTitle">
+						<X>1%</X>
+						<Y>12%</Y>
+						<Width>32%</Width> 
+						<Height>2%</Height> 
+						<Alignment>Center</Alignment>
+						<Text>Drone List</Text>
+					</Text>
+					<Checkbox name='Sentries'>
+						<X>1%</X>
+						<Y>50%</Y>
+						<Width>30%</Width> 
+						<Height>3%</Height> 
+						<Text>Use Sentry drones to attack targets more than ${Script[ComBot].VariableScope.DroneControl.Config.SentryRange} km away</Text>
+						<OnLoad>
+							if ${Script[ComBot].VariableScope.DroneControl.Config.Sentries}
+							{
+								This:SetChecked
+							}
+						</OnLoad>
+						<OnLeftClick>
+							Script[ComBot].VariableScope.DroneControl.Config:SetSentries[${This.Checked}]
+						</OnLeftClick>
+					</Checkbox>
+					<Slider name='SentryRange'> 
+						<X>70%</X>
+						<Y>50%</Y>
+						<Width>20%</Width> 
+						<Height>3%</Height> 
+						<Border>1</Border>
+						<Range>300</Range>
+						<OnLoad>
+							This:SetValue[${Script[ComBot].VariableScope.DroneControl.Config.SentryRange}]
+						</OnLoad>
+						<OnChange>
+							Script[ComBot].VariableScope.DroneControl.Config:SetSentryRange[${This.Value}]
+						</OnChange>
+					</Slider>
+					<Text name='DroneCountLabel'>
+						<X>1%</X>
+						<Y>60%</Y>
+						<Width>30%</Width> 
+						<Height>3%</Height> 
+						<Text>Use ${Script[ComBot].VariableScope.DroneControl.Config.DroneCount} Drones</Text>
+					</Text>
+					<Slider name='DroneCount'> 
+						<X>70%</X>
+						<Y>60%</Y>
+						<Width>20%</Width> 
+						<Height>3%</Height> 
+						<Border>1</Border>
+						<Range>25</Range>
+						<OnLoad>
+							This:SetValue[${Script[ComBot].VariableScope.DroneControl.Config.DroneCount}]
+						</OnLoad>
+						<OnChange>
+							Script[ComBot].VariableScope.DroneControl.Config:SetDroneCount[${This.Value}]
+						</OnChange>
+					</Slider>
+					
+					<Text name='LockCountLabel'>
+						<X>1%</X>
+						<Y>65%</Y>
+						<Width>30%</Width> 
+						<Height>3%</Height> 
+						<Text>Use ${Script[ComBot].VariableScope.DroneControl.Config.LockCount} Locks</Text>
+					</Text>
+					<Slider name='LockCount'> 
+						<X>70%</X>
+						<Y>65%</Y>
+						<Width>20%</Width> 
+						<Height>3%</Height> 
+						<Border>1</Border>
+						<Range>10</Range>
+						<OnLoad>
+							This:SetValue[${Script[ComBot].VariableScope.DroneControl.Config.LockCount}]
+						</OnLoad>
+						<OnChange>
+							Script[ComBot].VariableScope.DroneControl.Config:SetLockCount[${This.Value}]
+						</OnChange>
+					</Slider>
+					
+					<Text name='OutDelayLabel'>
+						<X>1%</X>
+						<Y>70%</Y>
+						<Width>30%</Width> 
+						<Height>3%</Height> 
+						<Text>Leave Drones out for ${Script[ComBot].VariableScope.DroneControl.Config.OutDelay} seconds</Text>
+					</Text>
+					<Slider name='OutDelay'> 
+						<X>70%</X>
+						<Y>70%</Y>
+						<Width>20%</Width> 
+						<Height>3%</Height> 
+						<Border>1</Border>
+						<Range>60</Range>
+						<OnLoad>
+							This:SetValue[${Script[ComBot].VariableScope.DroneControl.Config.OutDelay}]
+						</OnLoad>
+						<OnChange>
+							Script[ComBot].VariableScope.DroneControl.Config:SetOutDelay[${This.Value}]
+						</OnChange>
+					</Slider>
+					
+					<Checkbox name='Aggressive'>
+						<X>1%</X>
+						<Y>90%</Y>
+						<Width>30%</Width> 
+						<Height>3%</Height> 
+						<Text>Attack all potentially hostile NPC's</Text>
+						<OnLoad>
+							if ${Script[ComBot].VariableScope.DroneControl.Config.Aggressive}
+							{
+								This:SetChecked
+							}
+						</OnLoad>
+						<OnLeftClick>
+							Script[ComBot].VariableScope.DroneControl.Config:SetAggressive[${This.Checked}]
+						</OnLeftClick>
+					</Checkbox>
+					
+					<Checkbox name='UseIPC'>
+						<X>50%</X>
+						<Y>90%</Y>
+						<Width>30%</Width> 
+						<Height>3%</Height> 
+						<Text>Use IPC to coordinate attacks</Text>
+						<OnLoad>
+							if ${Script[ComBot].VariableScope.DroneControl.Config.UseIPC}
+							{
+								This:SetChecked
+							}
+						</OnLoad>
+						<OnLeftClick>
+							Script[ComBot].VariableScope.DroneControl.Config:SetUseIPC[${This.Checked}]
+						</OnLeftClick>
+					</Checkbox>
+				</Children>
+			</Frame>
+		</Children>
+	</window>
+	
+</ISUI>
