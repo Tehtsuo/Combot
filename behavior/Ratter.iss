@@ -203,7 +203,7 @@ objectdef obj_Ratter inherits obj_State
 		Bookmarks:Remove[1]
 		Bookmarks:Collapse
 		return TRUE
-		}
+
 	}
 
 	member:bool InitialUpdate()
