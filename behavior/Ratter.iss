@@ -254,7 +254,11 @@ objectdef obj_RatterUI inherits obj_State
 	
 	method Start()
 	{
-		This:QueueState["UpdateBookmarkLists", 5]
+		if ${This.IsIdle}
+		{
+			This:QueueState["OpenCargoHold"]
+			This:QueueState["UpdateBookmarkLists", 5]
+		}
 	}
 	
 	method Stop()
@@ -262,6 +266,17 @@ objectdef obj_RatterUI inherits obj_State
 		This:Clear
 	}
 
+	member:bool OpenCargoHold()
+	{
+		if !${EVEWindow[ByName, "Inventory"](exists)}
+		{
+			UI:Update["Ratter", "Opening inventory", "g"]
+			MyShip:OpenCargo[]
+			return FALSE
+		}
+		return TRUE
+	}
+	
 	member:bool UpdateBookmarkLists()
 	{
 		variable index:bookmark Bookmarks
@@ -286,6 +301,21 @@ objectdef obj_RatterUI inherits obj_State
 			}
 			while ${BookmarkIterator:Next(exists)}
 
+		UIElement[DropoffList@DropoffFrame@Frame@ComBot_Ratter]:ClearItems
+		if ${BookmarkIterator:First(exists)}
+			do
+			{	
+				if ${UIElement[Dropoff@DropoffFrame@Frame@ComBot_Ratter].Text.Length}
+				{
+					if ${BookmarkIterator.Value.Label.Left[${Ratter.Config.Dropoff.Length}].Equal[${Ratter.Config.Dropoff}]}
+						UIElement[DropoffList@DropoffFrame@Frame@ComBot_Ratter]:AddItem[${BookmarkIterator.Value.Label.Escape}]
+				}
+				else
+				{
+					UIElement[DropoffList@DropoffFrame@Frame@ComBot_Ratter]:AddItem[${BookmarkIterator.Value.Label.Escape}]
+				}
+			}
+			while ${BookmarkIterator:Next(exists)}
 			
 		return FALSE
 	}

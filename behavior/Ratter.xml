@@ -216,6 +216,38 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText[""]
 								</OnMouseExit>
 							</listbox>
+							<Text name='ThresholdTitle'> 
+								<X>34%</X> 
+								<Y>33%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Alignment>Center</Alignment>
+								<OnLoad>
+									Script[ComBot].VariableScope.Ratter.LocalUI:Start
+									This:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Ratter.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Ratter.Config.Threshold} * .01 * ${MyShip.CargoCapacity}].Round} m3]
+								</OnLoad>
+							</Text>						 
+							<Slider name='Threshold'> 
+								<X>34%</X> 
+								<Y>40%</Y> 
+								<Width>32%</Width> 
+								<Height>15%</Height> 
+								<Border>1</Border>
+								<OnLoad>
+									This:SetRange[100]
+									This:SetValue[${Script[ComBot].VariableScope.Ratter.Config.Threshold}]
+								</OnLoad>
+								<OnChange>
+									Script[ComBot].VariableScope.Ratter.Config:SetThreshold[${This.Value}]
+									UIElement[ThresholdTitle@RatterFrame@Frame@ComBot_Ratter]:SetText[Cargo Threshold: ${Script[ComBot].VariableScope.Ratter.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Ratter.Config.Threshold} * .01 * ${MyShip.CargoCapacity}].Round} m3]
+								</OnChange>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText["This field is used to determine when ComBot should perform a dropoff."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText[""]
+								</OnMouseExit>
+							</Slider>						 
 						</Children>
 					</Frame>
 				
@@ -224,7 +256,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Y>40%</Y> 
 						<Width>32%</Width> 
 						<Height>4%</Height> 
-						<Text>Pickup Configuration</Text>
+						<Text>Dropoff Configuration</Text>
 						<OnLoad>
 							This.Font:SetColor[FFFFFF00]
 						</OnLoad>
@@ -301,7 +333,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText[""]
 								</OnMouseExit>
 							</listbox>
-							<Text name='Dropoff_ContainerTitle'> 
+							<Text name='DropoffContainerTitle'> 
 								<X>34%</X> 
 								<Y>73%</Y> 
 								<Width>32%</Width> 
@@ -309,7 +341,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<Alignment>Center</Alignment>
 								<Text>Container Name</Text>
 							</Text>
-							<TextEntry name='Dropoff_Container'> 
+							<TextEntry name='DropoffContainer'> 
 								<X>34%</X> 
 								<Y>80%</Y> 
 								<Width>32%</Width> 
@@ -430,8 +462,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											UIElement[DropoffSubTypeTitle@DropoffFrame@Frame@ComBot_Ratter]:SetText[Corporate Folder]
 											UIElement[DropoffSubTypeTitle@DropoffFrame@Frame@ComBot_Ratter]:Show
 											UIElement[DropoffSubType@DropoffFrame@Frame@ComBot_Ratter]:Show
-											UIElement[Dropoff_Container@DropoffFrame@Frame@ComBot_Ratter]:Hide
-											UIElement[Dropoff_ContainerTitle@DropoffFrame@Frame@ComBot_Ratter]:Hide
+											UIElement[DropoffContainer@DropoffFrame@Frame@ComBot_Ratter]:Hide
+											UIElement[DropoffContainerTitle@DropoffFrame@Frame@ComBot_Ratter]:Hide
 											Script[ComBot].VariableScope.Ratter.Config:SetDropoffContainer[\"\"]
 											UIElement[DropoffTitle@DropoffFrame@Frame@ComBot_Ratter]:SetText[Station Bookmark]
 											break
@@ -445,9 +477,9 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											UIElement[DropoffSubType@DropoffFrame@Frame@ComBot_Ratter]:AddItem[Corporation Folder 7]
 											UIElement[DropoffSubType@DropoffFrame@Frame@ComBot_Ratter].ItemByText["${Script[ComBot].VariableScope.Ratter.Config.DropoffSubType}"]:Select
 											UIElement[DropoffSubTypeTitle@DropoffFrame@Frame@ComBot_Ratter]:SetText[Corporate Folder]
-											UIElement[Dropoff_Container@DropoffFrame@Frame@ComBot_Ratter]:Show
-											UIElement[Dropoff_ContainerTitle@DropoffFrame@Frame@ComBot_Ratter]:SetText[Container Name]
-											UIElement[Dropoff_ContainerTitle@DropoffFrame@Frame@ComBot_Ratter]:Show
+											UIElement[DropoffContainer@DropoffFrame@Frame@ComBot_Ratter]:Show
+											UIElement[DropoffContainerTitle@DropoffFrame@Frame@ComBot_Ratter]:SetText[Container Name]
+											UIElement[DropoffContainerTitle@DropoffFrame@Frame@ComBot_Ratter]:Show
 											UIElement[DropoffSubTypeTitle@DropoffFrame@Frame@ComBot_Ratter]:Show
 											UIElement[DropoffSubType@DropoffFrame@Frame@ComBot_Ratter]:Show
 											UIElement[DropoffTitle@DropoffFrame@Frame@ComBot_Ratter]:SetText[Container Bookmark]
@@ -462,9 +494,9 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											UIElement[DropoffSubType@DropoffFrame@Frame@ComBot_Ratter]:AddItem[Corporation Folder 7]
 											UIElement[DropoffSubType@DropoffFrame@Frame@ComBot_Ratter].ItemByText["${Script[ComBot].VariableScope.Ratter.Config.DropoffSubType}"]:Select
 											UIElement[DropoffSubTypeTitle@DropoffFrame@Frame@ComBot_Ratter]:SetText[Corporate Folder]
-											UIElement[Dropoff_Container@DropoffFrame@Frame@ComBot_Ratter]:Show
-											UIElement[Dropoff_ContainerTitle@DropoffFrame@Frame@ComBot_Ratter]:SetText[Orca Pilot Name]
-											UIElement[Dropoff_ContainerTitle@DropoffFrame@Frame@ComBot_Ratter]:Show
+											UIElement[DropoffContainer@DropoffFrame@Frame@ComBot_Ratter]:Show
+											UIElement[DropoffContainerTitle@DropoffFrame@Frame@ComBot_Ratter]:SetText[Orca Pilot Name]
+											UIElement[DropoffContainerTitle@DropoffFrame@Frame@ComBot_Ratter]:Show
 											UIElement[DropoffSubTypeTitle@DropoffFrame@Frame@ComBot_Ratter]:Show
 											UIElement[DropoffSubType@DropoffFrame@Frame@ComBot_Ratter]:Show
 											UIElement[DropoffTitle@DropoffFrame@Frame@ComBot_Ratter]:SetText[Mining System Bookmark]
@@ -473,12 +505,12 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											UIElement[DropoffSubTypeTitle@DropoffFrame@Frame@ComBot_Ratter]:Hide
 											UIElement[DropoffSubType@DropoffFrame@Frame@ComBot_Ratter]:Hide
 											Script[ComBot].VariableScope.Ratter.Config:SetDropoffSubType[\"\"]
-											UIElement[Dropoff_Container@DropoffFrame@Frame@ComBot_Ratter]:Hide
-											UIElement[Dropoff_ContainerTitle@DropoffFrame@Frame@ComBot_Ratter]:Hide
+											UIElement[DropoffContainer@DropoffFrame@Frame@ComBot_Ratter]:Hide
+											UIElement[DropoffContainerTitle@DropoffFrame@Frame@ComBot_Ratter]:Hide
 											Script[ComBot].VariableScope.Ratter.Config:SetDropoffContainer[\"\"]
 											UIElement[DropoffTitle@DropoffFrame@Frame@ComBot_Ratter]:SetText[Station Bookmark]
 									}
-									UIElement[Dropoff_Container@DropoffFrame@Frame@ComBot_Ratter]:SetText[${Script[ComBot].VariableScope.Ratter.Config.DropoffContainer}]
+									UIElement[DropoffContainer@DropoffFrame@Frame@ComBot_Ratter]:SetText[${Script[ComBot].VariableScope.Ratter.Config.DropoffContainer}]
 								</OnSelect>
 								<OnMouseEnter>
 									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText["Use this field to configure where you would like ComBot to unload salvage loot."]
