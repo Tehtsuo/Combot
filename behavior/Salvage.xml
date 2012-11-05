@@ -493,7 +493,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<Width>32%</Width>
 								<Height>85%</Height>
 								<OnLoad>
-									switch ${Script[ComBot].VariableScope.Salvage.Config.Dropoff_Type}
+									switch ${Script[ComBot].VariableScope.Salvage.Config.DropoffType}
 									{
 										case Corporation Hangar
 											This:AddItem[Corporation Folder 1]
@@ -523,10 +523,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											This:AddItem[Corporation Folder 7]
 											break
 									}
-									This.ItemByText["${Script[ComBot].VariableScope.Salvage.Config.Dropoff_SubType}"]:Select
+									This.ItemByText["${Script[ComBot].VariableScope.Salvage.Config.DropoffSubType}"]:Select
 								</OnLoad>
 								<OnSelect>
-									Script[ComBot].VariableScope.Salvage.Config:SetDropoff_SubType[${This.SelectedItem.Text}]
+									Script[ComBot].VariableScope.Salvage.Config:SetDropoffSubType[${This.SelectedItem.Text}]
 								</OnSelect>
 								<OnMouseEnter>
 									UIElement[Information@InformationFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText["This field is used to further configure your dropoff type for types that have additional options, like Corporate Hangars."]
@@ -559,10 +559,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									<Item>Orca</Item>
 								</Items>
 								<OnLoad>
-									This.ItemByText[${Script[ComBot].VariableScope.Salvage.Config.Dropoff_Type}]:Select
+									This.ItemByText[${Script[ComBot].VariableScope.Salvage.Config.DropoffType}]:Select
 								</OnLoad>
 								<OnSelect>
-									Script[ComBot].VariableScope.Salvage.Config:SetDropoff_Type[${This.SelectedItem.Text}]
+									Script[ComBot].VariableScope.Salvage.Config:SetDropoffType[${This.SelectedItem.Text}]
 									UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:ClearItems
 									switch ${This.SelectedItem.Text}
 									{
@@ -574,7 +574,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[Corporation Folder 5]
 											UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[Corporation Folder 6]
 											UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[Corporation Folder 7]
-											UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager].ItemByText["${Script[ComBot].VariableScope.Salvage.Config.Dropoff_SubType}"]:Select
+											UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager].ItemByText["${Script[ComBot].VariableScope.Salvage.Config.DropoffSubType}"]:Select
 											UIElement[DropoffSubTypeTitle@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText[Corporate Folder]
 											UIElement[DropoffSubTypeTitle@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Show
 											UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Show
@@ -591,7 +591,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[Corporation Folder 5]
 											UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[Corporation Folder 6]
 											UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[Corporation Folder 7]
-											UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager].ItemByText["${Script[ComBot].VariableScope.Salvage.Config.Dropoff_SubType}"]:Select
+											UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager].ItemByText["${Script[ComBot].VariableScope.Salvage.Config.DropoffSubType}"]:Select
 											UIElement[DropoffSubTypeTitle@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText[Corporate Folder]
 											UIElement[Dropoff_Container@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Show
 											UIElement[Dropoff_ContainerTitle@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText[Container Name]
@@ -608,7 +608,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[Corporation Folder 5]
 											UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[Corporation Folder 6]
 											UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:AddItem[Corporation Folder 7]
-											UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager].ItemByText["${Script[ComBot].VariableScope.Salvage.Config.Dropoff_SubType}"]:Select
+											UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager].ItemByText["${Script[ComBot].VariableScope.Salvage.Config.DropoffSubType}"]:Select
 											UIElement[DropoffSubTypeTitle@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText[Corporate Folder]
 											UIElement[Dropoff_Container@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Show
 											UIElement[Dropoff_ContainerTitle@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText[Orca Pilot Name]
@@ -620,7 +620,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 										case Personal Hangar
 											UIElement[DropoffSubTypeTitle@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Hide
 											UIElement[DropoffSubType@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Hide
-											Script[ComBot].VariableScope.Salvage.Config:SetDropoff_SubType[\"\"]
+											Script[ComBot].VariableScope.Salvage.Config:SetDropoffSubType[\"\"]
 											UIElement[Dropoff_Container@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Hide
 											UIElement[Dropoff_ContainerTitle@DropoffFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Hide
 											Script[ComBot].VariableScope.Salvage.Config:SetDropoffContainer[\"\"]

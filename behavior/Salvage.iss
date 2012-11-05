@@ -53,8 +53,8 @@ objectdef obj_Configuration_Salvager
 
 	Setting(string, Prefix, SetPrefix)
 	Setting(string, Dropoff, SetDropoff)
-	Setting(string, Dropoff_Type, SetDropoff_Type)
-	Setting(string, Dropoff_SubType, SetDropoff_SubType)
+	Setting(string, DropoffType, SetDropoffType)
+	Setting(string, DropoffSubType, SetDropoffSubType)
 	Setting(bool, BeltPatrolEnabled, SetBeltPatrolEnabled)
 	Setting(bool, SalvageYellow, SetSalvageYellow)
 	Setting(bool, AvoidShips, SetAvoidShips)
@@ -730,13 +730,13 @@ objectdef obj_Salvage inherits obj_State
 	
 	member:bool Offload()
 	{
-		switch ${Config.Dropoff_Type}
+		switch ${Config.DropoffType}
 		{
 			case Personal Hangar
 				Cargo:At[${Config.Dropoff}]:Unload
 				break
 			default
-				Cargo:At[${Config.Dropoff},${Config.Dropoff_Type},${Config.Dropoff_SubType},${Config.DropoffContainer}]:Unload
+				Cargo:At[${Config.Dropoff},${Config.DropoffType},${Config.DropoffSubType},${Config.DropoffContainer}]:Unload
 				break
 		}
 		return TRUE
