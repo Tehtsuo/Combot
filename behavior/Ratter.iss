@@ -43,19 +43,27 @@ objectdef obj_Configuration_Ratter
 	{
 		BaseConfig.BaseRef:AddSet[${This.SetName}]
 
+		This.CommonRef:AddSetting[Prefix,"Anom:"]
 		This.CommonRef:AddSetting[RattingSystem,""]
 		This.CommonRef:AddSetting[Dropoff,""]
+		This.CommonRef:AddSetting[DropoffType,""]
+		This.CommonRef:AddSetting[DropoffSubType,""]
+		This.CommonRef:AddSetting[DropoffContainer,""]
 		
 	}
 	
 	Setting(string, RattingSystem, SetRattingSystem)	
-	Setting(string, Dropoff, SetDropoff)	
-
+	Setting(string, Prefix, SetPrefix)
+	Setting(string, Dropoff, SetDropoff)
+	Setting(string, DropoffType, SetDropoffType)
+	Setting(string, DropoffSubType, SetDropoffSubType)
+	Setting(string, DropoffContainer, SetDropoffContainer)
 }
 
 objectdef obj_Ratter inherits obj_State
 {
 	variable obj_Configuration_Ratter Config
+	variable obj_RatterUI LocalUI
 	
 	variable obj_TargetList Rats
 	variable index:entity Belts
@@ -65,11 +73,13 @@ objectdef obj_Ratter inherits obj_State
 	{
 		This[parent]:Initialize
 		PulseFrequency:Set[500]
-		Dynamic:AddBehavior["Ratter", "Ratter", FALSE]
+		DynamicAddBehavior("Ratter", "Ratter")
 	}
 
 	method Shutdown()
 	{
+		This:DeactivateStateQueueDisplay
+		This:Clear
 	}	
 	
 	method Start()
@@ -260,37 +270,22 @@ objectdef obj_RatterUI inherits obj_State
 		EVE:GetBookmarks[Bookmarks]
 		Bookmarks:GetIterator[BookmarkIterator]
 		
-		UIElement[MiningSystemList@Miner_Frame@ComBot_Miner]:ClearItems
+		UIElement[RattingSystemList@RatterFrame@Frame@ComBot_Ratter]:ClearItems
 		if ${BookmarkIterator:First(exists)}
 			do
 			{	
-				if ${UIElement[MiningSystem@Miner_Frame@ComBot_Miner].Text.Length}
+				if ${UIElement[RattingSystem@RatterFrame@Frame@ComBot_Ratter].Text.Length}
 				{
-					if ${BookmarkIterator.Value.Label.Left[${Miner.Config.MiningSystem.Length}].Equal[${Miner.Config.MiningSystem}]}
-						UIElement[MiningSystemList@Miner_Frame@ComBot_Miner]:AddItem[${BookmarkIterator.Value.Label.Escape}]
+					if ${BookmarkIterator.Value.Label.Left[${Ratter.Config.RattingSystem.Length}].Equal[${Ratter.Config.RattingSystem}]}
+						UIElement[RattingSystemList@RatterFrame@Frame@ComBot_Ratter]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 				else
 				{
-					UIElement[MiningSystemList@Miner_Frame@ComBot_Miner]:AddItem[${BookmarkIterator.Value.Label.Escape}]
+					UIElement[RattingSystemList@RatterFrame@Frame@ComBot_Ratter]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 			}
 			while ${BookmarkIterator:Next(exists)}
 
-		UIElement[DropoffList@Miner_Frame@ComBot_Miner]:ClearItems
-		if ${BookmarkIterator:First(exists)}
-			do
-			{	
-				if ${UIElement[Dropoff@Miner_Frame@ComBot_Miner].Text.Length}
-				{
-					if ${BookmarkIterator.Value.Label.Left[${Miner.Config.Dropoff.Length}].Equal[${Miner.Config.Dropoff}]}
-						UIElement[DropoffList@Miner_Frame@ComBot_Miner]:AddItem[${BookmarkIterator.Value.Label.Escape}]
-				}
-				else
-				{
-					UIElement[DropoffList@Miner_Frame@ComBot_Miner]:AddItem[${BookmarkIterator.Value.Label.Escape}]
-				}
-			}
-			while ${BookmarkIterator:Next(exists)}
 			
 		return FALSE
 	}

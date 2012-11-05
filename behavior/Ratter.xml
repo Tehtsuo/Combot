@@ -1,0 +1,529 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ISUI>
+
+<!--
+
+ComBot  Copyright © 2012  Tehtsuo and Vendan
+
+This file is part of ComBot.
+
+ComBot is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ComBot is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+
+	<template name='Information.Font'>	
+		<Name>Terminal</Name>
+		<Size>8</Size>
+		<Color>FFFFFFFF</Color>
+	</template>	
+	<template name='Text.Font'>	
+		<Name>Verdana</Name>
+		<Size>12</Size>
+		<Color>FFFFFFFF</Color>
+		<Bold />
+	</template>	
+	<template name='Checkbox.Font'>	
+		<Name>Verdana</Name>
+		<Size>12</Size>
+		<Color>FFFFFFFF</Color>
+		<Bold />
+	</template>	
+	<template name='Button.Font'>	
+		<Name>Verdana</Name>
+		<Size>12</Size>
+		<Color>FF000000</Color>
+		<Bold />
+	</template>	
+
+	<window name='ComBot_Ratter'>
+		<Visible>1</Visible>
+		<BackGroundColor></BackGroundColor>
+		<Border>0</Border>
+		<X>200</X>
+		<Y>300</Y>
+		<Width>800</Width>
+		<Height>600</Height>
+		<TitleBar>
+			<Width>100%</Width>
+			<Height>20</Height>
+			<Border>0</Border>
+			<BackgroundColor>FF000000</BackgroundColor>
+			<Children>
+				<Text name='ComBot_Ratter_TitleBar_Title'>
+					<X>0</X>
+					<Y>3</Y>
+					<Width>100%</Width>
+					<Height>20</Height>
+					<Alignment>Center</Alignment>
+					<Text>Ratter Configuration</Text>
+				</Text>
+				<button	Name='Help'>
+					<Font template='Button.Font' />
+					<BackgroundColor>FF000000</BackgroundColor>
+					<X>r80</X>
+					<Y>0</Y>
+					<Width>40</Width>
+					<Height>20</Height>
+					<Text>Help</Text>
+					<OnLeftClick>
+						timedcommand 0 "OSExecute http://combot.vendaria.net/index.php?title=Ratter"
+					</OnLeftClick>
+				</button>
+				<button	Name='Close'>
+					<X>r40</X>
+					<Y>0</Y>
+					<Width>40</Width>
+					<Height>20</Height>
+					<Text>Close</Text>
+					<OnLeftClick>
+						if !${EVE.Bookmark[${Script[ComBot].VariableScope.Ratter.Config.Dropoff}](exists)}
+						{
+							Script[ComBot].VariableScope.UI:Update["Ratter", "Unable to verify Dropoff bookmark", "r"]
+						}
+
+						Script[ComBot].VariableScope.Ratter.LocalUI:Stop
+						ui -unload "&filepath;/Ratter"
+					</OnLeftClick>
+				</button>
+			</Children>
+		</TitleBar>
+		<Children name="Children">
+			<Frame name="Frame">
+				<X>0</X>
+				<Y>5</Y>
+				<Width>100%</Width>
+				<Height>100%</Height>
+				<BackgroundColor>FF000000</BackgroundColor>
+				<Border>1</Border>
+				<BorderColor>FFFFFFFF</BorderColor>
+				<Children name="Children">
+				
+					<Text name='RatterFrameTitle'> 
+						<X>1%</X> 
+						<Y>2%</Y> 
+						<Width>32%</Width> 
+						<Height>4%</Height> 
+						<Text>Ratter Configuration</Text>
+						<OnLoad>
+							This.Font:SetColor[FFFFFF00]
+						</OnLoad>
+					</Text>
+					<Frame name="RatterFrame">
+						<X>0%</X>
+						<Y>4%</Y>
+						<Width>100%</Width>
+						<Height>30%</Height>
+						<BackgroundColor>FF000000</BackgroundColor>
+						<Border>1</Border>
+						<BorderColor>FFFFFFFF</BorderColor>
+						<Children>
+							<Text name='PrefixTitle'> 
+								<X>1%</X> 
+								<Y>3%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Ratting Bookmark Prefix</Text>
+							</Text>						 
+							<Textentry name='Prefix'> 
+								<X>1%</X> 
+								<Y>10%</Y> 
+								<Width>32%</Width> 
+								<Height>15%</Height> 
+								<OnLoad>
+									This:SetText[${Script[ComBot].VariableScope.Ratter.Config.Prefix}]
+								</OnLoad>
+								<OnChange>
+									Script[ComBot].VariableScope.Ratter.Config:SetPrefix[${This.Text}]
+								</OnChange>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText["This field is to specify the prefix to use for your salvage bookmarks.  Any bookmark which starts with this prefix will be used as a salvage location."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText[""]
+								</OnMouseExit>
+							</Textentry>			
+							<Text name='RattingSystemTitle'> 
+								<X>1%</X> 
+								<Y>33%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Ratting System</Text>
+							</Text>						 
+							<Textentry Name="RattingSystem">
+								<BackgroundColor>FF000000</BackgroundColor>
+								<Border>1</Border>
+								<BorderColor>FFFFFFFF</BorderColor>
+								<X>1%</X>
+								<Y>40%</Y>
+								<Width>32%</Width>
+								<Height>15%</Height>
+								<OnLoad>
+									This:SetText[${Script[ComBot].VariableScope.Ratter.Config.RattingSystem}]
+								</OnLoad>
+								<OnChange>
+									if ${This.Text.Length}
+									{
+										Script[ComBot].VariableScope.Ratter.Config:SetRattingSystem[${This.Text}]
+									}
+									else
+									{
+										Script[ComBot].VariableScope.Ratter.Config:SetRattingSystem[\"\"]
+									}
+									UIElement[RattingSystemList@RatterFrame@Frame@ComBot_Ratter]:Show
+									Script[ComBot].VariableScope.Ratter.LocalUI:Start
+								</OnChange>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText["This field needs to contain the exact name of a bookmark in the system in which you would like to belt salvage when no salvage prefix bookmarks are available."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText[""]
+								</OnMouseExit>
+							</Textentry>
+							<listbox Name="RattingSystemList">
+								<BackgroundColor>FF000000</BackgroundColor>
+								<Border>1</Border>
+								<BorderColor>FFFFFFFF</BorderColor>
+								<X>1%</X>
+								<Y>55%</Y>
+								<Width>32%</Width>
+								<Height>50%</Height>
+								<OnLoad>
+									This:Hide
+								</OnLoad>
+								<OnSelect>
+									UIElement[RattingSystem@RatterFrame@Frame@ComBot_Ratter]:SetText[${This.SelectedItem.Text}]
+									Script[ComBot].VariableScope.Ratter.Config:SetRattingSystem[${This.SelectedItem.Text}]
+									Script[ComBot].VariableScope.Ratter.LocalUI:Stop
+									This:Hide
+								</OnSelect>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText["This field needs to contain the exact name of a bookmark in the system in which you would like to belt salvage when no salvage prefix bookmarks are available."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText[""]
+								</OnMouseExit>
+							</listbox>
+						</Children>
+					</Frame>
+				
+					<Text name='DropoffFrameTitle'> 
+						<X>1%</X> 
+						<Y>40%</Y> 
+						<Width>32%</Width> 
+						<Height>4%</Height> 
+						<Text>Pickup Configuration</Text>
+						<OnLoad>
+							This.Font:SetColor[FFFFFF00]
+						</OnLoad>
+					</Text>
+					<Frame name="DropoffFrame">
+						<X>0%</X>
+						<Y>42%</Y>
+						<Width>100%</Width>
+						<Height>30%</Height>
+						<BackgroundColor>FF000000</BackgroundColor>
+						<Border>1</Border>
+						<BorderColor>FFFFFFFF</BorderColor>
+						<Children>
+							<Text name='DropoffTitle'> 
+								<X>34%</X> 
+								<Y>3%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Dropoff Bookmark</Text>
+							</Text>						 
+							<Textentry Name="Dropoff">
+								<BackgroundColor>FF000000</BackgroundColor>
+								<Border>1</Border>
+								<BorderColor>FFFFFFFF</BorderColor>
+								<X>34%</X>
+								<Y>10%</Y>
+								<Width>32%</Width>
+								<Height>15%</Height>
+								<OnLoad>
+									This:SetText[${Script[ComBot].VariableScope.Ratter.Config.Dropoff}]
+								</OnLoad>
+								<OnChange>
+									if ${This.Text.Length}
+									{
+										Script[ComBot].VariableScope.Ratter.Config:SetDropoff[${This.Text}]
+									}
+									else
+									{
+										Script[ComBot].VariableScope.Ratter.Config:SetDropoff[\"\"]
+									}
+									UIElement[DropoffList@DropoffFrame@Frame@ComBot_Ratter]:Show
+									Script[ComBot].VariableScope.Ratter.LocalUI:Start
+								</OnChange>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText["This field needs to contain the exact bookmark for the station in which you would like to drop off salvage loot."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText[""]
+								</OnMouseExit>
+							</Textentry>
+							<listbox Name="DropoffList">
+								<BackgroundColor>FF000000</BackgroundColor>
+								<Border>1</Border>
+								<BorderColor>FFFFFFFF</BorderColor>
+								<X>34%</X>
+								<Y>25%</Y>
+								<Width>32%</Width>
+								<Height>70%</Height>
+								<OnLoad>
+									This:SetZOrder[alwaysontop]
+									This:Hide
+								</OnLoad>
+								<OnSelect>
+									UIElement[Dropoff@DropoffFrame@Frame@ComBot_Ratter]:SetText[${This.SelectedItem.Text}]
+									Script[ComBot].VariableScope.Ratter.Config:SetDropoff[${This.SelectedItem.Text}]
+									Script[ComBot].VariableScope.Ratter.LocalUI:Stop
+									This:Hide
+								</OnSelect>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText["This field needs to contain the exact bookmark for the station in which you would like to drop off salvage loot."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText[""]
+								</OnMouseExit>
+							</listbox>
+							<Text name='Dropoff_ContainerTitle'> 
+								<X>34%</X> 
+								<Y>73%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Container Name</Text>
+							</Text>
+							<TextEntry name='Dropoff_Container'> 
+								<X>34%</X> 
+								<Y>80%</Y> 
+								<Width>32%</Width> 
+								<Height>15%</Height> 
+								<OnLoad>
+									This:SetText[${Script[ComBot].VariableScope.Ratter.Config.DropoffContainer}]
+								</OnLoad>
+								<OnChange>
+									Script[ComBot].VariableScope.Ratter.Config:SetDropoffContainer[${This.Text}]
+								</OnChange>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText["This field is used to supply ComBot with an identifier for your dropoff location.  If you are delivering to an Orca, this needs to contain the name of the pilot flying your Orca.  If you are delivering to a Player Owned Station structure, this needs to contain the structure's name.  This field is also used to specify the prefix for corporate bookmarks created using the Corporate Jetcan mode."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText[""]
+								</OnMouseExit>
+							</TextEntry>
+
+							<Text name='DropoffSubTypeTitle'> 
+								<X>67%</X> 
+								<Y>3%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Dropoff Sub-Type</Text>
+							</Text>
+							<listbox Name="DropoffSubType">
+								<BackgroundColor>FF000000</BackgroundColor>
+								<Border>1</Border>
+								<BorderColor>FFFFFFFF</BorderColor>
+								<X>67%</X>
+								<Y>10%</Y>
+								<Width>32%</Width>
+								<Height>85%</Height>
+								<OnLoad>
+									switch ${Script[ComBot].VariableScope.Ratter.Config.DropoffType}
+									{
+										case Corporation Hangar
+											This:AddItem[Corporation Folder 1]
+											This:AddItem[Corporation Folder 2]
+											This:AddItem[Corporation Folder 3]
+											This:AddItem[Corporation Folder 4]
+											This:AddItem[Corporation Folder 5]
+											This:AddItem[Corporation Folder 6]
+											This:AddItem[Corporation Folder 7]
+											break
+										case Container
+											This:AddItem[Corporation Folder 1]
+											This:AddItem[Corporation Folder 2]
+											This:AddItem[Corporation Folder 3]
+											This:AddItem[Corporation Folder 4]
+											This:AddItem[Corporation Folder 5]
+											This:AddItem[Corporation Folder 6]
+											This:AddItem[Corporation Folder 7]
+											break
+										case Orca
+											This:AddItem[Corporation Folder 1]
+											This:AddItem[Corporation Folder 2]
+											This:AddItem[Corporation Folder 3]
+											This:AddItem[Corporation Folder 4]
+											This:AddItem[Corporation Folder 5]
+											This:AddItem[Corporation Folder 6]
+											This:AddItem[Corporation Folder 7]
+											break
+									}
+									This.ItemByText["${Script[ComBot].VariableScope.Ratter.Config.DropoffSubType}"]:Select
+								</OnLoad>
+								<OnSelect>
+									Script[ComBot].VariableScope.Ratter.Config:SetDropoffSubType[${This.SelectedItem.Text}]
+								</OnSelect>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText["This field is used to further configure your dropoff type for types that have additional options, like Corporate Hangars."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText[""]
+								</OnMouseExit>
+							</listbox>
+
+							<Text name='DropoffTypeTitle'> 
+								<X>1%</X> 
+								<Y>3%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Dropoff Location Type</Text>
+							</Text>
+							<listbox Name="DropoffType">
+								<BackgroundColor>FF000000</BackgroundColor>
+								<Border>1</Border>
+								<BorderColor>FFFFFFFF</BorderColor>
+								<X>1%</X>
+								<Y>10%</Y>
+								<Width>32%</Width>
+								<Height>85%</Height>
+								<Items>
+									<Item>Personal Hangar</Item>
+									<Item>Corporation Hangar</Item>
+									<Item>Container</Item>
+									<Item>Orca</Item>
+								</Items>
+								<OnLoad>
+									This.ItemByText[${Script[ComBot].VariableScope.Ratter.Config.DropoffType}]:Select
+								</OnLoad>
+								<OnSelect>
+									Script[ComBot].VariableScope.Ratter.Config:SetDropoffType[${This.SelectedItem.Text}]
+									UIElement[DropoffSubType@DropoffFrame@Frame@ComBot_Ratter]:ClearItems
+									switch ${This.SelectedItem.Text}
+									{
+										case Corporation Hangar
+											UIElement[DropoffSubType@DropoffFrame@Frame@ComBot_Ratter]:AddItem[Corporation Folder 1]
+											UIElement[DropoffSubType@DropoffFrame@Frame@ComBot_Ratter]:AddItem[Corporation Folder 2]
+											UIElement[DropoffSubType@DropoffFrame@Frame@ComBot_Ratter]:AddItem[Corporation Folder 3]
+											UIElement[DropoffSubType@DropoffFrame@Frame@ComBot_Ratter]:AddItem[Corporation Folder 4]
+											UIElement[DropoffSubType@DropoffFrame@Frame@ComBot_Ratter]:AddItem[Corporation Folder 5]
+											UIElement[DropoffSubType@DropoffFrame@Frame@ComBot_Ratter]:AddItem[Corporation Folder 6]
+											UIElement[DropoffSubType@DropoffFrame@Frame@ComBot_Ratter]:AddItem[Corporation Folder 7]
+											UIElement[DropoffSubType@DropoffFrame@Frame@ComBot_Ratter].ItemByText["${Script[ComBot].VariableScope.Ratter.Config.DropoffSubType}"]:Select
+											UIElement[DropoffSubTypeTitle@DropoffFrame@Frame@ComBot_Ratter]:SetText[Corporate Folder]
+											UIElement[DropoffSubTypeTitle@DropoffFrame@Frame@ComBot_Ratter]:Show
+											UIElement[DropoffSubType@DropoffFrame@Frame@ComBot_Ratter]:Show
+											UIElement[Dropoff_Container@DropoffFrame@Frame@ComBot_Ratter]:Hide
+											UIElement[Dropoff_ContainerTitle@DropoffFrame@Frame@ComBot_Ratter]:Hide
+											Script[ComBot].VariableScope.Ratter.Config:SetDropoffContainer[\"\"]
+											UIElement[DropoffTitle@DropoffFrame@Frame@ComBot_Ratter]:SetText[Station Bookmark]
+											break
+										case Container
+											UIElement[DropoffSubType@DropoffFrame@Frame@ComBot_Ratter]:AddItem[Corporation Folder 1]
+											UIElement[DropoffSubType@DropoffFrame@Frame@ComBot_Ratter]:AddItem[Corporation Folder 2]
+											UIElement[DropoffSubType@DropoffFrame@Frame@ComBot_Ratter]:AddItem[Corporation Folder 3]
+											UIElement[DropoffSubType@DropoffFrame@Frame@ComBot_Ratter]:AddItem[Corporation Folder 4]
+											UIElement[DropoffSubType@DropoffFrame@Frame@ComBot_Ratter]:AddItem[Corporation Folder 5]
+											UIElement[DropoffSubType@DropoffFrame@Frame@ComBot_Ratter]:AddItem[Corporation Folder 6]
+											UIElement[DropoffSubType@DropoffFrame@Frame@ComBot_Ratter]:AddItem[Corporation Folder 7]
+											UIElement[DropoffSubType@DropoffFrame@Frame@ComBot_Ratter].ItemByText["${Script[ComBot].VariableScope.Ratter.Config.DropoffSubType}"]:Select
+											UIElement[DropoffSubTypeTitle@DropoffFrame@Frame@ComBot_Ratter]:SetText[Corporate Folder]
+											UIElement[Dropoff_Container@DropoffFrame@Frame@ComBot_Ratter]:Show
+											UIElement[Dropoff_ContainerTitle@DropoffFrame@Frame@ComBot_Ratter]:SetText[Container Name]
+											UIElement[Dropoff_ContainerTitle@DropoffFrame@Frame@ComBot_Ratter]:Show
+											UIElement[DropoffSubTypeTitle@DropoffFrame@Frame@ComBot_Ratter]:Show
+											UIElement[DropoffSubType@DropoffFrame@Frame@ComBot_Ratter]:Show
+											UIElement[DropoffTitle@DropoffFrame@Frame@ComBot_Ratter]:SetText[Container Bookmark]
+											break
+										case Orca
+											UIElement[DropoffSubType@DropoffFrame@Frame@ComBot_Ratter]:AddItem[Corporation Folder 1]
+											UIElement[DropoffSubType@DropoffFrame@Frame@ComBot_Ratter]:AddItem[Corporation Folder 2]
+											UIElement[DropoffSubType@DropoffFrame@Frame@ComBot_Ratter]:AddItem[Corporation Folder 3]
+											UIElement[DropoffSubType@DropoffFrame@Frame@ComBot_Ratter]:AddItem[Corporation Folder 4]
+											UIElement[DropoffSubType@DropoffFrame@Frame@ComBot_Ratter]:AddItem[Corporation Folder 5]
+											UIElement[DropoffSubType@DropoffFrame@Frame@ComBot_Ratter]:AddItem[Corporation Folder 6]
+											UIElement[DropoffSubType@DropoffFrame@Frame@ComBot_Ratter]:AddItem[Corporation Folder 7]
+											UIElement[DropoffSubType@DropoffFrame@Frame@ComBot_Ratter].ItemByText["${Script[ComBot].VariableScope.Ratter.Config.DropoffSubType}"]:Select
+											UIElement[DropoffSubTypeTitle@DropoffFrame@Frame@ComBot_Ratter]:SetText[Corporate Folder]
+											UIElement[Dropoff_Container@DropoffFrame@Frame@ComBot_Ratter]:Show
+											UIElement[Dropoff_ContainerTitle@DropoffFrame@Frame@ComBot_Ratter]:SetText[Orca Pilot Name]
+											UIElement[Dropoff_ContainerTitle@DropoffFrame@Frame@ComBot_Ratter]:Show
+											UIElement[DropoffSubTypeTitle@DropoffFrame@Frame@ComBot_Ratter]:Show
+											UIElement[DropoffSubType@DropoffFrame@Frame@ComBot_Ratter]:Show
+											UIElement[DropoffTitle@DropoffFrame@Frame@ComBot_Ratter]:SetText[Mining System Bookmark]
+											break
+										case Personal Hangar
+											UIElement[DropoffSubTypeTitle@DropoffFrame@Frame@ComBot_Ratter]:Hide
+											UIElement[DropoffSubType@DropoffFrame@Frame@ComBot_Ratter]:Hide
+											Script[ComBot].VariableScope.Ratter.Config:SetDropoffSubType[\"\"]
+											UIElement[Dropoff_Container@DropoffFrame@Frame@ComBot_Ratter]:Hide
+											UIElement[Dropoff_ContainerTitle@DropoffFrame@Frame@ComBot_Ratter]:Hide
+											Script[ComBot].VariableScope.Ratter.Config:SetDropoffContainer[\"\"]
+											UIElement[DropoffTitle@DropoffFrame@Frame@ComBot_Ratter]:SetText[Station Bookmark]
+									}
+									UIElement[Dropoff_Container@DropoffFrame@Frame@ComBot_Ratter]:SetText[${Script[ComBot].VariableScope.Ratter.Config.DropoffContainer}]
+								</OnSelect>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText["Use this field to configure where you would like ComBot to unload salvage loot."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText[""]
+								</OnMouseExit>
+							</listbox>
+				
+						</Children>
+					</Frame>
+					
+					<Text name='InformationFrameTitle'> 
+						<X>1%</X> 
+						<Y>80%</Y> 
+						<Width>32%</Width> 
+						<Height>4%</Height> 
+						<Text>Information</Text>
+						<OnLoad>
+							This.Font:SetColor[FFFFFF00]
+						</OnLoad>
+					</Text>
+					<Frame name="InformationFrame">
+						<X>0%</X>
+						<Y>82%</Y>
+						<Width>100%</Width>
+						<Height>18%</Height>
+						<BackgroundColor>FF000000</BackgroundColor>
+						<Border>1</Border>
+						<BorderColor>FFFFFFFF</BorderColor>
+						<Children>
+							<Text name='Information'> 
+								<X>5%</X> 
+								<Y>5%</Y> 
+								<Width>90%</Width> 
+								<Height>90%</Height> 
+								<Wrap />
+								<VerticalAlignment>Center</VerticalAlignment>
+							</Text>
+						</Children>
+					</Frame>
+					
+				</Children>
+			</Frame>
+		</Children>
+	</window>
+	
+</ISUI>
