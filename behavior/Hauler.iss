@@ -148,9 +148,13 @@ objectdef obj_Hauler inherits obj_State
 	{
 		if ${EVEWindow[ByName, Inventory].ChildWindowExists[ShipOreHold]} && !${OreHold}
 		{
+			echo Found ore hold - going to fill
 			Cargo:PopulateCargoList[Ship]
+			echo CargoList - ${Cargo.CargoList.Used}
 			Cargo:Filter[CategoryID==CATEGORYID_ORE]
+			echo CargoList after filter - ${Cargo.CargoList.Used}
 			Cargo:MoveCargoList[OreHold]
+			echo Moved cargo to OreHold
 			This:InsertState["CheckCargoHold", 500, "TRUE"]
 			return TRUE
 		}
