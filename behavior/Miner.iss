@@ -560,7 +560,8 @@ objectdef obj_Miner inherits obj_State
 			{
 				variable string PopulateResults
 				UI:Update["Miner", "Belts still not found after re-filling the index", "y"]
-				UI:Update["Miner", "Expected entity bug, repopulating and re-trying", "y"]
+				UI:Update["Miner", "This might be a bug, or you might be in a system with no belts!", "y"]
+				UI:Update["Miner", "Attempting to force a PopulateEntities to fix bug", "y"]
 				EVE:PopulateEntities[TRUE]
 				return FALSE
 			}
