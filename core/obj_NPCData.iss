@@ -21,7 +21,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 objectdef obj_NPCData
 {
-	variable string SetName = "NPC Data"
+	variable string SetName = "NPCData"
 
 	variable filepath CONFIG_PATH = "${Script.CurrentDirectory}/data"
 	variable string CONFIG_FILE = "NPCData.xml"
