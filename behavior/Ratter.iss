@@ -52,6 +52,7 @@ objectdef obj_Configuration_Ratter
 		
 	}
 	
+	Setting(bool, BeltRat, SetBeltRat)
 	Setting(int, Warp, SetWarp)
 	Setting(int, Threshold, SetThreshold)
 	Setting(string, RattingSystem, SetRattingSystem)	
@@ -182,21 +183,33 @@ objectdef obj_Ratter inherits obj_State
 			Bookmarks:Collapse
 			if ${Bookmarks.Used} == 0
 			{
-				if !${Client.InSpace}
+				if ${Config.BeltRat}
 				{
-					Move:Undock
-					return FALSE
-				}
+					if !${Client.InSpace}
+					{
+						Move:Undock
+						return FALSE
+					}
 
-				if ${Belts.Used} == 0
+					if ${Belts.Used} == 0
+					{
+						EVE:QueryEntities[Belts, "GroupID = GROUP_ASTEROIDBELT"]
+					}
+
+					Move:Object[${Entity[${Belts[1].ID}]}, ${Distance}]
+					Belts:Remove[1]
+					Belts:Collapse
+					return TRUE
+				}
+				else
 				{
-					EVE:QueryEntities[Belts, "GroupID = GROUP_ASTEROIDBELT"]
+					Move:Bookmark[${Config.Dropoff}]
+					This:Clear
+					This:QueueState["Traveling"]
+					This:QueueState["OpenCargoHold"]
+					This:QueueState["CheckCargoHold"]
+					return TRUE
 				}
-
-				Move:Object[${Entity[${Belts[1].ID}]}, ${Distance}]
-				Belts:Remove[1]
-				Belts:Collapse
-				return TRUE
 			}
 		}
 		else

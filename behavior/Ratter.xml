@@ -216,6 +216,28 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText[""]
 								</OnMouseExit>
 							</listbox>
+							<Checkbox name='BeltRat'> 
+								<X>1%</X> 
+								<Y>60%</Y> 
+								<Width>32%</Width> 
+								<Height>9%</Height> 
+								<Text>Rat in belts if no bookmarks are available</Text>
+								<OnLoad>
+									if ${Script[ComBot].VariableScope.Ratter.Config.BeltRat}
+									{
+										This:SetChecked
+									}
+								</OnLoad>
+								<OnLeftClick>
+									Script[ComBot].VariableScope.Ratter.Config:SetBeltRat[${This.Checked}]
+								</OnLeftClick>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText["When this option is checked, ComBot will rat in belts instead of docking up when no bookmarks are available."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText[""]
+								</OnMouseExit>
+							</Checkbox>
 							<Text name='ThresholdTitle'> 
 								<X>34%</X> 
 								<Y>3%</Y> 
