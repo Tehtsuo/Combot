@@ -217,6 +217,7 @@ objectdef obj_Ratter inherits obj_State
 		}
 		else
 		{
+			UI:Update["Ratter", "Removing ${Bookmarks.Get[1].Label}", "g"]
 			Bookmarks.Get[1]:Remove
 			Bookmarks:Remove[1]
 			Bookmarks:Collapse
@@ -224,11 +225,10 @@ objectdef obj_Ratter inherits obj_State
 	
 		if ${Entity[GroupID==GROUP_WRECK && HaveLootRights](exists)} && ${Config.Salvage}
 		{
+			UI:Update["Ratter", "Bookmarking ${Entity[GroupID==GROUP_WRECK && HaveLootRights].Name}", "g"]
 			Entity[GroupID==GROUP_WRECK && HaveLootRights]:CreateBookmark["${Config.SalvagePrefix} ${EVETime.Time.Left[-3].Replace[":",""]}","","Corporation Locations"]
 		}
 		Move:Bookmark[${Bookmarks.Get[1].Label}, TRUE, ${Distance}]
-		Bookmarks:Remove[1]
-		Bookmarks:Collapse
 		return TRUE
 
 	}
@@ -252,6 +252,7 @@ objectdef obj_Ratter inherits obj_State
 			return TRUE
 		}
 		
+		Rats:RequestUpdate
 		return FALSE
 	}
 	
