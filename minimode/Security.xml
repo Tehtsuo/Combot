@@ -87,12 +87,12 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					<Height>20</Height>
 					<Text>Close</Text>
 					<OnLeftClick>
-						if !${EVE.Bookmark[${Script[ComBot].VariableScope.Config.Security.FleeTo}](exists)}
+						if !${EVE.Bookmark[${Script[ComBot].VariableScope.Security.Config.FleeTo}](exists)}
 						{
 							Script[ComBot].VariableScope.UI:Update["obj_Security", "Unable to find flee bookmark. This is DANGEROUS!", "r"]
 							Script[ComBot].VariableScope.UI:Update["obj_Security", "Verify your flee bookmark in the Security settings! ", "r"]
 						}
-						ui -unload "&filepath;/ComBotGUI_Security"
+						ui -unload "&filepath;/Security"
 					</OnLeftClick>
 				</button>
 			</Children>
@@ -114,13 +114,13 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Height>3%</Height> 
 						<Text>Pilot's standing to me</Text>
 						<OnLoad>
-							if ${Script[ComBot].VariableScope.Config.Security.MeToPilot}
+							if ${Script[ComBot].VariableScope.Security.Config.MeToPilot}
 							{
 								This:SetChecked
 							}
 						</OnLoad>
 						<OnLeftClick>
-							Script[ComBot].VariableScope.Config.Security:SetMeToPilot[${This.Checked}]
+							Script[ComBot].VariableScope.Security.Config:SetMeToPilot[${This.Checked}]
 						</OnLeftClick>
 					</Checkbox>
 					<Checkbox name='obj_Security_MeToCorp'>
@@ -130,13 +130,13 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Height>3%</Height> 
 						<Text>Corporation's standing to me</Text>
 						<OnLoad>
-							if ${Script[ComBot].VariableScope.Config.Security.MeToCorp}
+							if ${Script[ComBot].VariableScope.Security.Config.MeToCorp}
 							{
 								This:SetChecked
 							}
 						</OnLoad>
 						<OnLeftClick>
-							Script[ComBot].VariableScope.Config.Security:SetMeToCorp[${This.Checked}]
+							Script[ComBot].VariableScope.Security.Config:SetMeToCorp[${This.Checked}]
 						</OnLeftClick>
 					</Checkbox>
 					<Checkbox name='obj_Security_MeToAlliance'>
@@ -146,13 +146,13 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Height>3%</Height> 
 						<Text>Alliance's standing to me</Text>
 						<OnLoad>
-							if ${Script[ComBot].VariableScope.Config.Security.MeToAlliance}
+							if ${Script[ComBot].VariableScope.Security.Config.MeToAlliance}
 							{
 								This:SetChecked
 							}
 						</OnLoad>
 						<OnLeftClick>
-							Script[ComBot].VariableScope.Config.Security:SetMeToAlliance[${This.Checked}]
+							Script[ComBot].VariableScope.Security.Config:SetMeToAlliance[${This.Checked}]
 						</OnLeftClick>
 					</Checkbox>
 					<Checkbox name='obj_Security_CorpToPilot'>
@@ -162,13 +162,13 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Height>3%</Height> 
 						<Text>Pilot's standing to my corporation</Text>
 						<OnLoad>
-							if ${Script[ComBot].VariableScope.Config.Security.CorpToPilot}
+							if ${Script[ComBot].VariableScope.Security.Config.CorpToPilot}
 							{
 								This:SetChecked
 							}
 						</OnLoad>
 						<OnLeftClick>
-							Script[ComBot].VariableScope.Config.Security:SetCorpToPilot[${This.Checked}]
+							Script[ComBot].VariableScope.Security.Config:SetCorpToPilot[${This.Checked}]
 						</OnLeftClick>
 					</Checkbox>
 					<Checkbox name='obj_Security_CorpToCorp'>
@@ -178,13 +178,13 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Height>3%</Height> 
 						<Text>Corporation's standing to my corporation</Text>
 						<OnLoad>
-							if ${Script[ComBot].VariableScope.Config.Security.CorpToCorp}
+							if ${Script[ComBot].VariableScope.Security.Config.CorpToCorp}
 							{
 								This:SetChecked
 							}
 						</OnLoad>
 						<OnLeftClick>
-							Script[ComBot].VariableScope.Config.Security:SetCorpToCorp[${This.Checked}]
+							Script[ComBot].VariableScope.Security.Config:SetCorpToCorp[${This.Checked}]
 						</OnLeftClick>
 					</Checkbox>
 					<Checkbox name='obj_Security_CorpToAlliance'>
@@ -194,13 +194,13 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Height>3%</Height> 
 						<Text>Alliance's standing to my corporation</Text>
 						<OnLoad>
-							if ${Script[ComBot].VariableScope.Config.Security.CorpToAlliance}
+							if ${Script[ComBot].VariableScope.Security.Config.CorpToAlliance}
 							{
 								This:SetChecked
 							}
 						</OnLoad>
 						<OnLeftClick>
-							Script[ComBot].VariableScope.Config.Security:SetCorpToAlliance[${This.Checked}]
+							Script[ComBot].VariableScope.Security.Config:SetCorpToAlliance[${This.Checked}]
 						</OnLeftClick>
 					</Checkbox>
 					<Checkbox name='obj_Security_AllianceToPilot'>
@@ -210,13 +210,13 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Height>3%</Height> 
 						<Text>Pilot's standing to my alliance</Text>
 						<OnLoad>
-							if ${Script[ComBot].VariableScope.Config.Security.AllianceToPilot}
+							if ${Script[ComBot].VariableScope.Security.Config.AllianceToPilot}
 							{
 								This:SetChecked
 							}
 						</OnLoad>
 						<OnLeftClick>
-							Script[ComBot].VariableScope.Config.Security:SetAllianceToPilot[${This.Checked}]
+							Script[ComBot].VariableScope.Security.Config:SetAllianceToPilot[${This.Checked}]
 						</OnLeftClick>
 					</Checkbox>
 					<Checkbox name='obj_Security_AllianceToCorp'>
@@ -226,13 +226,13 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Height>3%</Height> 
 						<Text>Corporation's standing to my alliance</Text>
 						<OnLoad>
-							if ${Script[ComBot].VariableScope.Config.Security.AllianceToCorp}
+							if ${Script[ComBot].VariableScope.Security.Config.AllianceToCorp}
 							{
 								This:SetChecked
 							}
 						</OnLoad>
 						<OnLeftClick>
-							Script[ComBot].VariableScope.Config.Security:SetAllianceToCorp[${This.Checked}]
+							Script[ComBot].VariableScope.Security.Config:SetAllianceToCorp[${This.Checked}]
 						</OnLeftClick>
 					</Checkbox>
 					<Checkbox name='obj_Security_AllianceToAlliance'>
@@ -242,13 +242,13 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Height>3%</Height> 
 						<Text>Alliance's standing to my alliance</Text>
 						<OnLoad>
-							if ${Script[ComBot].VariableScope.Config.Security.AllianceToAlliance}
+							if ${Script[ComBot].VariableScope.Security.Config.AllianceToAlliance}
 							{
 								This:SetChecked
 							}
 						</OnLoad>
 						<OnLeftClick>
-							Script[ComBot].VariableScope.Config.Security:SetAllianceToAlliance[${This.Checked}]
+							Script[ComBot].VariableScope.Security.Config:SetAllianceToAlliance[${This.Checked}]
 						</OnLeftClick>
 					</Checkbox>
 					<Combobox Name="obj_Security_MeToPilot_Value">
@@ -264,10 +264,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								This:AddItem["${counter}"]
 							}
 							
-							This.ItemByText[${Script[ComBot].VariableScope.Config.Security.MeToPilot_Value}]:Select
+							This.ItemByText[${Script[ComBot].VariableScope.Security.Config.MeToPilot_Value}]:Select
 						</OnLoad>
 						<OnSelect>
-							Script[ComBot].VariableScope.Config.Security:SetMeToPilot_Value[${This.SelectedItem.Text}]
+							Script[ComBot].VariableScope.Security.Config:SetMeToPilot_Value[${This.SelectedItem.Text}]
 						</OnSelect>
 					</Combobox>					
 					<Combobox Name="obj_Security_MeToCorp_Value">
@@ -283,10 +283,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								This:AddItem[${counter}]
 							}
 							
-							This.ItemByText[${Script[ComBot].VariableScope.Config.Security.MeToCorp_Value}]:Select
+							This.ItemByText[${Script[ComBot].VariableScope.Security.Config.MeToCorp_Value}]:Select
 						</OnLoad>
 						<OnSelect>
-							Script[ComBot].VariableScope.Config.Security:SetMeToCorp_Value[${This.SelectedItem.Text}]
+							Script[ComBot].VariableScope.Security.Config:SetMeToCorp_Value[${This.SelectedItem.Text}]
 						</OnSelect>
 					</Combobox>					
 					<Combobox Name="obj_Security_MeToAlliance_Value">
@@ -302,10 +302,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								This:AddItem[${counter}]
 							}
 							
-							This.ItemByText[${Script[ComBot].VariableScope.Config.Security.MeToAlliance_Value}]:Select
+							This.ItemByText[${Script[ComBot].VariableScope.Security.Config.MeToAlliance_Value}]:Select
 						</OnLoad>
 						<OnSelect>
-							Script[ComBot].VariableScope.Config.Security:SetMeToAlliance_Value[${This.SelectedItem.Text}]
+							Script[ComBot].VariableScope.Security.Config:SetMeToAlliance_Value[${This.SelectedItem.Text}]
 						</OnSelect>
 					</Combobox>					
 					<Combobox Name="obj_Security_CorpToPilot_Value">
@@ -321,10 +321,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								This:AddItem[${counter}]
 							}
 							
-							This.ItemByText[${Script[ComBot].VariableScope.Config.Security.CorpToPilot_Value}]:Select
+							This.ItemByText[${Script[ComBot].VariableScope.Security.Config.CorpToPilot_Value}]:Select
 						</OnLoad>
 						<OnSelect>
-							Script[ComBot].VariableScope.Config.Security:SetCorpToPilot_Value[${This.SelectedItem.Text}]
+							Script[ComBot].VariableScope.Security.Config:SetCorpToPilot_Value[${This.SelectedItem.Text}]
 						</OnSelect>
 					</Combobox>					
 					<Combobox Name="obj_Security_CorpToCorp_Value">
@@ -340,10 +340,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								This:AddItem[${counter}]
 							}
 							
-							This.ItemByText[${Script[ComBot].VariableScope.Config.Security.CorpToCorp_Value}]:Select
+							This.ItemByText[${Script[ComBot].VariableScope.Security.Config.CorpToCorp_Value}]:Select
 						</OnLoad>
 						<OnSelect>
-							Script[ComBot].VariableScope.Config.Security:SetCorpToCorp_Value[${This.SelectedItem.Text}]
+							Script[ComBot].VariableScope.Security.Config:SetCorpToCorp_Value[${This.SelectedItem.Text}]
 						</OnSelect>
 					</Combobox>					
 					<Combobox Name="obj_Security_CorpToAlliance_Value">
@@ -359,10 +359,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								This:AddItem[${counter}]
 							}
 							
-							This.ItemByText[${Script[ComBot].VariableScope.Config.Security.CorpToAlliance_Value}]:Select
+							This.ItemByText[${Script[ComBot].VariableScope.Security.Config.CorpToAlliance_Value}]:Select
 						</OnLoad>
 						<OnSelect>
-							Script[ComBot].VariableScope.Config.Security:SetCorpToAlliance_Value[${This.SelectedItem.Text}]
+							Script[ComBot].VariableScope.Security.Config:SetCorpToAlliance_Value[${This.SelectedItem.Text}]
 						</OnSelect>
 					</Combobox>	
 					<Combobox Name="obj_Security_AllianceToPilot_Value">
@@ -378,10 +378,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								This:AddItem[${counter}]
 							}
 							
-							This.ItemByText[${Script[ComBot].VariableScope.Config.Security.AllianceToPilot_Value}]:Select
+							This.ItemByText[${Script[ComBot].VariableScope.Security.Config.AllianceToPilot_Value}]:Select
 						</OnLoad>
 						<OnSelect>
-							Script[ComBot].VariableScope.Config.Security:SetAllianceToPilot_Value[${This.SelectedItem.Text}]
+							Script[ComBot].VariableScope.Security.Config:SetAllianceToPilot_Value[${This.SelectedItem.Text}]
 						</OnSelect>
 					</Combobox>					
 					<Combobox Name="obj_Security_AllianceToCorp_Value">
@@ -397,10 +397,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								This:AddItem[${counter}]
 							}
 							
-							This.ItemByText[${Script[ComBot].VariableScope.Config.Security.AllianceToCorp_Value}]:Select
+							This.ItemByText[${Script[ComBot].VariableScope.Security.Config.AllianceToCorp_Value}]:Select
 						</OnLoad>
 						<OnSelect>
-							Script[ComBot].VariableScope.Config.Security:SetAllianceToCorp_Value[${This.SelectedItem.Text}]
+							Script[ComBot].VariableScope.Security.Config:SetAllianceToCorp_Value[${This.SelectedItem.Text}]
 						</OnSelect>
 					</Combobox>					
 					<Combobox Name="obj_Security_AllianceToAlliance_Value">
@@ -416,10 +416,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								This:AddItem[${counter}]
 							}
 							
-							This.ItemByText[${Script[ComBot].VariableScope.Config.Security.AllianceToAlliance_Value}]:Select
+							This.ItemByText[${Script[ComBot].VariableScope.Security.Config.AllianceToAlliance_Value}]:Select
 						</OnLoad>
 						<OnSelect>
-							Script[ComBot].VariableScope.Config.Security:SetAllianceToAlliance_Value[${This.SelectedItem.Text}]
+							Script[ComBot].VariableScope.Security.Config:SetAllianceToAlliance_Value[${This.SelectedItem.Text}]
 						</OnSelect>
 					</Combobox>	
 
@@ -430,13 +430,13 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Height>3%</Height> 
 						<Text>Wait at safe place after fleeing for</Text>
 						<OnLoad>
-							if ${Script[ComBot].VariableScope.Config.Security.FleeWaitTime_Enabled}
+							if ${Script[ComBot].VariableScope.Security.Config.FleeWaitTime_Enabled}
 							{
 								This:SetChecked
 							}
 						</OnLoad>
 						<OnLeftClick>
-							Script[ComBot].VariableScope.Config.Security:SetFleeWaitTime_Enabled[${This.Checked}]
+							Script[ComBot].VariableScope.Security.Config:SetFleeWaitTime_Enabled[${This.Checked}]
 						</OnLeftClick>
 					</Checkbox>		
 					<Combobox name='obj_Security_FleeWaitTime'>
@@ -452,10 +452,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							<Item value="120">2 Hours</Item>
 						</Items>
 						<OnLoad>
-							This.ItemByValue[${Script[ComBot].VariableScope.Config.Security.FleeWaitTime}]:Select
+							This.ItemByValue[${Script[ComBot].VariableScope.Security.Config.FleeWaitTime}]:Select
 						</OnLoad>
 						<OnSelect>
-							Script[ComBot].VariableScope.Config.Security:SetFleeWaitTime[${This.SelectedItem.Value}]
+							Script[ComBot].VariableScope.Security.Config:SetFleeWaitTime[${This.SelectedItem.Value}]
 						</OnSelect>
 					</Combobox>		
 					
@@ -466,13 +466,13 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Height>3%</Height> 
 						<Text>Take a break for</Text>
 						<OnLoad>
-							if ${Script[ComBot].VariableScope.Config.Security.Break_Enabled}
+							if ${Script[ComBot].VariableScope.Security.Config.Break_Enabled}
 							{
 								This:SetChecked
 							}
 						</OnLoad>
 						<OnLeftClick>
-							Script[ComBot].VariableScope.Config.Security:SetBreak_Enabled[${This.Checked}]
+							Script[ComBot].VariableScope.Security.Config:SetBreak_Enabled[${This.Checked}]
 						</OnLeftClick>
 					</Checkbox>		
 					<Combobox name='obj_Security_Break_Duration'>
@@ -486,10 +486,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							<Item value="120">2 Hours</Item>
 						</Items>
 						<OnLoad>
-							This.ItemByValue[${Script[ComBot].VariableScope.Config.Security.Break_Duration}]:Select
+							This.ItemByValue[${Script[ComBot].VariableScope.Security.Config.Break_Duration}]:Select
 						</OnLoad>
 						<OnSelect>
-							Script[ComBot].VariableScope.Config.Security:SetBreak_Duration[${This.SelectedItem.Value}]
+							Script[ComBot].VariableScope.Security.Config:SetBreak_Duration[${This.SelectedItem.Value}]
 						</OnSelect>
 					</Combobox>		
 					<Text name='obj_Security_Break_Text'>
@@ -513,10 +513,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							<Item value="360">6 Hours</Item>
 						</Items>
 						<OnLoad>
-							This.ItemByValue[${Script[ComBot].VariableScope.Config.Security.Break_Interval}]:Select
+							This.ItemByValue[${Script[ComBot].VariableScope.Security.Config.Break_Interval}]:Select
 						</OnLoad>
 						<OnSelect>
-							Script[ComBot].VariableScope.Config.Security:SetBreak_Interval[${This.SelectedItem.Value}]
+							Script[ComBot].VariableScope.Security.Config:SetBreak_Interval[${This.SelectedItem.Value}]
 						</OnSelect>
 					</Combobox>
 					
@@ -545,16 +545,16 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Width>32%</Width> 
 						<Height>3%</Height> 
 						<OnLoad>
-							This:SetText[${Script[ComBot].VariableScope.Config.Security.FleeTo}]
+							This:SetText[${Script[ComBot].VariableScope.Security.Config.FleeTo}]
 						</OnLoad>
 						<OnChange>
 							if ${This.Text.Length}
 							{
-								Script[ComBot].VariableScope.Config.Security:SetFleeTo[${This.Text}]
+								Script[ComBot].VariableScope.Security.Config:SetFleeTo[${This.Text}]
 							}
 							else
 							{
-								Script[ComBot].VariableScope.Config.Security:SetFleeTo[\"\"]
+								Script[ComBot].VariableScope.Security.Config:SetFleeTo[\"\"]
 							}
 							UIElement[FleeToList@ComBot_Security_Frame@ComBot_Security]:Show
 							Script[ComBot].VariableScope.Security.SecurityUI:Start
@@ -574,7 +574,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						</OnLoad>
 						<OnSelect>
 							UIElement[FleeTo@ComBot_Security_Frame@ComBot_Security]:SetText[${This.SelectedItem.Text}]
-							Script[ComBot].VariableScope.Config.Security:SetFleeTo[${This.SelectedItem.Text}]
+							Script[ComBot].VariableScope.Security.Config:SetFleeTo[${This.SelectedItem.Text}]
 							This:Hide
 							Script[ComBot].VariableScope.Security.SecurityUI:Stop
 						</OnSelect>
@@ -587,13 +587,13 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Height>3%</Height> 
 						<Text>Flee if targeted by another player</Text>
 						<OnLoad>
-							if ${Script[ComBot].VariableScope.Config.Security.TargetFlee}
+							if ${Script[ComBot].VariableScope.Security.Config.TargetFlee}
 							{
 								This:SetChecked
 							}
 						</OnLoad>
 						<OnLeftClick>
-							Script[ComBot].VariableScope.Config.Security:SetTargetFlee[${This.Checked}]
+							Script[ComBot].VariableScope.Security.Config:SetTargetFlee[${This.Checked}]
 						</OnLeftClick>
 					</Checkbox>		
 					<Checkbox name='obj_Security_CorpFlee'>
@@ -603,13 +603,13 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Height>3%</Height> 
 						<Text>Include corporation members in flee check</Text>
 						<OnLoad>
-							if ${Script[ComBot].VariableScope.Config.Security.CorpFlee}
+							if ${Script[ComBot].VariableScope.Security.Config.CorpFlee}
 							{
 								This:SetChecked
 							}
 						</OnLoad>
 						<OnLeftClick>
-							Script[ComBot].VariableScope.Config.Security:SetCorpFlee[${This.Checked}]
+							Script[ComBot].VariableScope.Security.Config:SetCorpFlee[${This.Checked}]
 						</OnLeftClick>
 					</Checkbox>		
 					<Checkbox name='obj_Security_AllianceFlee'>
@@ -619,13 +619,13 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Height>3%</Height> 
 						<Text>Include alliance members in flee check</Text>
 						<OnLoad>
-							if ${Script[ComBot].VariableScope.Config.Security.AllianceFlee}
+							if ${Script[ComBot].VariableScope.Security.Config.AllianceFlee}
 							{
 								This:SetChecked
 							}
 						</OnLoad>
 						<OnLeftClick>
-							Script[ComBot].VariableScope.Config.Security:SetAllianceFlee[${This.Checked}]
+							Script[ComBot].VariableScope.Security.Config:SetAllianceFlee[${This.Checked}]
 						</OnLeftClick>
 					</Checkbox>		
 					<Checkbox name='obj_Security_FleetFlee'>
@@ -635,13 +635,13 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<Height>3%</Height> 
 						<Text>Include fleet members in flee check</Text>
 						<OnLoad>
-							if ${Script[ComBot].VariableScope.Config.Security.FleetFlee}
+							if ${Script[ComBot].VariableScope.Security.Config.FleetFlee}
 							{
 								This:SetChecked
 							}
 						</OnLoad>
 						<OnLeftClick>
-							Script[ComBot].VariableScope.Config.Security:SetFleetFlee[${This.Checked}]
+							Script[ComBot].VariableScope.Security.Config:SetFleetFlee[${This.Checked}]
 						</OnLeftClick>
 					</Checkbox>		
 					

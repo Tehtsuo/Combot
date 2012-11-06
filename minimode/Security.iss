@@ -19,16 +19,75 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
+objectdef obj_Configuration_Security
+{
+	variable string SetName = "Security"
+
+	method Initialize()
+	{
+		if !${BaseConfig.BaseRef.FindSet[${This.SetName}](exists)}
+		{
+			UI:Update["obj_Configuration", " ${This.SetName} settings missing - initializing", "o"]
+			This:Set_Default_Values[]
+		}
+		UI:Update["obj_Configuration", " ${This.SetName}: Initialized", "-g"]
+	}
+
+	member:settingsetref CommonRef()
+	{
+		return ${BaseConfig.BaseRef.FindSet[${This.SetName}]}
+	}
+
+	method Set_Default_Values()
+	{
+		BaseConfig.BaseRef:AddSet[${This.SetName}]
+		
+		This.CommonRef:AddSetting[FleeTo,""]
+	}
+
+	Setting(bool, MeToPilot, SetMeToPilot)	
+	Setting(bool, MeToCorp, SetMeToCorp)	
+	Setting(bool, MeToAlliance, SetMeToAlliance)	
+	Setting(bool, CorpToPilot, SetCorpToPilot)	
+	Setting(bool, CorpToCorp, SetCorpToCorp)	
+	Setting(bool, CorpToAlliance, SetCorpToAlliance)	
+	Setting(bool, AllianceToPilot, SetAllianceToPilot)	
+	Setting(bool, AllianceToCorp, SetAllianceToCorp)	
+	Setting(bool, AllianceToAlliance, SetAllianceToAlliance)	
+	Setting(int, MeToPilot_Value, SetMeToPilot_Value)	
+	Setting(int, MeToCorp_Value, SetMeToCorp_Value)	
+	Setting(int, MeToAlliance_Value, SetMeToAlliance_Value)	
+	Setting(int, CorpToPilot_Value, SetCorpToPilot_Value)	
+	Setting(int, CorpToCorp_Value, SetCorpToCorp_Value)	
+	Setting(int, CorpToAlliance_Value, SetCorpToAlliance_Value)	
+	Setting(int, AllianceToPilot_Value, SetAllianceToPilot_Value)	
+	Setting(int, AllianceToCorp_Value, SetAllianceToCorp_Value)	
+	Setting(int, AllianceToAlliance_Value, SetAllianceToAlliance_Value)	
+	Setting(bool, FleeWaitTime_Enabled, SetFleeWaitTime_Enabled)	
+	Setting(int, FleeWaitTime, SetFleeWaitTime)	
+	Setting(bool, Break_Enabled, SetBreak_Enabled)	
+	Setting(int, Break_Duration, SetBreak_Duration)	
+	Setting(int, Break_Interval, SetBreak_Interval)	
+	Setting(string, FleeTo, SetFleeTo)	
+	Setting(bool, TargetFlee, SetTargetFlee)	
+	Setting(bool, CorpFlee, SetCorpFlee)
+	Setting(bool, AllianceFlee, SetAllianceFlee)
+	Setting(bool, FleetFlee, SetFleetFlee)
+	
+}	
+
 objectdef obj_Security inherits obj_State
 {
+	variable obj_Configuration_Security Config
 	variable obj_SecurityUI SecurityUI
 
 	method Initialize()
 	{
 		This[parent]:Initialize
 		This.NonGameTiedPulse:Set[FALSE]
+		DynamicAddMiniMode("MemoryManager", "MemoryManager")
 
-		if !${Config.Security.FleeTo(exists)} || ${Config.Security.FleeTo.Equal[NULL]} || ${Config.Security.FleeTo.Equal[]}
+		if !${Config.FleeTo(exists)} || ${Config.FleeTo.Equal[NULL]} || ${Config.FleeTo.Equal[]}
 		{
 			UI:Update["obj_Security", "No flee bookmark set.  This is DANGEROUS!", "r"]
 			UI:Update["obj_Security", "Specify a flee bookmark in the Security settings!", "r"]
@@ -92,76 +151,76 @@ objectdef obj_Security inherits obj_State
 		if ${Pilot_Iterator:First(exists)}
 		do
 		{
-			if ${MyCorpID} == ${Pilot_Iterator.Value.Corp.ID} && !${Config.Security.CorpFlee}
+			if ${MyCorpID} == ${Pilot_Iterator.Value.Corp.ID} && !${Config.CorpFlee}
 			{
 				continue
 			}
-			if ${MyAllianceID} == ${Pilot_Iterator.Value.AllianceID} && !${Config.Security.AllianceFlee}
+			if ${MyAllianceID} == ${Pilot_Iterator.Value.AllianceID} && !${Config.AllianceFlee}
 			{
 				continue
 			}
-			if ${Me.Fleet.IsMember[${Pilot_Iterator.Value.CharID}]} && !${Config.Security.FleetFlee}
+			if ${Me.Fleet.IsMember[${Pilot_Iterator.Value.CharID}]} && !${Config.FleetFlee}
 			{
 				continue
 			}
 		
-			if ${Config.Security.MeToPilot} && ${Pilot_Iterator.Value.Standing.MeToPilot} < ${Config.Security.MeToPilot_Value}
+			if ${Config.MeToPilot} && ${Pilot_Iterator.Value.Standing.MeToPilot} < ${Config.MeToPilot_Value}
 			{
 				This:QueueState["PrepFlee", 500, "${Pilot_Iterator.Value.Name}(pilot) is ${Pilot_Iterator.Value.Standing.MeToPilot} standing to you"]
 				This:QueueState["Flee", 500]
 				Profiling:EndTrack
 				return TRUE
 			}
-			if ${Config.Security.MeToCorp} && ${Pilot_Iterator.Value.Standing.MeToCorp} < ${Config.Security.MeToCorp_Value}
+			if ${Config.MeToCorp} && ${Pilot_Iterator.Value.Standing.MeToCorp} < ${Config.MeToCorp_Value}
 			{
 				This:QueueState["PrepFlee", 500, "${Pilot_Iterator.Value.Corp.Name}(corp) is ${Pilot_Iterator.Value.Standing.MeToCorp} standing to you"]
 				This:QueueState["Flee", 500]
 				Profiling:EndTrack
 				return TRUE
 			}
-			if ${Config.Security.MeToAlliance} && ${Pilot_Iterator.Value.Standing.MeToAlliance} < ${Config.Security.MeToAlliance_Value}
+			if ${Config.MeToAlliance} && ${Pilot_Iterator.Value.Standing.MeToAlliance} < ${Config.MeToAlliance_Value}
 			{
 				This:QueueState["PrepFlee", 500, "${Pilot_Iterator.Value.Alliance.Name}(alliance) is ${Pilot_Iterator.Value.Standing.MeToAlliance} standing to you"]
 				This:QueueState["Flee", 500]
 				Profiling:EndTrack
 				return TRUE
 			}
-			if ${Config.Security.CorpToPilot} && ${Pilot_Iterator.Value.Standing.CorpToPilot} < ${Config.Security.CorpToPilot_Value}
+			if ${Config.CorpToPilot} && ${Pilot_Iterator.Value.Standing.CorpToPilot} < ${Config.CorpToPilot_Value}
 			{
 				This:QueueState["PrepFlee", 500, "${Pilot_Iterator.Value.Name}(pilot) is ${Pilot_Iterator.Value.Standing.CorpToPilot} standing to your corporation"]
 				This:QueueState["Flee", 500]
 				Profiling:EndTrack
 				return TRUE
 			}
-			if ${Config.Security.CorpToCorp} && ${Pilot_Iterator.Value.Standing.CorpToCorp} < ${Config.Security.CorpToCorp_Value}
+			if ${Config.CorpToCorp} && ${Pilot_Iterator.Value.Standing.CorpToCorp} < ${Config.CorpToCorp_Value}
 			{
 				This:QueueState["PrepFlee", 500, "${Pilot_Iterator.Value.Corp.Name}(corp) is ${Pilot_Iterator.Value.Standing.CorpToCorp} standing to your corporation"]
 				This:QueueState["Flee", 500]
 				Profiling:EndTrack
 				return TRUE
 			}
-			if ${Config.Security.CorpToAlliance} && ${Pilot_Iterator.Value.Standing.CorpToAlliance} < ${Config.Security.CorpToAlliance_Value}
+			if ${Config.CorpToAlliance} && ${Pilot_Iterator.Value.Standing.CorpToAlliance} < ${Config.CorpToAlliance_Value}
 			{
 				This:QueueState["PrepFlee", 500, "${Pilot_Iterator.Value.Alliance.Name}(alliance) is ${Pilot_Iterator.Value.Standing.CorpToAlliance} standing to your corporation"]
 				This:QueueState["Flee", 500]
 				Profiling:EndTrack
 				return TRUE
 			}
-			if ${Config.Security.AllianceToPilot} && ${Pilot_Iterator.Value.Standing.AllianceToPilot} < ${Config.Security.AllianceToPilot_Value}
+			if ${Config.AllianceToPilot} && ${Pilot_Iterator.Value.Standing.AllianceToPilot} < ${Config.AllianceToPilot_Value}
 			{
 				This:QueueState["PrepFlee", 500, "${Pilot_Iterator.Value.Name}(pilot) is ${Pilot_Iterator.Value.Standing.AllianceToPilot} standing to your alliance"]
 				This:QueueState["Flee", 500]
 				Profiling:EndTrack
 				return TRUE
 			}
-			if ${Config.Security.AllianceToCorp} && ${Pilot_Iterator.Value.Standing.AllianceToCorp} < ${Config.Security.AllianceToCorp_Value}
+			if ${Config.AllianceToCorp} && ${Pilot_Iterator.Value.Standing.AllianceToCorp} < ${Config.AllianceToCorp_Value}
 			{
 				This:QueueState["PrepFlee", 500, "${Pilot_Iterator.Value.Corp.Name}(corp) is ${Pilot_Iterator.Value.Standing.AllianceToCorp} standing to your alliance"]
 				This:QueueState["Flee", 500]
 				Profiling:EndTrack
 				return TRUE
 			}
-			if ${Config.Security.AllianceToAlliance} && ${Pilot_Iterator.Value.Standing.AllianceToAlliance} < ${Config.Security.AllianceToAlliance_Value}
+			if ${Config.AllianceToAlliance} && ${Pilot_Iterator.Value.Standing.AllianceToAlliance} < ${Config.AllianceToAlliance_Value}
 			{
 				This:QueueState["PrepFlee", 500, "${Pilot_Iterator.Value.Alliance.Name}(alliance) is ${Pilot_Iterator.Value.Standing.AllianceToAlliance} standing to your alliance"]
 				This:QueueState["Flee", 500]
@@ -172,7 +231,7 @@ objectdef obj_Security inherits obj_State
 		}
 		while ${Pilot_Iterator:Next(exists)}
 
-		if ${Config.Security.TargetFlee}
+		if ${Config.TargetFlee}
 		{
 			variable index:entity Threats
 			variable iterator Threat
@@ -185,15 +244,15 @@ objectdef obj_Security inherits obj_State
 			if ${Threat:First(exists)}
 			do
 			{
-				if ${MyCorpID} == ${Threat.Value.Corp.ID} && !${Config.Security.CorpFlee}
+				if ${MyCorpID} == ${Threat.Value.Corp.ID} && !${Config.CorpFlee}
 				{
 					continue
 				}
-				if ${MyAllianceID} == ${Threat.Value.AllianceID} && !${Config.Security.AllianceFlee}
+				if ${MyAllianceID} == ${Threat.Value.AllianceID} && !${Config.AllianceFlee}
 				{
 					continue
 				}
-				if ${Me.Fleet.IsMember[${Threat.Value.CharID}]} && !${Config.Security.FleetFlee}
+				if ${Me.Fleet.IsMember[${Threat.Value.CharID}]} && !${Config.FleetFlee}
 				{
 					continue
 				}
@@ -242,7 +301,7 @@ objectdef obj_Security inherits obj_State
 	{
 		Profiling:StartTrack["Security_Flee"]
 
-		Move:Bookmark[${Config.Security.FleeTo}]
+		Move:Bookmark[${Config.FleeTo}]
 		
 		if !${Me.InStation}
 		{
@@ -250,10 +309,10 @@ objectdef obj_Security inherits obj_State
 			return FALSE
 		}
 
-		if ${Config.Security.FleeWaitTime_Enabled}
+		if ${Config.FleeWaitTime_Enabled}
 		{
-			This:QueueState["Log", 100, "Waiting for ${Config.Security.FleeWaitTime} minutes after flee"]
-			This:QueueState["Idle", ${Math.Calc[${Config.Security.FleeWaitTime} * 60000]}]
+			This:QueueState["Log", 100, "Waiting for ${Config.FleeWaitTime} minutes after flee"]
+			This:QueueState["Idle", ${Math.Calc[${Config.FleeWaitTime} * 60000]}]
 		}
 
 		This:QueueState["CheckSafe", 500, TRUE]
@@ -342,7 +401,7 @@ objectdef obj_SecurityUI inherits obj_State
 			{	
 				if ${UIElement[FleeTo@ComBot_Security_Frame@ComBot_Security].Text.Length}
 				{
-					if ${BookmarkIterator.Value.Label.Left[${Config.Security.FleeTo.Length}].Equal[${Config.Security.FleeTo}]} && ${BookmarkIterator.Value.Label.NotEqual[${Config.Security.FleeTo}]}
+					if ${BookmarkIterator.Value.Label.Left[${Config.FleeTo.Length}].Equal[${Config.FleeTo}]} && ${BookmarkIterator.Value.Label.NotEqual[${Config.FleeTo}]}
 						UIElement[FleeToList@ComBot_Security_Frame@ComBot_Security]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 				else
