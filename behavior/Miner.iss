@@ -556,6 +556,14 @@ objectdef obj_Miner inherits obj_State
 				
 				Belts:RemoveByQuery[${LavishScript.CreateQuery[Name =- "${beltsubstring}"]}, FALSE]
 			}
+			if ${Belts.Used} == 0
+			{
+				variable string PopulateResults
+				UI:Update["Miner", "Belts still not found after re-filling the index", "y"]
+				UI:Update["Miner", "Expected entity bug, repopulating and re-trying", "y"]
+				EVE:PopulateEntities[TRUE]
+				return FALSE
+			}
 
 			Move:Object[${Belts.Get[1].ID}]
 			Belts:Remove[1]
