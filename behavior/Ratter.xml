@@ -148,7 +148,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									Script[ComBot].VariableScope.Ratter.Config:SetSubstring[${This.Text}]
 								</OnChange>
 								<OnMouseEnter>
-									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText["This field is to specify the Substring to use for your salvage bookmarks.  Any bookmark which starts with this Substring will be used as a salvage location."]
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText["This field is to specify the Substring to use for your ratting bookmarks.  Any bookmark in your ratting system which starts with this Substring will be used as a ratting location."]
 								</OnMouseEnter>
 								<OnMouseExit>
 									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText[""]
@@ -298,6 +298,58 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText[""]
 								</OnMouseExit>
 							</Slider>						 
+							<Checkbox name='Salvage'> 
+								<X>1%</X> 
+								<Y>70%</Y> 
+								<Width>32%</Width> 
+								<Height>9%</Height> 
+								<Text>Bookmark wreck after ratting is complete</Text>
+								<OnLoad>
+									if ${Script[ComBot].VariableScope.Ratter.Config.Salvage}
+									{
+										This:SetChecked
+									}
+								</OnLoad>
+								<OnLeftClick>
+									Script[ComBot].VariableScope.Ratter.Config:SetSalvage[${This.Checked}]
+									if ${This.Checked}
+									{
+										UIElement[SalvagePrefix@RatterFrame@Frame@ComBot_Ratter]:Show
+									}
+									else
+									{
+										UIElement[SalvagePrefix@RatterFrame@Frame@ComBot_Ratter]:Hide
+									}
+								</OnLeftClick>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText["When this option is checked, ComBot will create a corporate bookmark of a wreck after ratting is complete."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText[""]
+								</OnMouseExit>
+							</Checkbox>
+							<Textentry name='SalvagePrefix'> 
+								<X>1%</X> 
+								<Y>80%</Y> 
+								<Width>32%</Width> 
+								<Height>15%</Height> 
+								<OnLoad>
+									This:SetText[${Script[ComBot].VariableScope.Ratter.Config.SalvagePrefix}]
+									if !${Script[ComBot].VariableScope.Ratter.Config.Salvage}
+									{
+										This:Hide
+									}
+								</OnLoad>
+								<OnChange>
+									Script[ComBot].VariableScope.Ratter.Config:SetSalvagePrefix[${This.Text}]
+								</OnChange>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText["This field is to specify the prefix to use to create corporate bookmarks of a wreck after ratting is complete."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText[""]
+								</OnMouseExit>
+							</Textentry>			
 						</Children>
 					</Frame>
 				

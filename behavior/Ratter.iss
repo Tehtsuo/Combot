@@ -44,6 +44,7 @@ objectdef obj_Configuration_Ratter
 		BaseConfig.BaseRef:AddSet[${This.SetName}]
 
 		This.CommonRef:AddSetting[Substring,"Anom:"]
+		This.CommonRef:AddSetting[SalvagePrefix,"Salvage:"]
 		This.CommonRef:AddSetting[RattingSystem,""]
 		This.CommonRef:AddSetting[Dropoff,""]
 		This.CommonRef:AddSetting[DropoffType,""]
@@ -53,6 +54,7 @@ objectdef obj_Configuration_Ratter
 	}
 	
 	Setting(bool, BeltRat, SetBeltRat)
+	Setting(bool, Salvage, SetSalvage)
 	Setting(int, Warp, SetWarp)
 	Setting(int, Threshold, SetThreshold)
 	Setting(string, RattingSystem, SetRattingSystem)	
@@ -61,6 +63,7 @@ objectdef obj_Configuration_Ratter
 	Setting(string, DropoffType, SetDropoffType)
 	Setting(string, DropoffSubType, SetDropoffSubType)
 	Setting(string, DropoffContainer, SetDropoffContainer)
+	Setting(string, SalvagePrefix, SetSalvagePrefix)
 }
 
 objectdef obj_Ratter inherits obj_State
@@ -219,6 +222,10 @@ objectdef obj_Ratter inherits obj_State
 			Bookmarks:Collapse
 		}
 	
+		if ${Entity[GroupID==GROUP_WRECK && HaveLootRights](exists)} && ${Config.Salvage}
+		{
+			Entity[GroupID==GROUP_WRECK && HaveLootRights]:CreateBookmark["${Config.SalvagePrefix}${EVETime.Time.Left[-3]}","","Corporation Locations"]
+		}
 		Move:Bookmark[${Bookmarks.Get[1].Label}, TRUE, ${Distance}]
 		Bookmarks:Remove[1]
 		Bookmarks:Collapse
