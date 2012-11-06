@@ -224,7 +224,7 @@ objectdef obj_Ratter inherits obj_State
 	
 		if ${Entity[GroupID==GROUP_WRECK && HaveLootRights](exists)} && ${Config.Salvage}
 		{
-			Entity[GroupID==GROUP_WRECK && HaveLootRights]:CreateBookmark["${Config.SalvagePrefix}${EVETime.Time.Left[-3]}","","Corporation Locations"]
+			Entity[GroupID==GROUP_WRECK && HaveLootRights]:CreateBookmark["${Config.SalvagePrefix} ${EVETime.Time.Left[-3].Replace[":",""]}","","Corporation Locations"]
 		}
 		Move:Bookmark[${Bookmarks.Get[1].Label}, TRUE, ${Distance}]
 		Bookmarks:Remove[1]
