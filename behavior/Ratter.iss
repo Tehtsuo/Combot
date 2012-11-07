@@ -50,13 +50,16 @@ objectdef obj_Configuration_Ratter
 		This.CommonRef:AddSetting[DropoffType,""]
 		This.CommonRef:AddSetting[DropoffSubType,""]
 		This.CommonRef:AddSetting[DropoffContainer,""]
+		This.CommonRef:AddSetting[SpeedTankDistance,5000]
 		
 	}
 	
 	Setting(bool, BeltRat, SetBeltRat)
 	Setting(bool, Salvage, SetSalvage)
+	Setting(bool, SpeedTank, SetSpeedTank)
 	Setting(int, Warp, SetWarp)
 	Setting(int, Threshold, SetThreshold)
+	Setting(int, SpeedTankDistance, SetSpeedTankDistance)
 	Setting(string, RattingSystem, SetRattingSystem)	
 	Setting(string, Substring, SetSubstring)
 	Setting(string, Dropoff, SetDropoff)
@@ -252,7 +255,28 @@ objectdef obj_Ratter inherits obj_State
 			return TRUE
 		}
 		
+		Rats.MaxLockCount:Set[4]
+		Rats.AutoLock:Set[TRUE]
 		Rats:RequestUpdate
+		
+		if ${Rats.TargetList.Used}
+		{
+			if 	${Config.SpeedTank} &&\
+				${Me.ToEntity.Mode} != 4
+			{
+				Rats.TargetList.Get[1]:Orbit[${Math.Calc[${Config.SpeedTankDistance}*1000+1000].Int}]
+			}
+		}
+		
+		if ${Rats.LockedTargetList.Used}
+		{
+			if 	${Ship.ModuleList_Weapon.ActiveCount} < ${Ship.ModuleList_Weapon.Count}
+			{
+				Ship.ModuleList_Weapon:ActivateCount[${Ship.ModuleList_Weapon.InactiveCount}, ${Rats.LockedTargetList.Get[1].ID}]
+				return FALSE
+			}
+		}
+		
 		return FALSE
 	}
 	
