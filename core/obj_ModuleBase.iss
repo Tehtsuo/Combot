@@ -59,7 +59,6 @@ objectdef obj_ModuleBase inherits obj_State
 	
 	method Deactivate()
 	{
-		echo DEACTIVATE, WHY?
 		if !${Deactivated}
 		{
 			MyShip.Module[${ModuleID}]:Deactivate
@@ -80,15 +79,9 @@ objectdef obj_ModuleBase inherits obj_State
 			This:QueueState["LoadMiningCrystal", 50, ${Entity[${newTarget}].Type}]
 		}
 		
-		echo ${This.CurState.Name} and ${This.States.Used} more states
-		echo This:QueueState["ActivateOn", 50, "${newTarget}"]
-		echo This:QueueState["WaitTillActive", 50, 20]
-		echo This:QueueState["WaitTillInactive"]
-
 		This:QueueState["ActivateOn", 50, "${newTarget}"]
 		This:QueueState["WaitTillActive", 50, 20]
 		This:QueueState["WaitTillInactive"]
-		echo ${This.CurState.Name} and ${This.States.Used} more states
 		if ${DoDeactivate}
 		{
 			CurrentTarget:Set[${newTarget}]
@@ -133,7 +126,6 @@ objectdef obj_ModuleBase inherits obj_State
 	
 	member:bool ActivateOn(int64 newTarget)
 	{
-		echo ModuleBase.ActivateOn
 		if ${newTarget} == -1 || ${newTarget} == 0
 		{
 			MyShip.Module[${ModuleID}]:Activate
