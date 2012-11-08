@@ -95,23 +95,6 @@ objectdef obj_Login inherits obj_State
 
 	member:bool Login()
 	{
-		if ${EVE.IsProgressWindowOpen}
-		{
-			return FALSE
-		}	
-
-		if ${Me(exists)} && ${MyShip(exists)} && (${Me.InSpace} || ${Me.InStation})
-		{
-			echo Returning True because ship found
-			return TRUE
-		}
-		
-		if ${CharSelect(exists)}
-		{
-			echo Returning True because charselect found
-			return TRUE
-		}
-		
 		if ${EVEWindow[ByName,modal](exists)}
 		{
 			echo Modal window exists
@@ -131,6 +114,23 @@ objectdef obj_Login inherits obj_State
 				EVEWindow[ByName,modal]:ClickButtonOK
 				return FALSE
 			}
+		}
+
+		if ${EVE.IsProgressWindowOpen}
+		{
+			return FALSE
+		}	
+
+		if ${Me(exists)} && ${MyShip(exists)} && (${Me.InSpace} || ${Me.InStation})
+		{
+			echo Returning True because ship found
+			return TRUE
+		}
+		
+		if ${CharSelect(exists)}
+		{
+			echo Returning True because charselect found
+			return TRUE
 		}
 		
 		if !${Login.ServerStatus.Find["OK"](exists)}
