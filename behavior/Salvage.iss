@@ -319,12 +319,12 @@ objectdef obj_Salvage inherits obj_State
 		
 		if ${Config.SalvageYellow}
 		{
-			Wrecks:AddQueryString["(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && !IsMoribund ${Size}"]
+			Wrecks:AddQueryString["(GroupID==GROUP_WRECK || (GroupID==GROUP_CARGOCONTAINER && Name=""Cargo Container"")) && !IsMoribund ${Size}"]
 		}
 		else
 		{
 			echo "(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && HaveLootRights && !IsMoribund ${Size}"
-			Wrecks:AddQueryString["(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && HaveLootRights && !IsMoribund ${Size}"]
+			Wrecks:AddQueryString["(GroupID==GROUP_WRECK || (GroupID==GROUP_CARGOCONTAINER && Name=""Cargo Container"")) && HaveLootRights && !IsMoribund ${Size}"]
 		}
 	
 		Wrecks:RequestUpdate

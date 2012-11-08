@@ -550,6 +550,15 @@ objectdef obj_Miner inherits obj_State
 				
 				Belts:RemoveByQuery[${LavishScript.CreateQuery[Name =- "${beltsubstring}"]}, FALSE]
 			}
+			if ${Belts.Used} == 0
+			{
+				variable string PopulateResults
+				UI:Update["Miner", "Belts still not found after re-filling the index", "y"]
+				UI:Update["Miner", "This might be a bug, or you might be in a system with no belts!", "y"]
+				UI:Update["Miner", "Attempting to force a PopulateEntities to fix bug", "y"]
+				EVE:PopulateEntities[TRUE]
+				return FALSE
+			}
 
 			Move:Object[${Belts.Get[1].ID}]
 			Belts:Remove[1]
@@ -685,7 +694,6 @@ objectdef obj_Miner inherits obj_State
 				}
 				if ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]} < ${Config.Threshold} * .01
 				{
-					Cargo:Filter[CategoryID==CATEGORYID_ORE]
 					if ${Cargo.CargoList.Used}
 					{
 						Cargo:MoveCargoList[OreHold]

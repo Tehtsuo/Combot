@@ -48,7 +48,7 @@ objectdef obj_Configuration_Hauler
 		This.CommonRef:AddSetting[Pickup,""]
 		This.CommonRef:AddSetting[Move,""]
 		This.CommonRef:AddSetting[Repeat,FALSE]
-		This.CommonRef:AddSetting[Mode,Continuous]
+		This.CommonRef:AddSetting[Mode,"Continuous"]
 	}
 	
 	Setting(string, PickupSubType, SetPickupSubType)
@@ -114,6 +114,10 @@ objectdef obj_Hauler inherits obj_State
 				case Queue
 					This:QueueState["ProcessQueue"]
 					This:QueueState["Traveling"]
+					break
+				default
+					This:QueueState["OpenCargoHold"]
+					This:QueueState["CheckCargoHold"]
 				break
 			}
 		}
@@ -138,12 +142,34 @@ objectdef obj_Hauler inherits obj_State
 		return TRUE
 	}
 	
-	member:bool CheckCargoHold()
+	member:bool CheckCargoHold(bool OreHold=FALSE, bool CorpHangar=FALSE)
 	{
+		if ${EVEWindow[ByName, Inventory].ChildWindowExists[ShipOreHold]} && !${OreHold}
+		{
+			if ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]} < ${Config.Threshold} * .01
+			{
+				Cargo:PopulateCargoList[Ship]
+				Cargo:MoveCargoList[OreHold]
+				This:InsertState["CheckCargoHold", 500, "TRUE"]
+				return TRUE
+			}
+		}
+		if ${EVEWindow[ByName, Inventory].ChildWindowExists[ShipCorpHangar]} && !${CorpHangar}
+		{
+			if ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipCorpHangar]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipCorpHangar]} < ${Config.Threshold} * .01
+			{
+				Cargo:PopulateCargoList[Ship]
+				Cargo:MoveCargoList[Container]
+				This:InsertState["CheckCargoHold", 500, "TRUE, TRUE"]
+				return TRUE
+			}
+		}
+		
+	
 		if ${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity} >= ${Config.Threshold} * .01
 		{
 			UI:Update["obj_Hauler", "Unload trip required", "g"]
-			Cargo:At[${Config.Dropoff},${Config.DropoffType},${Config.DropoffSubType}, ${Config.DropoffContainer}]:Unload
+			Cargo:At[${Config.Dropoff},${Config.DropoffType},${Config.DropoffSubType}, ${Config.DropoffContainer}]:Unload:Unload["",0,ShipCorpHangar]:Unload["",0,OreHold]
 			This:QueueState["Traveling"]
 			This:QueueState["OpenCargoHold"]
 			This:QueueState["CheckCargoHold"]

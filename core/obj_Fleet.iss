@@ -107,7 +107,7 @@ objectdef obj_Fleet inherits obj_State
 
 		if ${Me.Fleet.Invited}
 		{
-			if ${Me.Fleet.InvitationText.Find[${This.ResolveName[${This.ActiveCommander}]}]}
+			if ${Me.Fleet.InvitationText.Find[${Being[${This.ActiveCommander}].Name}]}
 			{
 				Me.Fleet:AcceptInvite
 				return FALSE
@@ -222,55 +222,6 @@ objectdef obj_Fleet inherits obj_State
 		
 	}
 	
-	member:string ResolveName(int64 value)
-	{
-		variable index:being CorpMembers
-		variable iterator CorpMember
-
-		EVE:GetOnlineCorpMembers[CorpMembers]
-		CorpMembers:GetIterator[CorpMember]
-		if ${CorpMember:First(exists)}
-			do
-			{
-				if ${CorpMember.Value.CharID} == ${value}
-				{
-					return ${CorpMember.Value.Name}
-				}
-			}
-			while ${CorpMember:Next(exists)}
-
-		variable index:being Buddies
-		variable iterator Buddy
-
-		EVE:GetBuddies[Buddies]
-		Buddies:GetIterator[Buddy]
-		if ${Buddy:First(exists)}
-			do
-			{
-				if ${Buddy.Value.CharID} == ${value}
-				{
-					return ${Buddy.Value.Name}
-				}
-			}
-			while ${Buddy:Next(exists)}
-
-		variable index:pilot LocalPilots
-		variable iterator LocalPilot
-
-		EVE:GetLocalPilots[LocalPilots]
-		LocalPilots:GetIterator[LocalPilot]
-		if ${LocalPilot:First(exists)}
-			do
-			{
-				if ${LocalPilot.Value.CharID} == ${value}
-				{
-					return ${LocalPilot.Value.Name}
-				}
-			}
-			while ${LocalPilot:Next(exists)}
-			
-		return "FALSE"
-	}
 	
 	member:bool StructureFleet()
 	{
@@ -535,56 +486,10 @@ objectdef obj_Fleet inherits obj_State
 			return FALSE
 		}
 		
-	
-		variable index:being CorpMembers
-		variable iterator CorpMember
-
-		EVE:GetOnlineCorpMembers[CorpMembers]
-		CorpMembers:GetIterator[CorpMember]
-		if ${CorpMember:First(exists)}
-			do
-			{
-				if ${CorpMember.Value.CharID} == ${value}
-				{
-					CorpMember.Value:InviteToFleet
-					return TRUE
-				}
-			}
-			while ${CorpMember:Next(exists)}
-
-		variable index:being Buddies
-		variable iterator Buddy
-
-		EVE:GetBuddies[Buddies]
-		Buddies:GetIterator[Buddy]
-		if ${Buddy:First(exists)}
-			do
-			{
-				if ${Buddy.Value.CharID} == ${value} && ${Buddy.Value.IsOnline}
-				{
-					Buddy.Value:InviteToFleet
-					return TRUE
-				}
-			}
-			while ${Buddy:Next(exists)}
-
-		variable index:pilot LocalPilots
-		variable iterator LocalPilot
-
-		EVE:GetLocalPilots[LocalPilots]
-		LocalPilots:GetIterator[LocalPilot]
-		if ${LocalPilot:First(exists)}
-			do
-			{
-				if ${LocalPilot.Value.CharID} == ${value}
-				{
-					LocalPilot.Value:InviteToFleet
-					return TRUE
-				}
-			}
-			while ${LocalPilot:Next(exists)}
-		
-		return FALSE
+		if ${Being[${value}].IsOnline}
+		{
+			Being[${value}]:InviteToFleet
+		}
 	}
 	
 }

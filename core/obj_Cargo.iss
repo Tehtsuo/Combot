@@ -194,7 +194,11 @@ objectdef obj_Cargo inherits obj_State
 	{
 		variable string TransferFolder
 		variable float Volume
-		
+
+		if ${location.Equal[OreHold]}
+		{
+			This:Filter[CategoryID==CATEGORYID_ORE]
+		}
 		
 		if ${CargoList.Used} == 1
 		{
