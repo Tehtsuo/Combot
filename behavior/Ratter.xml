@@ -243,7 +243,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<Y>65%</Y> 
 								<Width>32%</Width> 
 								<Height>9%</Height> 
-								<Text>Speed Tank: Orbit at ${Math.Calc[${Script[ComBot].VariableScope.Ratter.Config.SpeedTankDistance}*1000+1000].Int} km</Text>
+								<Text>Speed Tank: Orbit at ${Math.Calc[${Script[ComBot].VariableScope.Ratter.Config.SpeedTankDistance}+1].Int} km</Text>
 								<OnLoad>
 									if ${Script[ComBot].VariableScope.Ratter.Config.SpeedTank}
 									{
