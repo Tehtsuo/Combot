@@ -44,7 +44,7 @@ objectdef obj_Delay inherits obj_State
 	
 	method RegisterAction(string argAction, int argDelay, int ActionRandomDelta=500)
 	{
-		variable int trueDelay = ${Math.Calc[${argDelay} + ${Math.Rand[${ActionRandomDelta} + ${LavishScript.RunningTime}]}]}
+		variable int trueDelay = ${Math.Calc[${argDelay} + ${Math.Rand[${ActionRandomDelta}]} + ${LavishScript.RunningTime}]}
 		Actions:Insert["${argAction.Escape}", ${trueDelay}]
 		if ${CurState.Name.Equal["Idle"]}
 		{
