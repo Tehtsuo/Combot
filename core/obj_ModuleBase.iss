@@ -88,11 +88,11 @@ objectdef obj_ModuleBase inherits obj_State
 		echo This:QueueState["ActivateOn", 50, "${newTarget}"]
 		echo This:QueueState["WaitTillActive", 50, 20]
 		echo This:QueueState["WaitTillInactive"]
-		echo ${This.CurState.Name} and ${This.States.Used} more states
 
 		This:QueueState["ActivateOn", 50, "${newTarget}"]
 		This:QueueState["WaitTillActive", 50, 20]
 		This:QueueState["WaitTillInactive"]
+		echo ${This.CurState.Name} and ${This.States.Used} more states
 		if ${DoDeactivate}
 		{
 			CurrentTarget:Set[${newTarget}]
