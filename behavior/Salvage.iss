@@ -645,6 +645,7 @@ objectdef obj_Salvage inherits obj_State
 			{
 				if ${BookmarkIterator.Value.JumpsTo} == 0
 				{
+					echo ${BookmarkIterator.Value.Label}:  Distance to bookmark ${BookmarkIterator.Value.Distance} - ID: ${BookmarkIterator.Value.ID}
 					if ${BookmarkIterator.Value.Distance} < 500000 && ${Removed} != ${BookmarkIterator.Value.ID}
 					{
 						UI:Update["obj_Salvage", "Finished Salvaging ${BookmarkIterator.Value.Label} - Deleting", "g"]
