@@ -70,6 +70,7 @@ objectdef obj_ModuleBase inherits obj_State
 	
 	method Activate(int64 newTarget=-1, bool DoDeactivate=TRUE)
 	{
+		echo ModuleBase:Activate
 		if ${DoDeactivate} && ${This.IsActive}
 		{
 			This:Deactivate
@@ -129,6 +130,7 @@ objectdef obj_ModuleBase inherits obj_State
 	
 	member:bool ActivateOn(int64 newTarget)
 	{
+		echo ModuleBase.ActivateOn
 		if ${newTarget} == -1 || ${newTarget} == 0
 		{
 			MyShip.Module[${ModuleID}]:Activate
