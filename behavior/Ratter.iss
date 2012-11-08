@@ -135,8 +135,9 @@ objectdef obj_Ratter inherits obj_State
 		{
 			This:QueueState["GoToRattingSystem"]
 			This:QueueState["Traveling"]
-			This:QueueState["MoveToBelt"]
+			This:QueueState["MoveToNewRatLocation"]
 			This:QueueState["Traveling"]
+			This:QueueState["VerifyRatLocation"]
 			This:QueueState["Log", 10, "Waiting for rats to spawn, g"]
 			This:QueueState["Idle", 5000]
 			This:QueueState["InitialUpdate"]
@@ -177,7 +178,7 @@ objectdef obj_Ratter inherits obj_State
 	}
 	
 	
-	member:bool MoveToBelt()
+	member:bool MoveToNewRatLocation()
 	{
 		variable int Distance
 		Distance:Set[${Math.Calc[${Config.Warp} * 1000]}]
@@ -222,19 +223,35 @@ objectdef obj_Ratter inherits obj_State
 		{
 			UI:Update["Ratter", "Removing ${Bookmarks.Get[1].Label}", "g"]
 			Bookmarks.Get[1]:Remove
-			Bookmarks:Remove[1]
-			Bookmarks:Collapse
+			Bookmarks:Clear
+			return FALSE
 		}
 	
-		if ${Entity[GroupID==GROUP_WRECK && HaveLootRights](exists)} && ${Config.Salvage}
+		if 	${Entity[GroupID==GROUP_WRECK && HaveLootRights](exists)} &&\
+			${Config.Salvage} &&\
+			!${Entity[CategoryID == CATEGORYID_SHIP && IsPC && !IsFleetMember && OwnerID != ${Me.CharID}]}
 		{
 			UI:Update["Ratter", "Bookmarking ${Entity[GroupID==GROUP_WRECK && HaveLootRights].Name}", "g"]
 			Entity[GroupID==GROUP_WRECK && HaveLootRights]:CreateBookmark["${Config.SalvagePrefix} ${EVETime.Time.Left[-3].Replace[":",""]}","","Corporation Locations"]
 		}
+		echo Move:Bookmark[${Bookmarks.Get[1].Label}, TRUE, ${Distance}]
 		Move:Bookmark[${Bookmarks.Get[1].Label}, TRUE, ${Distance}]
 		return TRUE
 
 	}
+	
+	member:bool VerifyRatLocation()
+	{
+		if ${Entity[CategoryID == CATEGORYID_SHIP && IsPC && !IsFleetMember && OwnerID != ${Me.CharID}]}
+		{
+			UI:Update["Ratter", "This location is occupied, going to next", "g"]
+			This:InsertState["VerifyRatLocation"]
+			This:InsertState["Traveling"]
+			This:InsertState["MoveToNewRatLocation"]
+		}
+		return TRUE
+	}
+	
 
 	member:bool InitialUpdate()
 	{
