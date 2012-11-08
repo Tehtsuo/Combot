@@ -79,6 +79,7 @@ objectdef obj_Salvage inherits obj_State
 	variable bool Dedicated = TRUE
 	variable bool Salvaging = FALSE
 	variable queue:entity BeltPatrol
+	variable set UsedBookmarks
 	
 	variable obj_TargetList Wrecks
 	variable obj_TargetList NPCs
@@ -170,7 +171,7 @@ objectdef obj_Salvage inherits obj_State
 						BookmarkIterator.Value:Remove
 						return FALSE
 					}
-					if ${BookmarkIterator.Value.Created.AsInt64} < ${BookmarkTime} || ${BookmarkTime} == 0
+					if (${BookmarkIterator.Value.Created.AsInt64} < ${BookmarkTime} || ${BookmarkTime} == 0) && !${UsedBookmarks.Contains[${BookmarkIterator.Value.ID}]}
 					{
 						Target:Set[${BookmarkIterator.Value.Label}]
 						BookmarkTime:Set[${BookmarkIterator.Value.Created.AsInt64}]
@@ -207,7 +208,7 @@ objectdef obj_Salvage inherits obj_State
 						This:InsertState["Idle", 5000]
 						return TRUE
 					}
-					if ${BookmarkIterator.Value.Created.AsInt64} < ${BookmarkTime} || ${BookmarkTime} == 0
+					if (${BookmarkIterator.Value.Created.AsInt64} < ${BookmarkTime} || ${BookmarkTime} == 0) && !${UsedBookmarks.Contains[${BookmarkIterator.Value.ID}]}
 					{
 						Target:Set[${BookmarkIterator.Value.Label}]
 						BookmarkTime:Set[${BookmarkIterator.Value.Created.AsInt64}]
@@ -631,7 +632,7 @@ objectdef obj_Salvage inherits obj_State
 		return TRUE
 	}
 	
-	member:bool DeleteBookmark(int64 BookmarkCreator)
+	member:bool DeleteBookmark(int64 BookmarkCreator, int Removed=-1)
 	{
 		variable index:bookmark Bookmarks
 		variable iterator BookmarkIterator
@@ -644,10 +645,16 @@ objectdef obj_Salvage inherits obj_State
 			{
 				if ${BookmarkIterator.Value.JumpsTo} == 0
 				{
-					if ${BookmarkIterator.Value.Distance} < 500000
+					if ${BookmarkIterator.Value.Distance} < 500000 && ${Removed} != ${BookmarkIterator.Value.ID}
 					{
 						UI:Update["obj_Salvage", "Finished Salvaging ${BookmarkIterator.Value.Label} - Deleting", "g"]
+						This:InsertState["DeleteBookmark", 1000, ${BookmarkIterator.Value.ID}]
 						BookmarkIterator.Value:Remove
+						return TRUE
+					}
+					else
+					{
+						UsedBookmarks:Add[${BookmarkIterator.Value.ID}]
 						return TRUE
 					}
 				}
