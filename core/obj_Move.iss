@@ -113,7 +113,7 @@ objectdef obj_Move inherits obj_State
 			return
 		}
 
-		UI:Update["obj_Move", "Movement queued.  Destination: ${Me.Fleet.Member[${ID}].ToPilot.Name}", "g", TRUE]
+		UI:Update["obj_Move", "Movement queued.  Destination: ${Being[${ID}].Name}", "g", TRUE]
 		UI:Log["Redacted:  obj_Move - Movement queued.  Destination: XXXXXXX (Fleet Member)"]
 		This.Traveling:Set[TRUE]
 		This:QueueState["FleetmemberMove", 2000, "${ID}, ${IgnoreGate}"]
@@ -246,7 +246,8 @@ objectdef obj_Move inherits obj_State
 	{
 		if !${Me.Fleet.Member[${ID}].ToPilot(exists)}
 		{
-			UI:Update["obj_Move", "Fleet member is no longer in local, canceling Move", "g"]
+			UI:Update["obj_Move", "Fleet member ${Being[${ID}].Name} is no longer in local, canceling Move", "g", TRUE]
+			UI:Update["Radacted:  obj_Move - Fleet member XXXXXXX is no longer in local, canceling Move"]
 			This.Traveling:Set[FALSE]
 			return TRUE
 		}
