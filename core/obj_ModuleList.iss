@@ -62,7 +62,7 @@ objectdef obj_ModuleList
 			{
 				if !${ModuleIterator.Value.IsActive}
 				{
-					ModuleIterator.Value:Activate[${target}]
+					ModuleIterator.Value:Activate[${target}, FALSE]
 					activatedCount:Inc
 				}
 				if ${activatedCount} >= ${count}

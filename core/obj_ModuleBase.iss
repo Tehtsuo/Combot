@@ -75,10 +75,6 @@ objectdef obj_ModuleBase inherits obj_State
 		{
 			This:Deactivate
 		}
-		if ${newTarget} == -1
-		{
-			newTarget:Set[${Me.ActiveTarget.ID}]
-		}
 		if ${Entity[${newTarget}].CategoryID} == CATEGORYID_ORE && ${MyShip.Module[${ModuleID}].ToItem.GroupID} == GROUP_FREQUENCY_MINING_LASER
 		{
 			This:QueueState["LoadMiningCrystal", 50, ${Entity[${newTarget}].Type}]
