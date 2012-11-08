@@ -85,6 +85,11 @@ objectdef obj_ModuleBase inherits obj_State
 		{
 			This:QueueState["LoadMiningCrystal", 50, ${Entity[${newTarget}].Type}]
 		}
+		
+		echo This:QueueState["ActivateOn", 50, "${newTarget}"]
+		echo This:QueueState["WaitTillActive", 50, 20]
+		echo This:QueueState["WaitTillInactive"]
+
 		This:QueueState["ActivateOn", 50, "${newTarget}"]
 		This:QueueState["WaitTillActive", 50, 20]
 		This:QueueState["WaitTillInactive"]
