@@ -324,7 +324,6 @@ objectdef obj_Salvage inherits obj_State
 		}
 		else
 		{
-			echo "(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && HaveLootRights && !IsMoribund ${Size}"
 			Wrecks:AddQueryString["(GroupID==GROUP_WRECK || (GroupID==GROUP_CARGOCONTAINER && Name=""Cargo Container"")) && HaveLootRights && !IsMoribund ${Size}"]
 		}
 	
@@ -645,8 +644,7 @@ objectdef obj_Salvage inherits obj_State
 			{
 				if ${BookmarkIterator.Value.JumpsTo} == 0
 				{
-					echo ${BookmarkIterator.Value.Label}:  Distance to bookmark ${BookmarkIterator.Value.Distance} - ID: ${BookmarkIterator.Value.ID}
-					if ${BookmarkIterator.Value.Distance} < 500000 && ${Removed} != ${BookmarkIterator.Value.ID}
+					if ${BookmarkIterator.Value.Distance} < WARP_RANGE && ${Removed} != ${BookmarkIterator.Value.ID}
 					{
 						UI:Update["obj_Salvage", "Finished Salvaging ${BookmarkIterator.Value.Label} - Deleting", "g"]
 						This:InsertState["DeleteBookmark", 1000, "${BookmarkCreator},${BookmarkIterator.Value.ID}"]
