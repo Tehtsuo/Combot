@@ -648,7 +648,7 @@ objectdef obj_Salvage inherits obj_State
 					if ${BookmarkIterator.Value.Distance} < 500000 && ${Removed} != ${BookmarkIterator.Value.ID}
 					{
 						UI:Update["obj_Salvage", "Finished Salvaging ${BookmarkIterator.Value.Label} - Deleting", "g"]
-						This:InsertState["DeleteBookmark", 1000, ${BookmarkIterator.Value.ID}]
+						This:InsertState["DeleteBookmark", 1000, "${BookmarkCreator},${BookmarkIterator.Value.ID}"]
 						BookmarkIterator.Value:Remove
 						return TRUE
 					}
