@@ -33,6 +33,11 @@ objectdef obj_Module
 		}
 	}
 	
+	member:int64 CurrentTarget()
+	{
+		return ${ModuleBaseModules[${ModuleID}].CurrentTarget}
+	}
+	
 	member:bool IsActive()
 	{
 		return ${ModuleBaseModules[${ModuleID}].IsActive}
