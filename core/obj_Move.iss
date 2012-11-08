@@ -244,7 +244,7 @@ objectdef obj_Move inherits obj_State
 	
 	member:bool FleetmemberMove(int64 ID, bool IgnoreGate=FALSE)
 	{
-		if ${Me.Fleet.Member[${ID}].ToPilot(exists)}
+		if !${Me.Fleet.Member[${ID}].ToPilot(exists)}
 		{
 			UI:Update["obj_Move", "Fleet member is no longer in local, canceling Move", "g"]
 			This.Traveling:Set[FALSE]
