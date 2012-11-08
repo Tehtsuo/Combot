@@ -71,8 +71,10 @@ objectdef obj_ModuleBase inherits obj_State
 	method Activate(int64 newTarget=-1, bool DoDeactivate=TRUE)
 	{
 		echo ModuleBase:Activate
+		echo This.IsActive ${This.IsActive}
 		if ${DoDeactivate} && ${This.IsActive}
 		{
+			echo Triggering Deactivate
 			This:Deactivate
 		}
 		if ${newTarget} == -1
