@@ -48,13 +48,11 @@ objectdef obj_ModuleList
 	
 	method Activate(int64 target=-1)
 	{
-		echo ModuleList:Activate
 		This:ActivateCount[1, ${target}]
 	}
 	
 	method ActivateCount(int count, int64 target=-1)
 	{
-		echo ModuleList:ActivateCount
 		variable int activatedCount = 0
 		variable iterator ModuleIterator
 		Modules:GetIterator[ModuleIterator]
