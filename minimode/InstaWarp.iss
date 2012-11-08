@@ -50,18 +50,21 @@ objectdef obj_InstaWarp inherits obj_State
 		
 		if ${Me.ToEntity.Mode} == 3 && ${InstaWarp_Cooldown} && ${Ship.ModuleList_AB_MWD.ActiveCount}
 		{
+			echo Deactivating propulsion module
 			Ship.ModuleList_AB_MWD:Deactivate
 			return FALSE
 		}
 		
 		if ${Me.ToEntity.Mode} == 3 && !${InstaWarp_Cooldown}
 		{
+			echo Activating propulsion module
 			Ship.ModuleList_AB_MWD:Activate
 			InstaWarp_Cooldown:Set[TRUE]
 			return FALSE
 		}
 		if ${Me.ToEntity.Mode} != 3
 		{
+			echo Resetting InstaWarp
 			InstaWarp_Cooldown:Set[FALSE]
 			return FALSE
 		}
