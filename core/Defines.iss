@@ -32,6 +32,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 #define CATEGORYID_GLACIAL_MASS 																				25
 
 
+#define GROUP_DRONECONTROLUNIT																					407
 #define GROUP_AFTERBURNER 																						46
 #define GROUP_SHIELD_BOOSTER 																					40
 #define GROUP_SHIELD_HARDENER 																					77

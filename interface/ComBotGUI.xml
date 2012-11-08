@@ -331,18 +331,6 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								This:SetZOrder[movetop]
 							</OnLeftClick>
 						</Checkbox>
-						<button	Name='SecurityConfig'>
-							<Font template='Button.Font' />
-							<BackgroundColor>FF000000</BackgroundColor>
-							<X>1%</X>
-							<Y>35%</Y>
-							<Width>98%</Width>
-							<Height>10%</Height>
-							<Text>Security Settings</Text>
-							<OnLeftClick>
-								timedcommand 0 "ui -load \"&filepath;/ComBotGUI_Security.xml\""
-							</OnLeftClick>
-						</button>						
 						
 						<frame name='AutoLoginFillerFrame'>
 							<BackgroundColor>FF000000</BackgroundColor>
