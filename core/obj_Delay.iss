@@ -27,7 +27,7 @@ objectdef obj_DelayAction
 	method Initialize(string argAction, int argDelay)
 	{
 		Action:Set[${argAction.Escape}]
-		Delay:Set[${Math.Calc[${argDelay} + ${LavishScript.RunningTime}]}]
+		Delay:Set[${argDelay}]
 	}
 }
 
