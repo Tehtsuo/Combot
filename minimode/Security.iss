@@ -70,7 +70,7 @@ objectdef obj_Configuration_Security
 objectdef obj_Security inherits obj_State
 {
 	variable obj_Configuration_Security Config
-	variable obj_SecurityUI SecurityUI
+	variable obj_SecurityUI LocalUI
 
 	method Initialize()
 	{
@@ -383,18 +383,18 @@ objectdef obj_SecurityUI inherits obj_State
 		EVE:GetBookmarks[Bookmarks]
 		Bookmarks:GetIterator[BookmarkIterator]
 		
-		UIElement[FleeToList@ComBot_Security_Frame@ComBot_Security]:ClearItems
+		UIElement[FleeToList@FleeFrame@SecurityFrame@ComBot_Security]:ClearItems
 		if ${BookmarkIterator:First(exists)}
 			do
 			{	
-				if ${UIElement[FleeTo@ComBot_Security_Frame@ComBot_Security].Text.Length}
+				if ${UIElement[FleeTo@FleeFrame@SecurityFrame@ComBot_Security].Text.Length}
 				{
-					if ${BookmarkIterator.Value.Label.Left[${Config.FleeTo.Length}].Equal[${Config.FleeTo}]} && ${BookmarkIterator.Value.Label.NotEqual[${Config.FleeTo}]}
-						UIElement[FleeToList@ComBot_Security_Frame@ComBot_Security]:AddItem[${BookmarkIterator.Value.Label.Escape}]
+					if ${BookmarkIterator.Value.Label.Left[${Security.Config.FleeTo.Length}].Equal[${Security.Config.FleeTo}]} && ${BookmarkIterator.Value.Label.NotEqual[${Security.Config.FleeTo}]}
+						UIElement[FleeToList@FleeFrame@SecurityFrame@ComBot_Security]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 				else
 				{
-					UIElement[FleeToList@ComBot_Security_Frame@ComBot_Security]:AddItem[${BookmarkIterator.Value.Label.Escape}]
+					UIElement[FleeToList@FleeFrame@SecurityFrame@ComBot_Security]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 			}
 			while ${BookmarkIterator:Next(exists)}

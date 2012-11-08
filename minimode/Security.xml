@@ -163,8 +163,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									{
 										Script[ComBot].VariableScope.Security.Config:SetFleeTo[\"\"]
 									}
-									UIElement[FleeToList@ComBot_Security_Frame@ComBot_Security]:Show
-									Script[ComBot].VariableScope.Security.SecurityUI:Start
+									UIElement[FleeToList@FleeFrame@SecurityFrame@ComBot_Security]:Show
+									Script[ComBot].VariableScope.Security.LocalUI:Start
 								</OnChange>
 							</Textentry>
 							<listbox Name="FleeToList">
@@ -180,10 +180,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									This:Hide
 								</OnLoad>
 								<OnSelect>
-									UIElement[FleeTo@ComBot_Security_Frame@ComBot_Security]:SetText[${This.SelectedItem.Text}]
+									UIElement[FleeTo@FleeFrame@SecurityFrame@ComBot_Security]:SetText[${This.SelectedItem.Text}]
 									Script[ComBot].VariableScope.Security.Config:SetFleeTo[${This.SelectedItem.Text}]
 									This:Hide
-									Script[ComBot].VariableScope.Security.SecurityUI:Stop
+									Script[ComBot].VariableScope.Security.LocalUI:Stop
 								</OnSelect>
 							</listbox>					
 							<Checkbox name='FleeWaitTime_Enabled'>
