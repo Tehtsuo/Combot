@@ -644,17 +644,21 @@ objectdef obj_Salvage inherits obj_State
 			{
 				if ${BookmarkIterator.Value.JumpsTo} == 0
 				{
-					if ${BookmarkIterator.Value.Distance} < WARP_RANGE && ${Removed} != ${BookmarkIterator.Value.ID}
+					if ${BookmarkIterator.Value.Distance} < WARP_RANGE 
 					{
-						UI:Update["obj_Salvage", "Finished Salvaging ${BookmarkIterator.Value.Label} - Deleting", "g"]
-						This:InsertState["DeleteBookmark", 1000, "${BookmarkCreator},${BookmarkIterator.Value.ID}"]
-						BookmarkIterator.Value:Remove
-						return TRUE
-					}
-					else
-					{
-						UsedBookmarks:Add[${BookmarkIterator.Value.ID}]
-						return TRUE
+						if ${Removed} != ${BookmarkIterator.Value.ID}
+						{
+							UI:Update["obj_Salvage", "Finished Salvaging ${BookmarkIterator.Value.Label} - Deleting", "g"]
+							This:InsertState["DeleteBookmark", 1000, "${BookmarkCreator},${BookmarkIterator.Value.ID}"]
+							BookmarkIterator.Value:Remove
+							return TRUE
+						}
+						else
+						{
+							
+							UsedBookmarks:Add[${BookmarkIterator.Value.ID}]
+							return TRUE
+						}
 					}
 				}
 			}
