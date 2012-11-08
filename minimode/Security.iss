@@ -281,6 +281,7 @@ objectdef obj_Security inherits obj_State
 		}
 		Move:Clear
 		Move.Traveling:Set[FALSE]
+		Drones:RecallAll
 		return TRUE
 	}
 	
