@@ -51,12 +51,14 @@ objectdef obj_Configuration_Ratter
 		This.CommonRef:AddSetting[DropoffSubType,""]
 		This.CommonRef:AddSetting[DropoffContainer,""]
 		This.CommonRef:AddSetting[SpeedTankDistance,5000]
+		This.CommonRef:AddSetting[TetherPilot,""]
 		
 	}
 	
 	Setting(bool, BeltRat, SetBeltRat)
 	Setting(bool, Salvage, SetSalvage)
 	Setting(bool, SpeedTank, SetSpeedTank)
+	Setting(bool, Tether, SetTether)
 	Setting(int, Warp, SetWarp)
 	Setting(int, Threshold, SetThreshold)
 	Setting(int, SpeedTankDistance, SetSpeedTankDistance)
@@ -67,6 +69,7 @@ objectdef obj_Configuration_Ratter
 	Setting(string, DropoffSubType, SetDropoffSubType)
 	Setting(string, DropoffContainer, SetDropoffContainer)
 	Setting(string, SalvagePrefix, SetSalvagePrefix)
+	Setting(string, TetherPilot, SetTetherPilot)
 }
 
 objectdef obj_Ratter inherits obj_State
@@ -180,6 +183,11 @@ objectdef obj_Ratter inherits obj_State
 	
 	member:bool MoveToNewRatLocation()
 	{
+		if ${Config.Tether}
+		{
+			Move:Fleetmember[${Local["${Config.TetherPilot}"].ID}, TRUE]
+			return TRUE
+		}
 		variable int Distance
 		Distance:Set[${Math.Calc[${Config.Warp} * 1000]}]
 		if ${Bookmarks.Used} == 0

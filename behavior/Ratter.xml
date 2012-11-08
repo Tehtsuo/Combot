@@ -183,6 +183,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 										Script[ComBot].VariableScope.Ratter.Config:SetRattingSystem[\"\"]
 									}
 									UIElement[RattingSystemList@RatterFrame@Frame@ComBot_Ratter]:Show
+									UIElement[RattingSystemList@RatterFrame@Frame@ComBot_Ratter]:SetZOrder[movetop]
 									Script[ComBot].VariableScope.Ratter.LocalUI:Start
 								</OnChange>
 								<OnMouseEnter>
@@ -404,6 +405,59 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText[""]
 								</OnMouseExit>
 							</Textentry>			
+							<Checkbox name='Tether'> 
+								<X>67%</X> 
+								<Y>65%</Y> 
+								<Width>32%</Width> 
+								<Height>9%</Height> 
+								<Text>Tether to a fleet member</Text>
+								<OnLoad>
+									if ${Script[ComBot].VariableScope.Ratter.Config.Tether}
+									{
+										This:SetChecked
+									}
+								</OnLoad>
+								<OnLeftClick>
+									Script[ComBot].VariableScope.Ratter.Config:SetTether[${This.Checked}]
+									if ${This.Checked}
+									{
+										UIElement[TetherPilot@RatterFrame@Frame@ComBot_Ratter]:Show
+									}
+									else
+									{
+										UIElement[TetherPilot@RatterFrame@Frame@ComBot_Ratter]:Hide
+									}
+								</OnLeftClick>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText["When this option is checked, ComBot will follow a fleet member."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText[""]
+								</OnMouseExit>
+							</Checkbox>
+							<Textentry name='TetherPilot'> 
+								<X>67%</X> 
+								<Y>80%</Y> 
+								<Width>32%</Width> 
+								<Height>15%</Height> 
+								<Border>1</Border>
+								<OnLoad>
+									This:SetText[${Script[ComBot].VariableScope.Ratter.Config.TetherPilot}]
+									if !${Script[ComBot].VariableScope.Ratter.Config.Tether}
+									{
+										This:Hide
+									}
+								</OnLoad>
+								<OnChange>
+									Script[ComBot].VariableScope.Ratter.Config:SetTetherPilot[${This.Text}]
+								</OnChange>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText["This field is used to instruct ComBot who its tether pilot is."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText[""]
+								</OnMouseExit>
+							</Textentry>						 
 						</Children>
 					</Frame>
 				
