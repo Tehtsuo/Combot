@@ -246,7 +246,7 @@ objectdef obj_Move inherits obj_State
 		if !${Me.Fleet.Member[${ID}].ToPilot(exists)}
 		{
 			UI:Update["obj_Move", "Fleet member ${Being[${ID}].Name} is no longer in local, canceling Move", "g", TRUE]
-			UI:Update["Radacted:  obj_Move - Fleet member XXXXXXX is no longer in local, canceling Move"]
+			UI:Update["Redacted:  obj_Move - Fleet member XXXXXXX is no longer in local, canceling Move"]
 			This.Traveling:Set[FALSE]
 			return TRUE
 		}
@@ -276,7 +276,7 @@ objectdef obj_Move inherits obj_State
 				
 				UI:Update["obj_Move", "Warping to ${Me.Fleet.Member[${ID}].ToPilot.Name}", "g", TRUE]
 				UI:Log["Redacted:  obj_Move - Warping to XXXXXXX (FleetMember)"]
-				Me.Fleet.Member[${ID}].ToEntity:WarpTo[${Distance}]
+				Entity[Name =- "${Being[${ID}].Name}"]:WarpTo[${Distance}]
 				Client:Wait[5000]
 				return FALSE
 			}
