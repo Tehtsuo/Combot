@@ -160,6 +160,12 @@ objectdef obj_DroneControl inherits obj_State
 					return ${DroneType}
 				}
 				
+				DroneType:Set[${Drones.Data.FindType["Fighters"]}]
+				if ${DroneType} != -1
+				{
+					return ${DroneType}
+				}
+				
 				DroneType:Set[${Drones.Data.FindType["Medium Scout Drones"]}]
 				if ${DroneType} != -1
 				{
