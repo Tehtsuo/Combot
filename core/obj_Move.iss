@@ -276,7 +276,7 @@ objectdef obj_Move inherits obj_State
 				
 				UI:Update["obj_Move", "Warping to ${Me.Fleet.Member[${ID}].ToPilot.Name}", "g", TRUE]
 				UI:Log["Redacted:  obj_Move - Warping to XXXXXXX (FleetMember)"]
-				Entity[Name =- "${Being[${ID}].Name}"]:WarpTo[${Distance}]
+				Local[${ID}].ToEntity:WarpTo[${Distance}]
 				Client:Wait[5000]
 				return FALSE
 			}
