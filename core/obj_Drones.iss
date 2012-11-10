@@ -73,7 +73,7 @@ Drone states
 
 objectdef obj_Configuration_DroneData
 {
-	variable string SetName = "Drone Data"
+	variable string SetName = "DroneData"
 
 	variable filepath CONFIG_PATH = "${Script.CurrentDirectory}/data"
 	variable string CONFIG_FILE = "DroneData.xml"
