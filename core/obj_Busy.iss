@@ -24,6 +24,7 @@ objectdef obj_Busy
 	variable set BusyModes
 	variable bool IsBusy
 	variable queue:string ControlQueue
+	variable set ControlRequests
 	variable string CurrentControl
 	variable bool IsControlled = FALSE
 	
@@ -44,10 +45,13 @@ objectdef obj_Busy
 	
 	method RequestControl(string Name)
 	{
-		ControlQueue:Insert[${Name}]
-		if !${IsControlled}
+		if !${ControlRequests.Contains[${Name}]}
 		{
-			PopControl[]
+			ControlQueue:Insert[${Name}]
+			if !${IsControlled}
+			{
+				PopControl[]
+			}
 		}
 	}
 	
@@ -59,10 +63,16 @@ objectdef obj_Busy
 		}
 	}
 	
+	member:bool InControl(string Name)
+	{
+		return ${CurrentControl.Equal[${Name}]}
+	}
+	
 	method PopControl()
 	{
 		if ${ControlQueue.Used} > 0
 		{
+			ControlRequests:Remove[${CurrentControl}]
 			CurrentControl:Set[${ControlQueue.Peek}]
 			ControlQueue:Dequeue
 			IsControlled:Set[TRUE]
