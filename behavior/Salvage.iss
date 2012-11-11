@@ -64,7 +64,7 @@ objectdef obj_Configuration_Salvager
 	Setting(string, Size, SetSize)
 }
 
-objectdef obj_Salvage inherits obj_State
+objectdef obj_Salvager inherits obj_State
 {
 	variable obj_Configuration_Salvager Config
 	variable obj_SalvageUI LocalUI
@@ -88,7 +88,7 @@ objectdef obj_Salvage inherits obj_State
 	{
 		This[parent]:Initialize
 		NPCs:AddAllNPCs
-		DynamicAddBehavior("Salvage", "Dedicated Salvager")
+		DynamicAddBehavior("Salvager", "Dedicated Salvager")
 	}
 
 	method Start()
@@ -353,7 +353,7 @@ objectdef obj_Salvage inherits obj_State
 		{
 			MaxTarget:Set[${Me.MaxLockedTargets}]
 		}
-		Wrecks.MaxRange:Set[${MyShip.MaxTargetRange.Round}}
+		Wrecks.MaxRange:Set[${MyShip.MaxTargetRange.Round}]
 		Wrecks.MinLockCount:Set[${MaxTarget}]
 		Wrecks.AutoLock:Set[TRUE]
 		
@@ -756,100 +756,6 @@ objectdef obj_Salvage inherits obj_State
 
 
 
-
-
-
-objectdef obj_LootCans inherits obj_State
-{
-	method Initialize()
-	{
-		This[parent]:Initialize
-		This.NonGameTiedPulse:Set[TRUE]
-	}
-	
-	method Enable()
-	{
-		This:QueueState["Loot", 1500]
-	}
-	
-	method Disable()
-	{
-		This:Clear
-	}
-	
-	member:bool Loot()
-	{
-		variable index:entity Targets
-		variable iterator TargetIterator
-		variable index:item TargetCargo
-		variable iterator CargoIterator
-	
-		if !${Client.InSpace}
-		{
-			return FALSE
-		}
-		
-		if ${Me.ToEntity.Mode} == 3
-		{
-			return FALSE
-		}
-
-		if ${Salvage.Config.SalvageYellow}
-		{
-			EVE:QueryEntities[Targets, "(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && !IsWreckEmpty && Distance<LOOT_RANGE"]
-		}
-		else
-		{
-			EVE:QueryEntities[Targets, "(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && HaveLootRights && !IsWreckEmpty && Distance<LOOT_RANGE"]
-		}
-		Targets:GetIterator[TargetIterator]
-		if ${TargetIterator:First(exists)} && ${EVEWindow[ByName, Inventory](exists)}
-		{
-			do
-			{
-				if ${Salvage.Wrecks.TargetExceptions.Contains[${TargetIterator.Value.ID}]}
-				{
-					continue
-				}
-			
-				if ${EVEWindow[ByName, Inventory].ChildWindowExists[${TargetIterator.Value}]}
-				{
-					if !${EVEWindow[ByItemID, ${TargetIterator.Value}](exists)}
-					{
-						EVEWindow[ByName, Inventory]:MakeChildActive[${TargetIterator.Value}]
-						return FALSE
-					}
-					
-					Entity[${TargetIterator.Value}]:GetCargo[TargetCargo]
-					TargetCargo:GetIterator[CargoIterator]
-					if ${CargoIterator:First(exists)}
-					{
-						do
-						{
-							if ${CargoIterator.Value.IsContraband}
-							{
-								Salvage.Wrecks:AddTargetException[${TargetIterator.Value.ID}]
-								return FALSE
-							}
-						}
-						while ${CargoIterator:Next(exists)}
-					}
-					UI:Update["obj_Salvage", "Looting - ${TargetIterator.Value.Name}", "g"]
-					EVEWindow[ByItemID, ${TargetIterator.Value}]:LootAll
-					return FALSE
-				}
-				if !${EVEWindow[ByName, Inventory].ChildWindowExists[${TargetIterator.Value}]}
-				{
-					UI:Update["obj_Salvage", "Opening - ${TargetIterator.Value.Name}", "g"]
-					TargetIterator.Value:OpenCargo
-					return FALSE
-				}		
-			}
-			while ${TargetIterator:Next(exists)}
-		}
-		return FALSE
-	}
-}
 
 objectdef obj_SalvageUI inherits obj_State
 {
