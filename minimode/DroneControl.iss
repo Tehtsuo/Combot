@@ -138,7 +138,13 @@ objectdef obj_DroneControl inherits obj_State
 			
 			case Cruiser
 			case BattleCruiser
-			
+				
+				DroneType:Set[${Drones.Data.FindType["Fighters"]}]
+				if ${DroneType} != -1
+				{
+					return ${DroneType}
+				}
+				
 				DroneType:Set[${Drones.Data.FindType["Medium Scout Drones"]}]
 				if ${DroneType} != -1
 				{
@@ -152,15 +158,14 @@ objectdef obj_DroneControl inherits obj_State
 				}
 			
 			case Battleship
-			
-			
-				DroneType:Set[${Drones.Data.FindType["Heavy Attack Drones"]}]
+				
+				DroneType:Set[${Drones.Data.FindType["Fighters"]}]
 				if ${DroneType} != -1
 				{
 					return ${DroneType}
 				}
 				
-				DroneType:Set[${Drones.Data.FindType["Fighters"]}]
+				DroneType:Set[${Drones.Data.FindType["Heavy Attack Drones"]}]
 				if ${DroneType} != -1
 				{
 					return ${DroneType}
@@ -240,7 +245,7 @@ objectdef obj_DroneControl inherits obj_State
 			}
 			while ${typeIterator:Next(exists)}
 		}
-		return ${Drones.ActiveDroneCount["ToEntity.GroupID = 100 && (${types})"]}
+		return ${Drones.ActiveDroneCount["(ToEntity.GroupID = 100 || ToEntity.GroupID == 549) && (${types})"]}
 	}
 	
 	method RecallAllNonSentry()
@@ -261,7 +266,7 @@ objectdef obj_DroneControl inherits obj_State
 			}
 			while ${typeIterator:Next(exists)}
 		}
-		Drones:Recall["ToEntity.GroupID = 100 && (${types})", ${Drones.ActiveDroneCount["ToEntity.GroupID == 100 && (${types})"]}]
+		Drones:Recall["(ToEntity.GroupID = 100 || ToEntity.GroupID == 549) && (${types})", ${Drones.ActiveDroneCount["ToEntity.GroupID == 100 && (${types})"]}]
 	}
 	
 	method Start()
@@ -294,9 +299,9 @@ objectdef obj_DroneControl inherits obj_State
 		}
 		if ${Me.ToEntity.Mode} == 3
 		{
-			if ${Drones.ActiveCount["ToEntity.GroupID == 100"]} > 0
+			if ${Drones.ActiveCount["ToEntity.GroupID == 100 || ToEntity.GroupID == 549"]} > 0
 			{
-				Drones:Recall["ToEntity.GroupID = 100"]
+				Drones:Recall["ToEntity.GroupID = 100 || ToEntity.GroupID == 549"]
 			}
 			return FALSE
 		}
@@ -379,10 +384,10 @@ objectdef obj_DroneControl inherits obj_State
 					return TRUE
 				}
 			}
-			if ${Drones.ActiveDroneCount["ToEntity.GroupID == 100"]} > 0
+			if ${Drones.ActiveDroneCount["ToEntity.GroupID == 100 || ToEntity.GroupID == 549"]} > 0
 			{
 				echo Engage Target
-				Drones:Engage["ToEntity.GroupID = 100", ${CurrentTarget}, ${DroneCount}]
+				Drones:Engage["ToEntity.GroupID = 100 || ToEntity.GroupID == 549", ${CurrentTarget}, ${DroneCount}]
 			}
 			if ${DroneCount} > ${Drones.ActiveDroneCount["ToEntity.GroupID == 100"]}
 			{
