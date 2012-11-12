@@ -263,7 +263,7 @@ objectdef obj_LootCans inherits obj_State
 			{
 				if 	${TargetIterator.Value.Distance} > LOOT_RANGE ||\
 					${TargetIterator.Value.IsWreckEmpty} ||\
-					!${TargetIterator.Value(exists)}
+					!${Entity[${TargetIterator.Value.ID}](exists)}
 				{
 					continue
 				}
