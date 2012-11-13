@@ -428,7 +428,7 @@ objectdef obj_DroneControl inherits obj_State
 		{
 			do
 			{
-				if ${CurrentTarget.Equal[-1]} && ${TargetIterator.Value.Distance} < ${Me.DroneControlDistance}
+				if ${CurrentTarget.Equal[-1]}
 				{
 					CurrentTarget:Set[${TargetIterator.Value.ID}]
 				}
