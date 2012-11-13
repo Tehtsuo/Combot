@@ -384,6 +384,16 @@ objectdef obj_DroneControl inherits obj_State
 					return TRUE
 				}
 			}
+			if ${Entity[${CurrentTarget}].Distance} > ${Me.DroneControlDistance} && ${Config.Sentries}
+			{
+				if ${This.NonSentryCount} > 0
+				{
+					This:RecallAllSentry[]
+					This:QueueState["Idle", 5000]
+					This:QueueState["DroneControl"]
+					return TRUE
+				}
+			}
 			if ${Drones.ActiveDroneCount["ToEntity.GroupID == 100 || ToEntity.GroupID == 549"]} > 0
 			{
 				echo Engage Target
@@ -391,7 +401,11 @@ objectdef obj_DroneControl inherits obj_State
 			}
 			if ${DroneCount} > ${Drones.ActiveDroneCount["ToEntity.GroupID == 100"]}
 			{
-				if ${Entity[${CurrentTarget}].Distance} > (${Config.SentryRange} * 1000) && ${Config.Sentries}
+				if ${Entity[${CurrentTarget}].Distance} > ${Me.DroneControlDistance}
+				{
+					Drones:Deploy["TypeID = ${Drones.Data.FindType[Fighters]}", ${Math.Calc[${DroneCount} - ${Drones.ActiveDroneCount["ToEntity.GroupID == 100"]}]}]
+				}
+				elseif ${Entity[${CurrentTarget}].Distance} > (${Config.SentryRange} * 1000) && ${Config.Sentries}
 				{
 					Drones:Deploy["TypeID = ${Drones.Data.FindType[Sentry Drones]}", ${Math.Calc[${DroneCount} - ${Drones.ActiveDroneCount["ToEntity.GroupID == 100"]}]}]
 				}
