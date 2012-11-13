@@ -374,21 +374,21 @@ objectdef obj_DroneControl inherits obj_State
 					return TRUE
 				}
 			}
-			if ${Entity[${CurrentTarget}].Distance} > (${Config.SentryRange} * 1000) && ${Config.Sentries}
-			{
-				if ${This.NonSentryCount} > 0
-				{
-					This:RecallAllNonSentry[]
-					This:QueueState["Idle", 5000]
-					This:QueueState["DroneControl"]
-					return TRUE
-				}
-			}
 			if ${Entity[${CurrentTarget}].Distance} > ${Me.DroneControlDistance} && ${Config.Sentries}
 			{
 				if ${This.NonSentryCount} > 0
 				{
 					This:RecallAllSentry[]
+					This:QueueState["Idle", 5000]
+					This:QueueState["DroneControl"]
+					return TRUE
+				}
+			}
+			elseif ${Entity[${CurrentTarget}].Distance} > (${Config.SentryRange} * 1000) && ${Config.Sentries}
+			{
+				if ${This.NonSentryCount} > 0
+				{
+					This:RecallAllNonSentry[]
 					This:QueueState["Idle", 5000]
 					This:QueueState["DroneControl"]
 					return TRUE
