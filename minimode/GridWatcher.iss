@@ -90,6 +90,7 @@ objectdef obj_GridWatcher inherits obj_State
 					{
 						uplink speak "${Entity[Name =- "${EntityNames.Value.Name}"].Name} Found"
 						LastDetection:Set[${EntityNames.Value.Name}, ${Math.Calc[${LavishScript.RunningTime}+30000]}]
+						EVE:CreateBookmark["${EntityNames.Value.Name} ${EVETime.Time.Left[-3].Replace[":",""]}"]
 					}
 				}
 			}
