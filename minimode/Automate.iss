@@ -199,11 +199,21 @@ objectdef obj_Automate inherits obj_State
 	
 	method LogoutNow()
 	{
+		UI:Update["Automate", "Logout time!", "r"]
 		Move:NonGameTiedPulse:Set[TRUE]
 		This:Clear
 		This:QueueState["MoveToLogout"]
 		This:QueueState["Traveling"]
 		This:QueueState["Logout"]
+	}
+
+	method GotoLogoutNow()
+	{
+		UI:Update["Automate", "Going Home!", "r"]
+		Move:NonGameTiedPulse:Set[TRUE]
+		This:Clear
+		This:QueueState["MoveToLogout"]
+		This:QueueState["Traveling"]
 	}
 
 	method StationaryLogoutNow()
@@ -212,12 +222,10 @@ objectdef obj_Automate inherits obj_State
 		This:QueueState["Logout"]
 	}
 	
-	
 	member:bool MoveToLogout()
 	{
 		variable iterator Behaviors
 		Move:NonGameTiedPulse:Set[TRUE]
-		UI:Update["Automate", "Logout time!", "r"]
 		Dynamic.Behaviors:GetIterator[Behaviors]
 		if ${Behaviors:First(exists)}
 		{
@@ -227,6 +235,7 @@ objectdef obj_Automate inherits obj_State
 			}
 			while ${Behaviors:Next(exists)}
 		}
+		UIElement[Run@TitleBar@ComBot]:SetText[Run]
 		Move:Clear
 		Move.Traveling:Set[FALSE]
 		Move:Bookmark[${Config.Bookmark}]
