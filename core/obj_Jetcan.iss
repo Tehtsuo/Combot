@@ -54,14 +54,28 @@ objectdef obj_Jetcan inherits obj_State
 
 		if  ${MyShip.HasOreHold}
 		{
-			if ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]} < ${Miner.Config.Threshold} * .01
+			if ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]} != 0
+			{
+				if ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]} < ${Miner.Config.Threshold} * .01
+				{
+					return FALSE
+				}
+			}
+			else
 			{
 				return FALSE
 			}
 		}
 		else
 		{
-			if ${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity} < ${Miner.Config.Threshold} * .01
+			if ${MyShip.CargoCapacity} != 0
+			{
+				if ${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity} < ${Miner.Config.Threshold} * .01
+				{
+					return FALSE
+				}
+			}
+			else
 			{
 				return FALSE
 			}
@@ -119,7 +133,6 @@ objectdef obj_Jetcan inherits obj_State
 					TargetIterator.Value:OpenCargo
 					return FALSE
 				}
-				echo ${EVEWindow[ByName, Inventory].ChildCapacity[${TargetIterator.Value}]} - ${EVEWindow[ByName, Inventory].ChildUsedCapacity[${TargetIterator.Value}]} > 1000
 				if ${EVEWindow[ByName, Inventory].ChildCapacity[${TargetIterator.Value}]} - ${EVEWindow[ByName, Inventory].ChildUsedCapacity[${TargetIterator.Value}]} > 1000
 				{
 					; if !${EVEWindow[ByItemID, ${TargetIterator.Value}](exists)}
@@ -147,36 +160,42 @@ objectdef obj_Jetcan inherits obj_State
 
 		if  ${MyShip.HasOreHold}
 		{
-			if ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]} >= ${Config.Miner.Threshold} * .01
+			if ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]} != 0
 			{
-				Cargo:PopulateCargoList[OreHold]
-				Cargo.CargoList:GetIterator[TargetIterator]
-				if ${TargetIterator:First(exists)}
+				if ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]} >= ${Config.Miner.Threshold} * .01
 				{
-					TargetIterator.Value:Jettison
-					This:QueueState["Idle", 5000]
-					This:QueueState["Rename", 2000]
-					This:QueueState["FillCan", 1500]
-					This:QueueState["Fill", 1500]
-					return TRUE
+					Cargo:PopulateCargoList[OreHold]
+					Cargo.CargoList:GetIterator[TargetIterator]
+					if ${TargetIterator:First(exists)}
+					{
+						TargetIterator.Value:Jettison
+						This:QueueState["Idle", 5000]
+						This:QueueState["Rename", 2000]
+						This:QueueState["FillCan", 1500]
+						This:QueueState["Fill", 1500]
+						return TRUE
+					}
 				}
 			}
 		}
 		else
 		{
-			if ${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity} >= ${Config.Miner.Threshold} * .01
+			if ${MyShip.CargoCapacity} != 0
 			{
-				Cargo:PopulateCargoList[Ship]
-				Cargo:Filter["CategoryID == CATEGORYID_ORE || GroupID == GROUP_HARVESTABLECLOUD", FALSE]
-				Cargo.CargoList:GetIterator[TargetIterator]
-				if ${TargetIterator:First(exists)}
+				if ${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity} >= ${Config.Miner.Threshold} * .01
 				{
-					TargetIterator.Value:Jettison
-					This:QueueState["Idle", 5000]
-					This:QueueState["Rename", 2000]
-					This:QueueState["FillCan", 1500]
-					This:QueueState["Fill", 1500]
-					return TRUE
+					Cargo:PopulateCargoList[Ship]
+					Cargo:Filter["CategoryID == CATEGORYID_ORE || GroupID == GROUP_HARVESTABLECLOUD", FALSE]
+					Cargo.CargoList:GetIterator[TargetIterator]
+					if ${TargetIterator:First(exists)}
+					{
+						TargetIterator.Value:Jettison
+						This:QueueState["Idle", 5000]
+						This:QueueState["Rename", 2000]
+						This:QueueState["FillCan", 1500]
+						This:QueueState["Fill", 1500]
+						return TRUE
+					}
 				}
 			}
 		}

@@ -321,7 +321,8 @@ objectdef obj_Miner inherits obj_State
 		Profiling:StartTrack["Miner: PrepareWarp"]
 		if ${Busy.IsBusy}
 		{
-			return TRUE
+			Profiling:EndTrack
+			return FALSE
 		}
 		if ${Config.OrcaMode}
 		{

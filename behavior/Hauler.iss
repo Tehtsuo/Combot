@@ -164,7 +164,11 @@ objectdef obj_Hauler inherits obj_State
 				return TRUE
 			}
 		}
-		
+
+		if ${Busy.IsBusy}
+		{
+			return FALSE
+		}
 	
 		if ${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity} >= ${Config.Threshold} * .01
 		{

@@ -331,6 +331,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								</OnLoad>
 								<OnSelect>
 									Script[ComBot].VariableScope.Salvage.Config:SetSize[${This.SelectedItem.Text}]
+									NoOp ${Script[ComBot].VariableScope.Salvage.InitialUpdate}
 								</OnSelect>
 								<OnMouseEnter>
 									UIElement[Information@InformationFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText["This selection can be used to specify what wreck sizes to salvage.  Anything smaller than your selection will be ignored.  For example, choosing Small will salvage everything, but choosing Medium will only salvage Medium and Large wrecks."]
