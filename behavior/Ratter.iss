@@ -303,7 +303,7 @@ objectdef obj_Ratter inherits obj_State
 		}
 		
 		DroneControl:Start
-		Rats.MaxLockCount:Set[4]
+		Rats.MinLockCount:Set[2]
 		Rats.AutoLock:Set[TRUE]
 		Rats:RequestUpdate
 
