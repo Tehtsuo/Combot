@@ -55,6 +55,7 @@ objectdef obj_Configuration_Ratter
 		
 	}
 	
+	Setting(bool, WarpToAnom, SetWarpToAnom)
 	Setting(bool, BeltRat, SetBeltRat)
 	Setting(bool, Salvage, SetSalvage)
 	Setting(bool, SpeedTank, SetSpeedTank)
@@ -101,6 +102,7 @@ objectdef obj_Ratter inherits obj_State
 		This:AssignStateQueueDisplay[DebugStateList@Debug@ComBotTab@ComBot]
 		if ${This.IsIdle}
 		{
+			DroneControl:Stop
 			This:QueueState["OpenCargoHold"]
 			This:QueueState["CheckCargoHold"]
 		}
@@ -190,7 +192,8 @@ objectdef obj_Ratter inherits obj_State
 		}
 		variable int Distance
 		Distance:Set[${Math.Calc[${Config.Warp} * 1000]}]
-		if ${Bookmarks.Used} == 0
+
+		if ${Bookmarks.Used} == 0 && !${Config.WarpToAnom}
 		{
 			EVE:GetBookmarks[Bookmarks]
 			Bookmarks:RemoveByQuery[${LavishScript.CreateQuery[SolarSystemID == ${Me.SolarSystemID}]}, FALSE]
@@ -227,7 +230,7 @@ objectdef obj_Ratter inherits obj_State
 				}
 			}
 		}
-		else
+		elseif !${Config.WarpToAnom}
 		{
 			UI:Update["Ratter", "Removing ${Bookmarks.Get[1].Label}", "g"]
 			Bookmarks.Get[1]:Remove
@@ -242,11 +245,28 @@ objectdef obj_Ratter inherits obj_State
 			UI:Update["Ratter", "Bookmarking ${Entity[GroupID==GROUP_WRECK && HaveLootRights].Name}", "g"]
 			Entity[GroupID==GROUP_WRECK && HaveLootRights]:CreateBookmark["${Config.SalvagePrefix} ${EVETime.Time.Left[-3].Replace[":",""]}","","Corporation Locations"]
 		}
-		echo Move:Bookmark[${Bookmarks.Get[1].Label}, TRUE, ${Distance}]
-		Move:Bookmark[${Bookmarks.Get[1].Label}, TRUE, ${Distance}]
+
+		if ${Config.WarpToAnom}
+		{
+			if !${Client.InSpace}
+			{
+				Move:Undock
+				return FALSE
+			}
+
+			dotnet WarpToAnom
+			This:InsertState["Traveling"]
+			This:InsertState["Idle", 20000]
+			return TRUE
+		}
+		else
+		{
+			Move:Bookmark[${Bookmarks.Get[1].Label}, TRUE, ${Distance}]
+		}
 		return TRUE
 
 	}
+	
 	
 	member:bool VerifyRatLocation()
 	{
@@ -275,11 +295,13 @@ objectdef obj_Ratter inherits obj_State
 	{
 		if !${Busy.IsBusy} && !${Rats.TargetList.Used}
 		{
+			DroneControl:Stop
 			This:QueueState["OpenCargoHold"]
 			This:QueueState["CheckCargoHold"]
 			return TRUE
 		}
 		
+		DroneControl:Start
 		Rats.MaxLockCount:Set[4]
 		Rats.AutoLock:Set[TRUE]
 		Rats:RequestUpdate

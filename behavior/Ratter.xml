@@ -457,7 +457,30 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<OnMouseExit>
 									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText[""]
 								</OnMouseExit>
-							</Textentry>						 
+							</Textentry>	
+							<Checkbox name='WarpToAnom'> 
+								<X>67%</X> 
+								<Y>10%</Y> 
+								<Width>32%</Width> 
+								<Height>9%</Height> 
+								<Text>Warp to Anomalys using DirectEve</Text>
+								<OnLoad>
+									if ${Script[ComBot].VariableScope.Ratter.Config.WarpToAnom}
+									{
+										This:SetChecked
+									}
+								</OnLoad>
+								<OnLeftClick>
+									Script[ComBot].VariableScope.Ratter.Config:SetWarpToAnom[${This.Checked}]
+								</OnLeftClick>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText["When this option is checked, ComBot will use DirectEve to scan and warp to anomalys."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText[""]
+								</OnMouseExit>
+							</Checkbox>
+							
 						</Children>
 					</Frame>
 				
