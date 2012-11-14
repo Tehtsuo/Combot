@@ -210,7 +210,6 @@ objectdef obj_Automate inherits obj_State
 	method GotoLogoutNow()
 	{
 		UI:Update["Automate", "Going Home!", "r"]
-		Move:NonGameTiedPulse:Set[TRUE]
 		This:Clear
 		This:QueueState["MoveToLogout"]
 		This:QueueState["Traveling"]
@@ -225,7 +224,7 @@ objectdef obj_Automate inherits obj_State
 	member:bool MoveToLogout()
 	{
 		variable iterator Behaviors
-		Move:NonGameTiedPulse:Set[TRUE]
+		Move.NonGameTiedPulse:Set[TRUE]
 		Dynamic.Behaviors:GetIterator[Behaviors]
 		if ${Behaviors:First(exists)}
 		{
