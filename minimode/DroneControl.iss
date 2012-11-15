@@ -443,9 +443,9 @@ objectdef obj_DroneControl inherits obj_State
 		}
 		else
 		{
-			if ${Drones.ActiveDroneCount["ToEntity.GroupID = 100"]} > 0 && ${LavishScript.RunningTime} > ${RecallDelay}
+			if ${Drones.ActiveDroneCount["ToEntity.GroupID = 100 || ToEntity.GroupID == 549"]} > 0 && ${LavishScript.RunningTime} > ${RecallDelay}
 			{
-				Drones:Recall["ToEntity.GroupID = 100"]
+				Drones:Recall["ToEntity.GroupID = 100 || ToEntity.GroupID == 549"]
 				This:QueueState["Idle", 5000]
 				This:QueueState["DroneControl"]
 				return TRUE
