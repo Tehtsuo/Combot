@@ -85,11 +85,44 @@ objectdef obj_Ratter inherits obj_State
 	variable index:bookmark Bookmarks
 	variable int64 CurrentTarget
 	variable int64 FirstWreck=0
+	
 
+	
 	method Initialize()
 	{
 		This[parent]:Initialize
 		PulseFrequency:Set[500]
+		
+		variable iterator classIterator
+		variable iterator groupIterator
+		variable string groups = ""
+		variable string seperator = ""
+		
+		Rats:ClearQueryString
+		
+		
+		NPCData.BaseRef:GetSetIterator[classIterator]
+		if ${classIterator:First(exists)}
+		{
+			do
+			{
+				seperator:Set[""]
+				groups:Set[""]
+				classIterator.Value:GetSettingIterator[groupIterator]
+				if ${groupIterator:First(exists)}
+				{
+					do
+					{
+						groups:Concat["${seperator}GroupID = ${groupIterator.Key}"]
+						seperator:Set[" || "]
+					}
+					while ${groupIterator:Next(exists)}
+				}
+				Rats:AddQueryString["IsNPC && !IsMoribund && (${groups})"]
+			}
+			while ${classIterator:Next(exists)}
+		}
+		
 		Rats:AddAllNPCs
 		DynamicAddBehavior("Ratter", "Ratter")
 	}
