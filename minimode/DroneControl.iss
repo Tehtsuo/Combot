@@ -392,10 +392,16 @@ objectdef obj_DroneControl inherits obj_State
 					return TRUE
 				}
 			}
-			if ${Drones.ActiveDroneCount["ToEntity.GroupID == 100 || ToEntity.GroupID == 549"]} > 0
+			if ${Drones.ActiveDroneCount["ToEntity.GroupID == 549"]} > 0
 			{
-				Drones:Engage["ToEntity.GroupID = 100 || ToEntity.GroupID == 549", ${CurrentTarget}, ${DroneCount}]
+				Drones:Engage["ToEntity.GroupID == 549", ${CurrentTarget}, ${DroneCount}]
 			}
+			elseif ${Drones.ActiveDroneCount["ToEntity.GroupID == 100"]} > 0 &&\
+					${Entity[${CurrentTarget}].Distance} < ${Me.DroneControlDistance}
+			{
+				Drones:Engage["ToEntity.GroupID == 100", ${CurrentTarget}, ${DroneCount}]
+			}
+			
 			if ${DroneCount} > ${Drones.ActiveDroneCount["ToEntity.GroupID == 100"]}
 			{
 				if ${Entity[${CurrentTarget}].Distance} > ${Me.DroneControlDistance}
