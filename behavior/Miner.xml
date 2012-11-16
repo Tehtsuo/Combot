@@ -1599,6 +1599,30 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[""]
 								</OnMouseExit>
 							</Textentry>							
+							<Checkbox name='RenameCans'>
+								<X>34%</X>
+								<Y>65%</Y>
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Text>Rename Jetcans</Text>
+								<OnLoad>
+									if ${Script[ComBot].VariableScope.Miner.Config.RenameCans}
+									{
+										This:SetChecked
+									}
+									This:SetZOrder[movetop]
+								</OnLoad>
+								<OnLeftClick>
+									Script[ComBot].VariableScope.Miner.Config:SetRenameCans[${This.Checked}]
+									This:SetZOrder[movetop]
+								</OnLeftClick>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText["When checked, ComBot will rename jetcans after they are jettisoned with your corp ticker and current timestamp."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[""]
+								</OnMouseExit>
+							</Checkbox>
 							<Checkbox name='ApproachPriority'>
 								<X>34%</X>
 								<Y>75%</Y>
