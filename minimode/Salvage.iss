@@ -123,6 +123,7 @@ objectdef obj_Salvage inherits obj_State
 		}
 		Wrecks.MaxRange:Set[${Ship.ModuleList_TractorBeams.Range}]
 		Wrecks.MinLockCount:Set[${MaxTarget}]
+		Wrecks.LockOutOfRange:Set[FALSE]
 		Wrecks.AutoLock:Set[TRUE]
 		Wrecks:RequestUpdate
 		
@@ -137,6 +138,13 @@ objectdef obj_Salvage inherits obj_State
 			{
 				if ${TargetIterator.Value.ID(exists)}
 				{
+					if 	${TargetIterator.Value.IsLockedTarget} &&\
+						${TargetIterator.Value.Distance} > ${Ship.ModuleList_TractorBeams.Range}
+					{
+						TargetIterator.Value:UnlockTarget
+						return FALSE
+					}
+				
 					if  !${Ship.ModuleList_TractorBeams.IsActiveOn[${TargetIterator.Value.ID}]} &&\
 						${TargetIterator.Value.Distance} < ${Ship.ModuleList_TractorBeams.Range} &&\
 						${TargetIterator.Value.Distance} > LOOT_RANGE &&\
@@ -256,7 +264,6 @@ objectdef obj_LootCans inherits obj_State
 		}
 
 		Salvage.Wrecks.TargetList:GetIterator[TargetIterator]
-		echo ${Salvage.Wrecks.TargetList.Used}
 		if ${TargetIterator:First(exists)} && ${EVEWindow[ByName, Inventory](exists)}
 		{
 			do
@@ -291,7 +298,9 @@ objectdef obj_LootCans inherits obj_State
 					}
 					UI:Update["Salvage", "Looting - ${TargetIterator.Value.Name}", "g"]
 					EVEWindow[ByItemID, ${TargetIterator.Value}]:LootAll
-					return FALSE
+					This:InsertState["Loot"]
+					This:InsertState["Stack"]
+					return TRUE
 				}
 				if !${EVEWindow[ByName, Inventory].ChildWindowExists[${TargetIterator.Value}]}
 				{
@@ -303,5 +312,11 @@ objectdef obj_LootCans inherits obj_State
 			while ${TargetIterator:Next(exists)}
 		}
 		return FALSE
+	}
+	
+	member:bool Stack()
+	{
+		EVE:StackItems[MyShip, CargoHold]
+		return TRUE
 	}
 }
