@@ -167,12 +167,13 @@ objectdef obj_Hauler inherits obj_State
 
 		if ${Busy.IsBusy}
 		{
+			UI:Update["Hauler", "Waiting for drones", "y"]
 			return FALSE
 		}
 	
 		if ${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity} >= ${Config.Threshold} * .01
 		{
-			UI:Update["obj_Hauler", "Unload trip required", "g"]
+			UI:Update["Hauler", "Unload trip required", "g"]
 			Cargo:At[${Config.Dropoff},${Config.DropoffType},${Config.DropoffSubType}, ${Config.DropoffContainer}]:Unload:Unload["",0,ShipCorpHangar]:Unload["",0,OreHold]
 			This:QueueState["Traveling"]
 			This:QueueState["OpenCargoHold"]

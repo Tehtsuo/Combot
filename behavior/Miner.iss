@@ -321,6 +321,7 @@ objectdef obj_Miner inherits obj_State
 		Profiling:StartTrack["Miner: PrepareWarp"]
 		if ${Busy.IsBusy}
 		{
+			UI:Update["Miner", "Waiting for drones", "y"]
 			Profiling:EndTrack
 			return FALSE
 		}
