@@ -110,7 +110,10 @@ objectdef obj_Jetcan inherits obj_State
 							This:QueueState["LootCan", 1000, ${TargetIterator.Key}]
 							This:QueueState["NewCan", 2000]
 							This:QueueState["TransferCan", 10000, "${TargetIterator.Key}"]
-							This:QueueState["Rename", 1000]
+							if ${Miner.Config.RenameCans}
+							{
+								This:QueueState["Rename", 1000]
+							}
 							This:QueueState["Fill"]
 							UI:Update["obj_Jetcan", "Popping old can - ${TargetIterator.Value.Name}", "g"]
 							return TRUE
@@ -170,7 +173,10 @@ objectdef obj_Jetcan inherits obj_State
 					{
 						TargetIterator.Value:Jettison
 						This:QueueState["Idle", 5000]
-						This:QueueState["Rename", 2000]
+						if ${Miner.Config.RenameCans}
+						{
+							This:QueueState["Rename", 2000]
+						}
 						This:QueueState["FillCan", 1500]
 						This:QueueState["Fill", 1500]
 						return TRUE
@@ -191,7 +197,10 @@ objectdef obj_Jetcan inherits obj_State
 					{
 						TargetIterator.Value:Jettison
 						This:QueueState["Idle", 5000]
-						This:QueueState["Rename", 2000]
+						if ${Miner.Config.RenameCans}
+						{
+							This:QueueState["Rename", 2000]
+						}
 						This:QueueState["FillCan", 1500]
 						This:QueueState["Fill", 1500]
 						return TRUE
