@@ -94,6 +94,8 @@ objectdef obj_Salvage inherits obj_State
 	
 	method Stop()
 	{
+		This.IsBusy:Set[FALSE]
+		Busy:UnsetBusy["Salvage"]
 		Wrecks.AutoLock:Set[FALSE]
 		This:Clear
 	}
@@ -207,13 +209,13 @@ objectdef obj_Salvage inherits obj_State
 			if ${Wrecks.TargetList.Used} > 0
 			{
 				This.IsBusy:Set[FALSE]
-				Busy:UnsetBusy["DroneControl"]
+				Busy:UnsetBusy["Salvage"]
 			}
 			else
 			{
 				LootCans:Disable
 				This.IsBusy:Set[FALSE]
-				Busy:UnsetBusy["DroneControl"]
+				Busy:UnsetBusy["Salvage"]
 				Wrecks.AutoLock:Set[FALSE]
 				return FALSE
 			}
