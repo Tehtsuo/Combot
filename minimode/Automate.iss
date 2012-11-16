@@ -223,6 +223,11 @@ objectdef obj_Automate inherits obj_State
 	
 	member:bool MoveToLogout()
 	{
+		if ${Busy.IsBusy}
+		{
+			UI:Update["Automate", "Waiting for drones", "y"]
+			return FALSE
+		}
 		variable iterator Behaviors
 		Move.NonGameTiedPulse:Set[TRUE]
 		Dynamic.Behaviors:GetIterator[Behaviors]
