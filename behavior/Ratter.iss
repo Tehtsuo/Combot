@@ -55,11 +55,13 @@ objectdef obj_Configuration_Ratter
 		
 	}
 	
+	Setting(bool, AssistOnly, SetAssistOnly)
 	Setting(bool, WarpToAnom, SetWarpToAnom)
 	Setting(bool, BeltRat, SetBeltRat)
 	Setting(bool, Salvage, SetSalvage)
 	Setting(bool, SpeedTank, SetSpeedTank)
 	Setting(bool, Tether, SetTether)
+	Setting(bool, Squat, SetSquat)
 	Setting(int, Warp, SetWarp)
 	Setting(int, Threshold, SetThreshold)
 	Setting(int, SpeedTankDistance, SetSpeedTankDistance)
@@ -81,6 +83,7 @@ objectdef obj_Ratter inherits obj_State
 	variable obj_TargetList Rats
 	variable index:entity Belts
 	variable index:bookmark Bookmarks
+	variable int64 FirstWreck=0
 
 	method Initialize()
 	{
@@ -103,8 +106,15 @@ objectdef obj_Ratter inherits obj_State
 		if ${This.IsIdle}
 		{
 			DroneControl:Stop
-			This:QueueState["OpenCargoHold"]
-			This:QueueState["CheckCargoHold"]
+			if ${Config.AssistOnly}
+			{
+				This:QueueState["Rat"]
+			}
+			else
+			{
+				This:QueueState["OpenCargoHold"]
+				This:QueueState["CheckCargoHold"]
+			}
 		}
 	}
 	
@@ -283,6 +293,7 @@ objectdef obj_Ratter inherits obj_State
 
 	member:bool InitialUpdate()
 	{
+		FirstWreck:Set[0]
 		Rats:RequestUpdate
 		return TRUE
 	}
@@ -293,13 +304,45 @@ objectdef obj_Ratter inherits obj_State
 	}
 	member:bool Rat()
 	{
+		if !${Client.InSpace}
+		{
+			return FALSE
+		}
+		if ${Me.ToEntity.Mode} == 3
+		{
+			FirstWreck:Set[0]
+			return FALSE
+		}
 		if !${Busy.IsBusy} && !${Rats.TargetList.Used}
 		{
-			DroneControl:Stop
-			This:QueueState["OpenCargoHold"]
-			This:QueueState["CheckCargoHold"]
-			return TRUE
+			if ${Config.AssistOnly}
+			{
+				FirstWreck:Set[0]
+			}
+			else
+			{
+				DroneControl:Stop
+				This:QueueState["OpenCargoHold"]
+				This:QueueState["CheckCargoHold"]
+				return TRUE
+			}
 		}
+		
+		if ${Config.Squat}
+		{
+			if ${FirstWreck} == 0
+			{
+				if ${Entity[GroupID==GROUP_WRECK && HaveLootRights](exists)}
+				{
+					FirstWreck:Set[${Entity[GroupID==GROUP_WRECK && HaveLootRights].ID}]
+				}
+			}
+			else
+			{
+				Move:Approach[${FirstWreck}, 2000]
+			}
+		}
+		
 		
 		DroneControl:Start
 		Rats.MaxLockCount:Set[4]
@@ -320,6 +363,16 @@ objectdef obj_Ratter inherits obj_State
 			if 	${Ship.ModuleList_Weapon.ActiveCount} < ${Ship.ModuleList_Weapon.Count}
 			{
 				Ship.ModuleList_Weapon:ActivateCount[${Ship.ModuleList_Weapon.InactiveCount}, ${Rats.LockedTargetList.Get[1].ID}]
+				return FALSE
+			}
+			if ${Ship.ModuleList_TargetPainter.ActiveCount} < ${Ship.ModuleList_TargetPainter.Count}
+			{
+				Ship.ModuleList_TargetPainter:ActivateCount[${Ship.ModuleList_TargetPainter.InactiveCount}, ${Rats.LockedTargetList.Get[1].ID}]
+				return FALSE
+			}
+			if ${Ship.StasisWeb.ActiveCount} < ${Ship.StasisWeb.Count}
+			{
+				Ship.StasisWeb:ActivateCount[${Ship.StasisWeb.InactiveCount}, ${Rats.LockedTargetList.Get[1].ID}]
 				return FALSE
 			}
 		}

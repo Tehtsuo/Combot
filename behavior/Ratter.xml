@@ -405,6 +405,50 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText[""]
 								</OnMouseExit>
 							</Textentry>			
+							<Checkbox name='AssistOnly'> 
+								<X>67%</X> 
+								<Y>40%</Y> 
+								<Width>32%</Width> 
+								<Height>9%</Height> 
+								<Text>Just assist</Text>
+								<OnLoad>
+									if ${Script[ComBot].VariableScope.Ratter.Config.AssistOnly}
+									{
+										This:SetChecked
+									}
+								</OnLoad>
+								<OnLeftClick>
+									Script[ComBot].VariableScope.Ratter.Config:SetAssistOnly[${This.Checked}]
+								</OnLeftClick>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText["When this option is checked, ComBot will not do any warping, it will just sit where you put it and kill stuff.  Speed tanking and wreck squatting will still function."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText[""]
+								</OnMouseExit>
+							</Checkbox>
+							<Checkbox name='Squat'> 
+								<X>67%</X> 
+								<Y>50%</Y> 
+								<Width>32%</Width> 
+								<Height>9%</Height> 
+								<Text>Squat on the first wreck</Text>
+								<OnLoad>
+									if ${Script[ComBot].VariableScope.Ratter.Config.Squat}
+									{
+										This:SetChecked
+									}
+								</OnLoad>
+								<OnLeftClick>
+									Script[ComBot].VariableScope.Ratter.Config:SetSquat[${This.Checked}]
+								</OnLeftClick>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText["When this option is checked, ComBot will approach to within 2000 m of the first wreck created in the anomaly."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText[""]
+								</OnMouseExit>
+							</Checkbox>
 							<Checkbox name='Tether'> 
 								<X>67%</X> 
 								<Y>65%</Y> 
