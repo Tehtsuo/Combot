@@ -127,6 +127,7 @@ objectdef obj_Configuration_Miner
 		This.CommonRef:AddSetting[TetherName,""]
 		
 		This.CommonRef:AddSetting[DontMove,FALSE]
+		This.CommonRef:AddSetting[RenameCans,TRUE]
 		
 	}
 	
@@ -150,6 +151,7 @@ objectdef obj_Configuration_Miner
 	Setting(string, JetcanPrefix, SetJetcanPrefix)
 	
 	Setting(bool, DontMove, SetDontMove)
+	Setting(bool, RenameCans, SetRenameCans)
 
 }
 
