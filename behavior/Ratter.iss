@@ -84,6 +84,7 @@ objectdef obj_Ratter inherits obj_State
 	variable index:entity Belts
 	variable index:bookmark Bookmarks
 	variable int64 CurrentTarget
+	variable int64 FirstWreck=0
 
 	method Initialize()
 	{
