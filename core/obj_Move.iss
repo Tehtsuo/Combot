@@ -97,7 +97,7 @@ objectdef obj_Move inherits obj_State
 	
 	
 	
-	method Fleetmember(int64 ID, bool IgnoreGate=FALSE)
+	method Fleetmember(int64 ID, bool IgnoreGate=FALSE, int Distance=0)
 	{
 		if ${This.Traveling}
 		{
@@ -115,7 +115,7 @@ objectdef obj_Move inherits obj_State
 		UI:Update["obj_Move", "Movement queued.  Destination: ${Being[${ID}].Name}", "g", TRUE]
 		UI:Log["Redacted:  obj_Move - Movement queued.  Destination: XXXXXXX (Fleet Member)"]
 		This.Traveling:Set[TRUE]
-		This:QueueState["FleetmemberMove", 2000, "${ID}, ${IgnoreGate}"]
+		This:QueueState["FleetmemberMove", 2000, "${ID}, ${IgnoreGate}, ${Distance}"]
 	}
 
 	method Bookmark(string DestinationBookmarkLabel, bool IgnoreGate=FALSE, int Distance=0)

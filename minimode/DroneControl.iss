@@ -124,7 +124,6 @@ objectdef obj_DroneControl inherits obj_State
 		variable string TargetClass
 		variable int DroneType
 		TargetClass:Set[${NPCData.NPCType[${TargetGroupID}]}]
-		echo ${TargetClass}
 		switch ${TargetClass}
 		{
 			case Frigate
@@ -369,7 +368,6 @@ objectdef obj_DroneControl inherits obj_State
 		else
 		{
 			RecallDelay:Set[${Math.Calc[${LavishScript.RunningTime} + (${Config.OutDelay} * 1000)]}]
-			echo ${This.SentryCount} - ${This.NonSentryCount} - ${Entity[${CurrentTarget}].Distance} - ${Math.Calc[(${Config.SentryRange} * 1000)]}
 			if ${Entity[${CurrentTarget}].Distance} < (${Config.SentryRange} * 1000)
 			{
 				if ${This.SentryCount} > 0
@@ -400,11 +398,16 @@ objectdef obj_DroneControl inherits obj_State
 					return TRUE
 				}
 			}
-			if ${Drones.ActiveDroneCount["ToEntity.GroupID == 100 || ToEntity.GroupID == 549"]} > 0
+			if ${Drones.ActiveDroneCount["ToEntity.GroupID == 549"]} > 0
 			{
-				echo Engage Target
-				Drones:Engage["ToEntity.GroupID = 100 || ToEntity.GroupID == 549", ${CurrentTarget}, ${DroneCount}]
+				Drones:Engage["ToEntity.GroupID == 549", ${CurrentTarget}, ${DroneCount}]
 			}
+			elseif ${Drones.ActiveDroneCount["ToEntity.GroupID == 100"]} > 0 &&\
+					${Entity[${CurrentTarget}].Distance} < ${Me.DroneControlDistance}
+			{
+				Drones:Engage["ToEntity.GroupID == 100", ${CurrentTarget}, ${DroneCount}]
+			}
+			
 			if ${DroneCount} > ${Drones.ActiveDroneCount["ToEntity.GroupID == 100"]}
 			{
 				if ${Entity[${CurrentTarget}].Distance} > ${Me.DroneControlDistance}
@@ -417,7 +420,6 @@ objectdef obj_DroneControl inherits obj_State
 				}
 				else
 				{
-					echo Deploy Drones: ${This.FindBestType[${Entity[${CurrentTarget}].GroupID}]} - ${Math.Calc[${DroneCount} - ${Drones.ActiveDroneCount["ToEntity.GroupID == 100"]}]}
 					Drones:Deploy["TypeID = ${This.FindBestType[${Entity[${CurrentTarget}].GroupID}]}", ${Math.Calc[${DroneCount} - ${Drones.ActiveDroneCount["ToEntity.GroupID == 100"]}]}]
 				}
 				IsBusy:Set[TRUE]

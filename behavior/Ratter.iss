@@ -83,7 +83,7 @@ objectdef obj_Ratter inherits obj_State
 	variable obj_TargetList Rats
 	variable index:entity Belts
 	variable index:bookmark Bookmarks
-	variable int64 FirstWreck=0
+	variable int64 CurrentTarget
 
 	method Initialize()
 	{
@@ -195,13 +195,14 @@ objectdef obj_Ratter inherits obj_State
 	
 	member:bool MoveToNewRatLocation()
 	{
-		if ${Config.Tether}
-		{
-			Move:Fleetmember[${Local["${Config.TetherPilot}"].ID}, TRUE]
-			return TRUE
-		}
 		variable int Distance
 		Distance:Set[${Math.Calc[${Config.Warp} * 1000]}]
+
+		if ${Config.Tether}
+		{
+			Move:Fleetmember[${Local["${Config.TetherPilot}"].ID}, TRUE, ${Distance}]
+			return TRUE
+		}
 
 		if ${Bookmarks.Used} == 0 && !${Config.WarpToAnom}
 		{
@@ -345,9 +346,10 @@ objectdef obj_Ratter inherits obj_State
 		
 		
 		DroneControl:Start
-		Rats.MaxLockCount:Set[4]
+		Rats.MinLockCount:Set[4]
 		Rats.AutoLock:Set[TRUE]
 		Rats:RequestUpdate
+
 		
 		if ${Rats.TargetList.Used}
 		{
@@ -358,11 +360,15 @@ objectdef obj_Ratter inherits obj_State
 			}
 		}
 		
-		if ${Rats.LockedTargetList.Used}
+		if !${Entity[${CurrentTarget}](exists)} || !${Entity[${CurrentTarget}].IsLockedTarget}
+		{
+			CurrentTarget:Set[-1]
+		}
+		else
 		{
 			if 	${Ship.ModuleList_Weapon.ActiveCount} < ${Ship.ModuleList_Weapon.Count}
 			{
-				Ship.ModuleList_Weapon:ActivateCount[${Ship.ModuleList_Weapon.InactiveCount}, ${Rats.LockedTargetList.Get[1].ID}]
+				Ship.ModuleList_Weapon:ActivateCount[${Ship.ModuleList_Weapon.InactiveCount}, ${CurrentTarget}]
 				return FALSE
 			}
 			if ${Ship.ModuleList_TargetPainter.ActiveCount} < ${Ship.ModuleList_TargetPainter.Count}
@@ -375,6 +381,11 @@ objectdef obj_Ratter inherits obj_State
 				Ship.StasisWeb:ActivateCount[${Ship.StasisWeb.InactiveCount}, ${Rats.LockedTargetList.Get[1].ID}]
 				return FALSE
 			}
+		}
+		
+		if ${Rats.LockedTargetList.Used} && ${CurrentTarget.Equal[-1]}
+		{
+			CurrentTarget:Set[${Rats.LockedTargetList.Get[1].ID}]
 		}
 		
 		return FALSE
