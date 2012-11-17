@@ -85,6 +85,7 @@ objectdef obj_Ratter inherits obj_State
 	variable index:bookmark Bookmarks
 	variable int64 CurrentTarget
 	variable int64 FirstWreck=0
+	variable int FinishedDelay
 
 	method Initialize()
 	{
@@ -314,7 +315,7 @@ objectdef obj_Ratter inherits obj_State
 			FirstWreck:Set[0]
 			return FALSE
 		}
-		if !${Busy.IsBusy} && !${Rats.TargetList.Used}
+		if !${Busy.IsBusy} && !${Rats.TargetList.Used} && ${LavishScript.RunningTime} > ${FinishedDelay}
 		{
 			if ${Config.AssistOnly}
 			{
@@ -364,6 +365,7 @@ objectdef obj_Ratter inherits obj_State
 		}
 		else
 		{
+			FinishedDelay:Set[${Math.Calc[${LavishScript.RunningTime} + (10000)]}]
 			if 	${Ship.ModuleList_Weapon.ActiveCount} < ${Ship.ModuleList_Weapon.Count}
 			{
 				Ship.ModuleList_Weapon:ActivateCount[${Ship.ModuleList_Weapon.InactiveCount}, ${CurrentTarget}]
