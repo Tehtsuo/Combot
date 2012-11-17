@@ -486,6 +486,7 @@ objectdef obj_DroneControl inherits obj_State
 				{
 					UI:Update["DroneControl", "Primary target: \ar${TargetIterator.Value.Name}", "g"]
 					CurrentTarget:Set[${TargetIterator.Value.ID}]
+					break
 				}
 			}
 			while ${TargetIterator:Next(exists)}
