@@ -148,7 +148,7 @@ objectdef obj_Salvager inherits obj_State
 		if ${BookmarkIterator:First(exists)}
 		do
 		{	
-			if ${BookmarkIterator.Value.Label.Left[8].Upper.Equal[${Config.Prefix}]} && ${BookmarkIterator.Value.JumpsTo} <= 0
+			if ${BookmarkIterator.Value.Label.Left[${Config.Prefix.Length}].Upper.Equal[${Config.Prefix}]} && ${BookmarkIterator.Value.JumpsTo} <= 0
 			{
 				InHoldOff:Set[FALSE]
 				if ${HoldOffIterator:First(exists)}
@@ -183,7 +183,7 @@ objectdef obj_Salvager inherits obj_State
 		if ${BookmarkIterator:First(exists)} && !${BookmarkFound}
 		do
 		{	
-			if ${BookmarkIterator.Value.Label.Left[8].Upper.Equal[${Config.Prefix}]}
+			if ${BookmarkIterator.Value.Label.Left[${Config.Prefix.Length}].Upper.Equal[${Config.Prefix}]}
 			{
 				InHoldOff:Set[FALSE]
 				if ${HoldOffIterator:First(exists)}
@@ -395,6 +395,25 @@ objectdef obj_Salvager inherits obj_State
 		{
 			return TRUE
 		}
+		else
+		{
+			variable iterator TargetIterator
+			Salvage.Wrecks.TargetList:GetIterator[TargetIterator]
+			if ${TargetIterator:First(exists)}
+			{
+				do
+				{
+					if ${TargetIterator.Value.ID(exists)}
+					{
+						if 	${TargetIterator.Value.Distance} > ${Ship.ModuleList_TractorBeams.Range}
+						{
+							Move:Approach[${TargetIterator.Value.ID}]
+							return FALSE
+						}
+					}
+				}
+			}
+		}
 		return FALSE
 	}
 	
@@ -427,7 +446,7 @@ objectdef obj_Salvager inherits obj_State
 			{
 				do
 				{
-					if ${BookmarkIterator.Value.Label.Left[8].Upper.Equal[${Config.Prefix}]} && ${BookmarkIterator.Value.CreatorID.Equal[${BookmarkCreator}]}
+					if ${BookmarkIterator.Value.Label.Left[${Config.Prefix.Length}].Upper.Equal[${Config.Prefix}]} && ${BookmarkIterator.Value.CreatorID.Equal[${BookmarkCreator}]}
 					{
 						UseJumpGate:Set[TRUE]
 					}
@@ -491,7 +510,7 @@ objectdef obj_Salvager inherits obj_State
 		if ${BookmarkIterator:First(exists)}
 		do
 		{
-			if ${BookmarkIterator.Value.Label.Left[8].Upper.Equal[${Config.Prefix}]} && ${BookmarkIterator.Value.CreatorID.Equal[${BookmarkCreator}]}
+			if ${BookmarkIterator.Value.Label.Left[${Config.Prefix.Length}].Upper.Equal[${Config.Prefix}]} && ${BookmarkIterator.Value.CreatorID.Equal[${BookmarkCreator}]}
 			{
 				if ${BookmarkIterator.Value.JumpsTo} == 0
 				{

@@ -33,7 +33,7 @@ objectdef obj_Jetcan inherits obj_State
 	{
 		if ${States.Used} == 0 && ${CurState.Name.NotEqual[Fill]}
 		{
-			This:QueueState["Fill", 1500]
+			This:QueueState["Fill", 121000]
 		}
 	}
 	
@@ -114,7 +114,7 @@ objectdef obj_Jetcan inherits obj_State
 							{
 								This:QueueState["Rename", 1000]
 							}
-							This:QueueState["Fill"]
+							This:QueueState["Fill", 121000]
 							UI:Update["obj_Jetcan", "Popping old can - ${TargetIterator.Value.Name}", "g"]
 							return TRUE
 						}
@@ -154,7 +154,7 @@ objectdef obj_Jetcan inherits obj_State
 					}
 					Cargo:MoveCargoList[Container, "", ${TargetIterator.Value}]
 					This:QueueState["Stack", 1000, ${TargetIterator.Value}]
-					This:QueueState["Fill", 1500]
+					This:QueueState["Fill", 121000]
 					return TRUE
 				}
 			}
@@ -178,7 +178,7 @@ objectdef obj_Jetcan inherits obj_State
 							This:QueueState["Rename", 2000]
 						}
 						This:QueueState["FillCan", 1500]
-						This:QueueState["Fill", 1500]
+						This:QueueState["Fill", 121000]
 						return TRUE
 					}
 				}
@@ -202,7 +202,7 @@ objectdef obj_Jetcan inherits obj_State
 							This:QueueState["Rename", 2000]
 						}
 						This:QueueState["FillCan", 1500]
-						This:QueueState["Fill", 1500]
+						This:QueueState["Fill", 121000]
 						return TRUE
 					}
 				}
