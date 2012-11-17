@@ -429,12 +429,12 @@ objectdef obj_Ratter inherits obj_State
 		Rats:RequestUpdate
 
 		
-		if ${Rats.TargetList.Used}
+		if ${Rats.LockedAndLockingTargetList.Used}
 		{
 			if 	${Config.SpeedTank} &&\
 				${Me.ToEntity.Mode} != 4
 			{
-				Rats.TargetList.Get[1]:Orbit[${Math.Calc[${Config.SpeedTankDistance}*1000+1000].Int}]
+				Rats.LockedAndLockingTargetList.Get[1]:Orbit[${Math.Calc[${Config.SpeedTankDistance}*1000+1000].Int}]
 			}
 		}
 		

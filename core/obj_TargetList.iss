@@ -501,9 +501,9 @@ objectdef obj_TargetList inherits obj_State
 		
 		This:DeepCopyEntityIndex["This.LockedTargetListBufferOOR", "This.LockedTargetList"]
 		
-		This:DeepCopyEntityIndex["This.LockedAndLockingTargetListBuffer", "This.LockedTargetList"]
+		This:DeepCopyEntityIndex["This.LockedAndLockingTargetListBuffer", "This.LockedAndLockingTargetList"]
 		
-		This:DeepCopyEntityIndex["This.LockedAndLockingTargetListBufferOOR", "This.LockedTargetList"]
+		This:DeepCopyEntityIndex["This.LockedAndLockingTargetListBufferOOR", "This.LockedAndLockingTargetList"]
 		
 		This:DeepCopyCollection["This.TargetLockPrioritysBuffer", "This.TargetLockPrioritys"]
 		
