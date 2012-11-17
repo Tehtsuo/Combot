@@ -307,8 +307,11 @@ objectdef obj_Ratter inherits obj_State
 
 		if ${Config.Tether}
 		{
-			Move:Fleetmember[${Local["${Config.TetherPilot}"].ID}, TRUE, ${Distance}]
-			return TRUE
+			if !${Entity[Name =- "${Config.TetherPilot}"](exists)}
+			{
+				Move:Fleetmember[${Local["${Config.TetherPilot}"].ID}, TRUE, ${Distance}]
+				return TRUE
+			}
 		}
 
 		if ${Bookmarks.Used} == 0 && !${Config.WarpToAnom}
