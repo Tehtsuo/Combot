@@ -83,6 +83,7 @@ function main(string Character="")
 	
 
 	declarevariable NPCData obj_NPCData script
+	declarevariable PriorityTargets obj_PriorityTargets script
 	declarevariable ComBotLogin obj_Login script
 	declarevariable Dynamic obj_Dynamic script
 	#include temp/behaviordeclares.iss
@@ -117,7 +118,6 @@ function main(string Character="")
 	declarevariable Delay obj_Delay script
 	declarevariable Fleets obj_Fleet script
 	declarevariable Busy obj_Busy script
-	declarevariable PriorityTargets obj_PriorityTargets script
 	
 	
 	UI:Update["ComBot", "Module initialization complete", "y"]
