@@ -106,7 +106,6 @@ objectdef obj_Ratter inherits obj_State
 		This:AssignStateQueueDisplay[DebugStateList@Debug@ComBotTab@ComBot]
 		if ${This.IsIdle}
 		{
-			DroneControl:Stop
 			if ${Config.AssistOnly}
 			{
 				This:QueueState["Rat"]
@@ -323,7 +322,6 @@ objectdef obj_Ratter inherits obj_State
 			}
 			else
 			{
-				DroneControl:Stop
 				This:QueueState["OpenCargoHold"]
 				This:QueueState["CheckCargoHold"]
 				return TRUE
@@ -346,7 +344,6 @@ objectdef obj_Ratter inherits obj_State
 		}
 		
 		
-		DroneControl:Start
 		Rats.MinLockCount:Set[4]
 		Rats.AutoLock:Set[TRUE]
 		Rats:RequestUpdate
