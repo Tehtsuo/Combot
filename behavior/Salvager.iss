@@ -412,6 +412,7 @@ objectdef obj_Salvager inherits obj_State
 						}
 					}
 				}
+				while ${TargetIterator:Next(exists)}
 			}
 		}
 		return FALSE
