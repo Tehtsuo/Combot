@@ -123,7 +123,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<X>0%</X>
 						<Y>4%</Y>
 						<Width>100%</Width>
-						<Height>30%</Height>
+						<Height>40%</Height>
 						<BackgroundColor>FF000000</BackgroundColor>
 						<Border>1</Border>
 						<BorderColor>FFFFFFFF</BorderColor>
@@ -293,6 +293,33 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText[""]
 								</OnMouseExit>
 							</Slider>						 
+							<Text name='LocksTitle'> 
+								<X>67%</X> 
+								<Y>20%</Y> 
+								<Width>32%</Width> 
+								<Height>9%</Height> 
+								<Text>Lock ${Script[ComBot].VariableScope.Ratter.Config.Locks} targets</Text>
+							</Text>
+							<Slider name='Locks'> 
+								<X>67%</X> 
+								<Y>25%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Border>1</Border>
+								<OnLoad>
+									This:SetRange[10]
+									This:SetValue[${Script[ComBot].VariableScope.Ratter.Config.Locks}]
+								</OnLoad>
+								<OnChange>
+									Script[ComBot].VariableScope.Ratter.Config:SetLocks[${This.Value}]
+								</OnChange>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText["This field is used to instruct ComBot how many targets to use for weapons."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText[""]
+								</OnMouseExit>
+							</Slider>						 
 							<Text name='ThresholdTitle'> 
 								<X>34%</X> 
 								<Y>3%</Y> 
@@ -405,9 +432,31 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText[""]
 								</OnMouseExit>
 							</Textentry>			
-							<Checkbox name='AssistOnly'> 
+							<Checkbox name='DroneControl'> 
 								<X>67%</X> 
 								<Y>40%</Y> 
+								<Width>32%</Width> 
+								<Height>9%</Height> 
+								<Text>Use DroneControl minimode targets</Text>
+								<OnLoad>
+									if ${Script[ComBot].VariableScope.Ratter.Config.DroneControl}
+									{
+										This:SetChecked
+									}
+								</OnLoad>
+								<OnLeftClick>
+									Script[ComBot].VariableScope.Ratter.Config:SetDroneControl[${This.Checked}]
+								</OnLeftClick>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText["When this option is checked, ComBot will use the targets from the DroneControl minimode instead of the Ratter behavior module.  Best used for ships that are primarily drone-based as EWAR will be used to help your drones."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText[""]
+								</OnMouseExit>
+							</Checkbox>
+							<Checkbox name='AssistOnly'> 
+								<X>67%</X> 
+								<Y>50%</Y> 
 								<Width>32%</Width> 
 								<Height>9%</Height> 
 								<Text>Just assist</Text>
@@ -429,7 +478,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							</Checkbox>
 							<Checkbox name='Squat'> 
 								<X>67%</X> 
-								<Y>50%</Y> 
+								<Y>60%</Y> 
 								<Width>32%</Width> 
 								<Height>9%</Height> 
 								<Text>Squat on the first wreck</Text>
@@ -451,7 +500,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							</Checkbox>
 							<Checkbox name='Tether'> 
 								<X>67%</X> 
-								<Y>65%</Y> 
+								<Y>70%</Y> 
 								<Width>32%</Width> 
 								<Height>9%</Height> 
 								<Text>Tether to a fleet member</Text>
@@ -530,7 +579,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 				
 					<Text name='DropoffFrameTitle'> 
 						<X>1%</X> 
-						<Y>40%</Y> 
+						<Y>45%</Y> 
 						<Width>32%</Width> 
 						<Height>4%</Height> 
 						<Text>Dropoff Configuration</Text>
@@ -540,7 +589,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					</Text>
 					<Frame name="DropoffFrame">
 						<X>0%</X>
-						<Y>42%</Y>
+						<Y>47%</Y>
 						<Width>100%</Width>
 						<Height>30%</Height>
 						<BackgroundColor>FF000000</BackgroundColor>

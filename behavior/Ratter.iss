@@ -51,6 +51,7 @@ objectdef obj_Configuration_Ratter
 		This.CommonRef:AddSetting[DropoffSubType,""]
 		This.CommonRef:AddSetting[DropoffContainer,""]
 		This.CommonRef:AddSetting[SpeedTankDistance,5000]
+		This.CommonRef:AddSetting[Locks,4]
 		This.CommonRef:AddSetting[TetherPilot,""]
 		
 	}
@@ -62,7 +63,9 @@ objectdef obj_Configuration_Ratter
 	Setting(bool, SpeedTank, SetSpeedTank)
 	Setting(bool, Tether, SetTether)
 	Setting(bool, Squat, SetSquat)
+	Setting(bool, DroneControl, SetDroneControl)
 	Setting(int, Warp, SetWarp)
+	Setting(int, Locks, SetLocks)
 	Setting(int, Threshold, SetThreshold)
 	Setting(int, SpeedTankDistance, SetSpeedTankDistance)
 	Setting(string, RattingSystem, SetRattingSystem)	
@@ -92,6 +95,17 @@ objectdef obj_Ratter inherits obj_State
 		This[parent]:Initialize
 		PulseFrequency:Set[500]
 		
+		DynamicAddBehavior("Ratter", "Ratter")
+	}
+
+	method Shutdown()
+	{
+		This:DeactivateStateQueueDisplay
+		This:Clear
+	}	
+	
+	method Start()
+	{
 		variable iterator classIterator
 		variable iterator groupIterator
 		variable string groups = ""
@@ -168,17 +182,7 @@ objectdef obj_Ratter inherits obj_State
 		}
 		
 		Rats:AddTargetingMe
-		DynamicAddBehavior("Ratter", "Ratter")
-	}
 
-	method Shutdown()
-	{
-		This:DeactivateStateQueueDisplay
-		This:Clear
-	}	
-	
-	method Start()
-	{
 		UI:Update["obj_Ratter", "Started", "g"]
 		This:AssignStateQueueDisplay[DebugStateList@Debug@ComBotTab@ComBot]
 		if ${This.IsIdle}
@@ -464,17 +468,27 @@ objectdef obj_Ratter inherits obj_State
 		}
 		
 		
-		Rats.MinLockCount:Set[4]
+		Rats.MinLockCount:Set[${Locks}]
 		Rats.AutoLock:Set[TRUE]
 		Rats:RequestUpdate
-
 		
-		if ${Rats.LockedAndLockingTargetList.Used}
+		variable string ModuleToUse
+
+		if ${Config.DroneControl}
+		{
+			ModuleToUse:Set[DroneControl.DroneTargets]
+		}
+		else
+		{
+			ModuleToUse:Set[Rats]
+		}
+		
+		if ${${ModuleToUse}.LockedAndLockingTargetList.Used}
 		{
 			if 	${Config.SpeedTank} &&\
 				${Me.ToEntity.Mode} != 4
 			{
-				Rats.LockedAndLockingTargetList.Get[1]:Orbit[${Math.Calc[${Config.SpeedTankDistance}*1000+1000].Int}]
+				${ModuleToUse}.LockedAndLockingTargetList.Get[1]:Orbit[${Math.Calc[${Config.SpeedTankDistance}*1000+1000].Int}]
 			}
 		}
 		
@@ -502,10 +516,13 @@ objectdef obj_Ratter inherits obj_State
 			}
 		}
 		
-		if ${Rats.LockedAndLockingTargetList.Used} && ${CurrentTarget.Equal[-1]}
+		if ${${ModuleToUse}.LockedAndLockingTargetList.Used} && ${CurrentTarget.Equal[-1]}
 		{
-			CurrentTarget:Set[${Rats.LockedAndLockingTargetList.Get[1].ID}]
-			UI:Update["Ratter", "Primary target: \ar", "g"]
+			if ${${ModuleToUse}.LockedAndLockingTargetList.Get[1](exists)}
+			{
+				CurrentTarget:Set[${${ModuleToUse}.LockedAndLockingTargetList.Get[1].ID}]
+				UI:Update["Ratter", "Primary target: \ar${${ModuleToUse}.LockedAndLockingTargetList.Get[1].Name}", "g"]
+			}
 		}
 		
 		return FALSE
