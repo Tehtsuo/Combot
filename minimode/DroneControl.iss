@@ -87,7 +87,7 @@ objectdef obj_DroneControl inherits obj_State
 			{
 				do
 				{
-					groups:Concat["${seperator}Name =- ${groupIterator.Value}"]
+					groups:Concat[${seperator}Name =- "${groupIterator.Value}"]
 					seperator:Set[" || "]
 				}
 				while ${groupIterator:Next(exists)}
@@ -102,7 +102,7 @@ objectdef obj_DroneControl inherits obj_State
 			{
 				do
 				{
-					groups:Concat["${seperator}Name =- ${groupIterator.Value}"]
+					groups:Concat[${seperator}Name =- "${groupIterator.Value}"]
 					seperator:Set[" || "]
 				}
 				while ${groupIterator:Next(exists)}
@@ -117,7 +117,7 @@ objectdef obj_DroneControl inherits obj_State
 			{
 				do
 				{
-					groups:Concat["${seperator}Name =- ${groupIterator.Value}"]
+					groups:Concat[${seperator}Name =- "${groupIterator.Value}"]
 					seperator:Set[" || "]
 				}
 				while ${groupIterator:Next(exists)}

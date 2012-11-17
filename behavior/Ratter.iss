@@ -105,7 +105,7 @@ objectdef obj_Ratter inherits obj_State
 		{
 			do
 			{
-				groups:Concat["${seperator}Name =- ${groupIterator.Value}"]
+				groups:Concat[${seperator}Name =- "${groupIterator.Value}"]
 				seperator:Set[" || "]
 			}
 			while ${groupIterator:Next(exists)}
@@ -120,7 +120,7 @@ objectdef obj_Ratter inherits obj_State
 		{
 			do
 			{
-				groups:Concat["${seperator}Name =- ${groupIterator.Value}"]
+				groups:Concat[${seperator}Name =- "${groupIterator.Value}"]
 				seperator:Set[" || "]
 			}
 			while ${groupIterator:Next(exists)}
@@ -135,7 +135,7 @@ objectdef obj_Ratter inherits obj_State
 		{
 			do
 			{
-				groups:Concat["${seperator}Name =- ${groupIterator.Value}"]
+				groups:Concat[${seperator}Name =- "${groupIterator.Value}"]
 				seperator:Set[" || "]
 			}
 			while ${groupIterator:Next(exists)}
@@ -405,6 +405,7 @@ objectdef obj_Ratter inherits obj_State
 			This:InsertState["Rat"]
 			return TRUE
 		}
+		echo !${Busy.IsBusy} && !${Rats.TargetList.Used} && ${LavishScript.RunningTime} > ${FinishedDelay}
 		if !${Busy.IsBusy} && !${Rats.TargetList.Used} && ${LavishScript.RunningTime} > ${FinishedDelay}
 		{
 			variable bool Bookmarked=FALSE
@@ -504,6 +505,7 @@ objectdef obj_Ratter inherits obj_State
 		if ${Rats.LockedAndLockingTargetList.Used} && ${CurrentTarget.Equal[-1]}
 		{
 			CurrentTarget:Set[${Rats.LockedAndLockingTargetList.Get[1].ID}]
+			UI:Update["Ratter", "Primary target: \ar", "g"]
 		}
 		
 		return FALSE
