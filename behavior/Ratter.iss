@@ -154,8 +154,6 @@ objectdef obj_Ratter inherits obj_State
 			This:QueueState["MoveToNewRatLocation"]
 			This:QueueState["Traveling"]
 			This:QueueState["VerifyRatLocation"]
-			This:QueueState["Log", 10, "Waiting for rats to spawn, g"]
-			This:QueueState["Idle", 5000]
 			This:QueueState["InitialUpdate"]
 			This:QueueState["Updated"]
 			This:QueueState["Log", 10, "Ratting, g"]
@@ -295,6 +293,8 @@ objectdef obj_Ratter inherits obj_State
 
 	member:bool InitialUpdate()
 	{
+		UI:Update["Ratter", "Waiting for 60 seconds or npc on grid", "g"]
+		FinishedDelay:Set[${Math.Calc[${LavishScript.RunningTime} + (60000)]}]
 		FirstWreck:Set[0]
 		Rats:RequestUpdate
 		return TRUE
@@ -302,7 +302,16 @@ objectdef obj_Ratter inherits obj_State
 	
 	member:bool Updated()
 	{
-		return ${Rats.Updated}
+		Rats:RequestUpdate
+		if ${Rats.TargetList.Used} > 0
+		{
+			FinishedDelay:Set[${Math.Calc[${LavishScript.RunningTime} + (10000)]}]
+			return TRUE
+		}
+		if ${LavishScript.RunningTime} > ${FinishedDelay}
+		{
+			return TRUE
+		}
 	}
 	member:bool Rat()
 	{
