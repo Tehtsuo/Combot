@@ -123,7 +123,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<X>0%</X>
 						<Y>4%</Y>
 						<Width>100%</Width>
-						<Height>40%</Height>
+						<Height>35%</Height>
 						<BackgroundColor>FF000000</BackgroundColor>
 						<Border>1</Border>
 						<BorderColor>FFFFFFFF</BorderColor>
@@ -579,7 +579,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 				
 					<Text name='DropoffFrameTitle'> 
 						<X>1%</X> 
-						<Y>45%</Y> 
+						<Y>40%</Y> 
 						<Width>32%</Width> 
 						<Height>4%</Height> 
 						<Text>Dropoff Configuration</Text>
@@ -589,9 +589,9 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					</Text>
 					<Frame name="DropoffFrame">
 						<X>0%</X>
-						<Y>47%</Y>
+						<Y>42%</Y>
 						<Width>100%</Width>
-						<Height>30%</Height>
+						<Height>25%</Height>
 						<BackgroundColor>FF000000</BackgroundColor>
 						<Border>1</Border>
 						<BorderColor>FFFFFFFF</BorderColor>
@@ -846,6 +846,163 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								</OnMouseExit>
 							</listbox>
 				
+						</Children>
+					</Frame>
+					
+					<Text name='AmmoFrameTitle'> 
+						<X>1%</X> 
+						<Y>68%</Y> 
+						<Width>32%</Width> 
+						<Height>4%</Height> 
+						<Text>Ammo Configuration</Text>
+						<OnLoad>
+							This.Font:SetColor[FFFFFF00]
+						</OnLoad>
+					</Text>
+					<Frame name="AmmoFrame">
+						<X>0%</X>
+						<Y>70%</Y>
+						<Width>100%</Width>
+						<Height>9%</Height>
+						<BackgroundColor>FF000000</BackgroundColor>
+						<Border>1</Border>
+						<BorderColor>FFFFFFFF</BorderColor>
+						<Children>
+							<Text name='AmmoTitle'> 
+								<X>1%</X> 
+								<Y>5%</Y> 
+								<Width>32%</Width> 
+								<Height>5%</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Ammo</Text>
+							</Text>						 
+							<Textentry Name="Ammo">
+								<BackgroundColor>FF000000</BackgroundColor>
+								<Border>1</Border>
+								<BorderColor>FFFFFFFF</BorderColor>
+								<X>1%</X>
+								<Y>30%</Y>
+								<Width>32%</Width>
+								<Height>50%</Height>
+								<OnLoad>
+									This:SetText[${Script[ComBot].VariableScope.Ratter.Config.Ammo}]
+								</OnLoad>
+								<OnChange>
+									if ${This.Text.Length}
+									{
+										Script[ComBot].VariableScope.Ratter.Config:SetAmmo[${This.Text}]
+									}
+									else
+									{
+										Script[ComBot].VariableScope.Ratter.Config:SetAmmo[\"\"]
+									}
+									UIElement[AmmoList@AmmoFrame@Frame@ComBot_Ratter]:Show
+									UIElement[AmmoList@AmmoFrame@Frame@ComBot_Ratter]:SetZOrder[movetop]
+									Script[ComBot].VariableScope.Ratter.LocalUI:Start
+								</OnChange>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText["This field needs to contain the exact name of your ammo."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText[""]
+								</OnMouseExit>
+							</Textentry>
+							<listbox Name="AmmoList">
+								<BackgroundColor>FF000000</BackgroundColor>
+								<Border>1</Border>
+								<BorderColor>FFFFFFFF</BorderColor>
+								<X>1%</X>
+								<Y>60%</Y>
+								<Width>32%</Width>
+								<Height>70%</Height>
+								<OnLoad>
+									This:Hide
+								</OnLoad>
+								<OnSelect>
+									UIElement[Ammo@AmmoFrame@Frame@ComBot_Ratter]:SetText[${This.SelectedItem.Text}]
+									Script[ComBot].VariableScope.Ratter.Config:SetAmmo[${This.SelectedItem.Text}]
+									Script[ComBot].VariableScope.Ratter.LocalUI:Stop
+									This:Hide
+								</OnSelect>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText["This field needs to contain the exact name of your ammo."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText[""]
+								</OnMouseExit>
+							</listbox>
+							<Text name='AmmoSupplyTitle'> 
+								<X>34%</X> 
+								<Y>5%</Y> 
+								<Width>32%</Width> 
+								<Height>5%</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Resupply threshold</Text>
+							</Text>						 
+							<Textentry Name="AmmoSupply">
+								<BackgroundColor>FF000000</BackgroundColor>
+								<Border>1</Border>
+								<BorderColor>FFFFFFFF</BorderColor>
+								<X>34%</X>
+								<Y>30%</Y>
+								<Width>32%</Width>
+								<Height>50%</Height>
+								<OnLoad>
+									This:SetText[${Script[ComBot].VariableScope.Ratter.Config.AmmoSupply}]
+								</OnLoad>
+								<OnChange>
+									if ${This.Text.Length}
+									{
+										Script[ComBot].VariableScope.Ratter.Config:SetAmmoSupply[${This.Text}]
+									}
+									else
+									{
+										Script[ComBot].VariableScope.Ratter.Config:SetAmmoSupply[0]
+									}
+								</OnChange>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText["This field determines when ComBot should go to the dropoff location to load more ammo."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText[""]
+								</OnMouseExit>
+							</Textentry>
+							<Text name='AmmoCapTitle'> 
+								<X>67%</X> 
+								<Y>5%</Y> 
+								<Width>32%</Width> 
+								<Height>5%</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Resupply threshold</Text>
+							</Text>						 
+							<Textentry Name="AmmoCap">
+								<BackgroundColor>FF000000</BackgroundColor>
+								<Border>1</Border>
+								<BorderColor>FFFFFFFF</BorderColor>
+								<X>67%</X>
+								<Y>30%</Y>
+								<Width>32%</Width>
+								<Height>50%</Height>
+								<OnLoad>
+									This:SetText[${Script[ComBot].VariableScope.Ratter.Config.AmmoCap}]
+								</OnLoad>
+								<OnChange>
+									if ${This.Text.Length}
+									{
+										Script[ComBot].VariableScope.Ratter.Config:SetAmmoCap[${This.Text}]
+									}
+									else
+									{
+										Script[ComBot].VariableScope.Ratter.Config:SetAmmoCap[0]
+									}
+								</OnChange>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText["This field determines how much ammo ComBot should load.  Use 0 to indicate ComBot should fill your cargo hold."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText[""]
+								</OnMouseExit>
+							</Textentry>
 						</Children>
 					</Frame>
 					
