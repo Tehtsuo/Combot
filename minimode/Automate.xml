@@ -489,7 +489,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									{
 										Script[ComBot].VariableScope.Automate.Config:SetBookmark[\"\"]
 									}
-									UIElement[BookmarkList@AutomateFrame@ComBot_Automate_Frame@ComBot_Automate]:Show
+									UIElement[BookmarkList@AutoLogoutFrame@ComBot_Automate_Frame@ComBot_Automate]:Show
 									Script[ComBot].VariableScope.Automate.LocalUI:Start
 								</OnChange>
 								<OnMouseEnter>
@@ -512,7 +512,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									This:Hide
 								</OnLoad>
 								<OnSelect>
-									UIElement[Bookmark@AutomateFrame@ComBot_Automate_Frame@ComBot_Automate]:SetText[${This.SelectedItem.Text}]
+									UIElement[Bookmark@AutoLogoutFrame@ComBot_Automate_Frame@ComBot_Automate]:SetText[${This.SelectedItem.Text}]
 									Script[ComBot].VariableScope.Automate.Config:SetBookmark[${This.SelectedItem.Text}]
 									Script[ComBot].VariableScope.Automate.LocalUI:Stop
 									This:Hide
