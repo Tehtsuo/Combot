@@ -395,6 +395,25 @@ objectdef obj_Salvager inherits obj_State
 		{
 			return TRUE
 		}
+		else
+		{
+			variable iterator TargetIterator
+			Salvage.Wrecks.TargetList:GetIterator[TargetIterator]
+			if ${TargetIterator:First(exists)}
+			{
+				do
+				{
+					if ${TargetIterator.Value.ID(exists)}
+					{
+						if 	${TargetIterator.Value.Distance} > ${Ship.ModuleList_TractorBeams.Range}
+						{
+							Move:Approach[${TargetIterator.Value.ID}]
+							return FALSE
+						}
+					}
+				}
+			}
+		}
 		return FALSE
 	}
 	
