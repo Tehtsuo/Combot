@@ -445,20 +445,17 @@ objectdef obj_Ratter inherits obj_State
 		else
 		{
 			FinishedDelay:Set[${Math.Calc[${LavishScript.RunningTime} + (10000)]}]
-			if 	${Ship.ModuleList_Weapon.ActiveCount} < ${Ship.ModuleList_Weapon.Count} &&\
-				${Entity[${CurrentTarget}].IsLockedTarget}
+			if 	${Ship.ModuleList_Weapon.ActiveCount} < ${Ship.ModuleList_Weapon.Count}
 			{
 				Ship.ModuleList_Weapon:ActivateCount[${Ship.ModuleList_Weapon.InactiveCount}, ${CurrentTarget}]
 				return FALSE
 			}
-			if 	${Ship.ModuleList_TargetPainter.ActiveCount} < ${Ship.ModuleList_TargetPainter.Count} &&\
-				${Entity[${CurrentTarget}].IsLockedTarget}
+			if 	${Ship.ModuleList_TargetPainter.ActiveCount} < ${Ship.ModuleList_TargetPainter.Count}
 			{
 				Ship.ModuleList_TargetPainter:ActivateCount[${Ship.ModuleList_TargetPainter.InactiveCount}, ${CurrentTarget}]
 				return FALSE
 			}
-			if 	${Ship.StasisWeb.ActiveCount} < ${Ship.StasisWeb.Count} &&\
-				${Entity[${CurrentTarget}].IsLockedTarget}
+			if 	${Ship.StasisWeb.ActiveCount} < ${Ship.StasisWeb.Count}
 			{
 				Ship.StasisWeb:ActivateCount[${Ship.StasisWeb.InactiveCount}, ${CurrentTarget}]
 				return FALSE
