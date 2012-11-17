@@ -406,26 +406,29 @@ objectdef obj_Ratter inherits obj_State
 		else
 		{
 			FinishedDelay:Set[${Math.Calc[${LavishScript.RunningTime} + (10000)]}]
-			if 	${Ship.ModuleList_Weapon.ActiveCount} < ${Ship.ModuleList_Weapon.Count}
+			if 	${Ship.ModuleList_Weapon.ActiveCount} < ${Ship.ModuleList_Weapon.Count} &&\
+				${Entity[${CurrentTarget}].IsLockedTarget}
 			{
 				Ship.ModuleList_Weapon:ActivateCount[${Ship.ModuleList_Weapon.InactiveCount}, ${CurrentTarget}]
 				return FALSE
 			}
-			if ${Ship.ModuleList_TargetPainter.ActiveCount} < ${Ship.ModuleList_TargetPainter.Count}
+			if 	${Ship.ModuleList_TargetPainter.ActiveCount} < ${Ship.ModuleList_TargetPainter.Count} &&\
+				${Entity[${CurrentTarget}].IsLockedTarget}
 			{
-				Ship.ModuleList_TargetPainter:ActivateCount[${Ship.ModuleList_TargetPainter.InactiveCount}, ${Rats.LockedTargetList.Get[1].ID}]
+				Ship.ModuleList_TargetPainter:ActivateCount[${Ship.ModuleList_TargetPainter.InactiveCount}, ${CurrentTarget}]
 				return FALSE
 			}
-			if ${Ship.StasisWeb.ActiveCount} < ${Ship.StasisWeb.Count}
+			if 	${Ship.StasisWeb.ActiveCount} < ${Ship.StasisWeb.Count} &&\
+				${Entity[${CurrentTarget}].IsLockedTarget}
 			{
-				Ship.StasisWeb:ActivateCount[${Ship.StasisWeb.InactiveCount}, ${Rats.LockedTargetList.Get[1].ID}]
+				Ship.StasisWeb:ActivateCount[${Ship.StasisWeb.InactiveCount}, ${CurrentTarget}]
 				return FALSE
 			}
 		}
 		
-		if ${Rats.LockedTargetList.Used} && ${CurrentTarget.Equal[-1]}
+		if ${Rats.LockedAndLockingTargetList.Used} && ${CurrentTarget.Equal[-1]}
 		{
-			CurrentTarget:Set[${Rats.LockedTargetList.Get[1].ID}]
+			CurrentTarget:Set[${Rats.LockedAndLockingTargetList.Get[1].ID}]
 		}
 		
 		return FALSE
