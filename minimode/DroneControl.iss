@@ -85,9 +85,23 @@ objectdef obj_DroneControl inherits obj_State
 		variable string seperator = ""
 		
 		DroneTargets:ClearQueryString
+
 		
 		if ${Config.Aggressive}
 		{
+			PriorityTargets.List:GetIterator[groupIterator]
+			if ${groupIterator:First(exists)}
+			{
+				do
+				{
+					groups:Concat["${seperator}Name =- ${groupIterator.Value}"]
+					seperator:Set[" || "]
+				}
+				while ${groupIterator:Next(exists)}
+			}
+			echo Priority Targets string is ${groups.Length}
+			DroneTargets:AddQueryString["IsNPC && !IsMoribund && (${groups})"]
+
 			NPCData.BaseRef:GetSetIterator[classIterator]
 			if ${classIterator:First(exists)}
 			{

@@ -100,6 +100,19 @@ objectdef obj_Ratter inherits obj_State
 		Rats:ClearQueryString
 		
 		
+		PriorityTargets.List:GetIterator[groupIterator]
+		if ${groupIterator:First(exists)}
+		{
+			do
+			{
+				groups:Concat["${seperator}Name =- ${groupIterator.Value}"]
+				seperator:Set[" || "]
+			}
+			while ${groupIterator:Next(exists)}
+		}
+		echo Priority Targets string is ${groups.Length}
+		Rats:AddQueryString["IsNPC && !IsMoribund && (${groups})"]
+		
 		NPCData.BaseRef:GetSetIterator[classIterator]
 		if ${classIterator:First(exists)}
 		{
