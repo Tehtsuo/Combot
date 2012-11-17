@@ -68,13 +68,6 @@ objectdef obj_DroneControl inherits obj_State
 	{
 		This[parent]:Initialize
 		DynamicAddMiniMode("DroneControl", "DroneControl")
-		DroneTargets.MaxRange:Set[${Me.DroneControlDistance}]
-		DroneTargets.AutoLock:Set[TRUE]
-		DroneTargets.MinLockCount:Set[${Config.LockCount}]
-		This:SetAggressiveState[]
-		DroneTargets:SetIPCName[DroneTargets]
-		DroneTargets.UseIPC:Set[${Config.UseIPC}]
-		CurIPC:Set[${Config.UseIPC}]
 	}
 	
 	method SetAggressiveState()
@@ -89,7 +82,7 @@ objectdef obj_DroneControl inherits obj_State
 		
 		if ${Config.Aggressive}
 		{
-			PriorityTargets.List:GetIterator[groupIterator]
+			PriorityTargets.Scramble:GetIterator[groupIterator]
 			if ${groupIterator:First(exists)}
 			{
 				do
@@ -99,9 +92,40 @@ objectdef obj_DroneControl inherits obj_State
 				}
 				while ${groupIterator:Next(exists)}
 			}
-			echo Priority Targets string is ${groups.Length}
-			DroneTargets:AddQueryString["IsNPC && !IsMoribund && (${groups})"]
+			echo Scramble string is ${groups.Length}
+			Rats:AddQueryString["IsNPC && !IsMoribund && (${groups})"]
 
+			seperator:Set[""]
+			groups:Set[""]
+			PriorityTargets.Neut:GetIterator[groupIterator]
+			if ${groupIterator:First(exists)}
+			{
+				do
+				{
+					groups:Concat["${seperator}Name =- ${groupIterator.Value}"]
+					seperator:Set[" || "]
+				}
+				while ${groupIterator:Next(exists)}
+			}
+			echo Neut string is ${groups.Length}
+			Rats:AddQueryString["IsNPC && !IsMoribund && (${groups})"]
+			
+			seperator:Set[""]
+			groups:Set[""]
+			PriorityTargets.ECM:GetIterator[groupIterator]
+			if ${groupIterator:First(exists)}
+			{
+				do
+				{
+					groups:Concat["${seperator}Name =- ${groupIterator.Value}"]
+					seperator:Set[" || "]
+				}
+				while ${groupIterator:Next(exists)}
+			}
+			echo ECM string is ${groups.Length}
+			Rats:AddQueryString["IsNPC && !IsMoribund && (${groups})"]
+			
+			
 			NPCData.BaseRef:GetSetIterator[classIterator]
 			if ${classIterator:First(exists)}
 			{
@@ -290,11 +314,19 @@ objectdef obj_DroneControl inherits obj_State
 	
 	method Start()
 	{
+		DroneTargets.MaxRange:Set[${Me.DroneControlDistance}]
+		DroneTargets.MinLockCount:Set[${Config.LockCount}]
+		This:SetAggressiveState[]
+		DroneTargets:SetIPCName[DroneTargets]
+		DroneTargets.UseIPC:Set[${Config.UseIPC}]
+		CurIPC:Set[${Config.UseIPC}]
+		DroneTargets.AutoLock:Set[TRUE]
 		This:QueueState["DroneControl"]
 	}
 	
 	method Stop()
 	{
+		DroneTargets.AutoLock:Set[FALSE]
 		This:Clear
 	}
 	

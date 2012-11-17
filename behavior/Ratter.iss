@@ -100,7 +100,7 @@ objectdef obj_Ratter inherits obj_State
 		Rats:ClearQueryString
 		
 		
-		PriorityTargets.List:GetIterator[groupIterator]
+		PriorityTargets.Scramble:GetIterator[groupIterator]
 		if ${groupIterator:First(exists)}
 		{
 			do
@@ -110,8 +110,40 @@ objectdef obj_Ratter inherits obj_State
 			}
 			while ${groupIterator:Next(exists)}
 		}
-		echo Priority Targets string is ${groups.Length}
+		echo Scramble string is ${groups.Length}
 		Rats:AddQueryString["IsNPC && !IsMoribund && (${groups})"]
+
+		seperator:Set[""]
+		groups:Set[""]
+		PriorityTargets.Neut:GetIterator[groupIterator]
+		if ${groupIterator:First(exists)}
+		{
+			do
+			{
+				groups:Concat["${seperator}Name =- ${groupIterator.Value}"]
+				seperator:Set[" || "]
+			}
+			while ${groupIterator:Next(exists)}
+		}
+		echo Neut string is ${groups.Length}
+		Rats:AddQueryString["IsNPC && !IsMoribund && (${groups})"]
+		
+		seperator:Set[""]
+		groups:Set[""]
+		PriorityTargets.ECM:GetIterator[groupIterator]
+		if ${groupIterator:First(exists)}
+		{
+			do
+			{
+				groups:Concat["${seperator}Name =- ${groupIterator.Value}"]
+				seperator:Set[" || "]
+			}
+			while ${groupIterator:Next(exists)}
+		}
+		echo ECM string is ${groups.Length}
+		Rats:AddQueryString["IsNPC && !IsMoribund && (${groups})"]
+		
+
 		
 		NPCData.BaseRef:GetSetIterator[classIterator]
 		if ${classIterator:First(exists)}
@@ -329,7 +361,7 @@ objectdef obj_Ratter inherits obj_State
 
 	member:bool InitialUpdate()
 	{
-		UI:Update["Ratter", "Waiting for 60 seconds or npc on grid", "g"]
+		UI:Update["Ratter", "Waiting for 60 seconds for rats", "g"]
 		FinishedDelay:Set[${Math.Calc[${LavishScript.RunningTime} + (60000)]}]
 		FirstWreck:Set[0]
 		Rats:RequestUpdate
@@ -341,6 +373,13 @@ objectdef obj_Ratter inherits obj_State
 		Rats:RequestUpdate
 		if ${Rats.TargetList.Used} > 0
 		{
+			UI:Update["Ratter", "Found rats on grid", "g"]
+			FinishedDelay:Set[${Math.Calc[${LavishScript.RunningTime} + (10000)]}]
+			return TRUE
+		}
+		if ${Config.Tether} && !${Entity[Name =- "${Config.TetherPilot}"](exists)}
+		{
+			UI:Update["Ratter", "Tether pilot not on grid", "g"]
 			FinishedDelay:Set[${Math.Calc[${LavishScript.RunningTime} + (10000)]}]
 			return TRUE
 		}
