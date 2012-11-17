@@ -135,7 +135,7 @@ objectdef obj_Ratter inherits obj_State
 			while ${classIterator:Next(exists)}
 		}
 		
-		Rats:AddAllNPCs
+		Rats:AddTargetingMe
 		DynamicAddBehavior("Ratter", "Ratter")
 	}
 
@@ -292,14 +292,6 @@ objectdef obj_Ratter inherits obj_State
 			return FALSE
 		}
 	
-		if 	${Entity[GroupID==GROUP_WRECK && HaveLootRights](exists)} &&\
-			${Config.Salvage} &&\
-			!${Entity[CategoryID == CATEGORYID_SHIP && IsPC && !IsFleetMember && OwnerID != ${Me.CharID}]}
-		{
-			UI:Update["Ratter", "Bookmarking ${Entity[GroupID==GROUP_WRECK && HaveLootRights].Name}", "g"]
-			Entity[GroupID==GROUP_WRECK && HaveLootRights]:CreateBookmark["${Config.SalvagePrefix} ${EVETime.Time.Left[-3].Replace[":",""]}","","Corporation Locations"]
-		}
-
 		if ${Config.WarpToAnom}
 		{
 			if !${Client.InSpace}
@@ -357,7 +349,7 @@ objectdef obj_Ratter inherits obj_State
 			return TRUE
 		}
 	}
-	member:bool Rat()
+	member:bool Rat(bool RefreshBookmarks=FALSE)
 	{
 		if !${Client.InSpace}
 		{
@@ -368,8 +360,42 @@ objectdef obj_Ratter inherits obj_State
 			FirstWreck:Set[0]
 			return FALSE
 		}
+		if ${RefreshBookmarks}
+		{
+			EVE:RefreshBookmarks
+			This:InsertState["Rat"]
+			return TRUE
+		}
 		if !${Busy.IsBusy} && !${Rats.TargetList.Used} && ${LavishScript.RunningTime} > ${FinishedDelay}
 		{
+			variable bool Bookmarked=FALSE
+			variable index:bookmark Bookmarks
+			variable iterator BookmarkIterator
+			EVE:GetBookmarks[Bookmarks]
+			Bookmarks:GetIterator[BookmarkIterator]
+			if ${BookmarkIterator:First(exists)}
+				do
+				{
+					if 	${BookmarkIterator.Value.JumpsTo} == 0 &&\
+						${BookmarkIterator.Value.Distance} < WARP_RANGE
+					{
+						Bookmarked:Set[TRUE]
+					}
+				}
+				while ${BookmarkIterator:Next(exists)}
+			
+			if 	${Entity[GroupID==GROUP_WRECK && HaveLootRights](exists)} &&\
+				${Config.Salvage} &&\
+				!${Entity[CategoryID == CATEGORYID_SHIP && IsPC && !IsFleetMember && OwnerID != ${Me.CharID}]} &&\
+				!${Bookmarked} &&\
+				!${Entity[CategoryID = CATEGORYID_ENTITY && IsNPC && !IsMoribund && !(GroupID = GROUP_CONCORDDRONE || GroupID = GROUP_CONVOYDRONE || GroupID = GROUP_CONVOY || GroupID = GROUP_LARGECOLLIDABLEOBJECT || GroupID = GROUP_LARGECOLLIDABLESHIP || GroupID = GROUP_SPAWNCONTAINER || GroupID = CATEGORYID_ORE || GroupID = GROUP_LARGECOLLIDABLESTRUCTURE)]}
+			{
+				UI:Update["Ratter", "Bookmarking ${Entity[GroupID==GROUP_WRECK && HaveLootRights].Name}", "g"]
+				Entity[GroupID==GROUP_WRECK && HaveLootRights]:CreateBookmark["${Config.SalvagePrefix} ${EVETime.Time.Left[-3].Replace[":",""]}","","Corporation Locations"]
+				This:InsertState["Rat", 1500, TRUE]
+				return TRUE
+			}
+		
 			if ${Config.AssistOnly}
 			{
 				FirstWreck:Set[0]
