@@ -224,34 +224,31 @@ objectdef obj_Ratter inherits obj_State
 		variable index:item Items
 		variable iterator ItemIterator
 		variable int AmmoCount=0
+		variable string Reload=""
 
 		MyShip:GetCargo[Items]
 		Items:GetIterator[ItemIterator]
 
-		if ${ItemIterator:First(exists)}
-			do
-			{	
-				if ${ItemIterator.Value.Name.Equal[${Config.Ammo}]}
-				{
-					AmmoCount:Inc[${ItemIterator.Value.Quantity}]
+		if ${Config.Ammo.Length} > 0
+		{
+			if ${ItemIterator:First(exists)}
+				do
+				{	
+					if ${ItemIterator.Value.Name.Equal[${Config.Ammo}]}
+					{
+						AmmoCount:Inc[${ItemIterator.Value.Quantity}]
+					}
 				}
-			}
-			while ${ItemIterator:Next(exists)}
-		
-		if ${AmmoCount} < ${Config.AmmoSupply}
-		{
-			UI:Update["Ratter", "Reload trip required", "g"]
-			Cargo:At[${Config.Dropoff},${Config.DropoffType},${Config.DropoffSubType}, ${Config.DropoffContainer}]:Unload:Load[Name =- "${Config.Ammo}", ${Config.AmmoCap}]
-			This:QueueState["Traveling"]
-			This:QueueState["OpenCargoHold"]
-			This:QueueState["CheckCargoHold"]
-			return TRUE
+				while ${ItemIterator:Next(exists)}
+			Reload:Set[":Load[Name =- \"${Config.Ammo}\", ${Config.AmmoCap}]"]
 		}
+		
 	
-		if ${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity} >= ${Config.Threshold} * .01
+		if 	${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity} >= ${Config.Threshold} * .01 ||\
+			${AmmoCount} < ${Config.AmmoSupply}
 		{
-			UI:Update["Ratter", "Unload trip required", "g"]
-			Cargo:At[${Config.Dropoff},${Config.DropoffType},${Config.DropoffSubType}, ${Config.DropoffContainer}]:Unload
+			UI:Update["Ratter", "Unload/Reload trip required", "g"]
+			Cargo:At[${Config.Dropoff},${Config.DropoffType},${Config.DropoffSubType}, ${Config.DropoffContainer}]:Unload${Reload}
 			This:QueueState["Traveling"]
 			This:QueueState["OpenCargoHold"]
 			This:QueueState["CheckCargoHold"]
@@ -523,7 +520,7 @@ objectdef obj_Ratter inherits obj_State
 			}
 		}
 		
-		if !${Entity[${CurrentTarget}](exists)} || !${Entity[${CurrentTarget}].IsLockedTarget}
+		if !${Entity[${CurrentTarget}](exists)} || (!${Entity[${CurrentTarget}].IsLockedTarget} && !${Entity[${CurrentTarget}].BeingTargeted})
 		{
 			CurrentTarget:Set[-1]
 		}

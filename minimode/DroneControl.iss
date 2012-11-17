@@ -407,7 +407,7 @@ objectdef obj_DroneControl inherits obj_State
 		
 		DroneTargets.LockedAndLockingTargetList:GetIterator[TargetIterator]
 		
-		if !${Entity[${CurrentTarget}](exists)} || !${Entity[${CurrentTarget}].IsLockedTarget}
+		if !${Entity[${CurrentTarget}](exists)} || (!${Entity[${CurrentTarget}].IsLockedTarget} && !${Entity[${CurrentTarget}].BeingTargeted})
 		{
 			CurrentTarget:Set[-1]
 		}
