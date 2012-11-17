@@ -297,18 +297,18 @@ objectdef obj_AutomateUI inherits obj_State
 		Bookmarks:GetIterator[BookmarkIterator]
 		
 
-		UIElement[BookmarkList@AutoLogout@ComBot_Automate_Frame@ComBot_Automate]:ClearItems
+		UIElement[BookmarkList@AutoLogoutFrame@ComBot_Automate_Frame@ComBot_Automate]:ClearItems
 		if ${BookmarkIterator:First(exists)}
 			do
 			{	
-				if ${UIElement[Bookmark@AutoLogout@ComBot_Automate_Frame@ComBot_Automate].Text.Length}
+				if ${UIElement[Bookmark@AutoLogoutFrame@ComBot_Automate_Frame@ComBot_Automate].Text.Length}
 				{
 					if ${BookmarkIterator.Value.Label.Left[${Automate.Config.Bookmark.Length}].Equal[${Automate.Config.Bookmark}]}
-						UIElement[BookmarkList@AutoLogout@ComBot_Automate_Frame@ComBot_Automate]:AddItem[${BookmarkIterator.Value.Label.Escape}]
+						UIElement[BookmarkList@AutoLogoutFrame@ComBot_Automate_Frame@ComBot_Automate]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 				else
 				{
-					UIElement[BookmarkList@AutoLogout@ComBot_Automate_Frame@ComBot_Automate]:AddItem[${BookmarkIterator.Value.Label.Escape}]
+					UIElement[BookmarkList@AutoLogoutFrame@ComBot_Automate_Frame@ComBot_Automate]:AddItem[${BookmarkIterator.Value.Label.Escape}]
 				}
 			}
 			while ${BookmarkIterator:Next(exists)}

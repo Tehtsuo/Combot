@@ -51,6 +51,7 @@ objectdef obj_Configuration_Ratter
 		This.CommonRef:AddSetting[DropoffSubType,""]
 		This.CommonRef:AddSetting[DropoffContainer,""]
 		This.CommonRef:AddSetting[SpeedTankDistance,5000]
+		This.CommonRef:AddSetting[Locks,4]
 		This.CommonRef:AddSetting[TetherPilot,""]
 		
 	}
@@ -62,9 +63,13 @@ objectdef obj_Configuration_Ratter
 	Setting(bool, SpeedTank, SetSpeedTank)
 	Setting(bool, Tether, SetTether)
 	Setting(bool, Squat, SetSquat)
+	Setting(bool, DroneControl, SetDroneControl)
 	Setting(int, Warp, SetWarp)
+	Setting(int, Locks, SetLocks)
 	Setting(int, Threshold, SetThreshold)
 	Setting(int, SpeedTankDistance, SetSpeedTankDistance)
+	Setting(int, AmmoSupply, SetAmmoSupply)
+	Setting(int, AmmoCap, SetAmmoCap)
 	Setting(string, RattingSystem, SetRattingSystem)	
 	Setting(string, Substring, SetSubstring)
 	Setting(string, Dropoff, SetDropoff)
@@ -73,6 +78,7 @@ objectdef obj_Configuration_Ratter
 	Setting(string, DropoffContainer, SetDropoffContainer)
 	Setting(string, SalvagePrefix, SetSalvagePrefix)
 	Setting(string, TetherPilot, SetTetherPilot)
+	Setting(string, Ammo, SetAmmo)
 }
 
 objectdef obj_Ratter inherits obj_State
@@ -90,8 +96,8 @@ objectdef obj_Ratter inherits obj_State
 	method Initialize()
 	{
 		This[parent]:Initialize
-		PulseFrequency:Set[500]
-		Rats:AddAllNPCs
+		PulseFrequency:Set[1500]
+		
 		DynamicAddBehavior("Ratter", "Ratter")
 	}
 
@@ -103,6 +109,83 @@ objectdef obj_Ratter inherits obj_State
 	
 	method Start()
 	{
+		variable iterator classIterator
+		variable iterator groupIterator
+		variable string groups = ""
+		variable string seperator = ""
+		
+		Rats:ClearQueryString
+		
+		
+		PriorityTargets.Scramble:GetIterator[groupIterator]
+		if ${groupIterator:First(exists)}
+		{
+			do
+			{
+				groups:Concat[${seperator}Name =- "${groupIterator.Value}"]
+				seperator:Set[" || "]
+			}
+			while ${groupIterator:Next(exists)}
+		}
+		echo Scramble string is ${groups.Length}
+		Rats:AddQueryString["IsNPC && !IsMoribund && (${groups})"]
+
+		seperator:Set[""]
+		groups:Set[""]
+		PriorityTargets.Neut:GetIterator[groupIterator]
+		if ${groupIterator:First(exists)}
+		{
+			do
+			{
+				groups:Concat[${seperator}Name =- "${groupIterator.Value}"]
+				seperator:Set[" || "]
+			}
+			while ${groupIterator:Next(exists)}
+		}
+		echo Neut string is ${groups.Length}
+		Rats:AddQueryString["IsNPC && !IsMoribund && (${groups})"]
+		
+		seperator:Set[""]
+		groups:Set[""]
+		PriorityTargets.ECM:GetIterator[groupIterator]
+		if ${groupIterator:First(exists)}
+		{
+			do
+			{
+				groups:Concat[${seperator}Name =- "${groupIterator.Value}"]
+				seperator:Set[" || "]
+			}
+			while ${groupIterator:Next(exists)}
+		}
+		echo ECM string is ${groups.Length}
+		Rats:AddQueryString["IsNPC && !IsMoribund && (${groups})"]
+		
+
+		
+		NPCData.BaseRef:GetSetIterator[classIterator]
+		if ${classIterator:First(exists)}
+		{
+			do
+			{
+				seperator:Set[""]
+				groups:Set[""]
+				classIterator.Value:GetSettingIterator[groupIterator]
+				if ${groupIterator:First(exists)}
+				{
+					do
+					{
+						groups:Concat["${seperator}GroupID = ${groupIterator.Key}"]
+						seperator:Set[" || "]
+					}
+					while ${groupIterator:Next(exists)}
+				}
+				Rats:AddQueryString["IsNPC && !IsMoribund && (${groups})"]
+			}
+			while ${classIterator:Next(exists)}
+		}
+		
+		Rats:AddTargetingMe
+
 		UI:Update["obj_Ratter", "Started", "g"]
 		This:AssignStateQueueDisplay[DebugStateList@Debug@ComBotTab@ComBot]
 		if ${This.IsIdle}
@@ -138,6 +221,33 @@ objectdef obj_Ratter inherits obj_State
 	
 	member:bool CheckCargoHold()
 	{
+		variable index:item Items
+		variable iterator ItemIterator
+		variable int AmmoCount=0
+
+		MyShip:GetCargo[Items]
+		Items:GetIterator[ItemIterator]
+
+		if ${ItemIterator:First(exists)}
+			do
+			{	
+				if ${ItemIterator.Value.Name.Equal[${Config.Ammo}]}
+				{
+					AmmoCount:Inc[${ItemIterator.Value.Quantity}]
+				}
+			}
+			while ${ItemIterator:Next(exists)}
+		
+		if ${AmmoCount} < ${Config.AmmoSupply}
+		{
+			UI:Update["Ratter", "Reload trip required", "g"]
+			Cargo:At[${Config.Dropoff},${Config.DropoffType},${Config.DropoffSubType}, ${Config.DropoffContainer}]:Unload:Load[Name =- "${Config.Ammo}", ${Config.AmmoCap}]
+			This:QueueState["Traveling"]
+			This:QueueState["OpenCargoHold"]
+			This:QueueState["CheckCargoHold"]
+			return TRUE
+		}
+	
 		if ${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity} >= ${Config.Threshold} * .01
 		{
 			UI:Update["Ratter", "Unload trip required", "g"]
@@ -147,19 +257,17 @@ objectdef obj_Ratter inherits obj_State
 			This:QueueState["CheckCargoHold"]
 			return TRUE
 		}
-		else
-		{
-			This:QueueState["GoToRattingSystem"]
-			This:QueueState["Traveling"]
-			This:QueueState["MoveToNewRatLocation"]
-			This:QueueState["Traveling"]
-			This:QueueState["VerifyRatLocation"]
-			This:QueueState["InitialUpdate"]
-			This:QueueState["Updated"]
-			This:QueueState["Log", 10, "Ratting, g"]
-			This:QueueState["Rat"]
-			return TRUE
-		}
+
+		This:QueueState["GoToRattingSystem"]
+		This:QueueState["Traveling"]
+		This:QueueState["MoveToNewRatLocation"]
+		This:QueueState["Traveling"]
+		This:QueueState["VerifyRatLocation"]
+		This:QueueState["InitialUpdate"]
+		This:QueueState["Updated"]
+		This:QueueState["Log", 10, "Ratting, g"]
+		This:QueueState["Rat"]
+		return TRUE
 	}
 	
 	member:bool Log(string text, string color)
@@ -184,7 +292,7 @@ objectdef obj_Ratter inherits obj_State
 	
 	member:bool Traveling()
 	{
-		if ${Move.Traveling} || ${Me.ToEntity.Mode} == 3
+		if ${Move.Traveling} || ${Cargo.Processing} || ${Me.ToEntity.Mode} == 3
 		{
 			return FALSE
 		}
@@ -248,14 +356,6 @@ objectdef obj_Ratter inherits obj_State
 			return FALSE
 		}
 	
-		if 	${Entity[GroupID==GROUP_WRECK && HaveLootRights](exists)} &&\
-			${Config.Salvage} &&\
-			!${Entity[CategoryID == CATEGORYID_SHIP && IsPC && !IsFleetMember && OwnerID != ${Me.CharID}]}
-		{
-			UI:Update["Ratter", "Bookmarking ${Entity[GroupID==GROUP_WRECK && HaveLootRights].Name}", "g"]
-			Entity[GroupID==GROUP_WRECK && HaveLootRights]:CreateBookmark["${Config.SalvagePrefix} ${EVETime.Time.Left[-3].Replace[":",""]}","","Corporation Locations"]
-		}
-
 		if ${Config.WarpToAnom}
 		{
 			if !${Client.InSpace}
@@ -293,7 +393,7 @@ objectdef obj_Ratter inherits obj_State
 
 	member:bool InitialUpdate()
 	{
-		UI:Update["Ratter", "Waiting for 60 seconds or npc on grid", "g"]
+		UI:Update["Ratter", "Waiting for 60 seconds for rats", "g"]
 		FinishedDelay:Set[${Math.Calc[${LavishScript.RunningTime} + (60000)]}]
 		FirstWreck:Set[0]
 		Rats:RequestUpdate
@@ -305,6 +405,13 @@ objectdef obj_Ratter inherits obj_State
 		Rats:RequestUpdate
 		if ${Rats.TargetList.Used} > 0
 		{
+			UI:Update["Ratter", "Found rats on grid", "g"]
+			FinishedDelay:Set[${Math.Calc[${LavishScript.RunningTime} + (10000)]}]
+			return TRUE
+		}
+		if ${Config.Tether} && !${Entity[Name =- "${Config.TetherPilot}"](exists)}
+		{
+			UI:Update["Ratter", "Tether pilot not on grid", "g"]
 			FinishedDelay:Set[${Math.Calc[${LavishScript.RunningTime} + (10000)]}]
 			return TRUE
 		}
@@ -313,7 +420,7 @@ objectdef obj_Ratter inherits obj_State
 			return TRUE
 		}
 	}
-	member:bool Rat()
+	member:bool Rat(bool RefreshBookmarks=FALSE)
 	{
 		if !${Client.InSpace}
 		{
@@ -324,8 +431,43 @@ objectdef obj_Ratter inherits obj_State
 			FirstWreck:Set[0]
 			return FALSE
 		}
-		if !${Busy.IsBusy} && !${Rats.TargetList.Used} && ${LavishScript.RunningTime} > ${FinishedDelay}
+		if ${RefreshBookmarks}
 		{
+			EVE:RefreshBookmarks
+			This:InsertState["Rat"]
+			return TRUE
+		}
+		echo !${Busy.IsBusy} && !${Rats.TargetList.Used} && ${LavishScript.RunningTime} > ${FinishedDelay}
+		if (!${Busy.IsBusy} && !${Rats.TargetList.Used} && ${LavishScript.RunningTime} > ${FinishedDelay}) || (${Config.Tether} && !${Entity[Name =- "${Config.TetherPilot}"](exists)})
+		{
+			variable bool Bookmarked=FALSE
+			variable index:bookmark Bookmarks
+			variable iterator BookmarkIterator
+			EVE:GetBookmarks[Bookmarks]
+			Bookmarks:GetIterator[BookmarkIterator]
+			if ${BookmarkIterator:First(exists)}
+				do
+				{
+					if 	${BookmarkIterator.Value.JumpsTo} == 0 &&\
+						${BookmarkIterator.Value.Distance} < WARP_RANGE
+					{
+						Bookmarked:Set[TRUE]
+					}
+				}
+				while ${BookmarkIterator:Next(exists)}
+			
+			if 	${Entity[GroupID==GROUP_WRECK && HaveLootRights](exists)} &&\
+				${Config.Salvage} &&\
+				!${Entity[CategoryID == CATEGORYID_SHIP && IsPC && !IsFleetMember && OwnerID != ${Me.CharID}]} &&\
+				!${Bookmarked} &&\
+				!${Entity[CategoryID = CATEGORYID_ENTITY && IsNPC && !IsMoribund && !(GroupID = GROUP_CONCORDDRONE || GroupID = GROUP_CONVOYDRONE || GroupID = GROUP_CONVOY || GroupID = GROUP_LARGECOLLIDABLEOBJECT || GroupID = GROUP_LARGECOLLIDABLESHIP || GroupID = GROUP_SPAWNCONTAINER || GroupID = CATEGORYID_ORE || GroupID = GROUP_LARGECOLLIDABLESTRUCTURE)]}
+			{
+				UI:Update["Ratter", "Bookmarking ${Entity[GroupID==GROUP_WRECK && HaveLootRights].Name}", "g"]
+				Entity[GroupID==GROUP_WRECK && HaveLootRights]:CreateBookmark["${Config.SalvagePrefix} ${EVETime.Time.Left[-3].Replace[":",""]}","","Corporation Locations"]
+				This:InsertState["Rat", 1500, TRUE]
+				return TRUE
+			}
+		
 			if ${Config.AssistOnly}
 			{
 				FirstWreck:Set[0]
@@ -354,17 +496,27 @@ objectdef obj_Ratter inherits obj_State
 		}
 		
 		
-		Rats.MinLockCount:Set[4]
+		Rats.MinLockCount:Set[${Config.Locks}]
 		Rats.AutoLock:Set[TRUE]
 		Rats:RequestUpdate
-
 		
-		if ${Rats.TargetList.Used}
+		variable string ModuleToUse
+
+		if ${Config.DroneControl}
+		{
+			ModuleToUse:Set[DroneControl.DroneTargets]
+		}
+		else
+		{
+			ModuleToUse:Set[Rats]
+		}
+		
+		if ${${ModuleToUse}.LockedAndLockingTargetList.Used}
 		{
 			if 	${Config.SpeedTank} &&\
 				${Me.ToEntity.Mode} != 4
 			{
-				Rats.TargetList.Get[1]:Orbit[${Math.Calc[${Config.SpeedTankDistance}*1000+1000].Int}]
+				${ModuleToUse}.LockedAndLockingTargetList.Get[1]:Orbit[${Math.Calc[${Config.SpeedTankDistance}*1000+1000].Int}]
 			}
 		}
 		
@@ -380,21 +532,25 @@ objectdef obj_Ratter inherits obj_State
 				Ship.ModuleList_Weapon:ActivateCount[${Ship.ModuleList_Weapon.InactiveCount}, ${CurrentTarget}]
 				return FALSE
 			}
-			if ${Ship.ModuleList_TargetPainter.ActiveCount} < ${Ship.ModuleList_TargetPainter.Count}
+			if 	${Ship.ModuleList_TargetPainter.ActiveCount} < ${Ship.ModuleList_TargetPainter.Count}
 			{
-				Ship.ModuleList_TargetPainter:ActivateCount[${Ship.ModuleList_TargetPainter.InactiveCount}, ${Rats.LockedTargetList.Get[1].ID}]
+				Ship.ModuleList_TargetPainter:ActivateCount[${Ship.ModuleList_TargetPainter.InactiveCount}, ${CurrentTarget}]
 				return FALSE
 			}
-			if ${Ship.StasisWeb.ActiveCount} < ${Ship.StasisWeb.Count}
+			if 	${Ship.StasisWeb.ActiveCount} < ${Ship.StasisWeb.Count}
 			{
-				Ship.StasisWeb:ActivateCount[${Ship.StasisWeb.InactiveCount}, ${Rats.LockedTargetList.Get[1].ID}]
+				Ship.StasisWeb:ActivateCount[${Ship.StasisWeb.InactiveCount}, ${CurrentTarget}]
 				return FALSE
 			}
 		}
 		
-		if ${Rats.LockedTargetList.Used} && ${CurrentTarget.Equal[-1]}
+		if ${${ModuleToUse}.LockedAndLockingTargetList.Used} && ${CurrentTarget.Equal[-1]}
 		{
-			CurrentTarget:Set[${Rats.LockedTargetList.Get[1].ID}]
+			if ${${ModuleToUse}.LockedAndLockingTargetList.Get[1](exists)}
+			{
+				CurrentTarget:Set[${${ModuleToUse}.LockedAndLockingTargetList.Get[1].ID}]
+				UI:Update["Ratter", "Primary target: \ar${${ModuleToUse}.LockedAndLockingTargetList.Get[1].Name}", "g"]
+			}
 		}
 		
 		return FALSE
@@ -447,9 +603,13 @@ objectdef obj_RatterUI inherits obj_State
 	{
 		variable index:bookmark Bookmarks
 		variable iterator BookmarkIterator
+		variable index:item Items
+		variable iterator ItemIterator
 
 		EVE:GetBookmarks[Bookmarks]
 		Bookmarks:GetIterator[BookmarkIterator]
+		MyShip:GetCargo[Items]
+		Items:GetIterator[ItemIterator]
 		
 		UIElement[RattingSystemList@RatterFrame@Frame@ComBot_Ratter]:ClearItems
 		if ${BookmarkIterator:First(exists)}
@@ -483,6 +643,21 @@ objectdef obj_RatterUI inherits obj_State
 			}
 			while ${BookmarkIterator:Next(exists)}
 			
+		UIElement[AmmoList@AmmoFrame@Frame@ComBot_Ratter]:ClearItems
+		if ${ItemIterator:First(exists)}
+			do
+			{	
+				if ${UIElement[Ammo@AmmoFrame@Frame@ComBot_Ratter].Text.Length}
+				{
+					if ${ItemIterator.Value.Name.Left[${Ratter.Config.Ammo.Length}].Equal[${Ratter.Config.Ammo}]}
+						UIElement[AmmoList@AmmoFrame@Frame@ComBot_Ratter]:AddItem[${ItemIterator.Value.Name.Escape}]
+				}
+				else
+				{
+					UIElement[AmmoList@AmmoFrame@Frame@ComBot_Ratter]:AddItem[${ItemIterator.Value.Name.Escape}]
+				}
+			}
+			while ${ItemIterator:Next(exists)}
 		return FALSE
 	}
 

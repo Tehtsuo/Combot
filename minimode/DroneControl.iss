@@ -68,13 +68,6 @@ objectdef obj_DroneControl inherits obj_State
 	{
 		This[parent]:Initialize
 		DynamicAddMiniMode("DroneControl", "DroneControl")
-		DroneTargets.MaxRange:Set[${Me.DroneControlDistance}]
-		DroneTargets.AutoLock:Set[TRUE]
-		DroneTargets.MinLockCount:Set[${Config.LockCount}]
-		This:SetAggressiveState[]
-		DroneTargets:SetIPCName[DroneTargets]
-		DroneTargets.UseIPC:Set[${Config.UseIPC}]
-		CurIPC:Set[${Config.UseIPC}]
 	}
 	
 	method SetAggressiveState()
@@ -85,9 +78,54 @@ objectdef obj_DroneControl inherits obj_State
 		variable string seperator = ""
 		
 		DroneTargets:ClearQueryString
+
 		
 		if ${Config.Aggressive}
 		{
+			PriorityTargets.Scramble:GetIterator[groupIterator]
+			if ${groupIterator:First(exists)}
+			{
+				do
+				{
+					groups:Concat[${seperator}Name =- "${groupIterator.Value}"]
+					seperator:Set[" || "]
+				}
+				while ${groupIterator:Next(exists)}
+			}
+			echo Scramble string is ${groups.Length}
+			Rats:AddQueryString["IsNPC && !IsMoribund && (${groups})"]
+
+			seperator:Set[""]
+			groups:Set[""]
+			PriorityTargets.Neut:GetIterator[groupIterator]
+			if ${groupIterator:First(exists)}
+			{
+				do
+				{
+					groups:Concat[${seperator}Name =- "${groupIterator.Value}"]
+					seperator:Set[" || "]
+				}
+				while ${groupIterator:Next(exists)}
+			}
+			echo Neut string is ${groups.Length}
+			Rats:AddQueryString["IsNPC && !IsMoribund && (${groups})"]
+			
+			seperator:Set[""]
+			groups:Set[""]
+			PriorityTargets.ECM:GetIterator[groupIterator]
+			if ${groupIterator:First(exists)}
+			{
+				do
+				{
+					groups:Concat[${seperator}Name =- "${groupIterator.Value}"]
+					seperator:Set[" || "]
+				}
+				while ${groupIterator:Next(exists)}
+			}
+			echo ECM string is ${groups.Length}
+			Rats:AddQueryString["IsNPC && !IsMoribund && (${groups})"]
+			
+			
 			NPCData.BaseRef:GetSetIterator[classIterator]
 			if ${classIterator:First(exists)}
 			{
@@ -276,11 +314,19 @@ objectdef obj_DroneControl inherits obj_State
 	
 	method Start()
 	{
+		DroneTargets.MaxRange:Set[${Me.DroneControlDistance}]
+		DroneTargets.MinLockCount:Set[${Config.LockCount}]
+		This:SetAggressiveState[]
+		DroneTargets:SetIPCName[DroneTargets]
+		DroneTargets.UseIPC:Set[${Config.UseIPC}]
+		CurIPC:Set[${Config.UseIPC}]
+		DroneTargets.AutoLock:Set[TRUE]
 		This:QueueState["DroneControl"]
 	}
 	
 	method Stop()
 	{
+		DroneTargets.AutoLock:Set[FALSE]
 		This:Clear
 	}
 	
@@ -359,7 +405,7 @@ objectdef obj_DroneControl inherits obj_State
 		
 		
 		
-		DroneTargets.LockedTargetList:GetIterator[TargetIterator]
+		DroneTargets.LockedAndLockingTargetList:GetIterator[TargetIterator]
 		
 		if !${Entity[${CurrentTarget}](exists)} || !${Entity[${CurrentTarget}].IsLockedTarget}
 		{
@@ -436,9 +482,11 @@ objectdef obj_DroneControl inherits obj_State
 		{
 			do
 			{
-				if ${CurrentTarget.Equal[-1]}
+				if ${CurrentTarget.Equal[-1]} && ${TargetIterator.Value(exists)}
 				{
+					UI:Update["DroneControl", "Primary target: \ar${TargetIterator.Value.Name}", "g"]
 					CurrentTarget:Set[${TargetIterator.Value.ID}]
+					break
 				}
 			}
 			while ${TargetIterator:Next(exists)}
