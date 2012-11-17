@@ -148,7 +148,7 @@ objectdef obj_Salvager inherits obj_State
 		if ${BookmarkIterator:First(exists)}
 		do
 		{	
-			if ${BookmarkIterator.Value.Label.Left[8].Upper.Equal[${Config.Prefix}]} && ${BookmarkIterator.Value.JumpsTo} <= 0
+			if ${BookmarkIterator.Value.Label.Left[${Config.Prefix.Length}].Upper.Equal[${Config.Prefix}]} && ${BookmarkIterator.Value.JumpsTo} <= 0
 			{
 				InHoldOff:Set[FALSE]
 				if ${HoldOffIterator:First(exists)}
@@ -183,7 +183,7 @@ objectdef obj_Salvager inherits obj_State
 		if ${BookmarkIterator:First(exists)} && !${BookmarkFound}
 		do
 		{	
-			if ${BookmarkIterator.Value.Label.Left[8].Upper.Equal[${Config.Prefix}]}
+			if ${BookmarkIterator.Value.Label.Left[${Config.Prefix.Length}].Upper.Equal[${Config.Prefix}]}
 			{
 				InHoldOff:Set[FALSE]
 				if ${HoldOffIterator:First(exists)}
@@ -427,7 +427,7 @@ objectdef obj_Salvager inherits obj_State
 			{
 				do
 				{
-					if ${BookmarkIterator.Value.Label.Left[8].Upper.Equal[${Config.Prefix}]} && ${BookmarkIterator.Value.CreatorID.Equal[${BookmarkCreator}]}
+					if ${BookmarkIterator.Value.Label.Left[${Config.Prefix.Length}].Upper.Equal[${Config.Prefix}]} && ${BookmarkIterator.Value.CreatorID.Equal[${BookmarkCreator}]}
 					{
 						UseJumpGate:Set[TRUE]
 					}
@@ -491,7 +491,7 @@ objectdef obj_Salvager inherits obj_State
 		if ${BookmarkIterator:First(exists)}
 		do
 		{
-			if ${BookmarkIterator.Value.Label.Left[8].Upper.Equal[${Config.Prefix}]} && ${BookmarkIterator.Value.CreatorID.Equal[${BookmarkCreator}]}
+			if ${BookmarkIterator.Value.Label.Left[${Config.Prefix.Length}].Upper.Equal[${Config.Prefix}]} && ${BookmarkIterator.Value.CreatorID.Equal[${BookmarkCreator}]}
 			{
 				if ${BookmarkIterator.Value.JumpsTo} == 0
 				{
