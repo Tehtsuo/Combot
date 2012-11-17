@@ -46,6 +46,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 #include core/obj_Dynamic.iss
 #include core/obj_Busy.iss
 #include core/obj_NPCData.iss
+#include core/obj_PriorityTargets.iss
 
 #include temp/behaviorincludes.iss
 
@@ -116,6 +117,7 @@ function main(string Character="")
 	declarevariable Delay obj_Delay script
 	declarevariable Fleets obj_Fleet script
 	declarevariable Busy obj_Busy script
+	declarevariable PriorityTargets obj_PriorityTargets script
 	
 	
 	UI:Update["ComBot", "Module initialization complete", "y"]
