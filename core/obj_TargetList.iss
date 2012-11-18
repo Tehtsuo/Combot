@@ -139,7 +139,7 @@ objectdef obj_TargetList inherits obj_State
 			}
 			while ${TargetIterator:Next(exists)}
 		}
-		LockedTargetList:Collapse
+		LockedAndLockingTargetList:Collapse
 		
 		NeedUpdate:Set[TRUE]
 		Updated:Set[FALSE]
