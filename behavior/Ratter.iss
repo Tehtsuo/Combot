@@ -386,6 +386,7 @@ objectdef obj_Ratter inherits obj_State
 			This:InsertState["VerifyRatLocation"]
 			This:InsertState["Traveling"]
 			This:InsertState["MoveToNewRatLocation"]
+			Drones:RecallAll
 		}
 		return TRUE
 	}
@@ -450,7 +451,7 @@ objectdef obj_Ratter inherits obj_State
 				{
 					if 	${BookmarkIterator.Value.JumpsTo} == 0 &&\
 						${BookmarkIterator.Value.Distance} < WARP_RANGE &&\
-						${BookmarkIterator.Value.Label.Find[${Config.SalvagePrefix}]
+						${BookmarkIterator.Value.Label.Find[${Config.SalvagePrefix}]}
 					{
 						Bookmarked:Set[TRUE]
 					}
