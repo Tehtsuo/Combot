@@ -244,7 +244,7 @@ objectdef obj_Ratter inherits obj_State
 		}
 		
 	
-		if 	${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity} >= ${Config.Threshold} * .01 ||\
+		if 	${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity} > ${Config.Threshold} * .01 ||\
 			${AmmoCount} < ${Config.AmmoSupply}
 		{
 			UI:Update["Ratter", "Unload/Reload trip required", "g"]
@@ -456,6 +456,7 @@ objectdef obj_Ratter inherits obj_State
 				}
 				while ${BookmarkIterator:Next(exists)}
 			
+			echo Safe to create bookmark:  ${Entity[CategoryID = CATEGORYID_ENTITY && IsNPC && !IsMoribund && !(GroupID = GROUP_CONCORDDRONE || GroupID = GROUP_CONVOYDRONE || GroupID = GROUP_CONVOY || GroupID = GROUP_LARGECOLLIDABLEOBJECT || GroupID = GROUP_LARGECOLLIDABLESHIP || GroupID = GROUP_SPAWNCONTAINER || GroupID = CATEGORYID_ORE || GroupID = GROUP_LARGECOLLIDABLESTRUCTURE)]}
 			if 	${Entity[GroupID==GROUP_WRECK && HaveLootRights](exists)} &&\
 				${Config.Salvage} &&\
 				!${Entity[CategoryID == CATEGORYID_SHIP && IsPC && !IsFleetMember && OwnerID != ${Me.CharID}]} &&\
