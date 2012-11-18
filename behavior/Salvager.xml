@@ -161,30 +161,6 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									UIElement[Information@InformationFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText[""]
 								</OnMouseExit>
 							</Textentry>			
-							<Checkbox name='SalvageYellow'> 
-								<X>34%</X> 
-								<Y>50%</Y> 
-								<Width>32%</Width> 
-								<Height>9%</Height> 
-								<Text>Salvage all wrecks - including ones you don't own</Text>
-								<OnLoad>
-									if ${Script[ComBot].VariableScope.Salvager.Config.SalvageYellow}
-									{
-										This:SetChecked
-									}
-									This:SetZOrder[movetop]
-								</OnLoad>
-								<OnLeftClick>
-									Script[ComBot].VariableScope.Salvager.Config:SetSalvageYellow[${This.Checked}]
-									This:SetZOrder[movetop]
-								</OnLeftClick>
-								<OnMouseEnter>
-									UIElement[Information@InformationFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText["When this option is checked, ComBot will salvage wrecks which do not belong to you or your corporation."]
-								</OnMouseEnter>
-								<OnMouseExit>
-									UIElement[Information@InformationFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText[""]
-								</OnMouseExit>
-							</Checkbox>
 							<Checkbox name='AvoidShips'> 
 								<X>34%</X> 
 								<Y>60%</Y> 
@@ -278,7 +254,6 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									else
 									{
 										UIElement[BeltPatrolBookmark@SalvageFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Hide
-										UIElement[SalvageYellow@SalvageFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Hide
 										UIElement[AvoidShips@SalvageFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Hide
 									}
 									This:SetZOrder[movetop]
@@ -288,14 +263,12 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									if ${This.Checked}
 									{
 										UIElement[BeltPatrolBookmark@SalvageFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Show
-										UIElement[SalvageYellow@SalvageFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Show
 										UIElement[AvoidShips@SalvageFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Show
 									}
 									else
 									{
 										UIElement[BeltPatrolBookmark@SalvageFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Hide
 										UIElement[BeltPatrolBookmarkList@SalvageFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Hide
-										UIElement[SalvageYellow@SalvageFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Hide
 										UIElement[AvoidShips@SalvageFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:Hide
 									}
 									This:SetZOrder[movetop]

@@ -80,6 +80,7 @@ objectdef obj_Salvage inherits obj_State
 		
 		if ${Config.SalvageYellow}
 		{
+			echo SalvageYellow
 			Wrecks:AddQueryString["(GroupID==GROUP_WRECK || GroupID==GROUP_CARGOCONTAINER) && !IsMoribund ${Size}"]
 		}
 		else
@@ -130,7 +131,7 @@ objectdef obj_Salvage inherits obj_State
 		Wrecks:RequestUpdate
 		
 		
-		Wrecks.TargetList:GetIterator[TargetIterator]
+		Wrecks.LockedTargetList:GetIterator[TargetIterator]
 		if ${TargetIterator:First(exists)}
 		{
 			This.IsBusy:Set[TRUE]
