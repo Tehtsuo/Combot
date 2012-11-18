@@ -449,7 +449,8 @@ objectdef obj_Ratter inherits obj_State
 				do
 				{
 					if 	${BookmarkIterator.Value.JumpsTo} == 0 &&\
-						${BookmarkIterator.Value.Distance} < WARP_RANGE
+						${BookmarkIterator.Value.Distance} < WARP_RANGE &&\
+						${BookmarkIterator.Value.Label.Find[${Config.SalvagePrefix}]
 					{
 						Bookmarked:Set[TRUE]
 					}
