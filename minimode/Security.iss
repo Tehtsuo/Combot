@@ -75,7 +75,7 @@ objectdef obj_Security inherits obj_State
 	method Initialize()
 	{
 		This[parent]:Initialize
-		This.NonGameTiedPulse:Set[TRUE]
+		This.NonGameTiedPulse:Set[FALSE]
 		DynamicAddMiniMode("Security", "Security")
 
 		if !${Config.FleeTo(exists)} || ${Config.FleeTo.Equal[NULL]} || ${Config.FleeTo.Equal[]}
