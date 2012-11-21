@@ -127,7 +127,6 @@ objectdef obj_Ratter inherits obj_State
 			}
 			while ${groupIterator:Next(exists)}
 		}
-		echo Scramble string is ${groups.Length}
 		Rats:AddQueryString["IsNPC && !IsMoribund && (${groups})"]
 
 		seperator:Set[""]
@@ -142,7 +141,6 @@ objectdef obj_Ratter inherits obj_State
 			}
 			while ${groupIterator:Next(exists)}
 		}
-		echo Neut string is ${groups.Length}
 		Rats:AddQueryString["IsNPC && !IsMoribund && (${groups})"]
 		
 		seperator:Set[""]
@@ -157,7 +155,6 @@ objectdef obj_Ratter inherits obj_State
 			}
 			while ${groupIterator:Next(exists)}
 		}
-		echo ECM string is ${groups.Length}
 		Rats:AddQueryString["IsNPC && !IsMoribund && (${groups})"]
 		
 
@@ -185,6 +182,8 @@ objectdef obj_Ratter inherits obj_State
 		}
 		
 		Rats:AddTargetingMe
+		Rats:SetIPCName[Rats]
+		Rats.UseIPC:Set[TRUE]
 
 		UI:Update["obj_Ratter", "Started", "g"]
 		This:AssignStateQueueDisplay[DebugStateList@Debug@ComBotTab@ComBot]
@@ -257,6 +256,7 @@ objectdef obj_Ratter inherits obj_State
 
 		This:QueueState["GoToRattingSystem"]
 		This:QueueState["Traveling"]
+		This:QueueState["Reload"]
 		This:QueueState["MoveToNewRatLocation"]
 		This:QueueState["Traveling"]
 		This:QueueState["VerifyRatLocation"]
@@ -296,6 +296,11 @@ objectdef obj_Ratter inherits obj_State
 		return TRUE
 	}
 	
+	member:bool Reload()
+	{
+		EVE:Execute[CmdReloadAmmo]
+		return TRUE
+	}
 	
 	member:bool MoveToNewRatLocation()
 	{
@@ -311,7 +316,7 @@ objectdef obj_Ratter inherits obj_State
 			}
 		}
 
-		if ${Bookmarks.Used} == 0 && !${Config.WarpToAnom}
+		if ${Bookmarks.Used} == 0 && !${Config.WarpToAnom} && !${Config.Tether}
 		{
 			EVE:GetBookmarks[Bookmarks]
 			Bookmarks:RemoveByQuery[${LavishScript.CreateQuery[SolarSystemID == ${Me.SolarSystemID}]}, FALSE]
@@ -348,7 +353,7 @@ objectdef obj_Ratter inherits obj_State
 				}
 			}
 		}
-		elseif !${Config.WarpToAnom}
+		elseif !${Config.WarpToAnom} && !${Config.Tether}
 		{
 			UI:Update["Ratter", "Removing ${Bookmarks.Get[1].Label}", "g"]
 			Bookmarks.Get[1]:Remove
@@ -369,7 +374,7 @@ objectdef obj_Ratter inherits obj_State
 			This:InsertState["Idle", 20000]
 			return TRUE
 		}
-		else
+		elseif !${Config.Tether}
 		{
 			Move:Bookmark[${Bookmarks.Get[1].Label}, TRUE, ${Distance}]
 		}
@@ -438,7 +443,6 @@ objectdef obj_Ratter inherits obj_State
 			This:InsertState["Rat"]
 			return TRUE
 		}
-		echo !${Busy.IsBusy} && !${Rats.TargetList.Used} && ${LavishScript.RunningTime} > ${FinishedDelay}
 		if (!${Busy.IsBusy} && !${Rats.TargetList.Used} && ${LavishScript.RunningTime} > ${FinishedDelay}) || (${Config.Tether} && !${Entity[Name =- "${Config.TetherPilot}"](exists)})
 		{
 			variable bool Bookmarked=FALSE
@@ -458,7 +462,6 @@ objectdef obj_Ratter inherits obj_State
 				}
 				while ${BookmarkIterator:Next(exists)}
 			
-			echo Safe to create bookmark:  ${Entity[CategoryID = CATEGORYID_ENTITY && IsNPC && !IsMoribund && !(GroupID = GROUP_CONCORDDRONE || GroupID = GROUP_CONVOYDRONE || GroupID = GROUP_CONVOY || GroupID = GROUP_LARGECOLLIDABLEOBJECT || GroupID = GROUP_LARGECOLLIDABLESHIP || GroupID = GROUP_SPAWNCONTAINER || GroupID = CATEGORYID_ORE || GroupID = GROUP_LARGECOLLIDABLESTRUCTURE)]}
 			if 	${Entity[GroupID==GROUP_WRECK && HaveLootRights](exists)} &&\
 				${Config.Salvage} &&\
 				!${Entity[CategoryID == CATEGORYID_SHIP && IsPC && !IsFleetMember && OwnerID != ${Me.CharID}]} &&\
