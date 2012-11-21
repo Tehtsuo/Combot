@@ -274,9 +274,8 @@ objectdef obj_Move inherits obj_State
 			if ${Me.Fleet.Member[${ID}].ToEntity.Distance} > WARP_RANGE
 			{
 				
-				UI:Update["obj_Move", "Warping to ${Me.Fleet.Member[${ID}].ToPilot.Name}", "g", TRUE]
-				UI:Log["Redacted:  obj_Move - Warping to XXXXXXX (FleetMember)"]
-				Local[${ID}].ToEntity:WarpTo[${Distance}]
+				UI:Update["obj_Move", "Bounce warping to ${Entity[ID >= 40000000 and ID <= 50000000].Name}", "g", TRUE]
+				Entity[ID >= 40000000 and ID <= 50000000]:WarpTo
 				Client:Wait[5000]
 				return FALSE
 			}
