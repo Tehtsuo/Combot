@@ -543,9 +543,9 @@ objectdef obj_Ratter inherits obj_State
 				Ship.ModuleList_TargetPainter:ActivateCount[${Ship.ModuleList_TargetPainter.InactiveCount}, ${CurrentTarget}]
 				return FALSE
 			}
-			if 	${Ship.StasisWeb.ActiveCount} < ${Ship.StasisWeb.Count}
+			if 	${Ship.ModuleList_StasisWeb.ActiveCount} < ${Ship.ModuleList_StasisWeb.Count}
 			{
-				Ship.StasisWeb:ActivateCount[${Ship.StasisWeb.InactiveCount}, ${CurrentTarget}]
+				Ship.ModuleList_StasisWeb:ActivateCount[${Ship.ModuleList_StasisWeb.InactiveCount}, ${CurrentTarget}]
 				return FALSE
 			}
 		}
