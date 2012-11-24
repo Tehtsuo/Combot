@@ -371,7 +371,7 @@ objectdef obj_Ratter inherits obj_State
 
 			dotnet WarpToAnom
 			This:InsertState["Traveling"]
-			This:InsertState["Idle", 20000]
+			This:InsertState["Idle", 25000]
 			return TRUE
 		}
 		elseif !${Config.Tether}
