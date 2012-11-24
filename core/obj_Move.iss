@@ -271,7 +271,7 @@ objectdef obj_Move inherits obj_State
 
 		if ${Me.Fleet.Member[${ID}].ToEntity(exists)}
 		{
-			if ${Me.Fleet.Member[${ID}].ToEntity.Distance} > WARP_RANGE
+			if ${Me.Fleet.Member[${ID}].ToEntity.Distance} > 100000
 			{
 				
 				UI:Update["obj_Move", "Bounce warping to ${Entity[ID >= 40000000 && ID <= 50000000].Name}", "g", TRUE]
