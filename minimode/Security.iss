@@ -291,12 +291,8 @@ objectdef obj_Security inherits obj_State
 
 		Move:Bookmark[${Config.FleeTo}]
 		
-		if !${Me.InStation}
-		{
-			Profiling:EndTrack
-			return FALSE
-		}
-
+		This:QueueState["Traveling"]
+		
 		if ${Config.FleeWaitTime_Enabled}
 		{
 			This:QueueState["Log", 100, "Waiting for ${Config.FleeWaitTime} minutes after flee"]
