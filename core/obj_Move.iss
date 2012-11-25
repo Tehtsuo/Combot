@@ -366,11 +366,11 @@ objectdef obj_Move inherits obj_State
 				UI:Log["Redacted:  obj_Move - Warping to XXXXXXX (Bookmark)"]
 				if ${Me.Fleet.IsMember[${Me.CharID}]} 
 				{
-					EVE.Bookmark[${Bookmark}]:WarpTo[${Distance}]
+					EVE.Bookmark[${Bookmark}]:WarpFleetTo[${Distance}]
 				}
 				else
 				{
-					EVE.Bookmark[${Bookmark}]:WarpFleetTo[${Distance}]
+					EVE.Bookmark[${Bookmark}]:WarpTo[${Distance}]
 				}
 				Client:Wait[5000]
 				This:QueueState["BookmarkMove", 2000, ${Bookmark}]
@@ -398,11 +398,11 @@ objectdef obj_Move inherits obj_State
 					UI:Log["Redacted:  obj_Move - Warping to XXXXXXX (Bookmark)"]
 					if ${Me.Fleet.IsMember[${Me.CharID}]} 
 					{
-						EVE.Bookmark[${Bookmark}.ToEntity]:WarpTo[${Distance}]
+						EVE.Bookmark[${Bookmark}.ToEntity]:WarpFleetTo[${Distance}]
 					}
 					else
 					{
-						EVE.Bookmark[${Bookmark}.ToEntity]:WarpFleetTo[${Distance}]
+						EVE.Bookmark[${Bookmark}.ToEntity]:WarpTo[${Distance}]
 					}
 					return FALSE
 				}
@@ -426,11 +426,11 @@ objectdef obj_Move inherits obj_State
 					UI:Log["Redacted:  obj_Move - Warping to XXXXXXX (Bookmark)"]
 					if ${Me.Fleet.IsMember[${Me.CharID}]} 
 					{
-						EVE.Bookmark[${Bookmark}]:WarpTo[${Distance}]
+						EVE.Bookmark[${Bookmark}]:WarpFleetTo[${Distance}]
 					}
 					else
 					{
-						EVE.Bookmark[${Bookmark}]:WarpFleetTo[${Distance}]
+						EVE.Bookmark[${Bookmark}]:WarpTo[${Distance}]
 					}
 					Client:Wait[5000]
 					return FALSE
