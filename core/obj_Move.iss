@@ -39,7 +39,14 @@ objectdef obj_Move inherits obj_State
 	
 	method Warp(int64 ID, int Dist=0)
 	{
-		Entity[${ID}]:WarpTo[${Dist}]
+		if ${Me.Fleet.IsMember[${Me.CharID}]}
+		{
+			Entity[${ID}]:WarpFleetTo[${Dist}]
+		}
+		else
+		{
+			Entity[${ID}]:WarpTo[${Dist}]
+		}
 		Client:Wait[5000]
 	}
 	
@@ -170,7 +177,7 @@ objectdef obj_Move inherits obj_State
 		UI:Update["obj_Move", "Movement to ${Entity[${ID}].Name} queued.", "g", TRUE]
 		UI:Log["Redacted:  obj_Move - Movement to XXXXXXX queued."]
 		This.Traveling:Set[TRUE]
-		This:QueueState["ObjectMove", 2000, "${ID},${Distance}"]
+		This:QueueState["ObjectMove", 2000, "${ID},${Distance},${FleetWarp}"]
 	}	
 	
 	method Agent(string AgentName)
@@ -357,7 +364,14 @@ objectdef obj_Move inherits obj_State
 				
 				UI:Update["obj_Move", "Warping to ${Bookmark}", "g", TRUE]
 				UI:Log["Redacted:  obj_Move - Warping to XXXXXXX (Bookmark)"]
-				EVE.Bookmark[${Bookmark}]:WarpTo[${Distance}]
+				if ${Me.Fleet.IsMember[${Me.CharID}]} 
+				{
+					EVE.Bookmark[${Bookmark}]:WarpTo[${Distance}]
+				}
+				else
+				{
+					EVE.Bookmark[${Bookmark}]:WarpFleetTo[${Distance}]
+				}
 				Client:Wait[5000]
 				This:QueueState["BookmarkMove", 2000, ${Bookmark}]
 				return TRUE
@@ -382,7 +396,14 @@ objectdef obj_Move inherits obj_State
 				{
 					UI:Update["obj_Move", "Warping to ${Bookmark}", "g", TRUE]
 					UI:Log["Redacted:  obj_Move - Warping to XXXXXXX (Bookmark)"]
-					This:Warp[${EVE.Bookmark[${Bookmark}].ToEntity}, ${Distance}]
+					if ${Me.Fleet.IsMember[${Me.CharID}]} 
+					{
+						EVE.Bookmark[${Bookmark}.ToEntity]:WarpTo[${Distance}]
+					}
+					else
+					{
+						EVE.Bookmark[${Bookmark}.ToEntity]:WarpFleetTo[${Distance}]
+					}
 					return FALSE
 				}
 				elseif ${EVE.Bookmark[${Bookmark}].ToEntity.Distance} != -1 && ${EVE.Bookmark[${Bookmark}].ToEntity.Distance(exists)}
@@ -403,7 +424,14 @@ objectdef obj_Move inherits obj_State
 				{
 					UI:Update["obj_Move", "Warping to ${Bookmark}", "g", TRUE]
 					UI:Log["Redacted:  obj_Move - Warping to XXXXXXX (Bookmark)"]
-					EVE.Bookmark[${Bookmark}]:WarpTo[${Distance}]
+					if ${Me.Fleet.IsMember[${Me.CharID}]} 
+					{
+						EVE.Bookmark[${Bookmark}]:WarpTo[${Distance}]
+					}
+					else
+					{
+						EVE.Bookmark[${Bookmark}]:WarpFleetTo[${Distance}]
+					}
 					Client:Wait[5000]
 					return FALSE
 				}
