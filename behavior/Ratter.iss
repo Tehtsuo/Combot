@@ -495,6 +495,25 @@ objectdef obj_Ratter inherits obj_State
 			}
 		}
 
+		variable index:item Items
+		variable iterator ItemIterator
+		variable int AmmoCount=0
+
+		MyShip:GetCargo[Items]
+		Items:GetIterator[ItemIterator]
+
+		if ${Config.Ammo.Length} > 0
+		{
+			if ${ItemIterator:First(exists)}
+				do
+				{	
+					if ${ItemIterator.Value.Name.Equal[${Config.Ammo}]}
+					{
+						AmmoCount:Inc[${ItemIterator.Value.Quantity}]
+					}
+				}
+				while ${ItemIterator:Next(exists)}
+		
 		if 	${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity} > ${Config.Threshold} * .01 ||\
 			${AmmoCount} < ${Config.AmmoSupply}
 		{
