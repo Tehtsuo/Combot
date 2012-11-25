@@ -88,7 +88,10 @@ objectdef obj_ComBotUI
 				EVEWindow[ByName,modal]:ClickButtonOK
 			}
 			EVE:CloseAllMessageBoxes
-			EVE:CloseAllChatInvites
+			if ${Config.Common.CloseChatInvites}
+			{
+				EVE:CloseAllChatInvites
+			}
 
     		This.NextMsgBoxPulse:Set[${Math.Calc[${LavishScript.RunningTime} + ${PulseMsgBoxIntervalInMilliSeconds} + ${Math.Rand[500]}]}]
 		}

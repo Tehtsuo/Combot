@@ -295,6 +295,24 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								This:SetZOrder[movetop]
 							</OnLeftClick>
 						</Checkbox>
+						<Checkbox name='CloseChatInvites'>
+							<X>51%</X>
+							<Y>50%</Y>
+							<Width>48%</Width> 
+							<Height>6%</Height> 
+							<Text>Auto-close Chat Invites</Text>
+							<OnLoad>
+								if ${Script[ComBot].VariableScope.Config.Common.CloseChatInvites}
+								{
+									This:SetChecked
+								}
+								This:SetZOrder[movetop]
+							</OnLoad>
+							<OnLeftClick>
+								Script[ComBot].VariableScope.Config.Common:SetCloseChatInvites[${This.Checked}]
+								This:SetZOrder[movetop]
+							</OnLeftClick>
+						</Checkbox>
 						<Checkbox name='DisableUI'>
 							<X>1%</X>
 							<Y>58%</Y>
