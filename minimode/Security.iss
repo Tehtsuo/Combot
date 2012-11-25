@@ -268,6 +268,7 @@ objectdef obj_Security inherits obj_State
 	member:bool PrepFlee(string Message)
 	{
 		variable iterator Behaviors
+		uplink speak "Flee triggered!  ${Message}"
 		UI:Update["Security", "Flee triggered!", "r"]
 		UI:Update["Security", "${Message}", "r"]
 		Dynamic.Behaviors:GetIterator[Behaviors]
