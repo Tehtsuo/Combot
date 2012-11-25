@@ -494,6 +494,14 @@ objectdef obj_Ratter inherits obj_State
 				return TRUE
 			}
 		}
+
+		if 	${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity} > ${Config.Threshold} * .01 ||\
+			${AmmoCount} < ${Config.AmmoSupply}
+		{
+			This:QueueState["OpenCargoHold"]
+			This:QueueState["CheckCargoHold"]
+			return TRUE
+		}
 		
 		if ${Config.Squat}
 		{
