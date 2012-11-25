@@ -184,7 +184,10 @@ objectdef obj_Ratter inherits obj_State
 		Rats:AddTargetingMe
 		Rats:SetIPCName[Rats]
 		Rats.UseIPC:Set[TRUE]
+		Rats.AutoLock:Set[FALSE]
+		DroneControl.DroneTargets.AutoLock:Set[FALSE]
 
+		
 		UI:Update["obj_Ratter", "Started", "g"]
 		This:AssignStateQueueDisplay[DebugStateList@Debug@ComBotTab@ComBot]
 		if ${This.IsIdle}
@@ -370,8 +373,7 @@ objectdef obj_Ratter inherits obj_State
 			}
 
 			dotnet WarpToAnom
-			This:InsertState["Traveling"]
-			This:InsertState["Idle", 25000]
+			This:InsertState["Idle", 30000]
 			return TRUE
 		}
 		elseif !${Config.Tether}
@@ -473,6 +475,9 @@ objectdef obj_Ratter inherits obj_State
 				This:InsertState["Rat", 1500, TRUE]
 				return TRUE
 			}
+			Rats.AutoLock:Set[FALSE]
+			DroneControl.DroneTargets.AutoLock:Set[FALSE]
+			
 		
 			if ${Config.AssistOnly}
 			{
@@ -504,6 +509,7 @@ objectdef obj_Ratter inherits obj_State
 		
 		Rats.MinLockCount:Set[${Config.Locks}]
 		Rats.AutoLock:Set[TRUE]
+		DroneControl.DroneTargets.AutoLock:Set[TRUE]
 		Rats:RequestUpdate
 		
 		variable string ModuleToUse
