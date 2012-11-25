@@ -118,14 +118,14 @@ objectdef obj_Security inherits obj_State
 			if ${Config.CapFlee} && ${MyShip.CapacitorPct} <= ${Config.CapFleeThreshold}
 			{
 				This:QueueState["PrepFlee", 500, "Cap at or below threshold (${Config.CapFleeThreshold}%)"]
-				This:QueueState["Flee", 500]
+				This:QueueState["Flee", 500, FALSE]
 				Profiling:EndTrack
 				return TRUE
 			}
 			if ${Config.ShieldFlee} && ${MyShip.ShieldPct} <= ${Config.ShieldFleeThreshold}
 			{
 				This:QueueState["PrepFlee", 500, "Shields at or below threshold (${Config.ShieldFleeThreshold}%)"]
-				This:QueueState["Flee", 500]
+				This:QueueState["Flee", 500, FALSE]
 				Profiling:EndTrack
 				return TRUE
 			}
@@ -286,13 +286,17 @@ objectdef obj_Security inherits obj_State
 		return TRUE
 	}
 	
-	member:bool Flee()
+	member:bool Flee(bool PerformWait=TRUE)
 	{
 		Profiling:StartTrack["Security_Flee"]
 
 		Move:Bookmark[${Config.FleeTo}]
 		
 		This:QueueState["Traveling"]
+		if ${PerformWait}
+		{
+			This:QueueState["StationClear"]
+		}
 		
 		if ${Config.FleeWaitTime_Enabled}
 		{
@@ -302,6 +306,17 @@ objectdef obj_Security inherits obj_State
 
 		This:QueueState["CheckSafe", 500, TRUE]
 		Profiling:EndTrack
+		return TRUE
+	}
+	
+	member:bool StationClear()
+	{
+		if ${Me.InStation}
+		{
+			This:Clear
+			This:QueueState["CheckSafe", 500, TRUE]
+			return TRUE
+		}
 		return TRUE
 	}
 	
