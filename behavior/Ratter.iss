@@ -555,13 +555,13 @@ objectdef obj_Ratter inherits obj_State
 			ModuleToUse:Set[Rats]
 		}
 		
-		if ${${ModuleToUse}.LockedAndLockingTargetList.Used}
+		if ${Entity[${CurrentTarget}](exists)}
 		{
-			if 	${Config.SpeedTank}
+			if ${Config.SpeedTank}
 			{
 				if ${Me.ToEntity.Mode != 4}
 				{
-					UI:Update["Ratter", "SpeedTank: Orbiting \ao${${ModuleToUse}.LockedAndLockingTargetList.Get[1].Name}", "g"]
+					UI:Update["Ratter", "SpeedTank: Orbiting \ao${Entity[CurrentTarget].Name}", "g"]
 					${ModuleToUse}.LockedAndLockingTargetList.Get[1]:Orbit[${Math.Calc[${Config.SpeedTankDistance}*1000+1000].Int}]
 				}
 				elseif ${Entity[(GroupID==GROUP_LARGECOLLIDABLEOBJECT || GroupID==GROUP_LARGECOLLIDABLESHIP || GroupID==GROUP_LARGECOLLIDABLESTRUCTURE) && Distance < 5000]}
@@ -569,10 +569,11 @@ objectdef obj_Ratter inherits obj_State
 					UI:Update["Ratter", "SpeedTank: Orbiting \ao${Entity[(GroupID==GROUP_LARGECOLLIDABLEOBJECT || GroupID==GROUP_LARGECOLLIDABLESHIP || GroupID==GROUP_LARGECOLLIDABLESTRUCTURE) && Distance < 5000]}", "g"]
 					Entity[(GroupID==GROUP_LARGECOLLIDABLEOBJECT || GroupID==GROUP_LARGECOLLIDABLESHIP || GroupID==GROUP_LARGECOLLIDABLESTRUCTURE) && Distance < 5000]:Orbit[10000]
 				}
-				elseif !${Entity[(GroupID==GROUP_LARGECOLLIDABLEOBJECT || GroupID==GROUP_LARGECOLLIDABLESHIP || GroupID==GROUP_LARGECOLLIDABLESTRUCTURE) && Distance < 8000]}
+				elseif !${Entity[(GroupID==GROUP_LARGECOLLIDABLEOBJECT || GroupID==GROUP_LARGECOLLIDABLESHIP || GroupID==GROUP_LARGECOLLIDABLESTRUCTURE) && Distance < 8000]} &&\
+						${Me.ToEntity.Approaching.ID} != ${CurrentTarget}
 				{
-					UI:Update["Ratter", "SpeedTank: Orbiting \ao${${ModuleToUse}.LockedAndLockingTargetList.Get[1].Name}", "g"]
-					${ModuleToUse}.LockedAndLockingTargetList.Get[1]:Orbit[${Math.Calc[${Config.SpeedTankDistance}*1000+1000].Int}]
+					UI:Update["Ratter", "SpeedTank: Orbiting \ao${Entity[CurrentTarget].Name}", "g"]
+					Entity[${CurrentTarget}]:Orbit[${Math.Calc[${Config.SpeedTankDistance}*1000+1000].Int}]
 				}
 			}
 		}
