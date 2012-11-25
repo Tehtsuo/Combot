@@ -369,11 +369,15 @@ objectdef obj_Ratter inherits obj_State
 			if !${Client.InSpace}
 			{
 				Move:Undock
-				return FALSE
+
+				This:InsertState["MoveToNewRatLocation"]
+				This:InsertState["Reload"]
+				This:InsertState["Idle", 20000]
+				return TRUE
 			}
 
 			dotnet WarpToAnom
-			This:InsertState["Idle", 30000]
+			This:InsertState["Idle", 60000]
 			return TRUE
 		}
 		elseif !${Config.Tether}
