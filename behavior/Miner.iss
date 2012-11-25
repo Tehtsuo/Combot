@@ -520,7 +520,7 @@ objectdef obj_Miner inherits obj_State
 				}
 			}
 		
-			Move:Bookmark[${BookmarkIndex.Get[1].Label}]
+			Move:Bookmark[${BookmarkIndex.Get[1].Label}, TRUE, 0, TRUE]
 			BookmarkIndex:Remove[1]
 			BookmarkIndex:Collapse
 			This:InsertState["Updated"]
@@ -564,7 +564,7 @@ objectdef obj_Miner inherits obj_State
 				return FALSE
 			}
 
-			Move:Object[${Belts.Get[1].ID}]
+			Move:Object[${Belts.Get[1].ID}, 0, TRUE]
 			Belts:Remove[1]
 			Belts:Collapse
 			This:InsertState["Updated"]

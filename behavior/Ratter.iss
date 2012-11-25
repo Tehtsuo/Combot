@@ -340,14 +340,14 @@ objectdef obj_Ratter inherits obj_State
 						EVE:QueryEntities[Belts, "GroupID = GROUP_ASTEROIDBELT"]
 					}
 
-					Move:Object[${Entity[${Belts[1].ID}]}, ${Distance}]
+					Move:Object[${Entity[${Belts[1].ID}]}, ${Distance}, TRUE]
 					Belts:Remove[1]
 					Belts:Collapse
 					return TRUE
 				}
 				else
 				{
-					Move:Bookmark[${Config.Dropoff}]
+					Move:Bookmark[${Config.Dropoff}, TRUE, 0, TRUE]
 					This:Clear
 					This:QueueState["Traveling"]
 					This:QueueState["OpenCargoHold"]
@@ -382,7 +382,7 @@ objectdef obj_Ratter inherits obj_State
 		}
 		elseif !${Config.Tether}
 		{
-			Move:Bookmark[${Bookmarks.Get[1].Label}, TRUE, ${Distance}]
+			Move:Bookmark[${Bookmarks.Get[1].Label}, TRUE, ${Distance}, TRUE]
 		}
 		return TRUE
 
