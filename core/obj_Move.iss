@@ -41,7 +41,16 @@ objectdef obj_Move inherits obj_State
 	{
 		if ${Me.Fleet.IsMember[${Me.CharID}]}
 		{
+			if 	${Me.ToFleetMember.IsFleetCommander} ||\
+				${Me.ToFleetMember.IsWingCommander} ||\
+				${Me.ToFleetMember.IsSquadCommander}
+			{	
 			Entity[${ID}]:WarpFleetTo[${Dist}]
+			}
+			else
+			{
+				Entity[${ID}]:WarpTo[${Dist}]
+			}
 		}
 		else
 		{
@@ -366,7 +375,16 @@ objectdef obj_Move inherits obj_State
 				UI:Log["Redacted:  obj_Move - Warping to XXXXXXX (Bookmark)"]
 				if ${Me.Fleet.IsMember[${Me.CharID}]} 
 				{
-					EVE.Bookmark[${Bookmark}]:WarpFleetTo[${Distance}]
+					if 	${Me.ToFleetMember.IsFleetCommander} ||\
+						${Me.ToFleetMember.IsWingCommander} ||\
+						${Me.ToFleetMember.IsSquadCommander}
+					{	
+						EVE.Bookmark[${Bookmark}]:WarpFleetTo[${Distance}]
+					}
+					else
+					{
+						EVE.Bookmark[${Bookmark}]:WarpTo[${Distance}]
+					}
 				}
 				else
 				{
@@ -398,11 +416,20 @@ objectdef obj_Move inherits obj_State
 					UI:Log["Redacted:  obj_Move - Warping to XXXXXXX (Bookmark)"]
 					if ${Me.Fleet.IsMember[${Me.CharID}]} 
 					{
-						EVE.Bookmark[${Bookmark}.ToEntity]:WarpFleetTo[${Distance}]
+						if 	${Me.ToFleetMember.IsFleetCommander} ||\
+							${Me.ToFleetMember.IsWingCommander} ||\
+							${Me.ToFleetMember.IsSquadCommander}
+						{	
+							EVE.Bookmark[${Bookmark}].ToEntity:WarpFleetTo[${Distance}]
+						}
+						else
+						{
+							EVE.Bookmark[${Bookmark}].ToEntity:WarpTo[${Distance}]
+						}
 					}
 					else
 					{
-						EVE.Bookmark[${Bookmark}.ToEntity]:WarpTo[${Distance}]
+						EVE.Bookmark[${Bookmark}].ToEntity:WarpTo[${Distance}]
 					}
 					return FALSE
 				}
@@ -426,7 +453,16 @@ objectdef obj_Move inherits obj_State
 					UI:Log["Redacted:  obj_Move - Warping to XXXXXXX (Bookmark)"]
 					if ${Me.Fleet.IsMember[${Me.CharID}]} 
 					{
-						EVE.Bookmark[${Bookmark}]:WarpFleetTo[${Distance}]
+						if 	${Me.ToFleetMember.IsFleetCommander} ||\
+							${Me.ToFleetMember.IsWingCommander} ||\
+							${Me.ToFleetMember.IsSquadCommander}
+						{	
+							EVE.Bookmark[${Bookmark}]:WarpFleetTo[${Distance}]
+						}
+						else
+						{
+							EVE.Bookmark[${Bookmark}]:WarpTo[${Distance}]
+						}
 					}
 					else
 					{
