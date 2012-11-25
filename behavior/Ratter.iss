@@ -559,7 +559,7 @@ objectdef obj_Ratter inherits obj_State
 		{
 			if ${Config.SpeedTank}
 			{
-				if ${Me.ToEntity.Mode != 4}
+				if ${Me.ToEntity.Mode} != 4
 				{
 					UI:Update["Ratter", "SpeedTank: Orbiting \ao${Entity[CurrentTarget].Name}", "g"]
 					${ModuleToUse}.LockedAndLockingTargetList.Get[1]:Orbit[${Math.Calc[${Config.SpeedTankDistance}*1000+1000].Int}]
