@@ -513,6 +513,7 @@ objectdef obj_Ratter inherits obj_State
 					}
 				}
 				while ${ItemIterator:Next(exists)}
+		}
 		
 		if 	${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity} > ${Config.Threshold} * .01 ||\
 			${AmmoCount} < ${Config.AmmoSupply}
