@@ -561,7 +561,7 @@ objectdef obj_Ratter inherits obj_State
 			{
 				if ${Me.ToEntity.Mode} != 4
 				{
-					UI:Update["Ratter", "SpeedTank: Orbiting \ao${Entity[CurrentTarget].Name}", "g"]
+					UI:Update["Ratter", "SpeedTank: Orbiting \ao${Entity[${CurrentTarget}].Name}", "g"]
 					${ModuleToUse}.LockedAndLockingTargetList.Get[1]:Orbit[${Math.Calc[${Config.SpeedTankDistance}*1000+1000].Int}]
 				}
 				elseif ${Entity[(GroupID==GROUP_LARGECOLLIDABLEOBJECT || GroupID==GROUP_LARGECOLLIDABLESHIP || GroupID==GROUP_LARGECOLLIDABLESTRUCTURE) && Distance < 5000]}
@@ -572,7 +572,7 @@ objectdef obj_Ratter inherits obj_State
 				elseif !${Entity[(GroupID==GROUP_LARGECOLLIDABLEOBJECT || GroupID==GROUP_LARGECOLLIDABLESHIP || GroupID==GROUP_LARGECOLLIDABLESTRUCTURE) && Distance < 8000]} &&\
 						${Me.ToEntity.Approaching.ID} != ${CurrentTarget}
 				{
-					UI:Update["Ratter", "SpeedTank: Orbiting \ao${Entity[CurrentTarget].Name}", "g"]
+					UI:Update["Ratter", "SpeedTank: Orbiting \ao${Entity[${CurrentTarget}].Name}", "g"]
 					Entity[${CurrentTarget}]:Orbit[${Math.Calc[${Config.SpeedTankDistance}*1000+1000].Int}]
 				}
 			}
