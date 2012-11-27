@@ -293,7 +293,7 @@ objectdef obj_Security inherits obj_State
 		Move:Bookmark[${Config.FleeTo}]
 		
 		This:QueueState["Traveling"]
-		if ${PerformWait}
+		if !${PerformWait}
 		{
 			This:QueueState["StationClear"]
 		}
