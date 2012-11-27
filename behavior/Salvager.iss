@@ -405,7 +405,7 @@ objectdef obj_Salvager inherits obj_State
 				{
 					if ${TargetIterator.Value.ID(exists)}
 					{
-						if ${Salvage.Config.SalvageYellow} && !${TargetIterator.HaveLootRights}
+						if ${Salvage.Config.SalvageYellow} && !${TargetIterator.Value.HaveLootRights}
 						{
 							Move:Approach[${TargetIterator.Value.ID}]
 							return FALSE
