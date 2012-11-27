@@ -414,6 +414,14 @@ objectdef obj_Ratter inherits obj_State
 	
 	member:bool Updated()
 	{
+		if ${Me.ToEntity.Mode} == 3
+		{
+			This:InsertState["InitialUpdate"]
+			This:InsertState["VerifyRatLocation"]
+			This:InsertState["Traveling"]
+			This:InsertState["MoveToNewRatLocation"]
+			This:InsertState["Traveling"]
+		}
 		Rats:RequestUpdate
 		if ${Rats.TargetList.Used} > 0
 		{
