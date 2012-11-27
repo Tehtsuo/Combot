@@ -405,7 +405,12 @@ objectdef obj_Salvager inherits obj_State
 				{
 					if ${TargetIterator.Value.ID(exists)}
 					{
-						if 	${TargetIterator.Value.Distance} > ${Ship.ModuleList_TractorBeams.Range}
+						if ${Salvage.Config.SalvageYellow} && !${TargetIterator.HaveLootRights}
+						{
+							Move:Approach[${TargetIterator.Value.ID}]
+							return FALSE
+						}
+						elseif	${TargetIterator.Value.Distance} > ${Ship.ModuleList_TractorBeams.Range}
 						{
 							Move:Approach[${TargetIterator.Value.ID}]
 							return FALSE
