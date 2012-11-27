@@ -324,6 +324,8 @@ objectdef obj_Security inherits obj_State
 		else
 		{
 			AutoModule.SafetyOveride:Set[FALSE]
+			This:Clear
+			This:QueueState["CheckSafe", 500, TRUE]
 			return TRUE
 		}
 		return FALSE
