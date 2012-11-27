@@ -73,6 +73,7 @@ objectdef obj_Configuration_AutoModule
 objectdef obj_AutoModule inherits obj_State
 {
 	variable obj_Configuration_AutoModule Config
+	variable bool SafetyOveride=FALSE
 	
 	method Initialize()
 	{
@@ -93,7 +94,7 @@ objectdef obj_AutoModule inherits obj_State
 	
 	member:bool AutoModule()
 	{
-		if !${Client.InSpace}
+		if !${Client.InSpace} || ${SafetyOveride}
 		{
 			return FALSE
 		}

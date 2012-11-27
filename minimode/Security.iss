@@ -132,7 +132,7 @@ objectdef obj_Security inherits obj_State
 			if ${Config.ArmorFlee} && ${MyShip.ArmorPct} <= ${Config.ArmorFleeThreshold}
 			{
 				This:QueueState["PrepFlee", 500, "Armor at or below threshold (${Config.ArmorFleeThreshold}%)"]
-				This:QueueState["Flee", 500]
+				This:QueueState["Flee", 500, FALSE]
 				Profiling:EndTrack
 				return TRUE
 			}
@@ -317,7 +317,16 @@ objectdef obj_Security inherits obj_State
 			This:QueueState["CheckSafe", 500, TRUE]
 			return TRUE
 		}
-		return TRUE
+		elseif ${MyShip.CapacitorPct} <= 75
+		{
+			AutoModule.SafetyOveride:Set[TRUE]
+		}
+		else
+		{
+			AutoModule.SafetyOveride:Set[FALSE]
+			return TRUE
+		}
+		return FALSE
 	}
 	
 	member:bool Log(string text)
