@@ -421,6 +421,7 @@ objectdef obj_Ratter inherits obj_State
 			This:InsertState["Traveling"]
 			This:InsertState["MoveToNewRatLocation"]
 			This:InsertState["Traveling"]
+			return TRUE
 		}
 		Rats:RequestUpdate
 		if ${Rats.TargetList.Used} > 0
