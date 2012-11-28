@@ -79,6 +79,7 @@ objectdef obj_AutoModule inherits obj_State
 	{
 		This[parent]:Initialize
 		This.NonGameTiedPulse:Set[TRUE]
+		This.PulseFrequency:Set[100]
 		DynamicAddMiniMode("AutoModule", "AutoModule")
 	}
 	
