@@ -371,7 +371,7 @@ objectdef obj_Salvager inherits obj_State
 				This:QueueState["JumpToCelestial"]
 				This:QueueState["Traveling"]
 				This:QueueState["RefreshBookmarks", 3000]
-				This:QueueState["CheckBookmarks"]
+				This:QueueState["CheckBookmarks", 3000]
 			}
 			return TRUE
 		}
@@ -385,7 +385,7 @@ objectdef obj_Salvager inherits obj_State
 				This:QueueState["Offload"]
 				This:QueueState["Traveling"]
 				This:QueueState["RefreshBookmarks", 3000]
-				This:QueueState["CheckBookmarks"]
+				This:QueueState["CheckBookmarks", 3000]
 			}
 			return TRUE
 		}
@@ -442,7 +442,7 @@ objectdef obj_Salvager inherits obj_State
 				HoldOffTimer:Insert[${Math.Calc[${LavishScript.RunningTime} + 600000]}]
 				This:Clear
 				This:QueueState["RefreshBookmarks", 3000]
-				This:QueueState["CheckBookmarks"]
+				This:QueueState["CheckBookmarks", 3000]
 				return TRUE
 			}
 			
@@ -468,7 +468,7 @@ objectdef obj_Salvager inherits obj_State
 				HoldOffTimer:Insert[${Math.Calc[${LavishScript.RunningTime} + 600000]}]
 				This:Clear
 				This:QueueState["RefreshBookmarks", 3000]
-				This:QueueState["CheckBookmarks"]
+				This:QueueState["CheckBookmarks", 3000]
 				return TRUE
 			}
 
@@ -571,7 +571,7 @@ objectdef obj_Salvager inherits obj_State
 			UI:Update["obj_Salvage", "Unload trip not required", "g"]
 		}
 		This:QueueState["RefreshBookmarks", 3000]
-		This:QueueState["CheckBookmarks"]
+		This:QueueState["CheckBookmarks", 3000]
 		return TRUE;
 	}
 
