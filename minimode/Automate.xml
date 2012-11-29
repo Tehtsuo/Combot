@@ -57,7 +57,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					<Height>20</Height>
 					<Text>Close</Text>
 					<OnLeftClick>
-						Script[ComBot].VariableScope.Salvage.LocalUI:Stop
+						Script[ComBot].VariableScope.Automate.LocalUI:Stop
 						ui -unload "&filepath;/Automate"
 					</OnLeftClick>
 				</button>

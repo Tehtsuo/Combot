@@ -92,6 +92,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							Script[ComBot].VariableScope.UI:Update["obj_Security", "Unable to find flee bookmark. This is DANGEROUS!", "r"]
 							Script[ComBot].VariableScope.UI:Update["obj_Security", "Verify your flee bookmark in the Security settings! ", "r"]
 						}
+						Script[ComBot].VariableScope.Security.LocalUI:Stop
 						ui -unload "&filepath;/Security"
 					</OnLeftClick>
 				</button>
