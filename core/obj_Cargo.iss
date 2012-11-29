@@ -547,7 +547,7 @@ objectdef obj_Cargo inherits obj_State
 						EVEWindow[ByName, Inventory]:MakeChildActive[${Container}]
 						return FALSE
 					}
-					EVE:StackItems[${Container}, CorpHangars]
+					EVE:StackItems[${Container}, CorpHangars, ${This.CargoQueue.Peek.LocationSubtype}]
 					return TRUE
 				}
 			}
