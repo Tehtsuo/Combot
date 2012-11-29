@@ -305,6 +305,12 @@ objectdef obj_Ratter inherits obj_State
 		return TRUE
 	}
 	
+	member:bool RemoveSavedSpot()
+	{
+		Move:RemoveSavedSpot
+		return TRUE
+	}
+	
 	member:bool MoveToNewRatLocation()
 	{
 		variable int Distance
@@ -313,6 +319,8 @@ objectdef obj_Ratter inherits obj_State
 		if ${Move.SavedSpotExists}
 		{
 			Move:GotoSavedSpot
+			This:InsertState["RemoveSavedSpot"]
+			This:InsertState["Traveling", 2000]
 			This:InsertState["Reload"]
 			return TRUE
 		}
