@@ -125,7 +125,6 @@ objectdef obj_State
 						if ${ReportIdle}
 						{
 							UI:Log["${This(type)} State Change: ${States.Peek.Name}", TRUE]
-							echo "Processed state: ${This(type)}"
 						}
 						UIElement[${QueueListbox}].OrderedItem[1]:Remove
 						States:Dequeue
