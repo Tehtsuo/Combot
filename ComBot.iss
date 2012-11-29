@@ -129,7 +129,6 @@ function main(string Character="")
 	else
 	{
 		UI:Update["ComBot", "Paused", "r"]
-		Security:Start
 	}
 	
 
