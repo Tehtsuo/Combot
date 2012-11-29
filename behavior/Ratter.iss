@@ -309,6 +309,13 @@ objectdef obj_Ratter inherits obj_State
 	{
 		variable int Distance
 		Distance:Set[${Math.Calc[${Config.Warp} * 1000]}]
+		
+		if ${Move.SavedSpotExists}
+		{
+			Move:GotoSavedSpot
+			This:InsertState["Reload"]
+			return TRUE
+		}
 
 		if ${Config.Tether}
 		{
@@ -527,6 +534,7 @@ objectdef obj_Ratter inherits obj_State
 		if 	${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity} > ${Config.Threshold} * .01 ||\
 			${AmmoCount} < ${Config.AmmoSupply}
 		{
+			Move:SaveSpot
 			This:QueueState["OpenCargoHold"]
 			This:QueueState["CheckCargoHold"]
 			return TRUE
