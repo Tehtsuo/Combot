@@ -86,6 +86,7 @@ objectdef obj_ComBotUI
 			if ${EVEWindow[ByName,modal].Text.Find["The daily downtime will begin in"](exists)}
 			{
 				EVEWindow[ByName,modal]:ClickButtonOK
+				Automate:LogoutNow
 			}
 			EVE:CloseAllMessageBoxes
 			if ${Config.Common.CloseChatInvites}
