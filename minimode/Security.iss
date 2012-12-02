@@ -267,6 +267,7 @@ objectdef obj_Security inherits obj_State
 	
 	member:bool PrepFlee(string Message)
 	{
+		Move:SaveSpot
 		variable iterator Behaviors
 		uplink speak "Flee triggered!  ${Message}"
 		UI:Update["Security", "Flee triggered!", "r"]
