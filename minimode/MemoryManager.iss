@@ -19,9 +19,9 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-objectdef obj_Configuration_GridWatcher
+objectdef obj_Configuration_MemoryManager
 {
-	variable string SetName = "GridWatcher"
+	variable string SetName = "MemoryManager"
 
 	method Initialize()
 	{
@@ -41,61 +41,39 @@ objectdef obj_Configuration_GridWatcher
 	method Set_Default_Values()
 	{
 		BaseConfig.BaseRef:AddSet[${This.SetName}]
-		This.CommonRef:AddSet["Names"]
-		This.CommonRef:AddSetting["Created", True]
+
+		This.CommonRef:AddSetting[Size, 500]
 	}
+
+	Setting(int, Size, SetSize)
+	
 }
 
-
-objectdef obj_GridWatcher inherits obj_State
+objectdef obj_MemoryManager inherits obj_State
 {
-	variable obj_Configuration_GridWatcher Config
-	variable collection:int LastDetection
+	variable obj_Configuration_MemoryManager Config
 	
 	method Initialize()
 	{
 		This[parent]:Initialize
-		PulseFrequency:Set[1000]
-		DynamicAddMiniMode("GridWatcher", "GridWatcher")
+		This.NonGameTiedPulse:Set[TRUE]
+		DynamicAddMiniMode("MemoryManager", "MemoryManager")
 	}
 	
 	method Start()
 	{
-		UI:Update["obj_GridWatcher", "Starting Grid Watch", "g"]
-		This:QueueState["WatchGrid"]
+		execute dotnet memmanager memmanager ${Math.Calc[(${Config.Size}) * 1048576].Int}
+		This:QueueState["Manage", 300000]
 	}
 	
 	method Stop()
 	{
 		This:Clear
-		UI:Update["obj_GridWatcher", "Stopping Grid Watch", "g"]
 	}
 	
-	member:bool WatchGrid()
+	member:bool Manage()
 	{
-		if !${Client.InSpace} || ${Me.ToEntity.Mode} == 3
-		{
-			return FALSE
-		}
-		variable iterator EntityNames
-		This.Config.CommonRef.FindSet[Names]:GetSettingIterator[EntityNames]
-		
-		if ${EntityNames:First(exists)}
-		{
-			do
-			{
-				if ${LastDetection.Element[${EntityNames.Value.Name}]} < ${LavishScript.RunningTime}
-				{
-					if ${Entity[Name =- "${EntityNames.Value.Name}"](exists)}
-					{
-						uplink speak "${Entity[Name =- "${EntityNames.Value.Name}"].Name} Found"
-						LastDetection:Set[${EntityNames.Value.Name}, ${Math.Calc[${LavishScript.RunningTime}+30000]}]
-						EVE:CreateBookmark["${EntityNames.Value.Name} ${EVETime.Time.Left[-3].Replace[":",""]}"]
-					}
-				}
-			}
-			while ${EntityNames:Next(exists)}
-		}
+		execute dotnet memmanager memmanager ${Math.Calc[(${Config.Size}) * 1048576].Int}
 		return FALSE
 	}
 }

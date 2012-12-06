@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ISUI>
+
+<!--
+
+ComBot  Copyright © 2012  Tehtsuo and Vendan
+
+This file is part of ComBot.
+
+ComBot is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ComBot is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+
+	<template name='Information.Font'>	
+		<Name>Terminal</Name>
+		<Size>8</Size>
+		<Color>FFFFFFFF</Color>
+	</template>	
+
+	<window name='ComBot_MemoryManager'>
+		<Visible>1</Visible>
+		<BackGroundColor></BackGroundColor>
+		<Border>0</Border>
+		<X>200</X>
+		<Y>300</Y>
+		<Width>300</Width>
+		<Height>150</Height>
+		<TitleBar>
+			<Width>100%</Width>
+			<Height>20</Height>
+			<Border>0</Border>
+			<BackgroundColor>FF000000</BackgroundColor>
+			<Children>
+				<Text name='ComBot_MemoryManager_TitleBar_Title'>
+					<X>0</X>
+					<Y>3</Y>
+					<Width>100%</Width>
+					<Height>20</Height>
+					<Alignment>Center</Alignment>
+					<Text>MemoryManager Configuration</Text>
+				</Text>
+				<button	Name='Close'>
+					<X>r40</X>
+					<Y>0</Y>
+					<Width>40</Width>
+					<Height>20</Height>
+					<Text>Close</Text>
+					<OnLeftClick>
+						ui -unload "&filepath;/MemoryManager"
+					</OnLeftClick>
+				</button>
+			</Children>
+		</TitleBar>
+		<Children name="ComBot_MemoryManager_Children">
+			<Frame name="ComBot_MemoryManager_Frame">
+				<X>0</X>
+				<Y>5</Y>
+				<Width>100%</Width>
+				<Height>100%</Height>
+				<BackgroundColor>FF000000</BackgroundColor>
+				<Border>1</Border>
+				<BorderColor>FFFFFFFF</BorderColor>
+				<Children name="ComBot_MemoryManager_Frame_Children">
+					<Text name='obj_MemoryManagerInformation'> 
+						<Font template='Information.Font' />
+						<X>5%</X> 
+						<Y>5%</Y> 
+						<Width>90%</Width> 
+						<Height>50%</Height> 
+						<Wrap />
+						<Text>MemoryManager is a MiniMode to restrict how much memory the EVE process will consume.  Note:  If you change the maximum value, you will need to remove and add the minimode to apply the change.</Text>
+					</Text>
+					<Text name='MemoryCeilingTitle'>
+						<X>5%</X>
+						<Y>60%</Y>
+						<Width>90%</Width> 
+						<Height>10%</Height> 
+						<Alignment>Center</Alignment>
+						<Text>Memory Ceiling: ${Script[ComBot].VariableScope.MemoryManager.Config.Size}mb</Text>
+					</Text>
+					<Slider name='MemoryCeiling'>
+						<X>5%</X>
+						<Y>70%</Y>
+						<Width>90%</Width> 
+						<Height>20%</Height> 
+						<Range>800</Range>
+						<Border>1</Border>
+						<OnLoad>
+							This:SetValue[${Math.Calc[${Script[ComBot].VariableScope.MemoryManager.Config.Size} - 200]}]
+						</OnLoad>
+						<OnChange>
+							Script[ComBot].VariableScope.MemoryManager.Config:SetSize[${Math.Calc[${This.Value} + 200]}]
+						</OnChange>
+					</Slider>
+				</Children>
+			</Frame>
+		</Children>
+	</window>
+	
+</ISUI>

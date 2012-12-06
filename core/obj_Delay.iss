@@ -27,7 +27,7 @@ objectdef obj_DelayAction
 	method Initialize(string argAction, int argDelay)
 	{
 		Action:Set[${argAction.Escape}]
-		Delay:Set[${Math.Calc[${argDelay} + ${LavishScript.RunningTime}]}]
+		Delay:Set[${argDelay}]
 	}
 }
 
@@ -40,23 +40,22 @@ objectdef obj_Delay inherits obj_State
 		This[parent]:Initialize
 		PulseFrequency:Set[100]
 		RandomDelta:Set[0]
-		DistanceTarget:Set[${MyShip.ID}]
 	}
 	
 	method RegisterAction(string argAction, int argDelay, int ActionRandomDelta=500)
 	{
-		variable int trueDelay = ${Math.Calc[${argDelay} + ${Math.Rand[${ActionRandomDelta}]}]}
+		variable int trueDelay = ${Math.Calc[${argDelay} + ${Math.Rand[${ActionRandomDelta}]} + ${LavishScript.RunningTime}]}
 		Actions:Insert["${argAction.Escape}", ${trueDelay}]
 		if ${CurState.Name.Equal["Idle"]}
 		{
 			CurState.Name:Set["CheckAction"]
-			NextPulse:Set[${Math.Calc[${trueDelay} + ${LavishScript.RunningTime}]}]
+			NextPulse:Set[${trueDelay}]
 		}
 		else
 		{
-			if ${Math.Calc[${trueDelay} + ${LavishScript.RunningTime}]} < ${NextPulse}
+			if ${trueDelay} < ${NextPulse}
 			{
-				NextPulse:Set[${Math.Calc[${trueDelay} + ${LavishScript.RunningTime}]}]
+				NextPulse:Set[${trueDelay}]
 			}
 		}
 	}

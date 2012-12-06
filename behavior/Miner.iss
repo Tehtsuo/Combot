@@ -1,6 +1,6 @@
 /*
 
-ComBot  Copyright Â© 2012  Tehtsuo and Vendan
+ComBot  Copyright © 2012  Tehtsuo and Vendan
 
 This file is part of ComBot.
 
@@ -127,6 +127,7 @@ objectdef obj_Configuration_Miner
 		This.CommonRef:AddSetting[TetherName,""]
 		
 		This.CommonRef:AddSetting[DontMove,FALSE]
+		This.CommonRef:AddSetting[RenameCans,TRUE]
 		
 	}
 	
@@ -150,6 +151,7 @@ objectdef obj_Configuration_Miner
 	Setting(string, JetcanPrefix, SetJetcanPrefix)
 	
 	Setting(bool, DontMove, SetDontMove)
+	Setting(bool, RenameCans, SetRenameCans)
 
 }
 
@@ -184,8 +186,6 @@ objectdef obj_Miner inherits obj_State
 	method Start()
 	{
 		This:PopulateTargetList
-		Drones:RemainDocked
-		Drones:Defensive
 		UI:Update["obj_Miner", "Started", "g"]
 		This:AssignStateQueueDisplay[DebugStateList@Debug@ComBotTab@ComBot]
 		if ${This.IsIdle}
@@ -257,7 +257,7 @@ objectdef obj_Miner inherits obj_State
 	member:bool CheckCargoHold()
 	{
 		Profiling:StartTrack["Miner: CheckCargoHold"]
-		if 	${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]} >= ${Config.Threshold} * .01 && \
+		if 	${EVEWindow[ByCaption, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByCaption, Inventory].ChildCapacity[ShipOreHold]} >= ${Config.Threshold} * .01 && \
 			${MyShip.HasOreHold} && \
 			!${Config.Dropoff_Type.Equal[No Dropoff]} && \
 			!${Config.Dropoff_Type.Equal[Jetcan]} && \
@@ -289,7 +289,7 @@ objectdef obj_Miner inherits obj_State
 			Profiling:EndTrack
 			return TRUE
 		}
-		elseif ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipCorpHangar]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipCorpHangar]} >= ${Config.Threshold} * .01 && \
+		elseif ${EVEWindow[ByCaption, Inventory].ChildUsedCapacity[ShipCorpHangar]} / ${EVEWindow[ByCaption, Inventory].ChildCapacity[ShipCorpHangar]} >= ${Config.Threshold} * .01 && \
 			!${Config.Dropoff_Type.Equal[No Dropoff]} && \
 			!${Config.Dropoff_Type.Equal[Jetcan]} && \
 			${Config.OrcaMode}
@@ -321,13 +321,11 @@ objectdef obj_Miner inherits obj_State
 	member:bool PrepareWarp()
 	{
 		Profiling:StartTrack["Miner: PrepareWarp"]
-		if ${Drones.DronesInSpace}
+		if ${Busy.IsBusy}
 		{
-			Drones:Recall
-			This:InsertState["PrepareWarp"]
-			This:InsertState["Idle", 5000]
+			UI:Update["Miner", "Waiting for drones", "y"]
 			Profiling:EndTrack
-			return TRUE
+			return FALSE
 		}
 		if ${Config.OrcaMode}
 		{
@@ -522,7 +520,7 @@ objectdef obj_Miner inherits obj_State
 				}
 			}
 		
-			Move:Bookmark[${BookmarkIndex.Get[1].Label}]
+			Move:Bookmark[${BookmarkIndex.Get[1].Label}, TRUE, 0, TRUE]
 			BookmarkIndex:Remove[1]
 			BookmarkIndex:Collapse
 			This:InsertState["Updated"]
@@ -556,8 +554,17 @@ objectdef obj_Miner inherits obj_State
 				
 				Belts:RemoveByQuery[${LavishScript.CreateQuery[Name =- "${beltsubstring}"]}, FALSE]
 			}
+			if ${Belts.Used} == 0
+			{
+				variable string PopulateResults
+				UI:Update["Miner", "Belts still not found after re-filling the index", "y"]
+				UI:Update["Miner", "This might be a bug, or you might be in a system with no belts!", "y"]
+				UI:Update["Miner", "Attempting to force a PopulateEntities to fix bug", "y"]
+				EVE:PopulateEntities[TRUE]
+				return FALSE
+			}
 
-			Move:Object[${Belts.Get[1].ID}]
+			Move:Object[${Belts.Get[1].ID}, 0, TRUE]
 			Belts:Remove[1]
 			Belts:Collapse
 			This:InsertState["Updated"]
@@ -671,25 +678,31 @@ objectdef obj_Miner inherits obj_State
 		}
 		if ${Config.OrcaMode}
 		{
+			Asteroids:RequestUpdate
 			Asteroids.AutoLock:Set[FALSE]
 			Asteroids.LockTop:Set[FALSE]
 			
 			relay all -event ComBot_Orca_InBelt TRUE
-			relay all -event ComBot_Orca_Cargo ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipCorpHangar]}
+			relay all -event ComBot_Orca_Cargo ${EVEWindow[ByCaption, Inventory].ChildUsedCapacity[ShipCorpHangar]}
 			Cargo:PopulateCargoList[ShipCorpHangar]
 			if ${Cargo.CargoList.Used} && !${Config.Dropoff_Type.Equal[No Dropoff]}
 			{
-				if ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]} < ${Config.Threshold} * .01
-				{
-					Cargo:Filter[CategoryID==CATEGORYID_ORE]
-					Cargo:MoveCargoList[OreHold]
-					return TRUE
-				}
-				elseif ${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity} < ${Config.Threshold} * .01
+				if ${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity} < ${Config.Threshold} * .01
 				{
 					Cargo:Filter[GroupID==GROUP_HARVESTABLECLOUD || CategoryID==CATEGORYID_ORE]
-					Cargo:MoveCargoList[Ship]
-					return TRUE
+					if ${Cargo.CargoList.Used}
+					{
+						Cargo:MoveCargoList[Ship]
+						return TRUE
+					}
+				}
+				if ${EVEWindow[ByCaption, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByCaption, Inventory].ChildCapacity[ShipOreHold]} < ${Config.Threshold} * .01
+				{
+					if ${Cargo.CargoList.Used}
+					{
+						Cargo:MoveCargoList[OreHold]
+						return TRUE
+					}
 				}
 			}
 			

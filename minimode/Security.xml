@@ -1,0 +1,551 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ISUI>
+
+<!--
+
+ComBot  Copyright © 2012  Tehtsuo and Vendan
+
+This file is part of ComBot.
+
+ComBot is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ComBot is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+
+	<template name='Information.Font'>	
+		<Name>Terminal</Name>
+		<Size>8</Size>
+		<Color>FFFFFFFF</Color>
+	</template>	
+	<template name='Text.Font'>	
+		<Name>Verdana</Name>
+		<Size>12</Size>
+		<Color>FFFFFFFF</Color>
+		<Bold />
+	</template>	
+	<template name='Checkbox.Font'>	
+		<Name>Verdana</Name>
+		<Size>12</Size>
+		<Color>FFFFFFFF</Color>
+		<Bold />
+	</template>	
+	<template name='Button.Font'>	
+		<Name>Verdana</Name>
+		<Size>12</Size>
+		<Color>FF000000</Color>
+		<Bold />
+	</template>	
+
+	<window name='ComBot_Security'>
+		<Visible>1</Visible>
+		<BackGroundColor></BackGroundColor>
+		<Border>0</Border>
+		<X>200</X>
+		<Y>300</Y>
+		<Width>800</Width>
+		<Height>600</Height>
+		<TitleBar>
+			<Width>100%</Width>
+			<Height>20</Height>
+			<Border>0</Border>
+			<BackgroundColor>FF888888</BackgroundColor>
+			<Children>
+				<Text name='ComBot_Security_TitleBar_Title'>
+					<X>0</X>
+					<Y>3</Y>
+					<Width>100%</Width>
+					<Height>20</Height>
+					<Alignment>Center</Alignment>
+					<Text>Security Configuration</Text>
+				</Text>
+				<button	Name='Help'>
+					<Font template='Button.Font' />
+					<BackgroundColor>FF000000</BackgroundColor>
+					<X>r80</X>
+					<Y>0</Y>
+					<Width>40</Width>
+					<Height>20</Height>
+					<Text>Help</Text>
+					<OnLeftClick>
+						timedcommand 0 "OSExecute http://eve.isxgames.com/wiki/index.php?title=ComBot_Security"
+					</OnLeftClick>
+				</button>
+				<button	Name='Close'>
+					<X>r40</X>
+					<Y>0</Y>
+					<Width>40</Width>
+					<Height>20</Height>
+					<Text>Close</Text>
+					<OnLeftClick>
+						if !${EVE.Bookmark[${Script[ComBot].VariableScope.Security.Config.FleeTo}](exists)}
+						{
+							Script[ComBot].VariableScope.UI:Update["obj_Security", "Unable to find flee bookmark. This is DANGEROUS!", "r"]
+							Script[ComBot].VariableScope.UI:Update["obj_Security", "Verify your flee bookmark in the Security settings! ", "r"]
+						}
+						Script[ComBot].VariableScope.Security.LocalUI:Stop
+						ui -unload "&filepath;/Security"
+					</OnLeftClick>
+				</button>
+			</Children>
+		</TitleBar>
+		<Children name="Children">
+			<Frame name="SecurityFrame">
+				<X>0</X>
+				<Y>5</Y>
+				<Width>100%</Width>
+				<Height>100%</Height>
+				<BackgroundColor>FF000000</BackgroundColor>
+				<Border>1</Border>
+				<BorderColor>FFFFFFFF</BorderColor>
+				<Children name="Children">
+				
+					<Text name='FleeFrameTitle'> 
+						<X>1%</X> 
+						<Y>1%</Y> 
+						<Width>32%</Width> 
+						<Height>3%</Height> 
+						<Text>Flee Configuration</Text>
+						<OnLoad>
+							This.Font:SetColor[FFFFFF00]
+						</OnLoad>
+					</Text>
+					<Frame name="FleeFrame">
+						<X>0%</X>
+						<Y>3%</Y>
+						<Width>100%</Width>
+						<Height>20%</Height>
+						<BackgroundColor>FF000000</BackgroundColor>
+						<Border>1</Border>
+						<BorderColor>FFFFFFFF</BorderColor>
+						<Children>
+							<Text name='FleeToTitle'> 
+								<X>1%</X> 
+								<Y>5%</Y> 
+								<Width>20%</Width> 
+								<Height>10%</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Flee To Bookmark</Text>
+							</Text>
+							<Text name='FleeToTitle2'> 
+								<X>12%</X> 
+								<Y>5%</Y> 
+								<Width>20%</Width> 
+								<Height>10%</Height>
+								<Alignment>Center</Alignment>
+								<Text>IMPORTANT</Text>
+								<OnLoad>
+									This.Font:SetColor[FFFF0000]
+								</OnLoad>
+							</Text>
+							<Textentry name='FleeTo'> 
+								<X>1%</X> 
+								<Y>20%</Y> 
+								<Width>32%</Width> 
+								<Height>20%</Height> 
+								<OnLoad>
+									This:SetText[${Script[ComBot].VariableScope.Security.Config.FleeTo}]
+								</OnLoad>
+								<OnChange>
+									if ${This.Text.Length}
+									{
+										Script[ComBot].VariableScope.Security.Config:SetFleeTo[${This.Text}]
+									}
+									else
+									{
+										Script[ComBot].VariableScope.Security.Config:SetFleeTo[\"\"]
+									}
+									UIElement[FleeToList@FleeFrame@SecurityFrame@ComBot_Security]:Show
+									Script[ComBot].VariableScope.Security.LocalUI:Start
+								</OnChange>
+							</Textentry>
+							<listbox Name="FleeToList">
+								<BackgroundColor>FF000000</BackgroundColor>
+								<Border>1</Border>
+								<BorderColor>FFFFFFFF</BorderColor>
+								<X>1%</X>
+								<Y>40%</Y>
+								<Width>32%</Width>
+								<Height>70%</Height>
+								<OnLoad>
+									This:SetZOrder[alwaysontop]
+									This:Hide
+								</OnLoad>
+								<OnSelect>
+									UIElement[FleeTo@FleeFrame@SecurityFrame@ComBot_Security]:SetText[${This.SelectedItem.Text}]
+									Script[ComBot].VariableScope.Security.Config:SetFleeTo[${This.SelectedItem.Text}]
+									This:Hide
+									Script[ComBot].VariableScope.Security.LocalUI:Stop
+								</OnSelect>
+							</listbox>					
+							<Checkbox name='FleeWaitTime_Enabled'>
+								<X>34%</X>
+								<Y>5%</Y>
+								<Width>32%</Width> 
+								<Height>15%</Height> 
+								<Text>Wait at safe place after fleeing for ${Script[ComBot].VariableScope.Security.Config.FleeWaitTime} minutes</Text>
+								<OnLoad>
+									if ${Script[ComBot].VariableScope.Security.Config.FleeWaitTime_Enabled}
+									{
+										This:SetChecked
+									}
+								</OnLoad>
+								<OnLeftClick>
+									Script[ComBot].VariableScope.Security.Config:SetFleeWaitTime_Enabled[${This.Checked}]
+									if ${This.Checked}
+									{
+										UIElement[FleeWaitTime@FleeFrame@SecurityFrame@ComBot_Security]:Show
+									}
+									else
+									{
+										UIElement[FleeWaitTime@FleeFrame@SecurityFrame@ComBot_Security]:Hide
+									}
+								</OnLeftClick>
+							</Checkbox>		
+							<Slider name='FleeWaitTime'>
+								<X>34%</X>
+								<Y>25%</Y>
+								<Width>32%</Width> 
+								<Height>20%</Height> 
+								<Border>1</Border>
+								<OnLoad>
+									This:SetValue[${Script[ComBot].VariableScope.Security.Config.FleeWaitTime}]
+									if !${Script[ComBot].VariableScope.Security.Config.FleeWaitTime_Enabled}
+									{
+										This:Hide
+									}
+								</OnLoad>
+								<OnChange>
+									Script[ComBot].VariableScope.Security.Config:SetFleeWaitTime[${This.Value}]
+								</OnChange>
+							</Slider>		
+
+						</Children>
+					</Frame>
+
+					<Text name='StandingsFrameTitle'> 
+						<X>1%</X> 
+						<Y>24%</Y> 
+						<Width>32%</Width> 
+						<Height>3%</Height> 
+						<Text>Standings Configuration</Text>
+						<OnLoad>
+							This.Font:SetColor[FFFFFF00]
+						</OnLoad>
+					</Text>
+					<Frame name="StandingsFrame">
+						<X>0%</X>
+						<Y>26%</Y>
+						<Width>100%</Width>
+						<Height>5%</Height>
+						<BackgroundColor>FF000000</BackgroundColor>
+						<Border>1</Border>
+						<BorderColor>FFFFFFFF</BorderColor>
+						<Children>
+							<Checkbox name='NegativeStanding'>
+								<X>1%</X>
+								<Y>15%</Y>
+								<Width>32%</Width> 
+								<Height>80%</Height> 
+								<Text>Flee if any standing is negative</Text>
+								<OnLoad>
+									if ${Script[ComBot].VariableScope.Security.Config.NegativeStanding}
+									{
+										This:SetChecked
+									}
+								</OnLoad>
+								<OnLeftClick>
+									Script[ComBot].VariableScope.Security.Config:SetNegativeStanding[${This.Checked}]
+								</OnLeftClick>
+							</Checkbox>
+							<Checkbox name='NullStanding'>
+								<X>34%</X>
+								<Y>15%</Y>
+								<Width>32%</Width> 
+								<Height>80%</Height> 
+								<Text>Flee if all standings are neutral</Text>
+								<OnLoad>
+									if ${Script[ComBot].VariableScope.Security.Config.NullStanding}
+									{
+										This:SetChecked
+									}
+								</OnLoad>
+								<OnLeftClick>
+									Script[ComBot].VariableScope.Security.Config:SetNullStanding[${This.Checked}]
+								</OnLeftClick>
+							</Checkbox>
+				
+				
+						</Children>
+					</Frame>
+				
+					<Text name='GridFrameTitle'> 
+						<X>1%</X> 
+						<Y>32%</Y> 
+						<Width>32%</Width> 
+						<Height>3%</Height> 
+						<Text>On-Grid Configuration</Text>
+						<OnLoad>
+							This.Font:SetColor[FFFFFF00]
+						</OnLoad>
+					</Text>
+					<Frame name="GridFrame">
+						<X>0%</X>
+						<Y>34%</Y>
+						<Width>100%</Width>
+						<Height>5%</Height>
+						<BackgroundColor>FF000000</BackgroundColor>
+						<Border>1</Border>
+						<BorderColor>FFFFFFFF</BorderColor>
+						<Children>
+							<Checkbox name='TargetFlee'>
+								<X>1%</X>
+								<Y>15%</Y>
+								<Width>32%</Width> 
+								<Height>80%</Height> 
+								<Text>Flee if targeted by another player</Text>
+								<OnLoad>
+									if ${Script[ComBot].VariableScope.Security.Config.TargetFlee}
+									{
+										This:SetChecked
+									}
+								</OnLoad>
+								<OnLeftClick>
+									Script[ComBot].VariableScope.Security.Config:SetTargetFlee[${This.Checked}]
+								</OnLeftClick>
+							</Checkbox>		
+						</Children>
+					</Frame>
+					
+					<Text name='FriendlyFrameTitle'> 
+						<X>1%</X> 
+						<Y>40%</Y> 
+						<Width>32%</Width> 
+						<Height>3%</Height> 
+						<Text>Friendly Configuration</Text>
+						<OnLoad>
+							This.Font:SetColor[FFFFFF00]
+						</OnLoad>
+					</Text>
+					<Frame name="FriendlyFrame">
+						<X>0%</X>
+						<Y>42%</Y>
+						<Width>100%</Width>
+						<Height>5%</Height>
+						<BackgroundColor>FF000000</BackgroundColor>
+						<Border>1</Border>
+						<BorderColor>FFFFFFFF</BorderColor>
+						<Children>
+							<Checkbox name='CorpFlee'>
+								<X>1%</X>
+								<Y>15%</Y>
+								<Width>32%</Width> 
+								<Height>80%</Height> 
+								<Text>Include corporation members in flee check</Text>
+								<OnLoad>
+									if ${Script[ComBot].VariableScope.Security.Config.CorpFlee}
+									{
+										This:SetChecked
+									}
+								</OnLoad>
+								<OnLeftClick>
+									Script[ComBot].VariableScope.Security.Config:SetCorpFlee[${This.Checked}]
+								</OnLeftClick>
+							</Checkbox>		
+							<Checkbox name='AllianceFlee'>
+								<X>34%</X>
+								<Y>15%</Y>
+								<Width>32%</Width> 
+								<Height>80%</Height> 
+								<Text>Include alliance members in flee check</Text>
+								<OnLoad>
+									if ${Script[ComBot].VariableScope.Security.Config.AllianceFlee}
+									{
+										This:SetChecked
+									}
+								</OnLoad>
+								<OnLeftClick>
+									Script[ComBot].VariableScope.Security.Config:SetAllianceFlee[${This.Checked}]
+								</OnLeftClick>
+							</Checkbox>		
+							<Checkbox name='FleetFlee'>
+								<X>67%</X>
+								<Y>15%</Y>
+								<Width>32%</Width> 
+								<Height>80%</Height> 
+								<Text>Include fleet members in flee check</Text>
+								<OnLoad>
+									if ${Script[ComBot].VariableScope.Security.Config.FleetFlee}
+									{
+										This:SetChecked
+									}
+								</OnLoad>
+								<OnLeftClick>
+									Script[ComBot].VariableScope.Security.Config:SetFleetFlee[${This.Checked}]
+								</OnLeftClick>
+							</Checkbox>		
+						</Children>
+					</Frame>
+
+					<Text name='SurvivalFrameTitle'> 
+						<X>1%</X> 
+						<Y>48%</Y> 
+						<Width>32%</Width> 
+						<Height>3%</Height> 
+						<Text>Survival Configuration</Text>
+						<OnLoad>
+							This.Font:SetColor[FFFFFF00]
+						</OnLoad>
+					</Text>
+					<Frame name="SurvivalFrame">
+						<X>0%</X>
+						<Y>50%</Y>
+						<Width>100%</Width>
+						<Height>10%</Height>
+						<BackgroundColor>FF000000</BackgroundColor>
+						<Border>1</Border>
+						<BorderColor>FFFFFFFF</BorderColor>
+						<Children>
+							<Checkbox name='CapFlee'>
+								<X>1%</X>
+								<Y>5%</Y>
+								<Width>32%</Width> 
+								<Height>40%</Height> 
+								<Text>Flee if Capacitor reaches ${Script[ComBot].VariableScope.Security.Config.CapFleeThreshold}%</Text>
+								<OnLoad>
+									if ${Script[ComBot].VariableScope.Security.Config.CapFlee}
+									{
+										This:SetChecked
+									}
+								</OnLoad>
+								<OnLeftClick>
+									Script[ComBot].VariableScope.Security.Config:SetCapFlee[${This.Checked}]
+									if ${This.Checked}
+									{
+										UIElement[CapFleeThreshold@SurvivalFrame@SecurityFrame@ComBot_Security]:Show
+									}
+									else
+									{
+										UIElement[CapFleeThreshold@SurvivalFrame@SecurityFrame@ComBot_Security]:Hide
+									}
+								</OnLeftClick>
+							</Checkbox>		
+							<Slider name='CapFleeThreshold'>
+								<X>1%</X>
+								<Y>50%</Y>
+								<Width>32%</Width> 
+								<Height>40%</Height> 
+								<Border>1</Border>
+								<OnLoad>
+									This:SetValue[${Script[ComBot].VariableScope.Security.Config.CapFleeThreshold}]
+									if !${Script[ComBot].VariableScope.Security.Config.CapFlee}
+									{
+										This:Hide
+									}
+								</OnLoad>
+								<OnChange>
+									Script[ComBot].VariableScope.Security.Config:SetCapFleeThreshold[${This.Value}]
+								</OnChange>
+							</Slider>		
+							<Checkbox name='ShieldFlee'>
+								<X>34%</X>
+								<Y>5%</Y>
+								<Width>32%</Width> 
+								<Height>40%</Height> 
+								<Text>Flee if Shield reaches ${Script[ComBot].VariableScope.Security.Config.ShieldFleeThreshold}%</Text>
+								<OnLoad>
+									if ${Script[ComBot].VariableScope.Security.Config.ShieldFlee}
+									{
+										This:SetChecked
+									}
+								</OnLoad>
+								<OnLeftClick>
+									Script[ComBot].VariableScope.Security.Config:SetShieldFlee[${This.Checked}]
+									if ${This.Checked}
+									{
+										UIElement[ShieldFleeThreshold@SurvivalFrame@SecurityFrame@ComBot_Security]:Show
+									}
+									else
+									{
+										UIElement[ShieldFleeThreshold@SurvivalFrame@SecurityFrame@ComBot_Security]:Hide
+									}
+								</OnLeftClick>
+							</Checkbox>		
+							<Slider name='ShieldFleeThreshold'>
+								<X>34%</X>
+								<Y>50%</Y>
+								<Width>32%</Width> 
+								<Height>40%</Height> 
+								<Border>1</Border>
+								<OnLoad>
+									This:SetValue[${Script[ComBot].VariableScope.Security.Config.ShieldFleeThreshold}]
+									if !${Script[ComBot].VariableScope.Security.Config.ShieldFleeThreshold}
+									{
+										This:Hide
+									}
+								</OnLoad>
+								<OnChange>
+									Script[ComBot].VariableScope.Security.Config:SetShieldFleeThreshold[${This.Value}]
+								</OnChange>
+							</Slider>		
+							<Checkbox name='ArmorFlee'>
+								<X>67%</X>
+								<Y>5%</Y>
+								<Width>32%</Width> 
+								<Height>40%</Height> 
+								<Text>Flee if Armor reaches ${Script[ComBot].VariableScope.Security.Config.ArmorFleeThreshold}%</Text>
+								<OnLoad>
+									if ${Script[ComBot].VariableScope.Security.Config.ArmorFlee}
+									{
+										This:SetChecked
+									}
+								</OnLoad>
+								<OnLeftClick>
+									Script[ComBot].VariableScope.Security.Config:SetArmorFlee[${This.Checked}]
+									if ${This.Checked}
+									{
+										UIElement[ArmorFleeThreshold@SurvivalFrame@SecurityFrame@ComBot_Security]:Show
+									}
+									else
+									{
+										UIElement[ArmorFleeThreshold@SurvivalFrame@SecurityFrame@ComBot_Security]:Hide
+									}
+								</OnLeftClick>
+							</Checkbox>		
+							<Slider name='ArmorFleeThreshold'>
+								<X>67%</X>
+								<Y>50%</Y>
+								<Width>32%</Width> 
+								<Height>40%</Height> 
+								<Border>1</Border>
+								<OnLoad>
+									This:SetValue[${Script[ComBot].VariableScope.Security.Config.ArmorFleeThreshold}]
+									if !${Script[ComBot].VariableScope.Security.Config.ArmorFleeThreshold}
+									{
+										This:Hide
+									}
+								</OnLoad>
+								<OnChange>
+									Script[ComBot].VariableScope.Security.Config:SetArmorFleeThreshold[${This.Value}]
+								</OnChange>
+							</Slider>		
+							
+						</Children>
+					</Frame>
+					
+					
+				</Children>
+			</Frame>
+		</Children>
+	</window>
+	
+</ISUI>

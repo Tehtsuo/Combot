@@ -112,8 +112,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					<Width>40</Width>
 					<Height>20</Height>
 					<Text>Hide</Text>
-					<OnLeftClick>
-						if ${UIElement[ComBotTab@ComBot].Visible}
+					<OnLoad>
+						if ${Script[ComBot].VariableScope.Config.Common.Hidden}
 						{
 							UIElement[ComBotTab@ComBot]:Hide
 							This:SetText[Show]
@@ -122,6 +122,20 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						{
 							UIElement[ComBotTab@ComBot]:Show
 							This:SetText[Hide]
+						}
+					</OnLoad>
+					<OnLeftClick>
+						if ${UIElement[ComBotTab@ComBot].Visible}
+						{
+							UIElement[ComBotTab@ComBot]:Hide
+							This:SetText[Show]
+							Script[ComBot].VariableScope.Config.Common:SetHidden[TRUE]
+						}
+						else
+						{
+							UIElement[ComBotTab@ComBot]:Show
+							This:SetText[Hide]
+							Script[ComBot].VariableScope.Config.Common:SetHidden[FALSE]
 						}
 					</OnLeftClick>
 				</button>
@@ -281,6 +295,24 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								This:SetZOrder[movetop]
 							</OnLeftClick>
 						</Checkbox>
+						<Checkbox name='CloseChatInvites'>
+							<X>51%</X>
+							<Y>50%</Y>
+							<Width>48%</Width> 
+							<Height>6%</Height> 
+							<Text>Auto-close Chat Invites</Text>
+							<OnLoad>
+								if ${Script[ComBot].VariableScope.Config.Common.CloseChatInvites}
+								{
+									This:SetChecked
+								}
+								This:SetZOrder[movetop]
+							</OnLoad>
+							<OnLeftClick>
+								Script[ComBot].VariableScope.Config.Common:SetCloseChatInvites[${This.Checked}]
+								This:SetZOrder[movetop]
+							</OnLeftClick>
+						</Checkbox>
 						<Checkbox name='DisableUI'>
 							<X>1%</X>
 							<Y>58%</Y>
@@ -317,18 +349,6 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								This:SetZOrder[movetop]
 							</OnLeftClick>
 						</Checkbox>
-						<button	Name='SecurityConfig'>
-							<Font template='Button.Font' />
-							<BackgroundColor>FF000000</BackgroundColor>
-							<X>1%</X>
-							<Y>35%</Y>
-							<Width>98%</Width>
-							<Height>10%</Height>
-							<Text>Security Settings</Text>
-							<OnLeftClick>
-								timedcommand 0 "ui -load \"&filepath;/ComBotGUI_Security.xml\""
-							</OnLeftClick>
-						</button>						
 						
 						<frame name='AutoLoginFillerFrame'>
 							<BackgroundColor>FF000000</BackgroundColor>
@@ -471,6 +491,21 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								Script[ComBot].VariableScope.Fleets:DeleteFleet[${UIElement[FleetSelection@Settings@ComBotTab@ComBot].SelectedItem.Text}]
 							</OnLeftClick>
 						</button>													
+						<button	Name='GoHome'>
+							<Font template='Button.Font' />
+							<BackgroundColor>FF000000</BackgroundColor>
+							<X>1%</X>
+							<Y>32%</Y>
+							<Width>32%</Width>
+							<Height>8%</Height>
+							<Text>Go Home</Text>
+							<OnLeftClick>
+								Script[ComBot].VariableScope.Automate:GotoLogoutNow
+							</OnLeftClick>
+							<OnRightClick>
+								relay all Script[ComBot].VariableScope.Automate:GotoLogoutNow
+							</OnRightClick>
+						</button>
 					</Tab>
 
 					<Tab Name='Debug'>

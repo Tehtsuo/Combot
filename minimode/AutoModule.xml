@@ -289,6 +289,22 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							Script[ComBot].VariableScope.AutoModule.Config:SetECCM[${This.Checked}]
 						</OnLeftClick>
 					</Checkbox>
+					<Checkbox name='DroneControlUnit'>
+						<X>1%</X>
+						<Y>66%</Y>
+						<Width>30%</Width> 
+						<Height>3%</Height> 
+						<Text>Drone Control Unit Modules</Text>
+						<OnLoad>
+							if ${Script[ComBot].VariableScope.AutoModule.Config.DroneControlUnit}
+							{
+								This:SetChecked
+							}
+						</OnLoad>
+						<OnLeftClick>
+							Script[ComBot].VariableScope.AutoModule.Config:SetDroneControlUnit[${This.Checked}]
+						</OnLeftClick>
+					</Checkbox>
 					
 				</Children>
 			</Frame>

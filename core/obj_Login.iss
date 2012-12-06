@@ -43,7 +43,7 @@ objectdef obj_EVEExtension
 
 objectdef obj_Login inherits obj_State
 {
-	
+	variable bool Wait=FALSE
 	
 	method Initialize()
 	{
@@ -54,24 +54,68 @@ objectdef obj_Login inherits obj_State
 		{
 			return
 		}
-		
+		This:QueueState["Build"]
+	}
+	
+	member:bool Build()
+	{
+		if ${Wait}
+		{
+			UI:Update["Login", "Login pending for character \ao${EVEExtension.Character}", "y", TRUE]
+		}
+		This:QueueState["WaitForLogin"]
 		if ${EVEExtension.Character.Length}
 		{
-			UI:Update["obj_Login", "Beginning auto-login for character \ao${EVEExtension.Character}", "y"]		
+			This:QueueState["Log", 10, "Beginning auto-login for character \ao${EVEExtension.Character},y,TRUE"]
 		}
 		else
 		{
-			UI:Update["obj_Login", "Autologin character not specified.  Specify a character in your command line.", "r"]
+			This:QueueState["Log", 10, "Autologin character not specified.  Specify a character in your command line.,r,FALSE"]
 			return
 		}
-		
-		
 		This:QueueState["Login"]
 		This:QueueState["SelectCharacter"]
+		return TRUE
+	}
+	
+	member:bool WaitForLogin()
+	{
+		if ${Wait}
+		{
+			return FALSE
+		}
+		return TRUE
+	}
+	
+	member:bool Log(string msg, string color, bool redact=FALSE)
+	{
+		UI:Update["Login", "${msg}", "${color}", ${redact}]		
+		return TRUE
 	}
 
 	member:bool Login()
 	{
+		if ${EVEWindow[ByName,modal](exists)}
+		{
+			echo Modal window exists
+			if ${EVEWindow[ByName,modal].Text.Find["There is a new build available"](exists)}
+			{
+				EVEWindow[ByName,modal]:ClickButtonYes
+				return FALSE
+			}
+			elseif 	${EVEWindow[ByName,modal].Text.Find["A client update is available"](exists)} || \
+					${EVEWindow[ByName,modal].Text.Find["The client update has been installed."](exists)} || \
+					${EVEWindow[ByName,modal].Text.Find["The update has been downloaded."](exists)} || \
+					${EVEWindow[ByName,modal].Text.Find["The daily downtime will begin in"](exists)} || \
+					${EVEWindow[ByName,modal].Text.Find["The connection to the server was closed"](exists)} || \
+					${EVEWindow[ByName,modal].Text.Find["At any time you can log in to the account management page"](exists)}
+			{
+				echo Need to click OK button
+				EVEWindow[ByName,modal]:ClickButtonOK
+				return FALSE
+			}
+		}
+
 		if ${EVE.IsProgressWindowOpen}
 		{
 			return FALSE
@@ -87,25 +131,6 @@ objectdef obj_Login inherits obj_State
 		{
 			echo Returning True because charselect found
 			return TRUE
-		}
-		
-		if ${EVEWindow[ByName,modal](exists)}
-		{
-			if ${EVEWindow[ByName,modal].Text.Find["There is a new build available"](exists)}
-			{
-				EVEWindow[ByName,modal]:ClickButtonYes
-				return FALSE
-			}
-			elseif 	${EVEWindow[ByName,modal].Text.Find["A client update is available"](exists)} || \
-					${EVEWindow[ByName,modal].Text.Find["The client update has been installed."](exists)} || \
-					${EVEWindow[ByName,modal].Text.Find["The update has been downloaded."](exists)} || \
-					${EVEWindow[ByName,modal].Text.Find["The daily downtime will begin in"](exists)} || \
-					${EVEWindow[ByName,modal].Text.Find["The connection to the server was closed"](exists)} || \
-					${EVEWindow[ByName,modal].Text.Find["At any time you can log in to the account management page"](exists)}
-			{
-				EVEWindow[ByName,modal]:ClickButtonOK
-				return FALSE
-			}
 		}
 		
 		if !${Login.ServerStatus.Find["OK"](exists)}

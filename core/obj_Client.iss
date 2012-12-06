@@ -135,7 +135,7 @@ objectdef obj_Client
 		BookmarkIndex:RemoveByQuery[${LavishScript.CreateQuery[SolarSystemID == ${Me.SolarSystemID}]}, FALSE]
 		BookmarkIndex:RemoveByQuery[${LavishScript.CreateQuery[Label =- "${UndockWarp.Config.substring}"]}, FALSE]
 		BookmarkIndex:RemoveByQuery[${LavishScript.CreateQuery[Distance > 150000]}, FALSE]
-		BookmarkIndex:RemoveByQuery[${LavishScript.CreateQuery[Distance < 250000]}, FALSE]
+		BookmarkIndex:RemoveByQuery[${LavishScript.CreateQuery[Distance < 2000000]}, FALSE]
 		BookmarkIndex:Collapse
 		
 		if ${BookmarkIndex.Used}

@@ -30,6 +30,7 @@ objectdef obj_Base_Configuration
 		if !${BaseConfig.BaseRef.FindSet[${This.SetName}](exists)}
 		{
 			UI:Update["obj_Configuration", " ${This.SetName} settings missing - initializing", "o"]
+			BaseConfig.BaseRef:AddSet[${This.SetName}]
 			This:Set_Default_Values[]
 		}
 		UI:Update["obj_Configuration", " ${This.SetName}: Initialized", "-g"]
@@ -109,9 +110,6 @@ objectdef obj_Configuration_BaseConfig
 objectdef obj_Configuration
 {
 	variable obj_Configuration_Common Common
-	variable obj_Configuration_Security Security
-	variable obj_Configuration_HangarSale HangarSale
-	variable obj_Configuration_Hauler Hauler
 	variable obj_Configuration_Fleets Fleets
 	method Save()
 	{
@@ -163,7 +161,9 @@ objectdef obj_Configuration_Common
 	Setting(bool, Disable3D, SetDisable3D)
 	Setting(bool, DisableUI, SetDisableUI)
 	Setting(bool, DisableTexture, SetDisableTexture)
+	Setting(bool, CloseChatInvites, SetCloseChatInvites)
 	Setting(string, ActiveTab, SetActiveTab)
+	Setting(bool, Hidden, SetHidden)
 	Setting(int64, CharID, SetCharID)
 	Setting(string, Account, SetAccount)
 	Setting(string, Password, SetPassword)
@@ -173,64 +173,6 @@ objectdef obj_Configuration_Common
 
 
 	
-objectdef obj_Configuration_Security
-{
-	variable string SetName = "Security"
-
-	method Initialize()
-	{
-		if !${BaseConfig.BaseRef.FindSet[${This.SetName}](exists)}
-		{
-			UI:Update["obj_Configuration", " ${This.SetName} settings missing - initializing", "o"]
-			This:Set_Default_Values[]
-		}
-		UI:Update["obj_Configuration", " ${This.SetName}: Initialized", "-g"]
-	}
-
-	member:settingsetref CommonRef()
-	{
-		return ${BaseConfig.BaseRef.FindSet[${This.SetName}]}
-	}
-
-	method Set_Default_Values()
-	{
-		BaseConfig.BaseRef:AddSet[${This.SetName}]
-		
-		This.CommonRef:AddSetting[FleeTo,""]
-	}
-
-	Setting(bool, MeToPilot, SetMeToPilot)	
-	Setting(bool, MeToCorp, SetMeToCorp)	
-	Setting(bool, MeToAlliance, SetMeToAlliance)	
-	Setting(bool, CorpToPilot, SetCorpToPilot)	
-	Setting(bool, CorpToCorp, SetCorpToCorp)	
-	Setting(bool, CorpToAlliance, SetCorpToAlliance)	
-	Setting(bool, AllianceToPilot, SetAllianceToPilot)	
-	Setting(bool, AllianceToCorp, SetAllianceToCorp)	
-	Setting(bool, AllianceToAlliance, SetAllianceToAlliance)	
-	Setting(int, MeToPilot_Value, SetMeToPilot_Value)	
-	Setting(int, MeToCorp_Value, SetMeToCorp_Value)	
-	Setting(int, MeToAlliance_Value, SetMeToAlliance_Value)	
-	Setting(int, CorpToPilot_Value, SetCorpToPilot_Value)	
-	Setting(int, CorpToCorp_Value, SetCorpToCorp_Value)	
-	Setting(int, CorpToAlliance_Value, SetCorpToAlliance_Value)	
-	Setting(int, AllianceToPilot_Value, SetAllianceToPilot_Value)	
-	Setting(int, AllianceToCorp_Value, SetAllianceToCorp_Value)	
-	Setting(int, AllianceToAlliance_Value, SetAllianceToAlliance_Value)	
-	Setting(bool, FleeWaitTime_Enabled, SetFleeWaitTime_Enabled)	
-	Setting(int, FleeWaitTime, SetFleeWaitTime)	
-	Setting(bool, Break_Enabled, SetBreak_Enabled)	
-	Setting(int, Break_Duration, SetBreak_Duration)	
-	Setting(int, Break_Interval, SetBreak_Interval)	
-	Setting(string, FleeTo, SetFleeTo)	
-	Setting(bool, TargetFlee, SetTargetFlee)	
-	Setting(bool, CorpFlee, SetCorpFlee)
-	Setting(bool, AllianceFlee, SetAllianceFlee)
-	Setting(bool, FleetFlee, SetFleetFlee)
-	
-}	
-	
-
 
 
 objectdef obj_Configuration_Fleets
@@ -288,6 +230,7 @@ objectdef obj_Configuration_Fleets
 		BaseConfig.BaseRef:AddSet[${This.SetName}]
 		This.CommonRef:AddSet[Fleets]
 		This.CommonRef:AddSetting[Active,"No Fleet"]
+		echo "Fleets default value save"
 		Config:Save
 	}
 	
@@ -333,6 +276,8 @@ objectdef obj_Configuration_Fleet
 		CurrentRef:AddSet[Wings]
 		This.CommonRef:AddSetting[Commander,0]
 		This.CommonRef:AddSetting[Booster,0]
+		
+		echo Fleet default value save
 		Config:Save
 	}
 	
@@ -380,6 +325,7 @@ objectdef obj_Configuration_Wing
 		CurrentRef:AddSet[Squads]
 		This.CommonRef:AddSetting[Commander,0]
 		This.CommonRef:AddSetting[Booster,0]
+		echo Wing default value save
 		Config:Save
 	}
 	
@@ -426,6 +372,7 @@ objectdef obj_Configuration_Squad
 		CurrentRef:AddSet[Members]
 		This.CommonRef:AddSetting[Commander,0]
 		This.CommonRef:AddSetting[Booster,0]
+		echo Squad default value save
 		Config:Save
 	}
 	
@@ -449,6 +396,7 @@ objectdef obj_Configuration_Member
 	method Set_Default_Values()
 	{
 		CurrentRef:AddSetting[Created, TRUE]
+		echo Member default value save
 		Config:Save
 	}
 	

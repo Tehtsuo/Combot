@@ -170,7 +170,10 @@ objectdef obj_Cargo inherits obj_State
 				else
 				{
 					EarlyBreak:Set[TRUE]
-					Cargo.Value:MoveTo[MyShip, CargoHold, ${Math.Calc[(${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity} - ${Volume}) / ${Cargo.Value.Volume} - 1]}]
+					if ${Cargo.Value.Volume} != 0
+					{
+						Cargo.Value:MoveTo[MyShip, CargoHold, ${Math.Calc[(${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity} - ${Volume}) / ${Cargo.Value.Volume} - 1]}]
+					}
 					break
 				}
 			}
@@ -194,11 +197,20 @@ objectdef obj_Cargo inherits obj_State
 	{
 		variable string TransferFolder
 		variable float Volume
-		
+
+		if ${location.Equal[OreHold]}
+		{
+			This:Filter[CategoryID==CATEGORYID_ORE]
+		}
 		
 		if ${CargoList.Used} == 1
 		{
 			variable item CargoItem=${CargoList[1].ID}
+			if ${CargoItem.Volume} == 0
+			{
+				return
+			}
+			
 			if ${Quantity} > 0
 			{
 				Volume:Set[${CargoItem.Volume} * ${Quantity}]
@@ -229,35 +241,35 @@ objectdef obj_Cargo inherits obj_State
 				case Container
 					if ${ID} == -1
 					{
-						if ${Volume} < ${EVEWindow[ByName, Inventory].ChildCapacity[ShipCorpHangar]} - ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipCorpHangar]}
+						if ${Volume} < ${EVEWindow[ByCaption, Inventory].ChildCapacity[ShipCorpHangar]} - ${EVEWindow[ByCaption, Inventory].ChildUsedCapacity[ShipCorpHangar]}
 						{
 							CargoItem:MoveTo[MyShip, CorpHangars, ${Quantity}${TransferFolder}]
 						}
 						else
 						{
-							CargoItem:MoveTo[MyShip, CorpHangars, ${Math.Calc[(${EVEWindow[ByName, Inventory].ChildCapacity[ShipCorpHangar]} - ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipCorpHangar]}) / ${CargoItem.Volume}].Int}${TransferFolder}]
+							CargoItem:MoveTo[MyShip, CorpHangars, ${Math.Calc[(${EVEWindow[ByCaption, Inventory].ChildCapacity[ShipCorpHangar]} - ${EVEWindow[ByCaption, Inventory].ChildUsedCapacity[ShipCorpHangar]}) / ${CargoItem.Volume}].Int}${TransferFolder}]
 						}
 					}
 					else
 					{
-						if ${Volume} < ${EVEWindow[ByName, Inventory].ChildCapacity[${ID}]} - ${EVEWindow[ByName, Inventory].ChildUsedCapacity[${ID}]}
+						if ${Volume} < ${EVEWindow[ByCaption, Inventory].ChildCapacity[${ID}]} - ${EVEWindow[ByCaption, Inventory].ChildUsedCapacity[${ID}]}
 						{
 							CargoItem:MoveTo[${ID}, CorpHangars, ${Quantity}${TransferFolder}]
 						}
 						else
 						{
-							CargoItem:MoveTo[${ID}, CorpHangars, ${Math.Calc[(${EVEWindow[ByName, Inventory].ChildCapacity[ShipCorpHangar]} - ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipCorpHangar]}) / ${CargoItem.Volume}].Int}${TransferFolder}]
+							CargoItem:MoveTo[${ID}, CorpHangars, ${Math.Calc[(${EVEWindow[ByCaption, Inventory].ChildCapacity[${ID}]} - ${EVEWindow[ByCaption, Inventory].ChildUsedCapacity[${ID}]}) / ${CargoItem.Volume}].Int}${TransferFolder}]
 						}
 					}
 					break
 				case OreHold
-					if ${Volume} < ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]} - ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]}
+					if ${Volume} < ${EVEWindow[ByCaption, Inventory].ChildCapacity[ShipOreHold]} - ${EVEWindow[ByCaption, Inventory].ChildUsedCapacity[ShipOreHold]}
 					{
 						CargoItem:MoveTo[MyShip, OreHold, ${Quantity}]
 					}
 					else
 					{
-						CargoItem:MoveTo[MyShip, OreHold, ${Math.Calc[(${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]} - ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]}) / ${CargoItem.Volume}].Int}]
+						CargoItem:MoveTo[MyShip, OreHold, ${Math.Calc[(${EVEWindow[ByCaption, Inventory].ChildCapacity[ShipOreHold]} - ${EVEWindow[ByCaption, Inventory].ChildUsedCapacity[ShipOreHold]}) / ${CargoItem.Volume}].Int}]
 					}
 					break
 				case Personal Hangar
@@ -299,10 +311,13 @@ objectdef obj_Cargo inherits obj_State
 								TransferIndex:Insert[${Cargo.Value.ID}]
 								Volume:Inc[${Math.Calc[${Cargo.Value.Quantity} * ${Cargo.Value.Volume}]}]
 							}
-							elseif ${Math.Calc[(${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity} - ${Volume}) / ${Cargo.Value.Volume}].Int}
+							elseif ${Cargo.Value.Volume} != 0
 							{
-								Cargo.Value:MoveTo[MyShip, CargoHold, ${Math.Calc[(${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity} - ${Volume}) / ${Cargo.Value.Volume}].Int}]
-								break
+								if ${Math.Calc[(${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity} - ${Volume}) / ${Cargo.Value.Volume}].Int}
+								{
+									Cargo.Value:MoveTo[MyShip, CargoHold, ${Math.Calc[(${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity} - ${Volume}) / ${Cargo.Value.Volume}].Int}]
+									break
+								}
 							}
 						}
 						while ${Cargo:Next(exists)}
@@ -315,15 +330,18 @@ objectdef obj_Cargo inherits obj_State
 						if ${Cargo:First(exists)}
 							do
 							{
-								if ${Cargo.Value.Quantity} * ${Cargo.Value.Volume} < ${EVEWindow[ByName, Inventory].ChildCapacity[ShipCorpHangar]} - ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipCorpHangar]} - ${Volume}
+								if ${Cargo.Value.Quantity} * ${Cargo.Value.Volume} < ${EVEWindow[ByCaption, Inventory].ChildCapacity[ShipCorpHangar]} - ${EVEWindow[ByCaption, Inventory].ChildUsedCapacity[ShipCorpHangar]} - ${Volume}
 								{
 									TransferIndex:Insert[${Cargo.Value.ID}]
 									Volume:Inc[${Cargo.Value.Quantity} * ${Cargo.Value.Volume}]
 								}
-								elseif ${Math.Calc[(${EVEWindow[ByName, Inventory].ChildCapacity[ShipCorpHangar]} - ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipCorpHangar]} - ${Volume}) / ${Cargo.Value.Volume}].Int}
+								elseif ${Cargo.Value.Volume} != 0
 								{
-									Cargo.Value:MoveTo[MyShip, CorpHangars, ${Math.Calc[(${EVEWindow[ByName, Inventory].ChildCapacity[ShipCorpHangar]} - ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipCorpHangar]} - ${Volume}) / ${Cargo.Value.Volume}].Int}${TransferFolder}]
-									break
+									if ${Math.Calc[(${EVEWindow[ByCaption, Inventory].ChildCapacity[ShipCorpHangar]} - ${EVEWindow[ByCaption, Inventory].ChildUsedCapacity[ShipCorpHangar]} - ${Volume}) / ${Cargo.Value.Volume}].Int}
+									{
+										Cargo.Value:MoveTo[MyShip, CorpHangars, ${Math.Calc[(${EVEWindow[ByCaption, Inventory].ChildCapacity[ShipCorpHangar]} - ${EVEWindow[ByCaption, Inventory].ChildUsedCapacity[ShipCorpHangar]} - ${Volume}) / ${Cargo.Value.Volume}].Int}${TransferFolder}]
+										break
+									}
 								}
 							}
 							while ${Cargo:Next(exists)}
@@ -334,15 +352,18 @@ objectdef obj_Cargo inherits obj_State
 						if ${Cargo:First(exists)}
 							do
 							{
-								if ${Cargo.Value.Quantity} * ${Cargo.Value.Volume} < ${EVEWindow[ByName, Inventory].ChildCapacity[${ID}]} - ${EVEWindow[ByName, Inventory].ChildUsedCapacity[${ID}]} - ${Volume}
+								if ${Cargo.Value.Quantity} * ${Cargo.Value.Volume} < ${EVEWindow[ByCaption, Inventory].ChildCapacity[${ID}]} - ${EVEWindow[ByCaption, Inventory].ChildUsedCapacity[${ID}]} - ${Volume}
 								{
 									TransferIndex:Insert[${Cargo.Value.ID}]
 									Volume:Inc[${Cargo.Value.Quantity} * ${Cargo.Value.Volume}]
 								}
-								elseif ${Math.Calc[(${EVEWindow[ByName, Inventory].ChildCapacity[${ID}]} - ${EVEWindow[ByName, Inventory].ChildUsedCapacity[${ID}]} - ${Volume}) / ${Cargo.Value.Volume}].Int}
+								elseif ${Cargo.Value.Volume} != 0
 								{
-									Cargo.Value:MoveTo[MyShip, CorpHangars, ${Math.Calc[(${EVEWindow[ByName, Inventory].ChildCapacity[${ID}]} - ${EVEWindow[ByName, Inventory].ChildUsedCapacity[${ID}]} - ${Volume}) / ${Cargo.Value.Volume}].Int}${TransferFolder}]
-									break
+									if ${Math.Calc[(${EVEWindow[ByCaption, Inventory].ChildCapacity[${ID}]} - ${EVEWindow[ByCaption, Inventory].ChildUsedCapacity[${ID}]} - ${Volume}) / ${Cargo.Value.Volume}].Int}
+									{
+										Cargo.Value:MoveTo[MyShip, CorpHangars, ${Math.Calc[(${EVEWindow[ByCaption, Inventory].ChildCapacity[${ID}]} - ${EVEWindow[ByCaption, Inventory].ChildUsedCapacity[${ID}]} - ${Volume}) / ${Cargo.Value.Volume}].Int}${TransferFolder}]
+										break
+									}
 								}
 							}
 							while ${Cargo:Next(exists)}
@@ -354,15 +375,18 @@ objectdef obj_Cargo inherits obj_State
 					if ${Cargo:First(exists)}
 						do
 						{
-							if ${Cargo.Value.Quantity} * ${Cargo.Value.Volume} < ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]} - ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} - ${Volume}
+							if ${Cargo.Value.Quantity} * ${Cargo.Value.Volume} < ${EVEWindow[ByCaption, Inventory].ChildCapacity[ShipOreHold]} - ${EVEWindow[ByCaption, Inventory].ChildUsedCapacity[ShipOreHold]} - ${Volume}
 							{
 								TransferIndex:Insert[${Cargo.Value.ID}]
 								Volume:Inc[${Cargo.Value.Quantity} * ${Cargo.Value.Volume}]
 							}
-							elseif ${Math.Calc[(${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]} - ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} - ${Volume}) / ${Cargo.Value.Volume}].Int}
+							elseif ${Cargo.Value.Volume} != 0
 							{
-								Cargo.Value:MoveTo[MyShip, OreHold, ${Math.Calc[(${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]} - ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} - ${Volume}) / ${Cargo.Value.Volume}].Int}]
-								break
+								if ${Math.Calc[(${EVEWindow[ByCaption, Inventory].ChildCapacity[ShipOreHold]} - ${EVEWindow[ByCaption, Inventory].ChildUsedCapacity[ShipOreHold]} - ${Volume}) / ${Cargo.Value.Volume}].Int}
+								{
+									Cargo.Value:MoveTo[MyShip, OreHold, ${Math.Calc[(${EVEWindow[ByCaption, Inventory].ChildCapacity[ShipOreHold]} - ${EVEWindow[ByCaption, Inventory].ChildUsedCapacity[ShipOreHold]} - ${Volume}) / ${Cargo.Value.Volume}].Int}]
+									break
+								}
 							}
 						}
 						while ${Cargo:Next(exists)}
@@ -512,7 +536,7 @@ objectdef obj_Cargo inherits obj_State
 				}
 				else
 				{
-					if !${EVEWindow[ByName, Inventory].ChildWindowExists[${Container}]}
+					if !${EVEWindow[ByCaption, Inventory].ChildWindowExists[${Container}]}
 					{
 						UI:Update["obj_Cargo", "Opening ${This.CargoQueue.Peek.Container}", "g"]
 						Entity[${Container}]:Open
@@ -520,10 +544,10 @@ objectdef obj_Cargo inherits obj_State
 					}
 					if !${EVEWindow[ByItemID, ${Container}](exists)} 
 					{
-						EVEWindow[ByName, Inventory]:MakeChildActive[${Container}]
+						EVEWindow[ByCaption, Inventory]:MakeChildActive[${Container}]
 						return FALSE
 					}
-					EVE:StackItems[${Container}, CorpHangars]
+					EVE:StackItems[${Container}, CorpHangars, ${This.CargoQueue.Peek.LocationSubtype}]
 					return TRUE
 				}
 			}
@@ -535,9 +559,9 @@ objectdef obj_Cargo inherits obj_State
 		
 		}
 
-		if ${EVEWindow[ByName, Inventory].ChildWindowExists[Corporation Hangars]} && !${OpenedCorpHangar}
+		if ${EVEWindow[ByCaption, Inventory].ChildWindowExists[Corporation Hangars]} && !${OpenedCorpHangar}
 		{
-			EVEWindow[ByName, Inventory]:MakeChildActive[Corporation Hangars]
+			EVEWindow[ByCaption, Inventory]:MakeChildActive[Corporation Hangars]
 			This:InsertState["Stack", 2000, TRUE]
 			return TRUE
 		}
@@ -554,7 +578,7 @@ objectdef obj_Cargo inherits obj_State
 			case Personal Hangar
 				EVE:StackItems[MyStationHangar, Hangar]
 				break
-			case Corporation Folder
+			case Corporation Hangar
 				EVE:StackItems[MyStationCorporateHangar, StationCorporateHangar]
 				break
 		}
@@ -578,7 +602,7 @@ objectdef obj_Cargo inherits obj_State
 				}
 				else
 				{
-					if !${EVEWindow[ByName, Inventory].ChildWindowExists[${Container}]}
+					if !${EVEWindow[ByCaption, Inventory].ChildWindowExists[${Container}]}
 					{
 						UI:Update["obj_Cargo", "Opening ${This.CargoQueue.Peek.Container}", "g"]
 						Entity[${Container}]:Open
@@ -586,7 +610,7 @@ objectdef obj_Cargo inherits obj_State
 					}
 					if !${EVEWindow[ByItemID, ${Container}](exists)} 
 					{
-						EVEWindow[ByName, Inventory]:MakeChildActive[${Container}]
+						EVEWindow[ByCaption, Inventory]:MakeChildActive[${Container}]
 						return FALSE
 					}
 					Cargo:PopulateCargoList[${This.CargoQueue.Peek.Source}]
@@ -602,9 +626,9 @@ objectdef obj_Cargo inherits obj_State
 			}
 		}
 		
-		if ${EVEWindow[ByName, Inventory].ChildWindowExists[Corporation Hangars]} && !${OpenedCorpHangar}
+		if ${EVEWindow[ByCaption, Inventory].ChildWindowExists[Corporation Hangars]} && !${OpenedCorpHangar}
 		{
-			EVEWindow[ByName, Inventory]:MakeChildActive[Corporation Hangars]
+			EVEWindow[ByCaption, Inventory]:MakeChildActive[Corporation Hangars]
 			This:InsertState["Unload", 2000, TRUE]
 			return TRUE
 		}
@@ -631,7 +655,7 @@ objectdef obj_Cargo inherits obj_State
 				}
 				else
 				{
-					if !${EVEWindow[ByName, Inventory].ChildWindowExists[${Container}]}
+					if !${EVEWindow[ByCaption, Inventory].ChildWindowExists[${Container}]}
 					{
 						UI:Update["obj_Cargo", "Opening ${This.CargoQueue.Peek.Container}", "g"]
 						Entity[${Container}]:Open
@@ -639,7 +663,7 @@ objectdef obj_Cargo inherits obj_State
 					}
 					if !${EVEWindow[ByItemID, ${Container}](exists)} 
 					{
-						EVEWindow[ByName, Inventory]:MakeChildActive[${Container}]
+						EVEWindow[ByCaption, Inventory]:MakeChildActive[${Container}]
 						return FALSE
 					}
 					Cargo:PopulateCargoList[Container, ${Container}, ${This.CargoQueue.Peek.LocationSubtype}]
@@ -655,9 +679,9 @@ objectdef obj_Cargo inherits obj_State
 			}
 		}
 
-		if ${EVEWindow[ByName, Inventory].ChildWindowExists[Corporation Hangars]} && !${OpenedCorpHangar}
+		if ${EVEWindow[ByCaption, Inventory].ChildWindowExists[Corporation Hangars]} && !${OpenedCorpHangar}
 		{
-			EVEWindow[ByName, Inventory]:MakeChildActive[Corporation Hangars]
+			EVEWindow[ByCaption, Inventory]:MakeChildActive[Corporation Hangars]
 			This:InsertState["Load", 2000, TRUE]
 			return TRUE
 		}

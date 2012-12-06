@@ -25,7 +25,6 @@ objectdef obj_Move inherits obj_State
 
 	variable bool Traveling=FALSE
 	
-	variable int Distance
 	
 	variable string SavedSpot = ""
 
@@ -38,9 +37,26 @@ objectdef obj_Move inherits obj_State
 
 	
 	
-	method Warp(int64 ID, int Dist=0)
+	method Warp(int64 ID, int Dist=0, bool FleetWarp=FALSE)
 	{
-		Entity[${ID}]:WarpTo[${Dist}]
+		if ${Me.Fleet.IsMember[${Me.CharID}]}
+		{
+			if 	(${Me.ToFleetMember.IsFleetCommander} ||\
+				${Me.ToFleetMember.IsWingCommander} ||\
+				${Me.ToFleetMember.IsSquadCommander}) &&\
+				${FleetWarp}
+			{	
+				Entity[${ID}]:WarpFleetTo[${Dist}]
+			}
+			else
+			{
+				Entity[${ID}]:WarpTo[${Dist}]
+			}
+		}
+		else
+		{
+			Entity[${ID}]:WarpTo[${Dist}]
+		}
 		Client:Wait[5000]
 	}
 	
@@ -98,7 +114,7 @@ objectdef obj_Move inherits obj_State
 	
 	
 	
-	method Fleetmember(int64 ID, bool IgnoreGate=FALSE)
+	method Fleetmember(int64 ID, bool IgnoreGate=FALSE, int Distance=0)
 	{
 		if ${This.Traveling}
 		{
@@ -113,13 +129,13 @@ objectdef obj_Move inherits obj_State
 			return
 		}
 
-		UI:Update["obj_Move", "Movement queued.  Destination: ${Me.Fleet.Member[${ID}].ToPilot.Name}", "g", TRUE]
+		UI:Update["obj_Move", "Movement queued.  Destination: ${Being[${ID}].Name}", "g", TRUE]
 		UI:Log["Redacted:  obj_Move - Movement queued.  Destination: XXXXXXX (Fleet Member)"]
 		This.Traveling:Set[TRUE]
-		This:QueueState["FleetmemberMove", 2000, "${ID}, ${IgnoreGate}"]
+		This:QueueState["FleetmemberMove", 2000, "${ID}, ${IgnoreGate}, ${Distance}"]
 	}
 
-	method Bookmark(string DestinationBookmarkLabel, bool IgnoreGate=FALSE)
+	method Bookmark(string DestinationBookmarkLabel, bool IgnoreGate=FALSE, int Distance=0, bool FleetWarp=FALSE)
 	{
 		if ${This.Traveling}
 		{
@@ -137,7 +153,7 @@ objectdef obj_Move inherits obj_State
 		UI:Update["obj_Move", "Movement queued.  Destination: ${DestinationBookmarkLabel}", "g", TRUE]
 		UI:Log["Redacted:  obj_Move - Movement queued.  Destination: XXXXXXX (Bookmark)"]
 		This.Traveling:Set[TRUE]
-		This:QueueState["BookmarkMove", 2000, "${DestinationBookmarkLabel}, ${IgnoreGate}"]
+		This:QueueState["BookmarkMove", 2000, "${DestinationBookmarkLabel}, ${IgnoreGate}, ${Distance}, ${FleetWarp}"]
 	}
 
 	method System(string SystemID)
@@ -161,17 +177,17 @@ objectdef obj_Move inherits obj_State
 		This:QueueState["SystemMove", 2000, ${SystemID}]
 	}
 
-	method Object(int64 ID)
+	method Object(int64 ID, int Distance=0, bool FleetWarp=FALSE)
 	{
 		if ${This.Traveling}
 		{
 			return
 		}
 		
-		UI:Update["obj_Move", "Moving to ${Entity[${ID}].Name}", "g", TRUE]
-		UI:Log["Redacted:  obj_Move - Movement to object queued.  Destination: XXXXXXX"]
+		UI:Update["obj_Move", "Movement to ${Entity[${ID}].Name} queued.", "g", TRUE]
+		UI:Log["Redacted:  obj_Move - Movement to XXXXXXX queued."]
 		This.Traveling:Set[TRUE]
-		This:QueueState["ObjectMove", 2000, ${ID}]
+		This:QueueState["ObjectMove", 2000, "${ID},${Distance},${FleetWarp}"]
 	}	
 	
 	method Agent(string AgentName)
@@ -219,11 +235,11 @@ objectdef obj_Move inherits obj_State
 			return FALSE
 		}
 
-		if ${Entity[${ID}].Distance} < -5000
+		if ${Entity[${ID}].Distance} < -8000
 		{
 			UI:Update["obj_Move", "Too close!  Orbiting ${Entity[${ID}].Name}", "g"]
-			Client:Wait[5000]
 			Entity[${ID}]:Orbit
+			Client:Wait[10000]
 			return FALSE
 		}
 		if ${Entity[${ID}].Distance} > 3000
@@ -242,8 +258,16 @@ objectdef obj_Move inherits obj_State
 	}
 	
 	
-	member:bool FleetmemberMove(int64 ID, bool IgnoreGate=FALSE)
+	member:bool FleetmemberMove(int64 ID, bool IgnoreGate=FALSE, int Distance=0)
 	{
+		if !${Me.Fleet.Member[${ID}].ToPilot(exists)}
+		{
+			UI:Update["obj_Move", "Fleet member ${Being[${ID}].Name} is no longer in local, canceling Move", "g", TRUE]
+			UI:Update["Redacted:  obj_Move - Fleet member XXXXXXX is no longer in local, canceling Move"]
+			This.Traveling:Set[FALSE]
+			return TRUE
+		}
+	
 		if ${Me.InStation}
 		{
 			UI:Update["obj_Move", "Undocking from ${Me.Station.Name}", "g", TRUE]
@@ -264,12 +288,11 @@ objectdef obj_Move inherits obj_State
 
 		if ${Me.Fleet.Member[${ID}].ToEntity(exists)}
 		{
-			if ${Me.Fleet.Member[${ID}].ToEntity.Distance} > WARP_RANGE
+			if ${Me.Fleet.Member[${ID}].ToEntity.Distance} > 100000
 			{
 				
-				UI:Update["obj_Move", "Warping to ${Me.Fleet.Member[${ID}].ToPilot.Name}", "g", TRUE]
-				UI:Log["Redacted:  obj_Move - Warping to XXXXXXX (FleetMember)"]
-				Me.Fleet.Member[${ID}].ToEntity:WarpTo[${This.Distance}]
+				UI:Update["obj_Move", "Bounce warping to ${Entity[ID >= 40000000 && ID <= 50000000].Name}", "g", TRUE]
+				Entity[ID >= 40000000 && ID <= 50000000]:WarpTo
 				Client:Wait[5000]
 				return FALSE
 			}
@@ -292,15 +315,15 @@ objectdef obj_Move inherits obj_State
 				}
 				UI:Update["obj_Move", "Warping to ${Me.Fleet.Member[${ID}].ToPilot.Name}", "g", TRUE]
 				UI:Log["Redacted:  obj_Move - Warping to XXXXXXX (FleetMember)"]
-				Me.Fleet.Member[${ID}]:WarpTo[${This.Distance}]
+				Me.Fleet.Member[${ID}]:WarpTo[${Distance}]
 				Client:Wait[5000]
-				This:QueueState["FleetmemberMove", 2000, ${ID}]
+				This:QueueState["FleetmemberMove", 2000, "${ID}, FALSE, ${Distance}"]
 				
 				return TRUE
 		}
 	}
 
-	member:bool BookmarkMove(string Bookmark, bool IgnoreGate=FALSE)
+	member:bool BookmarkMove(string Bookmark, bool IgnoreGate=FALSE, int Distance=0, bool FleetWarp=FALSE)
 	{
 
 		if ${Me.InStation}
@@ -351,7 +374,24 @@ objectdef obj_Move inherits obj_State
 				
 				UI:Update["obj_Move", "Warping to ${Bookmark}", "g", TRUE]
 				UI:Log["Redacted:  obj_Move - Warping to XXXXXXX (Bookmark)"]
-				EVE.Bookmark[${Bookmark}]:WarpTo[${This.Distance}]
+				if ${Me.Fleet.IsMember[${Me.CharID}]} 
+				{
+					if 	(${Me.ToFleetMember.IsFleetCommander} ||\
+						${Me.ToFleetMember.IsWingCommander} ||\
+						${Me.ToFleetMember.IsSquadCommander}) &&\
+						${FleetWarp}
+					{	
+						EVE.Bookmark[${Bookmark}]:WarpFleetTo[${Distance}]
+					}
+					else
+					{
+						EVE.Bookmark[${Bookmark}]:WarpTo[${Distance}]
+					}
+				}
+				else
+				{
+					EVE.Bookmark[${Bookmark}]:WarpTo[${Distance}]
+				}
 				Client:Wait[5000]
 				This:QueueState["BookmarkMove", 2000, ${Bookmark}]
 				return TRUE
@@ -376,7 +416,24 @@ objectdef obj_Move inherits obj_State
 				{
 					UI:Update["obj_Move", "Warping to ${Bookmark}", "g", TRUE]
 					UI:Log["Redacted:  obj_Move - Warping to XXXXXXX (Bookmark)"]
-					This:Warp[${EVE.Bookmark[${Bookmark}].ToEntity}, ${This.Distance}]
+					if ${Me.Fleet.IsMember[${Me.CharID}]} 
+					{
+						if 	(${Me.ToFleetMember.IsFleetCommander} ||\
+							${Me.ToFleetMember.IsWingCommander} ||\
+							${Me.ToFleetMember.IsSquadCommander}) &&\
+							${FleetWarp}
+						{	
+							EVE.Bookmark[${Bookmark}].ToEntity:WarpFleetTo[${Distance}]
+						}
+						else
+						{
+							EVE.Bookmark[${Bookmark}].ToEntity:WarpTo[${Distance}]
+						}
+					}
+					else
+					{
+						EVE.Bookmark[${Bookmark}].ToEntity:WarpTo[${Distance}]
+					}
 					return FALSE
 				}
 				elseif ${EVE.Bookmark[${Bookmark}].ToEntity.Distance} != -1 && ${EVE.Bookmark[${Bookmark}].ToEntity.Distance(exists)}
@@ -397,7 +454,24 @@ objectdef obj_Move inherits obj_State
 				{
 					UI:Update["obj_Move", "Warping to ${Bookmark}", "g", TRUE]
 					UI:Log["Redacted:  obj_Move - Warping to XXXXXXX (Bookmark)"]
-					EVE.Bookmark[${Bookmark}]:WarpTo[${This.Distance}]
+					if ${Me.Fleet.IsMember[${Me.CharID}]} 
+					{
+						if 	(${Me.ToFleetMember.IsFleetCommander} ||\
+							${Me.ToFleetMember.IsWingCommander} ||\
+							${Me.ToFleetMember.IsSquadCommander}) &&\
+							${FleetWarp}
+						{	
+							EVE.Bookmark[${Bookmark}]:WarpFleetTo[${Distance}]
+						}
+						else
+						{
+							EVE.Bookmark[${Bookmark}]:WarpTo[${Distance}]
+						}
+					}
+					else
+					{
+						EVE.Bookmark[${Bookmark}]:WarpTo[${Distance}]
+					}
 					Client:Wait[5000]
 					return FALSE
 				}
@@ -508,7 +582,7 @@ objectdef obj_Move inherits obj_State
 		return TRUE
 	}
 
-	member:bool ObjectMove(int64 ID)
+	member:bool ObjectMove(int64 ID, int Distance=0, bool FleetWarp=FALSE)
 	{
 
 		if ${Me.InStation}
@@ -537,7 +611,7 @@ objectdef obj_Move inherits obj_State
 		
 		if  ${Entity[${ID}].Distance} > WARP_RANGE
 		{
-			This:Warp[${ID}]
+			This:Warp[${ID}, ${Distance}, ${FleetWarp}]
 			return FALSE
 		}
 		
@@ -610,6 +684,7 @@ objectdef obj_Approach inherits obj_State
 	method Initialize()
 	{
 		This[parent]:Initialize
+		This.PulseFrequency:Set[3000]
 		This.NonGameTiedPulse:Set[TRUE]
 	}
 
@@ -639,20 +714,6 @@ objectdef obj_Approach inherits obj_State
 			EVE:Execute[CmdStopShip]
 			Ship.ModuleList_AB_MWD:Deactivate
 			return TRUE
-		}
-		
-		if ${Config.Common.Propulsion}
-		{
-			if !${Ship.ModuleList_AB_MWD.ActiveCount} && ${MyShip.CapacitorPct} > ${Config.Common.Propulsion_Threshold}
-			{
-				Ship.ModuleList_AB_MWD:Activate
-				return FALSE
-			}
-			if ${Ship.ModuleList_AB_MWD.ActiveCount} && ${MyShip.CapacitorPct} <= ${Config.Common.Propulsion_Threshold}
-			{
-				Ship.ModuleList_AB_MWD:Deactivate
-				return FALSE
-			}
 		}
 		
 		return FALSE

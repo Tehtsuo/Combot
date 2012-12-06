@@ -51,6 +51,7 @@ objectdef obj_Configuration_AutoModule
 		This.CommonRef:AddSetting[SensorBoosters, TRUE]
 		This.CommonRef:AddSetting[TrackingComputers, TRUE]
 		This.CommonRef:AddSetting[ECCM, TRUE]
+		This.CommonRef:AddSetting[DroneControlUnit, TRUE]
 	}
 
 	Setting(bool, ActiveHardeners, SetActiveHardeners)
@@ -65,17 +66,20 @@ objectdef obj_Configuration_AutoModule
 	Setting(bool, SensorBoosters, SetSensorBoosters)
 	Setting(bool, TrackingComputers, SetTrackingComputers)
 	Setting(bool, ECCM, SetECCM)
+	Setting(bool, DroneControlUnit, SetDroneControlUnit)
 	
 }
 
 objectdef obj_AutoModule inherits obj_State
 {
 	variable obj_Configuration_AutoModule Config
+	variable bool SafetyOveride=FALSE
 	
 	method Initialize()
 	{
 		This[parent]:Initialize
 		This.NonGameTiedPulse:Set[TRUE]
+		This.PulseFrequency:Set[100]
 		DynamicAddMiniMode("AutoModule", "AutoModule")
 	}
 	
@@ -91,7 +95,7 @@ objectdef obj_AutoModule inherits obj_State
 	
 	member:bool AutoModule()
 	{
-		if !${Client.InSpace}
+		if !${Client.InSpace} || ${SafetyOveride}
 		{
 			return FALSE
 		}
@@ -147,6 +151,10 @@ objectdef obj_AutoModule inherits obj_State
 			Ship.ModuleList_ECCM:ActivateCount[${Math.Calc[${Ship.ModuleList_ECCM.Count} - ${Ship.ModuleList_ECCM.ActiveCount}]}]
 		}
 
+		if ${Ship.ModuleList_DroneControlUnit.ActiveCount} < ${Ship.ModuleList_DroneControlUnit.Count} && ${Config.DroneControlUnit}
+		{
+			Ship.ModuleList_DroneControlUnit:ActivateCount[${Math.Calc[${Ship.ModuleList_DroneControlUnit.Count} - ${Ship.ModuleList_DroneControlUnit.ActiveCount}]}]
+		}
 		
 		return FALSE
 	}

@@ -49,6 +49,7 @@ objectdef obj_Ship inherits obj_State
 		This:AddModuleList[TargetPainter, "ToItem.GroupID = GROUP_TARGETPAINTER"]
 		This:AddModuleList[TrackingComputer, "ToItem.GroupID = GROUP_TRACKINGCOMPUTER"]
 		This:AddModuleList[GangLinks, "ToItem.GroupID = GROUP_GANGLINK"]
+		This:AddModuleList[DroneControlUnit, "ToItem.GroupID = GROUP_DRONECONTROLUNIT"]
 		This:AddModuleList[EnergyTransfer, "ToItem.GroupID = GROUP_ENERGY_TRANSFER"]
 		This:AddModuleList[TargetModules, "MaxRange>0"]
 		This:Clear
