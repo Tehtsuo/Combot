@@ -62,7 +62,6 @@ objectdef obj_ComBot
 	{
 		UIElement[Run@TitleBar@ComBot]:SetText[Stop]
 		This.Paused:Set[FALSE]
-		Security:Start
 		${Config.Common.ComBot_Mode}:Start
 	}
 
