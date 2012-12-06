@@ -144,9 +144,9 @@ objectdef obj_Hauler inherits obj_State
 	
 	member:bool CheckCargoHold(bool OreHold=FALSE, bool CorpHangar=FALSE)
 	{
-		if ${EVEWindow[ByName, Inventory].ChildWindowExists[ShipOreHold]} && !${OreHold}
+		if ${EVEWindow[ByCaption, Inventory].ChildWindowExists[ShipOreHold]} && !${OreHold}
 		{
-			if ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]} < ${Config.Threshold} * .01
+			if ${EVEWindow[ByCaption, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByCaption, Inventory].ChildCapacity[ShipOreHold]} < ${Config.Threshold} * .01
 			{
 				Cargo:PopulateCargoList[Ship]
 				Cargo:MoveCargoList[OreHold]
@@ -154,9 +154,9 @@ objectdef obj_Hauler inherits obj_State
 				return TRUE
 			}
 		}
-		if ${EVEWindow[ByName, Inventory].ChildWindowExists[ShipCorpHangar]} && !${CorpHangar}
+		if ${EVEWindow[ByCaption, Inventory].ChildWindowExists[ShipCorpHangar]} && !${CorpHangar}
 		{
-			if ${EVEWindow[ByName, Inventory].ChildUsedCapacity[ShipCorpHangar]} / ${EVEWindow[ByName, Inventory].ChildCapacity[ShipCorpHangar]} < ${Config.Threshold} * .01
+			if ${EVEWindow[ByCaption, Inventory].ChildUsedCapacity[ShipCorpHangar]} / ${EVEWindow[ByCaption, Inventory].ChildCapacity[ShipCorpHangar]} < ${Config.Threshold} * .01
 			{
 				Cargo:PopulateCargoList[Ship]
 				Cargo:MoveCargoList[Container]
@@ -467,14 +467,14 @@ objectdef obj_Hauler inherits obj_State
 		}
 		else
 		{
-			if !${EVEWindow[ByName, Inventory].ChildWindowExists[${CurrentCan}]}
+			if !${EVEWindow[ByCaption, Inventory].ChildWindowExists[${CurrentCan}]}
 			{
 				Entity[${CurrentCan}]:OpenCargo
 				return FALSE
 			}
 			; if !${EVEWindow[ByItemID, ${CurrentCan}](exists)}
 			; {
-				; EVEWindow[ByName, Inventory]:MakeChildActive[${CurrentCan}]
+				; EVEWindow[ByCaption, Inventory]:MakeChildActive[${CurrentCan}]
 				; return FALSE
 			; }
 			Cargo:PopulateCargoList[Container, ${CurrentCan}]

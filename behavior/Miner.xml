@@ -312,11 +312,11 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									{
 										if ${Script[ComBot].VariableScope.Miner.Config.OrcaMode}
 										{
-											This:SetText[Corp Hangar Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${EVEWindow[ByName, Inventory].ChildCapacity[ShipCorpHangar]}].Round} m3]
+											This:SetText[Corp Hangar Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${EVEWindow[ByCaption, Inventory].ChildCapacity[ShipCorpHangar]}].Round} m3]
 										}
 										else
 										{
-											This:SetText[OreHold Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]}].Round} m3]
+											This:SetText[OreHold Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${EVEWindow[ByCaption, Inventory].ChildCapacity[ShipOreHold]}].Round} m3]
 										}
 									}
 									else
@@ -341,11 +341,11 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									{
 										if ${Script[ComBot].VariableScope.Miner.Config.OrcaMode}
 										{
-											UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[Corp Hangar Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${EVEWindow[ByName, Inventory].ChildCapacity[ShipCorpHangar]}].Round} m3]
+											UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[Corp Hangar Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${EVEWindow[ByCaption, Inventory].ChildCapacity[ShipCorpHangar]}].Round} m3]
 										}
 										else
 										{
-											UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[OreHold Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]}].Round} m3]
+											UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[OreHold Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${EVEWindow[ByCaption, Inventory].ChildCapacity[ShipOreHold]}].Round} m3]
 										}
 									}
 									else
@@ -1521,11 +1521,11 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									{
 										if ${Script[ComBot].VariableScope.Miner.Config.OrcaMode}
 										{
-											UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[Corp Hangar Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${EVEWindow[ByName, Inventory].ChildCapacity[ShipCorpHangar]}].Round} m3]
+											UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[Corp Hangar Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${EVEWindow[ByCaption, Inventory].ChildCapacity[ShipCorpHangar]}].Round} m3]
 										}
 										else
 										{
-											UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[OreHold Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${EVEWindow[ByName, Inventory].ChildCapacity[ShipOreHold]}].Round} m3]
+											UIElement[ThresholdTitle@DropoffFrame@Miner_Frame@ComBot_Miner]:SetText[OreHold Threshold: ${Script[ComBot].VariableScope.Miner.Config.Threshold}% = ${Math.Calc[${Script[ComBot].VariableScope.Miner.Config.Threshold} * .01 * ${EVEWindow[ByCaption, Inventory].ChildCapacity[ShipOreHold]}].Round} m3]
 										}
 									}
 									else

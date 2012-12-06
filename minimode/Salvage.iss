@@ -267,7 +267,7 @@ objectdef obj_LootCans inherits obj_State
 		}
 
 		Salvage.Wrecks.TargetList:GetIterator[TargetIterator]
-		if ${TargetIterator:First(exists)} && ${EVEWindow[ByName, Inventory](exists)}
+		if ${TargetIterator:First(exists)} && ${EVEWindow[ByCaption, Inventory](exists)}
 		{
 			do
 			{
@@ -277,11 +277,11 @@ objectdef obj_LootCans inherits obj_State
 				{
 					continue
 				}
-				if ${EVEWindow[ByName, Inventory].ChildWindowExists[${TargetIterator.Value}]}
+				if ${EVEWindow[ByCaption, Inventory].ChildWindowExists[${TargetIterator.Value}]}
 				{
 					if !${EVEWindow[ByItemID, ${TargetIterator.Value}](exists)}
 					{
-						EVEWindow[ByName, Inventory]:MakeChildActive[${TargetIterator.Value}]
+						EVEWindow[ByCaption, Inventory]:MakeChildActive[${TargetIterator.Value}]
 						return FALSE
 					}
 					
@@ -305,7 +305,7 @@ objectdef obj_LootCans inherits obj_State
 					This:InsertState["Stack"]
 					return TRUE
 				}
-				if !${EVEWindow[ByName, Inventory].ChildWindowExists[${TargetIterator.Value}]}
+				if !${EVEWindow[ByCaption, Inventory].ChildWindowExists[${TargetIterator.Value}]}
 				{
 					UI:Update["Salvage", "Opening - ${TargetIterator.Value.Name}", "g"]
 					TargetIterator.Value:OpenCargo
