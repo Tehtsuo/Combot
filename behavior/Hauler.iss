@@ -191,12 +191,11 @@ objectdef obj_Hauler inherits obj_State
 	method OrcaCargoUpdate(float value)
 	{
 		OrcaCargo:Set[${value}]
-		UIElement[obj_HaulerOrcaCargo@Hauler@ComBotTab@ComBot]:SetText[Orca Cargo Hold: ${OrcaCargo.Round} m3]
 	}
 	
 	member:bool CheckForWork()
 	{
-		if ${Config.PickupType.Equal[Orca]}
+		if ${Config.PickupType.Equal[Fleet Hangar]}
 		{
 			if ${OrcaCargo} > ${Config.Threshold} * .01 * ${MyShip.CargoCapacity}
 			{
@@ -234,12 +233,7 @@ objectdef obj_Hauler inherits obj_State
 		}
 		else
 		{
-			variable string PickupType=${Config.PickupType}
-			if ${PickupType.Equal[Orca]}
-			{
-				PickupType:Set[Container]
-			}
-			Cargo:At[${Config.Pickup},${PickupType},${Config.PickupSubType},${Config.PickupContainer}]:Load
+			Cargo:At[${Config.Pickup},${Config.PickupType},${Config.PickupSubType},${Config.PickupContainer}]:Load
 			This:QueueState["Traveling"]
 			This:QueueState["OpenCargoHold"]
 			This:QueueState["CheckCargoHold"]

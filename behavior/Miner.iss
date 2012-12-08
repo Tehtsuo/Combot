@@ -343,14 +343,11 @@ objectdef obj_Miner inherits obj_State
 	member:bool Dropoff()
 	{
 		Profiling:StartTrack["Miner: Dropoff"]
-		variable string Dropoff_Type=${Config.Dropoff_Type}
 		variable string Bookmark=${Config.Dropoff}
-		if ${Dropoff_Type.Equal[Orca]}
+		if ${Config.Dropoff_Type.Equal[Fleet Hangar]}
 		{
-			echo OrcaWarp - ${This.WarpToOrca}
 			if ${This.WarpToOrca}
 			{
-				Dropoff_Type:Set[Container]
 				Bookmark:Set[${Config.MiningSystem}]
 			}
 			else

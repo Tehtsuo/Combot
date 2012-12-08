@@ -176,7 +176,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 												Script[ComBot].VariableScope.Hauler.LocalUI:Start
 											</OnChange>
 											<OnMouseEnter>
-												UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText["This field needs to contain the exact name of your pickup bookmark.  The bookmark can be a station if you are picking up from a personal hangar or corporate hangar, or a location if you are picking up from a Player Owned Station structure.  If you are picking up from an Orca or Jetcan, the bookmark needs to be any bookmark in the system where your fleet is mining."]
+												UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText["This field needs to contain the exact name of your pickup bookmark.  The bookmark can be a station if you are picking up from a personal hangar or corporate hangar, or a location if you are picking up from a Player Owned Station structure.  If you are picking up from an Fleet Hangar or Jetcan, the bookmark needs to be any bookmark in the system where your fleet is mining."]
 											</OnMouseEnter>
 											<OnMouseExit>
 												UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText[""]
@@ -201,7 +201,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 												Script[ComBot].VariableScope.Hauler.LocalUI:Stop
 											</OnSelect>
 											<OnMouseEnter>
-												UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText["This field needs to contain the exact name of your pickup bookmark.  The bookmark can be a station if you are picking up from a personal hangar or corporate hangar, or a location if you are picking up from a Player Owned Station structure.  If you are picking up from an Orca or Jetcan, the bookmark needs to be any bookmark in the system where your fleet is mining."]
+												UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText["This field needs to contain the exact name of your pickup bookmark.  The bookmark can be a station if you are picking up from a personal hangar or corporate hangar, or a location if you are picking up from a Player Owned Station structure.  If you are picking up from an Fleet Hangar or Jetcan, the bookmark needs to be any bookmark in the system where your fleet is mining."]
 											</OnMouseEnter>
 											<OnMouseExit>
 												UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText[""]
@@ -213,7 +213,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											<Width>32%</Width> 
 											<Height>10%</Height> 
 											<Alignment>Center</Alignment>
-											<Text>Orca Name</Text>
+											<Text>Fleet Hangar Name</Text>
 										</Text>
 										<TextEntry name='PickupContainer'> 
 											<X>34%</X> 
@@ -228,7 +228,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 												Script[ComBot].VariableScope.Hauler.Config:SetPickupContainer[${This.Text}]
 											</OnChange>
 											<OnMouseEnter>
-												UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText["This field is used to supply ComBot with an identifier for your pickup location.  If you are picking up from an Orca, this needs to contain the name of the pilot flying your Orca.  If you are picking up from a Player Owned Station structure, this needs to contain the structure's name.  This field is also used to specify the prefix for corporate bookmarks created using the Corporate Jetcan mode."]
+												UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText["This field is used to supply ComBot with an identifier for your pickup location.  If you are picking up from an Fleet Hangar, this needs to contain the name of the pilot flying your Fleet Hangar.  If you are picking up from a Player Owned Station structure, this needs to contain the structure's name.  This field is also used to specify the prefix for corporate bookmarks created using the Corporate Jetcan mode."]
 											</OnMouseEnter>
 											<OnMouseExit>
 												UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText[""]
@@ -327,7 +327,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 												<Item>Container</Item>
 												<Item>Corporation Hangar</Item>
 												<Item>Personal Hangar</Item>
-												<Item>Orca</Item>
+												<Item>Fleet Hangar</Item>
 												<Item>Jetcan</Item>
 											</Items>
 											<OnLoad>
@@ -367,9 +367,9 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 														UIElement[PickupSubType@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
 														UIElement[PickupSubTypeTitle@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
 														break
-													case Orca
+													case Fleet Hangar
 														UIElement[PickupTitle@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Mining System Bookmark]
-														UIElement[PickupContainerTitle@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Orca Pilot Name]
+														UIElement[PickupContainerTitle@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Fleet Hangar Pilot Name]
 														UIElement[PickupContainerTitle@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
 														UIElement[PickupContainer@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
 														UIElement[PickupSubType@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
@@ -436,9 +436,9 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 														UIElement[PickupSubType@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
 														UIElement[PickupSubTypeTitle@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
 														break
-													case Orca
+													case Fleet Hangar
 														UIElement[PickupTitle@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Mining System Bookmark]
-														UIElement[PickupContainerTitle@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Orca Pilot Name]
+														UIElement[PickupContainerTitle@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Fleet Hangar Pilot Name]
 														UIElement[PickupContainerTitle@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
 														UIElement[PickupContainer@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
 														UIElement[PickupSubType@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
@@ -661,7 +661,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 												<Item>Container</Item>
 												<Item>Corporation Hangar</Item>
 												<Item>Personal Hangar</Item>
-												<Item>Orca</Item>
+												<Item>Fleet Hangar</Item>
 											</Items>
 											<OnLoad>
 												This.ItemByText[${Script[ComBot].VariableScope.Hauler.Config.DropoffType}]:Select
@@ -714,9 +714,9 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 														UIElement[DropoffTitle@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Container Bookmark]
 														UIElement[DropoffSubTypeTitle@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Corporate Folder]
 														break
-													case Orca
+													case Fleet Hangar
 														UIElement[DropoffContainer@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
-														UIElement[DropoffContainerTitle@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Orca Pilot Name]
+														UIElement[DropoffContainerTitle@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Fleet Hangar Pilot Name]
 														UIElement[DropoffTitle@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Mining System Bookmark]
 														UIElement[DropoffContainerTitle@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
 														UIElement[DropoffSubTypeTitle@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
@@ -978,7 +978,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 															Script[ComBot].VariableScope.Hauler.LocalUI:Start
 														</OnChange>
 														<OnMouseEnter>
-															UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText["This field needs to contain the exact name of your pickup bookmark.  The bookmark can be a station if you are picking up from a personal hangar or corporate hangar, or a location if you are picking up from a Player Owned Station structure.  If you are picking up from an Orca or Jetcan, the bookmark needs to be any bookmark in the system where your fleet is mining."]
+															UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText["This field needs to contain the exact name of your pickup bookmark.  The bookmark can be a station if you are picking up from a personal hangar or corporate hangar, or a location if you are picking up from a Player Owned Station structure.  If you are picking up from an Fleet Hangar or Jetcan, the bookmark needs to be any bookmark in the system where your fleet is mining."]
 														</OnMouseEnter>
 														<OnMouseExit>
 															UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText[""]
@@ -1003,7 +1003,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 															Script[ComBot].VariableScope.Hauler.LocalUI:Stop
 														</OnSelect>
 														<OnMouseEnter>
-															UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText["This field needs to contain the exact name of your pickup bookmark.  The bookmark can be a station if you are picking up from a personal hangar or corporate hangar, or a location if you are picking up from a Player Owned Station structure.  If you are picking up from an Orca or Jetcan, the bookmark needs to be any bookmark in the system where your fleet is mining."]
+															UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText["This field needs to contain the exact name of your pickup bookmark.  The bookmark can be a station if you are picking up from a personal hangar or corporate hangar, or a location if you are picking up from a Player Owned Station structure.  If you are picking up from an Fleet Hangar or Jetcan, the bookmark needs to be any bookmark in the system where your fleet is mining."]
 														</OnMouseEnter>
 														<OnMouseExit>
 															UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText[""]
@@ -1015,7 +1015,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 														<Width>32%</Width> 
 														<Height>10%</Height> 
 														<Alignment>Center</Alignment>
-														<Text>Orca Name</Text>
+														<Text>Fleet Hangar Name</Text>
 													</Text>
 													<TextEntry name='PickupContainer'> 
 														<X>34%</X> 
@@ -1030,7 +1030,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 															Script[ComBot].VariableScope.Hauler.Config:SetPickupContainer[${This.Text}]
 														</OnChange>
 														<OnMouseEnter>
-															UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText["This field is used to supply ComBot with an identifier for your pickup location.  If you are picking up from an Orca, this needs to contain the name of the pilot flying your Orca.  If you are picking up from a Player Owned Station structure, this needs to contain the structure's name.  This field is also used to specify the prefix for corporate bookmarks created using the Corporate Jetcan mode."]
+															UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText["This field is used to supply ComBot with an identifier for your pickup location.  If you are picking up from an Fleet Hangar, this needs to contain the name of the pilot flying your Fleet Hangar.  If you are picking up from a Player Owned Station structure, this needs to contain the structure's name.  This field is also used to specify the prefix for corporate bookmarks created using the Corporate Jetcan mode."]
 														</OnMouseEnter>
 														<OnMouseExit>
 															UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText[""]
@@ -1129,7 +1129,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 															<Item>Container</Item>
 															<Item>Corporation Hangar</Item>
 															<Item>Personal Hangar</Item>
-															<Item>Orca</Item>
+															<Item>Fleet Hangar</Item>
 														</Items>
 														<OnLoad>
 															This.ItemByText[${Script[ComBot].VariableScope.Hauler.Config.PickupType}]:Select
@@ -1169,9 +1169,9 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 																	UIElement[PickupSubTypeTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
 																	Script[ComBot].VariableScope.Hauler.Config:SetPickupContainer[\"\"]
 																	break
-																case Orca
+																case Fleet Hangar
 																	UIElement[PickupTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Mining System Bookmark]
-																	UIElement[PickupContainerTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Orca Pilot Name]
+																	UIElement[PickupContainerTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Fleet Hangar Pilot Name]
 																	UIElement[PickupContainerTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
 																	UIElement[PickupContainer@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
 																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
@@ -1240,9 +1240,9 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
 																	UIElement[PickupSubTypeTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
 																	break
-																case Orca
+																case Fleet Hangar
 																	UIElement[PickupTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Mining System Bookmark]
-																	UIElement[PickupContainerTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Orca Pilot Name]
+																	UIElement[PickupContainerTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Fleet Hangar Pilot Name]
 																	UIElement[PickupContainerTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
 																	UIElement[PickupContainer@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
 																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
@@ -1478,7 +1478,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 															<Item>Container</Item>
 															<Item>Corporation Hangar</Item>
 															<Item>Personal Hangar</Item>
-															<Item>Orca</Item>
+															<Item>Fleet Hangar</Item>
 														</Items>
 														<OnLoad>
 															This.ItemByText[${Script[ComBot].VariableScope.Hauler.Config.DropoffType}]:Select
@@ -1538,9 +1538,9 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 																	UIElement[DropoffTitle@DropoffFrame@Unload@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Container Bookmark]
 																	UIElement[DropoffSubTypeTitle@DropoffFrame@Unload@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Corporate Folder]
 																	break
-																case Orca
+																case Fleet Hangar
 																	UIElement[DropoffContainer@DropoffFrame@Unload@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
-																	UIElement[DropoffContainerTitle@DropoffFrame@Unload@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Orca Pilot Name]
+																	UIElement[DropoffContainerTitle@DropoffFrame@Unload@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Fleet Hangar Pilot Name]
 																	UIElement[DropoffTitle@DropoffFrame@Unload@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Mining System Bookmark]
 																	UIElement[DropoffContainerTitle@DropoffFrame@Unload@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
 																	UIElement[DropoffSubTypeTitle@DropoffFrame@Unload@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide

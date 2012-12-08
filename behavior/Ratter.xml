@@ -679,7 +679,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									Script[ComBot].VariableScope.Ratter.Config:SetDropoffContainer[${This.Text}]
 								</OnChange>
 								<OnMouseEnter>
-									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText["This field is used to supply ComBot with an identifier for your dropoff location.  If you are delivering to an Orca, this needs to contain the name of the pilot flying your Orca.  If you are delivering to a Player Owned Station structure, this needs to contain the structure's name.  This field is also used to specify the Substring for corporate bookmarks created using the Corporate Jetcan mode."]
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText["This field is used to supply ComBot with an identifier for your dropoff location.  If you are delivering to an Fleet Hangar, this needs to contain the name of the pilot flying your Fleet Hangar.  If you are delivering to a Player Owned Station structure, this needs to contain the structure's name.  This field is also used to specify the Substring for corporate bookmarks created using the Corporate Jetcan mode."]
 								</OnMouseEnter>
 								<OnMouseExit>
 									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText[""]
@@ -757,7 +757,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									<Item>Personal Hangar</Item>
 									<Item>Corporation Hangar</Item>
 									<Item>Container</Item>
-									<Item>Orca</Item>
+									<Item>Fleet Hangar</Item>
 								</Items>
 								<OnLoad>
 									This.ItemByText[${Script[ComBot].VariableScope.Ratter.Config.DropoffType}]:Select
@@ -801,9 +801,9 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											UIElement[DropoffSubType@DropoffFrame@Frame@ComBot_Ratter]:Show
 											UIElement[DropoffTitle@DropoffFrame@Frame@ComBot_Ratter]:SetText[Container Bookmark]
 											break
-										case Orca
+										case Fleet Hangar
 											UIElement[DropoffContainer@DropoffFrame@Frame@ComBot_Ratter]:Show
-											UIElement[DropoffContainerTitle@DropoffFrame@Frame@ComBot_Ratter]:SetText[Orca Pilot Name]
+											UIElement[DropoffContainerTitle@DropoffFrame@Frame@ComBot_Ratter]:SetText[Fleet Hangar Pilot Name]
 											UIElement[DropoffContainerTitle@DropoffFrame@Frame@ComBot_Ratter]:Show
 											UIElement[DropoffSubTypeTitle@DropoffFrame@Frame@ComBot_Ratter]:Hide
 											UIElement[DropoffSubType@DropoffFrame@Frame@ComBot_Ratter]:Hide
