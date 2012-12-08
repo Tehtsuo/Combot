@@ -289,7 +289,7 @@ objectdef obj_Miner inherits obj_State
 			Profiling:EndTrack
 			return TRUE
 		}
-		elseif ${EVEWindow[Inventory].ChildUsedCapacity[ShipCorpHangar]} / ${EVEWindow[Inventory].ChildCapacity[ShipCorpHangar]} >= ${Config.Threshold} * .01 && \
+		elseif ${EVEWindow[Inventory].ChildUsedCapacity[ShipFleetHangar]} / ${EVEWindow[Inventory].ChildCapacity[ShipFleetHangar]} >= ${Config.Threshold} * .01 && \
 			!${Config.Dropoff_Type.Equal[No Dropoff]} && \
 			!${Config.Dropoff_Type.Equal[Jetcan]} && \
 			${Config.OrcaMode}
