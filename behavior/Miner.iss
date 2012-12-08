@@ -245,7 +245,7 @@ objectdef obj_Miner inherits obj_State
 	
 	member:bool OpenCargoHold()
 	{
-		if !${EVEWindow[ByName, "Inventory"](exists)}
+		if !${EVEWindow[ByCaption, Inventory](exists)}
 		{
 			UI:Update["obj_Miner", "Opening inventory", "g"]
 			MyShip:OpenCargo[]
@@ -862,7 +862,7 @@ objectdef obj_MinerUI inherits obj_State
 
 	member:bool OpenCargoHold()
 	{
-		if !${EVEWindow[ByName, "Inventory"](exists)}
+		if !${EVEWindow[ByCaption, Inventory](exists)}
 		{
 			UI:Update["obj_Miner", "Opening inventory", "g"]
 			MyShip:OpenCargo[]

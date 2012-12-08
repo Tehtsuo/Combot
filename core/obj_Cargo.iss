@@ -516,7 +516,7 @@ objectdef obj_Cargo inherits obj_State
 		variable int64 Container
 
 	
-		if !${EVEWindow[ByName, "Inventory"](exists)}
+		if !${EVEWindow[ByCaption, Inventory](exists)}
 		{
 			UI:Update["obj_Cargo", "Making sure inventory is open", "g"]
 			MyShip:Open

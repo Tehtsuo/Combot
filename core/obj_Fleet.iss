@@ -193,7 +193,6 @@ objectdef obj_Fleet inherits obj_State
 	
 	member:int64 ActiveCommander()
 	{
-		echo Config.Fleets.GetFleet[${Config.Fleets.Active}].Commander
 		if ${Config.Fleets.GetFleet[${Config.Fleets.Active}].Commander} > 0
 		{
 			return ${Config.Fleets.GetFleet[${Config.Fleets.Active}].Commander}

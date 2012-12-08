@@ -202,9 +202,7 @@ objectdef obj_Configuration_Fleets
 		}
 		if !${This.CommonRef.FindSet[Fleets].FindSet[${FleetID}](exists)}
 		{
-			echo Adding Fleet: ${FleetID}
 			This.CommonRef.FindSet[Fleets]:AddSet[${FleetID}]
-			echo Added Fleet: ${This.CommonRef.FindSet[Fleets].FindSet[${FleetID}](exists)}
 			Config:Save
 		}
 		return ${This.CommonRef.FindSet[Fleets].FindSet[${FleetID}]}
@@ -214,7 +212,6 @@ objectdef obj_Configuration_Fleets
 	{
 		if ${This.CommonRef.FindSet[Fleets].FindSet[${FleetID}](exists)}
 		{
-			echo Deleting Fleet: ${FleetID}
 			This.CommonRef.FindSet[Fleets]:Clear
 			Config:Save
 		}
@@ -230,7 +227,6 @@ objectdef obj_Configuration_Fleets
 		BaseConfig.BaseRef:AddSet[${This.SetName}]
 		This.CommonRef:AddSet[Fleets]
 		This.CommonRef:AddSetting[Active,"No Fleet"]
-		echo "Fleets default value save"
 		Config:Save
 	}
 	
@@ -254,7 +250,6 @@ objectdef obj_Configuration_Fleet
 	{
 		if !${CurrentRef.FindSet[Wings].FindSet[${WingID}](exists)}
 		{
-			echo Adding Wing: ${WingID}
 			CurrentRef.FindSet[Wings]:AddSet[${WingID}]
 			Config:Save
 		}
@@ -277,7 +272,6 @@ objectdef obj_Configuration_Fleet
 		This.CommonRef:AddSetting[Commander,0]
 		This.CommonRef:AddSetting[Booster,0]
 		
-		echo Fleet default value save
 		Config:Save
 	}
 	
@@ -302,7 +296,6 @@ objectdef obj_Configuration_Wing
 	{
 		if !${CurrentRef.FindSet[Squads].FindSet[${SquadID}](exists)}
 		{
-			echo Adding Squad: ${SquadID}
 			CurrentRef.FindSet[Squads]:AddSet[${SquadID}]
 			Config:Save
 		}
@@ -321,11 +314,9 @@ objectdef obj_Configuration_Wing
 	
 	method Set_Default_Values()
 	{
-		echo Setting Squad defaults
 		CurrentRef:AddSet[Squads]
 		This.CommonRef:AddSetting[Commander,0]
 		This.CommonRef:AddSetting[Booster,0]
-		echo Wing default value save
 		Config:Save
 	}
 	
@@ -350,7 +341,6 @@ objectdef obj_Configuration_Squad
 	{
 		if !${CurrentRef.FindSet[Members].FindSet[${MemberID}](exists)}
 		{
-			echo Adding Member: ${MemberID}
 			CurrentRef.FindSet[Members]:AddSet[${MemberID}]
 			Config:Save
 		}
@@ -372,7 +362,6 @@ objectdef obj_Configuration_Squad
 		CurrentRef:AddSet[Members]
 		This.CommonRef:AddSetting[Commander,0]
 		This.CommonRef:AddSetting[Booster,0]
-		echo Squad default value save
 		Config:Save
 	}
 	
@@ -396,7 +385,6 @@ objectdef obj_Configuration_Member
 	method Set_Default_Values()
 	{
 		CurrentRef:AddSetting[Created, TRUE]
-		echo Member default value save
 		Config:Save
 	}
 	

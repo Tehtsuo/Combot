@@ -133,7 +133,7 @@ objectdef obj_Hauler inherits obj_State
 	
 	member:bool OpenCargoHold()
 	{
-		if !${EVEWindow[ByName, "Inventory"](exists)}
+		if !${EVEWindow[ByCaption, Inventory](exists)}
 		{
 			UI:Update["obj_Hauler", "Opening inventory", "g"]
 			MyShip:Open
@@ -723,7 +723,7 @@ objectdef obj_HaulerUI inherits obj_State
 
 	member:bool OpenCargoHold()
 	{
-		if !${EVEWindow[ByName, "Inventory"](exists)}
+		if !${EVEWindow[ByCaption, Inventory](exists)}
 		{
 			UI:Update["obj_Hauler", "Opening inventory", "g"]
 			MyShip:OpenCargo[]
