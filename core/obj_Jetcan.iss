@@ -253,7 +253,7 @@ objectdef obj_Jetcan inherits obj_State
 		{
 			return TRUE
 		}
-		if !${EVEWindow[ByName, "Inventory"](exists)}
+		if !${EVEWindow[ByCaption, Inventory](exists)}
 		{
 			MyShip:Open
 			return FALSE
@@ -274,7 +274,7 @@ objectdef obj_Jetcan inherits obj_State
 		{
 			return TRUE
 		}
-		if !${EVEWindow[ByName, "Inventory"](exists)}
+		if !${EVEWindow[ByCaption, Inventory](exists)}
 		{
 			MyShip:Open
 			return FALSE
@@ -298,7 +298,7 @@ objectdef obj_Jetcan inherits obj_State
 	
 	member:bool NewCan()
 	{
-		if !${EVEWindow[ByName, "Inventory"](exists)}
+		if !${EVEWindow[ByCaption, Inventory](exists)}
 		{
 			MyShip:Open
 			return FALSE
@@ -325,7 +325,7 @@ objectdef obj_Jetcan inherits obj_State
 		{
 			return TRUE
 		}
-		if !${EVEWindow[ByName, "Inventory"](exists)}
+		if !${EVEWindow[ByCaption, Inventory](exists)}
 		{
 			MyShip:Open
 			return FALSE
