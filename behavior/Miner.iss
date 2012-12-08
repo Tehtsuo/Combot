@@ -245,7 +245,7 @@ objectdef obj_Miner inherits obj_State
 	
 	member:bool OpenCargoHold()
 	{
-		if !${EVEWindow[ByCaption, Inventory](exists)}
+		if !${EVEWindow[Inventory](exists)}
 		{
 			UI:Update["obj_Miner", "Opening inventory", "g"]
 			MyShip:OpenCargo[]
@@ -257,7 +257,7 @@ objectdef obj_Miner inherits obj_State
 	member:bool CheckCargoHold()
 	{
 		Profiling:StartTrack["Miner: CheckCargoHold"]
-		if 	${EVEWindow[ByCaption, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByCaption, Inventory].ChildCapacity[ShipOreHold]} >= ${Config.Threshold} * .01 && \
+		if 	${EVEWindow[Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[Inventory].ChildCapacity[ShipOreHold]} >= ${Config.Threshold} * .01 && \
 			${MyShip.HasOreHold} && \
 			!${Config.Dropoff_Type.Equal[No Dropoff]} && \
 			!${Config.Dropoff_Type.Equal[Jetcan]} && \
@@ -289,7 +289,7 @@ objectdef obj_Miner inherits obj_State
 			Profiling:EndTrack
 			return TRUE
 		}
-		elseif ${EVEWindow[ByCaption, Inventory].ChildUsedCapacity[ShipCorpHangar]} / ${EVEWindow[ByCaption, Inventory].ChildCapacity[ShipCorpHangar]} >= ${Config.Threshold} * .01 && \
+		elseif ${EVEWindow[Inventory].ChildUsedCapacity[ShipCorpHangar]} / ${EVEWindow[Inventory].ChildCapacity[ShipCorpHangar]} >= ${Config.Threshold} * .01 && \
 			!${Config.Dropoff_Type.Equal[No Dropoff]} && \
 			!${Config.Dropoff_Type.Equal[Jetcan]} && \
 			${Config.OrcaMode}
@@ -683,7 +683,7 @@ objectdef obj_Miner inherits obj_State
 			Asteroids.LockTop:Set[FALSE]
 			
 			relay all -event ComBot_Orca_InBelt TRUE
-			relay all -event ComBot_Orca_Cargo ${EVEWindow[ByCaption, Inventory].ChildUsedCapacity[ShipCorpHangar]}
+			relay all -event ComBot_Orca_Cargo ${EVEWindow[Inventory].ChildUsedCapacity[ShipCorpHangar]}
 			Cargo:PopulateCargoList[ShipCorpHangar]
 			if ${Cargo.CargoList.Used} && !${Config.Dropoff_Type.Equal[No Dropoff]}
 			{
@@ -696,7 +696,7 @@ objectdef obj_Miner inherits obj_State
 						return TRUE
 					}
 				}
-				if ${EVEWindow[ByCaption, Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[ByCaption, Inventory].ChildCapacity[ShipOreHold]} < ${Config.Threshold} * .01
+				if ${EVEWindow[Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[Inventory].ChildCapacity[ShipOreHold]} < ${Config.Threshold} * .01
 				{
 					if ${Cargo.CargoList.Used}
 					{
@@ -862,7 +862,7 @@ objectdef obj_MinerUI inherits obj_State
 
 	member:bool OpenCargoHold()
 	{
-		if !${EVEWindow[ByCaption, Inventory](exists)}
+		if !${EVEWindow[Inventory](exists)}
 		{
 			UI:Update["obj_Miner", "Opening inventory", "g"]
 			MyShip:OpenCargo[]

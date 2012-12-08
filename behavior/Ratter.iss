@@ -212,7 +212,7 @@ objectdef obj_Ratter inherits obj_State
 	
 	member:bool OpenCargoHold()
 	{
-		if !${EVEWindow[ByCaption, Inventory](exists)}
+		if !${EVEWindow[Inventory](exists)}
 		{
 			UI:Update["Ratter", "Opening inventory", "g"]
 			MyShip:Open
@@ -708,7 +708,7 @@ objectdef obj_RatterUI inherits obj_State
 
 	member:bool OpenCargoHold()
 	{
-		if !${EVEWindow[ByCaption, Inventory](exists)}
+		if !${EVEWindow[Inventory](exists)}
 		{
 			UI:Update["Ratter", "Opening inventory", "g"]
 			MyShip:OpenCargo[]

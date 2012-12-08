@@ -1,13 +1,13 @@
 function main()
 {
-	echo Inventory window exists:  ${EVEWindow[ByCaption, Inventory](exists)}
+	echo Inventory window exists:  ${EVEWindow[Inventory](exists)}
 
 	variable index:string Names
 	variable index:int64 IDs
 	variable iterator Name
 		
 		
-	EVEWindow[ByCaption, Inventory]:GetChildren[Names, IDs]
+	EVEWindow[Inventory]:GetChildren[Names, IDs]
 	Names:GetIterator[Name]
 	if ${Name:First(exists)}
 		do

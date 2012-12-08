@@ -545,7 +545,7 @@ objectdef obj_Salvager inherits obj_State
 	
 	member:bool OpenCargoHold()
 	{
-		if !${EVEWindow[ByCaption, Inventory](exists)}
+		if !${EVEWindow[Inventory](exists)}
 		{
 			UI:Update["obj_Salvage", "Opening inventory", "g"]
 			MyShip:OpenCargo[]
