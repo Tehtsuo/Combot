@@ -67,6 +67,7 @@ objectdef obj_DroneControl inherits obj_State
 	method Initialize()
 	{
 		This[parent]:Initialize
+		PulseFrequency:Set[1500]
 		DynamicAddMiniMode("DroneControl", "DroneControl")
 	}
 	
@@ -451,6 +452,7 @@ objectdef obj_DroneControl inherits obj_State
 			elseif ${Drones.ActiveDroneCount["ToEntity.GroupID == 100"]} > 0 &&\
 					${Entity[${CurrentTarget}].Distance} < ${Me.DroneControlDistance}
 			{
+				echo Drones engage
 				Drones:Engage["ToEntity.GroupID == 100", ${CurrentTarget}, ${DroneCount}]
 			}
 			
