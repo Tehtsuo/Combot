@@ -291,15 +291,6 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 														This:AddItem[Corporation Folder 6]
 														This:AddItem[Corporation Folder 7]
 														break
-													case Orca
-														This:AddItem[Corporation Folder 1]
-														This:AddItem[Corporation Folder 2]
-														This:AddItem[Corporation Folder 3]
-														This:AddItem[Corporation Folder 4]
-														This:AddItem[Corporation Folder 5]
-														This:AddItem[Corporation Folder 6]
-														This:AddItem[Corporation Folder 7]
-														break
 													default
 														This:Hide
 												}
@@ -377,20 +368,12 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 														UIElement[PickupSubTypeTitle@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
 														break
 													case Orca
-														UIElement[PickupSubType@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 1]
-														UIElement[PickupSubType@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 2]
-														UIElement[PickupSubType@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 3]
-														UIElement[PickupSubType@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 4]
-														UIElement[PickupSubType@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 5]
-														UIElement[PickupSubType@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 6]
-														UIElement[PickupSubType@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 7]
-														UIElement[PickupSubType@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler].ItemByText[${Script[ComBot].VariableScope.Hauler.Config.PickupSubType}]:Select
 														UIElement[PickupTitle@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Mining System Bookmark]
 														UIElement[PickupContainerTitle@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Orca Pilot Name]
 														UIElement[PickupContainerTitle@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
 														UIElement[PickupContainer@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
-														UIElement[PickupSubType@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
-														UIElement[PickupSubTypeTitle@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
+														UIElement[PickupSubType@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
+														UIElement[PickupSubTypeTitle@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
 														break
 													case Jetcan
 														UIElement[PickupTitle@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Mining System Bookmark]
@@ -454,20 +437,13 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 														UIElement[PickupSubTypeTitle@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
 														break
 													case Orca
-														UIElement[PickupSubType@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 1]
-														UIElement[PickupSubType@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 2]
-														UIElement[PickupSubType@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 3]
-														UIElement[PickupSubType@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 4]
-														UIElement[PickupSubType@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 5]
-														UIElement[PickupSubType@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 6]
-														UIElement[PickupSubType@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 7]
-														UIElement[PickupSubTypeTitle@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Corporate Folder]
 														UIElement[PickupTitle@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Mining System Bookmark]
 														UIElement[PickupContainerTitle@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Orca Pilot Name]
 														UIElement[PickupContainerTitle@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
 														UIElement[PickupContainer@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
-														UIElement[PickupSubType@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
-														UIElement[PickupSubTypeTitle@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
+														UIElement[PickupSubType@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
+														UIElement[PickupSubTypeTitle@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
+														Script[ComBot].VariableScope.Hauler.Config:SetPickupSubType[\"\"]
 														break
 													case Jetcan
 														UIElement[PickupSubTypeTitle@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Jetcan Mode]
@@ -651,20 +627,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 														This:AddItem[Corporation Folder 6]
 														This:AddItem[Corporation Folder 7]
 														break
-													case Orca
-														This:AddItem[Corporation Folder 1]
-														This:AddItem[Corporation Folder 2]
-														This:AddItem[Corporation Folder 3]
-														This:AddItem[Corporation Folder 4]
-														This:AddItem[Corporation Folder 5]
-														This:AddItem[Corporation Folder 6]
-														This:AddItem[Corporation Folder 7]
-														break
 												}
 												This.ItemByText["${Script[ComBot].VariableScope.Hauler.Config.DropoffSubType}"]:Select
 											</OnLoad>
 											<OnSelect>
-												echo ${This.SelectedItem.Text}
 												Script[ComBot].VariableScope.Hauler.Config:SetDropoffSubType[${This.SelectedItem.Text}]
 											</OnSelect>
 											<OnMouseEnter>
@@ -749,21 +715,13 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 														UIElement[DropoffSubTypeTitle@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Corporate Folder]
 														break
 													case Orca
-														UIElement[DropoffSubType@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 1]
-														UIElement[DropoffSubType@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 2]
-														UIElement[DropoffSubType@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 3]
-														UIElement[DropoffSubType@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 4]
-														UIElement[DropoffSubType@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 5]
-														UIElement[DropoffSubType@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 6]
-														UIElement[DropoffSubType@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 7]
-														UIElement[DropoffSubType@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler].ItemByText["${Script[ComBot].VariableScope.Hauler.Config.DropoffSubType}"]:Select
 														UIElement[DropoffContainer@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
 														UIElement[DropoffContainerTitle@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Orca Pilot Name]
 														UIElement[DropoffTitle@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Mining System Bookmark]
 														UIElement[DropoffContainerTitle@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
-														UIElement[DropoffSubTypeTitle@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
-														UIElement[DropoffSubType@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
-														UIElement[DropoffSubTypeTitle@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Corporate Folder]
+														UIElement[DropoffSubTypeTitle@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
+														UIElement[DropoffSubType@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
+														Script[ComBot].VariableScope.Hauler.Config:SetDropoffSubType[\"\"]
 														break
 													case Personal Hangar
 														UIElement[DropoffSubTypeTitle@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
@@ -1135,15 +1093,6 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 																	This:AddItem[Corporation Folder 6]
 																	This:AddItem[Corporation Folder 7]
 																	break
-																case Orca
-																	This:AddItem[Corporation Folder 1]
-																	This:AddItem[Corporation Folder 2]
-																	This:AddItem[Corporation Folder 3]
-																	This:AddItem[Corporation Folder 4]
-																	This:AddItem[Corporation Folder 5]
-																	This:AddItem[Corporation Folder 6]
-																	This:AddItem[Corporation Folder 7]
-																	break
 																default
 																	This:Hide
 															}
@@ -1221,20 +1170,12 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 																	Script[ComBot].VariableScope.Hauler.Config:SetPickupContainer[\"\"]
 																	break
 																case Orca
-																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 1]
-																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 2]
-																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 3]
-																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 4]
-																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 5]
-																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 6]
-																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 7]
-																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler].ItemByText[${Script[ComBot].VariableScope.Hauler.Config.PickupSubType}]:Select
 																	UIElement[PickupTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Mining System Bookmark]
 																	UIElement[PickupContainerTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Orca Pilot Name]
 																	UIElement[PickupContainerTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
 																	UIElement[PickupContainer@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
-																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
-																	UIElement[PickupSubTypeTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
+																	UIElement[PickupSubTypeTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
 																	break
 																case Jetcan
 																	UIElement[PickupTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Mining System Bookmark]
@@ -1300,20 +1241,13 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 																	UIElement[PickupSubTypeTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
 																	break
 																case Orca
-																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 1]
-																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 2]
-																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 3]
-																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 4]
-																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 5]
-																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 6]
-																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 7]
-																	UIElement[PickupSubTypeTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Corporate Folder]
 																	UIElement[PickupTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Mining System Bookmark]
 																	UIElement[PickupContainerTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Orca Pilot Name]
 																	UIElement[PickupContainerTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
 																	UIElement[PickupContainer@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
-																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
-																	UIElement[PickupSubTypeTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
+																	UIElement[PickupSubType@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
+																	UIElement[PickupSubTypeTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
+																	Script[ComBot].VariableScope.Hauler.Config:SetPickupSubType[\"\"]
 																	break
 																case Jetcan
 																	UIElement[PickupSubTypeTitle@PickupFrame@Load@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Jetcan Mode]
@@ -1510,15 +1444,6 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 																	This:AddItem[Corporation Folder 6]
 																	This:AddItem[Corporation Folder 7]
 																	break
-																case Orca
-																	This:AddItem[Corporation Folder 1]
-																	This:AddItem[Corporation Folder 2]
-																	This:AddItem[Corporation Folder 3]
-																	This:AddItem[Corporation Folder 4]
-																	This:AddItem[Corporation Folder 5]
-																	This:AddItem[Corporation Folder 6]
-																	This:AddItem[Corporation Folder 7]
-																	break
 															}
 															This.ItemByText["${Script[ComBot].VariableScope.Hauler.Config.DropoffSubType}"]:Select
 														</OnLoad>
@@ -1614,21 +1539,13 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 																	UIElement[DropoffSubTypeTitle@DropoffFrame@Unload@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Corporate Folder]
 																	break
 																case Orca
-																	UIElement[DropoffSubType@DropoffFrame@Unload@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 1]
-																	UIElement[DropoffSubType@DropoffFrame@Unload@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 2]
-																	UIElement[DropoffSubType@DropoffFrame@Unload@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 3]
-																	UIElement[DropoffSubType@DropoffFrame@Unload@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 4]
-																	UIElement[DropoffSubType@DropoffFrame@Unload@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 5]
-																	UIElement[DropoffSubType@DropoffFrame@Unload@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 6]
-																	UIElement[DropoffSubType@DropoffFrame@Unload@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 7]
-																	UIElement[DropoffSubType@DropoffFrame@Unload@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler].ItemByText["${Script[ComBot].VariableScope.Hauler.Config.DropoffSubType}"]:Select
 																	UIElement[DropoffContainer@DropoffFrame@Unload@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
 																	UIElement[DropoffContainerTitle@DropoffFrame@Unload@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Orca Pilot Name]
 																	UIElement[DropoffTitle@DropoffFrame@Unload@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Mining System Bookmark]
 																	UIElement[DropoffContainerTitle@DropoffFrame@Unload@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
-																	UIElement[DropoffSubTypeTitle@DropoffFrame@Unload@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
-																	UIElement[DropoffSubType@DropoffFrame@Unload@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
-																	UIElement[DropoffSubTypeTitle@DropoffFrame@Unload@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Corporate Folder]
+																	UIElement[DropoffSubTypeTitle@DropoffFrame@Unload@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
+																	UIElement[DropoffSubType@DropoffFrame@Unload@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
+																	Script[ComBot].VariableScope.Hauler.Config:SetDropoffSubType[\"\"]
 																	break
 																case Personal Hangar
 																	UIElement[DropoffSubTypeTitle@DropoffFrame@Unload@Action@Queue@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide

@@ -723,15 +723,6 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											This:AddItem[Corporation Folder 6]
 											This:AddItem[Corporation Folder 7]
 											break
-										case Orca
-											This:AddItem[Corporation Folder 1]
-											This:AddItem[Corporation Folder 2]
-											This:AddItem[Corporation Folder 3]
-											This:AddItem[Corporation Folder 4]
-											This:AddItem[Corporation Folder 5]
-											This:AddItem[Corporation Folder 6]
-											This:AddItem[Corporation Folder 7]
-											break
 									}
 									This.ItemByText["${Script[ComBot].VariableScope.Ratter.Config.DropoffSubType}"]:Select
 								</OnLoad>
@@ -811,21 +802,13 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											UIElement[DropoffTitle@DropoffFrame@Frame@ComBot_Ratter]:SetText[Container Bookmark]
 											break
 										case Orca
-											UIElement[DropoffSubType@DropoffFrame@Frame@ComBot_Ratter]:AddItem[Corporation Folder 1]
-											UIElement[DropoffSubType@DropoffFrame@Frame@ComBot_Ratter]:AddItem[Corporation Folder 2]
-											UIElement[DropoffSubType@DropoffFrame@Frame@ComBot_Ratter]:AddItem[Corporation Folder 3]
-											UIElement[DropoffSubType@DropoffFrame@Frame@ComBot_Ratter]:AddItem[Corporation Folder 4]
-											UIElement[DropoffSubType@DropoffFrame@Frame@ComBot_Ratter]:AddItem[Corporation Folder 5]
-											UIElement[DropoffSubType@DropoffFrame@Frame@ComBot_Ratter]:AddItem[Corporation Folder 6]
-											UIElement[DropoffSubType@DropoffFrame@Frame@ComBot_Ratter]:AddItem[Corporation Folder 7]
-											UIElement[DropoffSubType@DropoffFrame@Frame@ComBot_Ratter].ItemByText["${Script[ComBot].VariableScope.Ratter.Config.DropoffSubType}"]:Select
-											UIElement[DropoffSubTypeTitle@DropoffFrame@Frame@ComBot_Ratter]:SetText[Corporate Folder]
 											UIElement[DropoffContainer@DropoffFrame@Frame@ComBot_Ratter]:Show
 											UIElement[DropoffContainerTitle@DropoffFrame@Frame@ComBot_Ratter]:SetText[Orca Pilot Name]
 											UIElement[DropoffContainerTitle@DropoffFrame@Frame@ComBot_Ratter]:Show
-											UIElement[DropoffSubTypeTitle@DropoffFrame@Frame@ComBot_Ratter]:Show
-											UIElement[DropoffSubType@DropoffFrame@Frame@ComBot_Ratter]:Show
+											UIElement[DropoffSubTypeTitle@DropoffFrame@Frame@ComBot_Ratter]:Hide
+											UIElement[DropoffSubType@DropoffFrame@Frame@ComBot_Ratter]:Hide
 											UIElement[DropoffTitle@DropoffFrame@Frame@ComBot_Ratter]:SetText[Mining System Bookmark]
+											Script[ComBot].VariableScope.Ratter.Config:SetDropoffSubType[\"\"]
 											break
 										case Personal Hangar
 											UIElement[DropoffSubTypeTitle@DropoffFrame@Frame@ComBot_Ratter]:Hide
