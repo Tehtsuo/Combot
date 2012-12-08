@@ -16,6 +16,14 @@ function main()
 			echo Name:         ${Name.Value}
 		}
 		while ${Name:Next(exists)}
+	IDs:GetIterator[Name]
+	if ${Name:First(exists)}
+		do
+		{
+			echo ------------------------------------
+			echo ID:         ${Name.Value}
+		}
+		while ${Name:Next(exists)}
 	
 
 }
