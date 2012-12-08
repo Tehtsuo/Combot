@@ -342,6 +342,7 @@ objectdef obj_Ratter inherits obj_State
 		}
 		while ${BookmarkIterator:Next(exists)}
 		
+		return TRUE
 	}
 	
 	member:bool MoveToNewRatLocation()
