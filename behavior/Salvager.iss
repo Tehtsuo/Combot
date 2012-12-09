@@ -164,7 +164,7 @@ objectdef obj_Salvager inherits obj_State
 				{
 					if ${BookmarkIterator.Value.Created.AsInt64} + 72000000000 < ${EVETime.AsInt64}
 					{
-						UI:["Salvager", "Removing expired bookmark - ${BookmarkIterator.Value.Label}", "o", TRUE]
+						UI:Update["Salvager", "Removing expired bookmark - ${BookmarkIterator.Value.Label}", "o", TRUE]
 						BookmarkIterator.Value:Remove
 						return FALSE
 					}
