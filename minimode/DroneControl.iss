@@ -93,7 +93,6 @@ objectdef obj_DroneControl inherits obj_State
 				}
 				while ${groupIterator:Next(exists)}
 			}
-			echo Scramble string is ${groups.Length}
 			Rats:AddQueryString["IsNPC && !IsMoribund && (${groups})"]
 
 			seperator:Set[""]
@@ -108,7 +107,6 @@ objectdef obj_DroneControl inherits obj_State
 				}
 				while ${groupIterator:Next(exists)}
 			}
-			echo Neut string is ${groups.Length}
 			Rats:AddQueryString["IsNPC && !IsMoribund && (${groups})"]
 			
 			seperator:Set[""]
@@ -123,7 +121,6 @@ objectdef obj_DroneControl inherits obj_State
 				}
 				while ${groupIterator:Next(exists)}
 			}
-			echo ECM string is ${groups.Length}
 			Rats:AddQueryString["IsNPC && !IsMoribund && (${groups})"]
 			
 			
@@ -452,7 +449,6 @@ objectdef obj_DroneControl inherits obj_State
 			elseif ${Drones.ActiveDroneCount["ToEntity.GroupID == 100"]} > 0 &&\
 					${Entity[${CurrentTarget}].Distance} < ${Me.DroneControlDistance}
 			{
-				echo Drones engage
 				Drones:Engage["ToEntity.GroupID == 100", ${CurrentTarget}, ${DroneCount}]
 			}
 			
