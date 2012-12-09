@@ -161,10 +161,17 @@ objectdef obj_ModuleBase inherits obj_State
 		return TRUE
 	}
 	
-	member:bool WaitTillInactive()
+	member:bool WaitTillInactive(int Count = 0)
 	{
+		if ${Count} > 1000
+		{
+			echo ${MyShip.Module[${ModuleID}].ToItem.Name}: WaitTillInactive failed after 5 seconds, trying another Deactivate
+			This:Deactivate
+			return TRUE
+		}
 		if ${MyShip.Module[${ModuleID}].IsActive}
 		{
+			Count:Inc
 			return FALSE
 		}
 		Activated:Set[FALSE]
