@@ -175,6 +175,7 @@ objectdef obj_ModuleBase inherits obj_State
 	
 	member:bool UpdateStatus()
 	{
+		echo ${MyShip.Module[${ModuleID}].ToItem.Name}: ${MyShip.Module[${ModuleID}].IsActive}
 		if ${MyShip.Module[${ModuleID}].IsActive}
 		{
 			Activated:Set[TRUE]
