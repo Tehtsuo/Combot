@@ -166,6 +166,9 @@ objectdef obj_Salvager inherits obj_State
 					{
 						UI:Update["Salvager", "Removing expired bookmark - ${BookmarkIterator.Value.Label}", "o", TRUE]
 						BookmarkIterator.Value:Remove
+						UsedBookmarks:Add[${BookmarkIterator.Value.ID}]
+						This:InsertState["CheckBookmarks"]
+						This:InsertState["Idle", 5000]
 						return FALSE
 					}
 					if (${BookmarkIterator.Value.Created.AsInt64} < ${BookmarkTime} || ${BookmarkTime} == 0) && !${UsedBookmarks.Contains[${BookmarkIterator.Value.ID}]}
@@ -201,6 +204,7 @@ objectdef obj_Salvager inherits obj_State
 					{
 						UI:Update["Salvager", "Removing expired bookmark - ${BookmarkIterator.Value.Label}", "o", TRUE]
 						BookmarkIterator.Value:Remove
+						UsedBookmarks:Add[${BookmarkIterator.Value.ID}]
 						This:InsertState["CheckBookmarks"]
 						This:InsertState["Idle", 5000]
 						return TRUE
@@ -396,7 +400,6 @@ objectdef obj_Salvager inherits obj_State
 			}
 			return TRUE
 		}
-		
 		
 		if ${Salvage.Wrecks.TargetList.Used} == 0
 		{
