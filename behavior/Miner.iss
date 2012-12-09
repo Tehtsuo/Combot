@@ -252,9 +252,23 @@ objectdef obj_Miner inherits obj_State
 			return FALSE
 		}
 		if 	${MyShip.HasOreHold} && \
-			!${EVEWindow[Inventory].ActiveChildName.Equal[ShipOreHold]}
+			!${EVEWindow[Inventory].ActiveChildName.Equal[ShipOreHold]} && \
+			!${Config.OrcaMode}
 		{
 			EVEWindow[Inventory]:MakeChildActive[ShipOreHold]
+			return FALSE
+		}
+		elseif !${MyShip.HasOreHold} && \
+			!${EVEWindow[Inventory].ActiveChildName.Equal[ShipCargo]} && \
+			!${Config.OrcaMode}
+		{
+			EVEWindow[Inventory]:MakeChildActive[ShipCargo]
+			return FALSE
+		}
+		if !${EVEWindow[Inventory].ActiveChildName.Equal[ShipFleetHangar]} && \
+			${Config.OrcaMode}
+		{
+			EVEWindow[Inventory]:MakeChildActive[ShipFleetHangar]
 			return FALSE
 		}
 		return TRUE
@@ -637,7 +651,7 @@ objectdef obj_Miner inherits obj_State
 		
 	
 		variable int64 Orca
-		if ${Config.Dropoff_Type.Equal[Orca]}
+		if ${Config.Dropoff_Type.Equal[Fleet Hangar]}
 		{
 			if ${Entity[Name = "${Config.Container_Name}"](exists)}
 			{
@@ -686,8 +700,9 @@ objectdef obj_Miner inherits obj_State
 			Asteroids.LockTop:Set[FALSE]
 			
 			relay all -event ComBot_Orca_InBelt TRUE
-			relay all -event ComBot_Orca_Cargo ${EVEWindow[Inventory].ChildUsedCapacity[ShipCorpHangar]}
+			relay all -event ComBot_Orca_Cargo ${EVEWindow[Inventory].ChildUsedCapacity[ShipFleetHangar]}
 			Cargo:PopulateCargoList[ShipCorpHangar]
+			echo ShipCorpHangar:  ${Cargo.CargoList.Used}
 			if ${Cargo.CargoList.Used} && !${Config.Dropoff_Type.Equal[No Dropoff]}
 			{
 				if ${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity} < ${Config.Threshold} * .01
