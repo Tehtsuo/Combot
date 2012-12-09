@@ -494,7 +494,16 @@ objectdef obj_Ratter inherits obj_State
 	{
 		if !${Client.InSpace}
 		{
-			return FALSE
+			if ${Config.AssistOnly}
+			{
+				This:QueueState["Rat"]
+			}
+			else
+			{
+				This:QueueState["OpenCargoHold"]
+				This:QueueState["CheckCargoHold"]
+			}
+			return TRUE
 		}
 		if ${Me.ToEntity.Mode} == 3
 		{
