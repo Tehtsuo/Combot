@@ -251,6 +251,12 @@ objectdef obj_Miner inherits obj_State
 			EVE:Execute[OpenInventory]
 			return FALSE
 		}
+		if 	${MyShip.HasOreHold} && \
+			!${EVEWindow[Inventory].ActiveChildName[ShipOreHold]}
+		{
+			EVEWindow[Inventory]:MakeChildActive[ShipOreHold]
+			return FALSE
+		}
 		return TRUE
 	}
 	
