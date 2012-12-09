@@ -548,7 +548,7 @@ objectdef obj_Salvager inherits obj_State
 		if !${EVEWindow[Inventory](exists)}
 		{
 			UI:Update["obj_Salvage", "Opening inventory", "g"]
-			EVE:Execute[OpenInventory][]
+			EVE:Execute[OpenInventory]
 			return FALSE
 		}
 		if !${EVEWindow[byCaption, "active ship"](exists)}

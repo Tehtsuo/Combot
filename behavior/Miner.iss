@@ -248,7 +248,7 @@ objectdef obj_Miner inherits obj_State
 		if !${EVEWindow[Inventory](exists)}
 		{
 			UI:Update["obj_Miner", "Opening inventory", "g"]
-			EVE:Execute[OpenInventory][]
+			EVE:Execute[OpenInventory]
 			return FALSE
 		}
 		return TRUE
@@ -862,7 +862,7 @@ objectdef obj_MinerUI inherits obj_State
 		if !${EVEWindow[Inventory](exists)}
 		{
 			UI:Update["obj_Miner", "Opening inventory", "g"]
-			EVE:Execute[OpenInventory][]
+			EVE:Execute[OpenInventory]
 			return FALSE
 		}
 		return TRUE

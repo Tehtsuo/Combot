@@ -720,7 +720,7 @@ objectdef obj_HaulerUI inherits obj_State
 		if !${EVEWindow[Inventory](exists)}
 		{
 			UI:Update["obj_Hauler", "Opening inventory", "g"]
-			EVE:Execute[OpenInventory][]
+			EVE:Execute[OpenInventory]
 			return FALSE
 		}
 		return TRUE
