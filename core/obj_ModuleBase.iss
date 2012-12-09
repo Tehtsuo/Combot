@@ -65,11 +65,13 @@ objectdef obj_ModuleBase inherits obj_State
 			Deactivated:Set[TRUE]
 			This:Clear
 			This:QueueState["WaitTillInactive"]
+			This:QueueState["UpdateStatus"]
 		}
 	}
 	
 	method Activate(int64 newTarget=-1, bool DoDeactivate=TRUE)
 	{
+		This:Clear
 		if ${DoDeactivate} && ${This.IsActive}
 		{
 			This:Deactivate
@@ -169,6 +171,22 @@ objectdef obj_ModuleBase inherits obj_State
 		Deactivated:Set[FALSE]
 		CurrentTarget:Set[-1]
 		return TRUE
+	}
+	
+	member:bool UpdateStatus()
+	{
+		echo ${MyShip.Module[${ModuleID}].ToItem.Name}: ${MyShip.Module[${ModuleID}].IsActive}
+		if ${MyShip.Module[${ModuleID}].IsActive}
+		{
+			Activated:Set[TRUE]
+			Deactivated:Set[TRUE]
+		}
+		else
+		{
+			Activated:Set[FALSE]
+			Deactivated:Set[FALSE]
+		}
+		return FALSE
 	}
 	
 	member:float Range()

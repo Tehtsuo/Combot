@@ -212,7 +212,7 @@ objectdef obj_Ratter inherits obj_State
 	
 	member:bool OpenCargoHold()
 	{
-		if !${EVEWindow[ByCaption, Inventory](exists)}
+		if !${EVEWindow[Inventory](exists)}
 		{
 			UI:Update["Ratter", "Opening inventory", "g"]
 			MyShip:Open
@@ -260,6 +260,7 @@ objectdef obj_Ratter inherits obj_State
 		This:QueueState["GoToRattingSystem"]
 		This:QueueState["Traveling"]
 		This:QueueState["Reload"]
+		This:QueueState["ClearOldBookmarks"]
 		This:QueueState["MoveToNewRatLocation"]
 		This:QueueState["Traveling"]
 		This:QueueState["VerifyRatLocation"]
@@ -308,6 +309,39 @@ objectdef obj_Ratter inherits obj_State
 	member:bool RemoveSavedSpot()
 	{
 		Move:RemoveSavedSpot
+		return TRUE
+	}
+	
+	member:bool ClearOldBookmarks(bool RefreshBookmarks=FALSE)
+	{
+		if !${RefreshBookmarks}
+		{
+			EVE:RefreshBookmarks
+			This:InsertState["ClearOldBookmarks", 3000, TRUE]
+			return TRUE
+		}
+	
+		variable index:bookmark Bookmarks
+		variable iterator BookmarkIterator
+		EVE:GetBookmarks[Bookmarks]
+		Bookmarks:GetIterator[BookmarkIterator]
+		
+		if ${BookmarkIterator:First(exists)}
+		do
+		{	
+			if ${BookmarkIterator.Value.Label.Left[${Config.SalvagePrefix.Length}].Upper.Equal[${Config.SalvagePrefix}]} && \
+				${BookmarkIterator.Value.CreatorID} == ${Me.CharID}
+			{
+				if ${BookmarkIterator.Value.Created.AsInt64} + 18000000000 < ${EVETime.AsInt64}
+				{
+					UI:Update["Ratter", "Removing old bookmark - ${BookmarkIterator.Value.Label}", "o", TRUE]
+					BookmarkIterator.Value:Remove
+					return FALSE
+				}
+			}
+		}
+		while ${BookmarkIterator:Next(exists)}
+		
 		return TRUE
 	}
 	
@@ -674,10 +708,10 @@ objectdef obj_RatterUI inherits obj_State
 
 	member:bool OpenCargoHold()
 	{
-		if !${EVEWindow[ByCaption, Inventory](exists)}
+		if !${EVEWindow[Inventory](exists)}
 		{
 			UI:Update["Ratter", "Opening inventory", "g"]
-			MyShip:OpenCargo[]
+			EVE:Execute[OpenInventory]
 			return FALSE
 		}
 		return TRUE

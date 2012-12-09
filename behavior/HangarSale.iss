@@ -172,10 +172,10 @@ objectdef obj_HangarSale inherits obj_State
 	
 	member:bool OpenHangar()
 	{
-		if !${EVEWindow[ByCaption, Inventory](exists)}
+		if !${EVEWindow[Inventory](exists)}
 		{
 			UI:Update["obj_HangarSale", "Making sure inventory is open", "g"]
-			MyShip:OpenCargo
+			EVE:Execute[OpenInventory]
 			return FALSE
 		}
 		if !${EVEWindow[byCaption, "Item Hangar"](exists)}
