@@ -152,7 +152,7 @@ objectdef obj_Jetcan inherits obj_State
 						Cargo:PopulateCargoList[Ship]
 						Cargo:Filter["CategoryID == CATEGORYID_ORE || GroupID == GROUP_HARVESTABLECLOUD", FALSE]
 					}
-					Cargo:MoveCargoList[Container, "", ${TargetIterator.Value}]
+					Cargo:MoveCargoList[Jetcan, "", ${TargetIterator.Value}]
 					This:QueueState["Stack", 1000, ${TargetIterator.Value}]
 					This:QueueState["Fill", 2000]
 					return TRUE
@@ -343,7 +343,7 @@ objectdef obj_Jetcan inherits obj_State
 		{
 			if !${CanAges.Element[CanIterator.Value.ID](exists)}
 			{
-				Cargo:MoveCargoList[Container, "", ${CanIterator.Value.ID}]
+				Cargo:MoveCargoList[Jetcan, "", ${CanIterator.Value.ID}]
 				return TRUE
 			}
 		}
@@ -381,7 +381,7 @@ objectdef obj_Jetcan inherits obj_State
 					Cargo:PopulateCargoList[Ship]
 					Cargo:Filter["CategoryID == CATEGORYID_ORE || GroupID == GROUP_HARVESTABLECLOUD", FALSE]
 				}
-				Cargo:MoveCargoList[Container, "", ${TargetIterator.Value}]
+				Cargo:MoveCargoList[Jetcan, "", ${TargetIterator.Value}]
 				This:QueueState["Stack", 1000, ${TargetIterator.Value}]
 				return TRUE
 			}
