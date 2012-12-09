@@ -293,7 +293,7 @@ objectdef obj_Cargo inherits obj_State
 					}
 					else
 					{
-						CargoItem:MoveTo[${ID}, CargoHold, ${Math.Calc[(${EVEWindow[Inventory].ChildCapacity[${ID}]} - ${EVEWindow[Inventory].ChildUsedCapacity[${ID}]}) / ${CargoItem.Volume}].Int}${TransferFolder}]
+						CargoItem:MoveTo[${ID}, CargoHold, ${Math.Calc[(${EVEWindow[Inventory].ChildCapacity[${ID}]} - ${EVEWindow[Inventory].ChildUsedCapacity[${ID}]}) / ${CargoItem.Volume}].Int}]
 					}
 					break
 				case OreHold
@@ -469,7 +469,7 @@ objectdef obj_Cargo inherits obj_State
 							{
 								if ${Math.Calc[(${EVEWindow[Inventory].ChildCapacity[${ID}]} - ${EVEWindow[Inventory].ChildUsedCapacity[${ID}]} - ${Volume}) / ${Cargo.Value.Volume}].Int}
 								{
-									Cargo.Value:MoveTo[MyShip, CargoHold, ${Math.Calc[(${EVEWindow[Inventory].ChildCapacity[${ID}]} - ${EVEWindow[Inventory].ChildUsedCapacity[${ID}]} - ${Volume}) / ${Cargo.Value.Volume}].Int}]
+									Cargo.Value:MoveTo[${ID}, CargoHold, ${Math.Calc[(${EVEWindow[Inventory].ChildCapacity[${ID}]} - ${EVEWindow[Inventory].ChildUsedCapacity[${ID}]} - ${Volume}) / ${Cargo.Value.Volume}].Int}]
 									break
 								}
 							}
