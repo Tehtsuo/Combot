@@ -316,8 +316,8 @@ objectdef obj_Miner inherits obj_State
 			This:QueueState["Traveling"]
 			This:QueueState["Undock"]
 			This:QueueState["WaitForSpace"]
-;			This:QueueState["RequestUpdate"]
-;			This:QueueState["Updated"]
+			This:QueueState["RequestUpdate"]
+			This:QueueState["Updated"]
 			This:QueueState["CheckForWork"]
 			Profiling:EndTrack
 			return TRUE
