@@ -162,7 +162,7 @@ objectdef obj_Salvager inherits obj_State
 				while ${HoldOffIterator:Next(exists)}
 				if !${InHoldOff}
 				{
-					if ${BookmarkIterator.Value.Created.AsInt64} + 72000000000 < ${EVETime.AsInt64}
+					if ${BookmarkIterator.Value.Created.AsInt64} + 72000000000 < ${EVETime.AsInt64} && !${UsedBookmarks.Contains[${BookmarkIterator.Value.ID}]}
 					{
 						UI:Update["Salvager", "Removing expired bookmark - ${BookmarkIterator.Value.Label}", "o", TRUE]
 						BookmarkIterator.Value:Remove
@@ -197,7 +197,7 @@ objectdef obj_Salvager inherits obj_State
 				while ${HoldOffIterator:Next(exists)}
 				if !${InHoldOff}
 				{
-					if ${BookmarkIterator.Value.Created.AsInt64} + 72000000000 < ${EVETime.AsInt64}
+					if ${BookmarkIterator.Value.Created.AsInt64} + 72000000000 < ${EVETime.AsInt64} && !${UsedBookmarks.Contains[${BookmarkIterator.Value.ID}]}
 					{
 						UI:Update["Salvager", "Removing expired bookmark - ${BookmarkIterator.Value.Label}", "o", TRUE]
 						BookmarkIterator.Value:Remove
