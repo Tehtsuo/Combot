@@ -252,7 +252,7 @@ objectdef obj_Miner inherits obj_State
 			return FALSE
 		}
 		if 	${MyShip.HasOreHold} && \
-			!${EVEWindow[Inventory].ActiveChildName[ShipOreHold]}
+			!${EVEWindow[Inventory].ActiveChildName.Equal[ShipOreHold]}
 		{
 			EVEWindow[Inventory]:MakeChildActive[ShipOreHold]
 			return FALSE
