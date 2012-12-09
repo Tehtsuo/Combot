@@ -71,6 +71,7 @@ objectdef obj_ModuleBase inherits obj_State
 	
 	method Activate(int64 newTarget=-1, bool DoDeactivate=TRUE)
 	{
+		This:Clear
 		if ${DoDeactivate} && ${This.IsActive}
 		{
 			This:Deactivate
