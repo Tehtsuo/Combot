@@ -376,6 +376,13 @@ objectdef obj_Salvager inherits obj_State
 			return TRUE
 		}
 
+		if !${EVEWindow[Inventory](exists)}
+		{
+			UI:Update["obj_Salvage", "Opening inventory", "g"]
+			EVE:Execute[OpenInventory]
+			return FALSE
+		}
+
 		if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) > ${FullHold}
 		{
 			UI:Update["obj_Salvage", "Unload trip required", "g"]
