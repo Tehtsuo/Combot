@@ -337,7 +337,7 @@ objectdef obj_Miner inherits obj_State
 		{
 			relay all -event ComBot_Orca_InBelt FALSE
 		}
-		if ${Asteroids.TargetList.Used} && !${Config.Dropoff_Type.Equal[Orca]} && !${Config.Tether}
+		if ${Asteroids.TargetList.Used} && !${Config.Dropoff_Type.Equal[Fleet Hangar]} && !${Config.Tether}
 		{
 			Move:SaveSpot
 		}

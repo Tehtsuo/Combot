@@ -661,7 +661,7 @@ objectdef obj_Cargo inherits obj_State
 					}
 					if ${This.CargoQueue.Peek.LocationType.Equal[Fleet Hangar]}
 					{
-						EVE:StackItems[${Container}, CorpHangars]
+						EVE:StackItems[${Container}, FleetHangar]
 					}
 					return TRUE
 				}
