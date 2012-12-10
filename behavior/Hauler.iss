@@ -101,14 +101,13 @@ objectdef obj_Hauler inherits obj_State
 	
 	method Start()
 	{
-		UI:Update["obj_Hauler", "Started", "g"]
+		UI:Update["Hauler", "Started", "g"]
 		This:AssignStateQueueDisplay[DebugStateList@Debug@ComBotTab@ComBot]
 		if ${This.IsIdle}
 		{
 			switch ${Config.Mode}
 			{
 				case Continuous
-					This:QueueState["OpenCargoHold"]
 					This:QueueState["CheckCargoHold"]
 					break
 				case Queue
@@ -116,7 +115,6 @@ objectdef obj_Hauler inherits obj_State
 					This:QueueState["Traveling"]
 					break
 				default
-					This:QueueState["OpenCargoHold"]
 					This:QueueState["CheckCargoHold"]
 				break
 			}
@@ -133,19 +131,23 @@ objectdef obj_Hauler inherits obj_State
 	
 	member:bool OpenCargoHold()
 	{
-		if !${EVEWindow[Inventory](exists)}
-		{
-			UI:Update["obj_Hauler", "Opening inventory", "g"]
-			MyShip:Open
-			return FALSE
-		}
-		return TRUE
+		return ${Client.Inventory}
 	}
 	
 	member:bool CheckCargoHold(bool OreHold=FALSE, bool CorpHangar=FALSE)
 	{
+		if !${Client.Inventory}
+		{
+			return FALSE
+		}
 		if ${EVEWindow[Inventory].ChildWindowExists[ShipOreHold]} && !${OreHold}
 		{
+			if 	${EVEWindow[Inventory].ChildUsedCapacity[ShipOreHold]} == -1 || \
+				${EVEWindow[Inventory].ChildCapacity[ShipOreHold]} == 0
+			{
+				EVEWindow[Inventory]:MakeChildActive[ShipOreHold]
+				return FALSE
+			}
 			if ${EVEWindow[Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[Inventory].ChildCapacity[ShipOreHold]} < ${Config.Threshold} * .01
 			{
 				Cargo:PopulateCargoList[Ship]
@@ -156,6 +158,12 @@ objectdef obj_Hauler inherits obj_State
 		}
 		if ${EVEWindow[Inventory].ChildWindowExists[ShipFleetHangar]} && !${CorpHangar}
 		{
+			if 	${EVEWindow[Inventory].ChildUsedCapacity[ShipFleetHangar]} == -1 || \
+				${EVEWindow[Inventory].ChildCapacity[ShipFleetHangar]} == 0
+			{
+				EVEWindow[Inventory]:MakeChildActive[ShipFleetHangar]
+				return FALSE
+			}
 			if ${EVEWindow[Inventory].ChildUsedCapacity[ShipFleetHangar]} / ${EVEWindow[Inventory].ChildCapacity[ShipFleetHangar]} < ${Config.Threshold} * .01
 			{
 				Cargo:PopulateCargoList[Ship]
@@ -170,8 +178,16 @@ objectdef obj_Hauler inherits obj_State
 			UI:Update["Hauler", "Waiting for drones", "y"]
 			return FALSE
 		}
-	
-		if ${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity} >= ${Config.Threshold} * .01
+
+		
+		if 	${EVEWindow[Inventory].ChildUsedCapacity[ShipCargo]} == -1 || \
+			${EVEWindow[Inventory].ChildCapacity[ShipCargo]} == 0
+		{
+			EVEWindow[Inventory]:MakeChildActive[ShipCargo]
+			return FALSE
+		}
+		
+		if ${EVEWindow[Inventory].ChildUsedCapacity[ShipCargo]} / ${EVEWindow[Inventory].ChildCapacity[ShipCargo]} >= ${Config.Threshold} * .01
 		{
 			UI:Update["Hauler", "Unload trip required", "g"]
 			Cargo:At[${Config.Dropoff},${Config.DropoffType},${Config.DropoffSubType}, ${Config.DropoffContainer}]:Unload:Unload["",0,ShipCorpHangar]:Unload["",0,OreHold]
@@ -197,6 +213,15 @@ objectdef obj_Hauler inherits obj_State
 	{
 		if ${Config.PickupType.Equal[Fleet Hangar]}
 		{
+			if !${Client.Inventory}
+			{
+				return FALSE
+			}
+			if 	${EVEWindow[Inventory].ChildCapacity[ShipCargo]} == 0
+			{
+				EVEWindow[Inventory]:MakeChildActive[ShipCargo]
+				return FALSE
+			}
 			if ${OrcaCargo} > ${Config.Threshold} * .01 * ${MyShip.CargoCapacity}
 			{
 				return TRUE
@@ -380,16 +405,24 @@ objectdef obj_Hauler inherits obj_State
 		{
 			return TRUE
 		}
+		if !${Client.Inventory}
+		{
+			return FALSE
+		}
 		
 		variable iterator CanIter
 		
-		if ${MyShip.UsedCargoCapacity} > (${Config.Threshold} * .01 * ${MyShip.CargoCapacity})
+		if 	${EVEWindow[Inventory].ChildUsedCapacity[ShipCargo]} == -1 || \
+			${EVEWindow[Inventory].ChildCapacity[ShipCargo]} == 0
+		{
+			EVEWindow[Inventory]:MakeChildActive[ShipCargo]
+			return FALSE
+		}
+		
+		if ${EVEWindow[Inventory].ChildUsedCapacity[ShipCargo]} > (${Config.Threshold} * .01 * ${EVEWindow[Inventory].ChildCapacity[ShipCargo]}
 		{
 			return TRUE
 		}
-		
-		echo ${IR_Cans.TargetList.Used} cans in range
-		echo ${OOR_Cans.TargetList.Used} cans out of range
 		
 		OOR_Cans:RequestUpdate
 		IR_Cans:RequestUpdate
@@ -463,17 +496,18 @@ objectdef obj_Hauler inherits obj_State
 		{
 			if !${EVEWindow[Inventory].ChildWindowExists[${CurrentCan}]}
 			{
-				Entity[${CurrentCan}]:OpenCargo
+				Entity[${CurrentCan}]:Open
 				return FALSE
 			}
-			; if !${EVEWindow[ByItemID, ${CurrentCan}](exists)}
-			; {
-				; EVEWindow[Inventory]:MakeChildActive[${CurrentCan}]
-				; return FALSE
-			; }
+			if 	${EVEWindow[Inventory].ChildUsedCapacity[${CurrentCan}]} == -1 || \
+				${EVEWindow[Inventory].ChildCapacity[${CurrentCan}]} == 0
+			{
+				EVEWindow[Inventory]:MakeChildActive[${CurrentCan}]
+				return FALSE
+			}
 			Cargo:PopulateCargoList[Container, ${CurrentCan}]
 			
-			if ${EVEWindow[ByItemID, ${CurrentCan}].UsedCapacity} > ${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}]}
+			if ${EVEWindow[Inventory].ChildUsedCapacity[${CurrentCan}]} > ${Math.Calc[${EVEWindow[Inventory].ChildCapacity[ShipCargo]} - ${EVEWindow[Inventory].ChildUsedCapacity[ShipCargo]}]}
 			{
 				if ${PopCan}
 				{
@@ -717,13 +751,7 @@ objectdef obj_HaulerUI inherits obj_State
 
 	member:bool OpenCargoHold()
 	{
-		if !${EVEWindow[Inventory](exists)}
-		{
-			UI:Update["obj_Hauler", "Opening inventory", "g"]
-			EVE:Execute[OpenInventory]
-			return FALSE
-		}
-		return TRUE
+		return ${Client.Inventory}
 	}
 	
 	
