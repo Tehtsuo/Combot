@@ -436,13 +436,17 @@ objectdef obj_Ratter inherits obj_State
 	
 	member:bool VerifyRatLocation()
 	{
+		DroneControl:Recall
+		if ${Busy.IsBusy}
+		{
+			return FALSE
+		}
 		if ${Entity[CategoryID == CATEGORYID_SHIP && IsPC && !IsFleetMember && OwnerID != ${Me.CharID}]}
 		{
 			UI:Update["Ratter", "This location is occupied, going to next", "g"]
 			This:InsertState["VerifyRatLocation"]
 			This:InsertState["Traveling"]
 			This:InsertState["MoveToNewRatLocation"]
-			Drones:RecallAll
 		}
 		return TRUE
 	}

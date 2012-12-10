@@ -129,12 +129,6 @@ objectdef obj_Hauler inherits obj_State
 	}
 	
 	
-	
-	member:bool OpenCargoHold()
-	{
-		return ${Client.Inventory}
-	}
-	
 	member:bool CheckCargoHold(bool OreHold=FALSE, bool CorpHangar=FALSE)
 	{
 		if !${Client.Inventory}
@@ -151,14 +145,14 @@ objectdef obj_Hauler inherits obj_State
 		if ${EVEWindow[Inventory].ChildUsedCapacity[ShipFleetHangar]} / ${EVEWindow[Inventory].ChildCapacity[ShipFleetHangar]} < ${Config.Threshold} * .01
 		{
 			Cargo:PopulateCargoList[Ship]
-			Cargo:MoveCargoList[Container]
+			Cargo:MoveCargoList[Fleet Hangar]
 			This:InsertState["CheckCargoHold", 500, "TRUE, TRUE"]
 			return TRUE
 		}
 
+		DroneControl:Recall
 		if ${Busy.IsBusy}
 		{
-			UI:Update["Hauler", "Waiting for drones", "y"]
 			return FALSE
 		}
 

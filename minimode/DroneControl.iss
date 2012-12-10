@@ -64,6 +64,8 @@ objectdef obj_DroneControl inherits obj_State
 	variable bool CurAggressive
 	variable bool CurIPC
 	
+	variable RecallActive=FALSE
+	
 	method Initialize()
 	{
 		This[parent]:Initialize
@@ -326,6 +328,56 @@ objectdef obj_DroneControl inherits obj_State
 	{
 		DroneTargets.AutoLock:Set[FALSE]
 		This:Clear
+	}
+	
+	method Recall()
+	{
+		if ${This.RecallActive}
+		{
+			return
+		}
+		This.RecallActive:Set[TRUE]
+
+		variable bool DontResume=${This.IsIdle}
+		
+		This:Clear
+
+		if ${Drones.DronesInSpace}
+		{
+			Busy:SetBusy["DroneControl"]
+			Drones:RecallAll
+			This:QueueState["Idle", 2000]
+			This:QueueState["RecallCheck"]
+		}
+		
+		This:QueueState["Idle", 20000]
+		This:QueueState["ResetRecall", 50]
+		
+		if !${DontResume}
+		{
+			This:QueueState["DroneControl"]
+		}
+	}
+	
+	member:bool RecallCheck()
+	{
+		if ${Drones.DronesInSpace}
+		{
+			Drones:RecallAll
+			This:InsertState["RecallCheck"]
+			This:InsertState["Idle", 2000]
+		}
+		else
+		{
+			Busy:UnsetBusy["DroneControl"]
+		}
+		return TRUE
+	}
+	
+	member:bool ResetRecall()
+	{
+		This.RecallActive:Set[FALSE]
+		return TRUE
 	}
 	
 	member:bool DroneControl()

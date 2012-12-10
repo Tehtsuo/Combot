@@ -578,7 +578,13 @@ objectdef obj_Cargo inherits obj_State
 			return TRUE
 		}
 		
-		UI:Update["obj_Cargo", "Process ${This.CargoQueue.Peek.Action} @ ${This.CargoQueue.Peek.Bookmark} - ${This.CargoQueue.Peek.LocationType}", "g", TRUE]
+		DroneControl:Recall
+		if ${Busy.IsBusy}
+		{
+			return FALSE
+		}
+
+		UI:Update["Cargo", "Process ${This.CargoQueue.Peek.Action} @ ${This.CargoQueue.Peek.Bookmark} - ${This.CargoQueue.Peek.LocationType}", "g", TRUE]
 		
 		if !${Local[${This.CargoQueue.Peek.Container}](exists)}
 		{

@@ -319,11 +319,9 @@ objectdef obj_Miner inherits obj_State
 	
 	member:bool PrepareWarp()
 	{
-		Profiling:StartTrack["Miner: PrepareWarp"]
+		DroneControl:Recall
 		if ${Busy.IsBusy}
 		{
-			UI:Update["Miner", "Waiting for drones", "y"]
-			Profiling:EndTrack
 			return FALSE
 		}
 		if ${Config.OrcaMode}
@@ -335,7 +333,6 @@ objectdef obj_Miner inherits obj_State
 			Move:SaveSpot
 		}
 		Asteroids:ClearExclusions
-		Profiling:EndTrack
 		return TRUE
 	}
 	
