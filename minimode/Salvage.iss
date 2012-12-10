@@ -277,7 +277,6 @@ objectdef obj_LootCans inherits obj_State
 				{
 					continue
 				}
-				echo EVEWindow[Inventory].ChildWindowExists[${TargetIterator.Value}]:  ${EVEWindow[Inventory].ChildWindowExists[${TargetIterator.Value}]}
 				if ${EVEWindow[Inventory].ChildWindowExists[${TargetIterator.Value}]}
 				{
 					if !${EVEWindow[ByItemID, ${TargetIterator.Value}](exists)}
@@ -309,7 +308,7 @@ objectdef obj_LootCans inherits obj_State
 				if !${EVEWindow[Inventory].ChildWindowExists[${TargetIterator.Value}]}
 				{
 					UI:Update["Salvage", "Opening - ${TargetIterator.Value.Name}", "g"]
-					TargetIterator.Value:OpenCargo
+					TargetIterator.Value:Open
 					return FALSE
 				}		
 			}
