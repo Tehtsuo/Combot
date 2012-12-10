@@ -141,6 +141,7 @@ objectdef obj_Configuration_Miner
 	Setting(bool, OrcaMode, SetOrcaMode)	
 	Setting(bool, Tether, SetTether)	
 	Setting(bool, ApproachPriority, SetApproachPriority)
+	Setting(bool, MineAlone, SetMineAlone)
 	Setting(string, TetherName, SetTetherName)	
 	Setting(bool, UseBookmarks, SetUseBookmarks)	
 	Setting(string, BeltPrefix, SetBeltPrefix)	
@@ -241,6 +242,7 @@ objectdef obj_Miner inherits obj_State
 			Asteroids:AddQueryString[GroupID==GROUP_HARVESTABLECLOUD]
 		}
 	}
+
 	
 	
 	member:bool OpenCargoHold()
@@ -453,6 +455,10 @@ objectdef obj_Miner inherits obj_State
 		if !${Asteroids.TargetList.Used}
 		{
 			This:QueueState["MoveToBelt"]
+			if ${Config.MineAlone}
+			{
+				This:QueueState["VerifyMiningLocation"]
+			}
 			This:QueueState["RequestUpdate"]
 			This:QueueState["Updated"]
 			This:QueueState["CheckForWork"]
@@ -464,6 +470,18 @@ objectdef obj_Miner inherits obj_State
 			This:QueueState["CheckCargoHold"]
 		}
 		Profiling:EndTrack
+		return TRUE
+	}
+	
+	member:bool VerifyMiningLocation()
+	{
+		if ${Entity[CategoryID == CATEGORYID_SHIP && IsPC && !IsFleetMember && OwnerID != ${Me.CharID}]}
+		{
+			UI:Update["Miner", "This location is occupied, going to next", "g"]
+			This:InsertState["VerifyMiningLocation"]
+			This:InsertState["MoveToBelt"]
+			Drones:RecallAll
+		}
 		return TRUE
 	}
 	

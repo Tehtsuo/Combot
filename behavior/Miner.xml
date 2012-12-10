@@ -1465,9 +1465,33 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								</OnMouseExit>
 							</Checkbox>							
 
+							<Checkbox name='MineAlone'>
+								<X>1%</X>
+								<Y>20%</Y>
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Text>Mine Alone</Text>
+								<OnLoad>
+									if ${Script[ComBot].VariableScope.Miner.Config.MineAlone}
+									{
+										This:SetChecked
+
+									}
+								</OnLoad>
+								<OnLeftClick>
+									Script[ComBot].VariableScope.Miner.Config:SetMineAlone[${This.Checked}]
+								</OnLeftClick>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText["When checked, ComBot will verify you are alone when switching belts.  If another ship which is not in your fleet is in the belt, it will move to another belt."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Miner_Frame@ComBot_Miner]:SetText[""]
+								</OnMouseExit>
+							</Checkbox>							
+							
 							<Checkbox name='obj_MinerOrcaMode'>
 								<X>1%</X>
-								<Y>25%</Y>
+								<Y>30%</Y>
 								<Width>32%</Width> 
 								<Height>10%</Height> 
 								<Text>Orca Mode</Text>
