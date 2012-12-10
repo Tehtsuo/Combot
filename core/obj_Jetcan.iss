@@ -44,6 +44,8 @@ objectdef obj_Jetcan inherits obj_State
 	
 	member:bool Fill()
 	{
+		echo BEGINNING OF FILL
+		
 		variable index:entity Targets
 		variable iterator TargetIterator
 	
@@ -56,6 +58,8 @@ objectdef obj_Jetcan inherits obj_State
 		{
 			return FALSE
 		}
+		
+		echo AFTER INVENTORY CHECK
 		
 		if  ${MyShip.HasOreHold}
 		{
