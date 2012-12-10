@@ -89,6 +89,8 @@ objectdef obj_Security inherits obj_State
 	{
 		if ${This.IsIdle}
 		{
+			This:QueueState["WaitForLogin"]
+			This:QueueState["Idle", 5000]
 			This:QueueState["CheckSafe", 500]
 		}
 	}
@@ -97,7 +99,16 @@ objectdef obj_Security inherits obj_State
 	{
 		This:Clear
 	}
-
+	
+	member:bool WaitForLogin()
+	{
+		if ${Me(exists)} && ${MyShip(exists)} && (${Me.InSpace} || ${Me.InStation})
+		{
+			EVE:RefreshStandings
+			return TRUE
+		}
+		return FALSE
+	}
 	
 	member:bool CheckSafe(bool ClearFlee=FALSE)
 	{

@@ -119,7 +119,6 @@ objectdef obj_Configuration_DroneData
 	{
 		variable iterator DroneTypeIDs
 		BaseRef.FindSet[${TypeName}]:GetSettingIterator[DroneTypeIDs]
-		echo ${TypeName}
 		if ${DroneTypeIDs:First(exists)}
 		{
 			do
@@ -178,7 +177,6 @@ objectdef obj_Drones inherits obj_State
 		variable iterator DroneIterator
 		variable int Selected = 0
 		
-		echo ${TypeQuery} - ${Count}
 		
 		MyShip:GetDrones[DroneBayDrones]
 		DroneBayDrones:RemoveByQuery[${LavishScript.CreateQuery[${TypeQuery}]}, FALSE]
@@ -192,7 +190,6 @@ objectdef obj_Drones inherits obj_State
 				{
 					break
 				}
-				echo ${DroneIterator.Value.ID}
 				ActiveTypes:Add[${DroneIterator.Value.TypeID}]
 				DronesToLaunch:Insert[${DroneIterator.Value.ID}]
 				Selected:Inc
