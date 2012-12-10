@@ -90,7 +90,7 @@ objectdef obj_Cargo inherits obj_State
 				Me.Ship:GetCargo[CargoList]
 				break
 			case ShipCorpHangar
-				Me.Ship:GetCorpHangarsCargo[CargoList]
+				Me.Ship:GetFleetHangarCargo[CargoList]
 				break
 			case OreHold
 				Me.Ship:GetOreHoldCargo[CargoList]
