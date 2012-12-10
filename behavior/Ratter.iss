@@ -198,7 +198,6 @@ objectdef obj_Ratter inherits obj_State
 			}
 			else
 			{
-				This:QueueState["OpenCargoHold"]
 				This:QueueState["CheckCargoHold"]
 			}
 		}
@@ -210,16 +209,6 @@ objectdef obj_Ratter inherits obj_State
 		This:Clear
 	}
 	
-	member:bool OpenCargoHold()
-	{
-		if !${EVEWindow[Inventory](exists)}
-		{
-			UI:Update["Ratter", "Opening inventory", "g"]
-			EVE:Execute[OpenInventory]
-			return FALSE
-		}
-		return TRUE
-	}
 	
 	member:bool CheckCargoHold()
 	{
@@ -227,7 +216,12 @@ objectdef obj_Ratter inherits obj_State
 		variable iterator ItemIterator
 		variable int AmmoCount=0
 		variable string Reload=""
-
+		
+		if !${Client.Inventory}
+		{
+			return FALSE
+		}
+		
 		MyShip:GetCargo[Items]
 		Items:GetIterator[ItemIterator]
 
@@ -246,13 +240,12 @@ objectdef obj_Ratter inherits obj_State
 		}
 		
 	
-		if 	${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity} > ${Config.Threshold} * .01 ||\
+		if 	${EVEWindow[Inventory].ChildUsedCapacity[ShipCargo]} / ${EVEWindow[Inventory].ChildCapacity[ShipCargo]} > ${Config.Threshold} * .01 ||\
 			${AmmoCount} < ${Config.AmmoSupply}
 		{
 			UI:Update["Ratter", "Unload/Reload trip required", "g"]
 			Cargo:At[${Config.Dropoff},${Config.DropoffType},${Config.DropoffSubType}, ${Config.DropoffContainer}]:Unload${Reload}
 			This:QueueState["Traveling"]
-			This:QueueState["OpenCargoHold"]
 			This:QueueState["CheckCargoHold"]
 			return TRUE
 		}
@@ -399,7 +392,6 @@ objectdef obj_Ratter inherits obj_State
 					Move:Bookmark[${Config.Dropoff}, TRUE, 0, TRUE]
 					This:Clear
 					This:QueueState["Traveling"]
-					This:QueueState["OpenCargoHold"]
 					This:QueueState["CheckCargoHold"]
 					return TRUE
 				}
@@ -500,11 +492,16 @@ objectdef obj_Ratter inherits obj_State
 			}
 			else
 			{
-				This:QueueState["OpenCargoHold"]
 				This:QueueState["CheckCargoHold"]
 			}
 			return TRUE
 		}
+
+		if !${Client.Inventory}
+		{
+			return FALSE
+		}
+			
 		if ${Me.ToEntity.Mode} == 3
 		{
 			FirstWreck:Set[0]
@@ -556,7 +553,6 @@ objectdef obj_Ratter inherits obj_State
 			}
 			else
 			{
-				This:QueueState["OpenCargoHold"]
 				This:QueueState["CheckCargoHold"]
 				return TRUE
 			}
@@ -582,11 +578,10 @@ objectdef obj_Ratter inherits obj_State
 				while ${ItemIterator:Next(exists)}
 		}
 		
-		if 	${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity} > ${Config.Threshold} * .01 ||\
+		if 	${EVEWindow[Inventory].ChildUsedCapacity[ShipCargo]} / ${EVEWindow[Inventory].ChildCapacity[ShipCargo]} > ${Config.Threshold} * .01 ||\
 			${AmmoCount} < ${Config.AmmoSupply}
 		{
 			Move:SaveSpot
-			This:QueueState["OpenCargoHold"]
 			This:QueueState["CheckCargoHold"]
 			return TRUE
 		}
@@ -717,13 +712,7 @@ objectdef obj_RatterUI inherits obj_State
 
 	member:bool OpenCargoHold()
 	{
-		if !${EVEWindow[Inventory](exists)}
-		{
-			UI:Update["Ratter", "Opening inventory", "g"]
-			EVE:Execute[OpenInventory]
-			return FALSE
-		}
-		return TRUE
+		return ${Client.Inventory}
 	}
 	
 	member:bool UpdateBookmarkLists()
