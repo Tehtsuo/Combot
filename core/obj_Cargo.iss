@@ -444,7 +444,6 @@ objectdef obj_Cargo inherits obj_State
 								{
 									if ${Math.Calc[(${EVEWindow[Inventory].ChildCapacity[${ID}]} - ${EVEWindow[Inventory].ChildUsedCapacity[${ID}]} - ${Volume}) / ${Cargo.Value.Volume}].Int}
 									{
-										echo Cargo.Value:MoveTo[MyShip, FleetHangar, ${Math.Calc[(${EVEWindow[Inventory].ChildCapacity[${ID}]} - ${EVEWindow[Inventory].ChildUsedCapacity[${ID}]} - ${Volume}) / ${Cargo.Value.Volume}].Int}]
 										Cargo.Value:MoveTo[MyShip, FleetHangar, ${Math.Calc[(${EVEWindow[Inventory].ChildCapacity[${ID}]} - ${EVEWindow[Inventory].ChildUsedCapacity[${ID}]} - ${Volume}) / ${Cargo.Value.Volume}].Int}]
 										break
 									}
