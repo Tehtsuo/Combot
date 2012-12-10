@@ -46,16 +46,14 @@ objectdef obj_Jetcan inherits obj_State
 	{
 		variable index:entity Targets
 		variable iterator TargetIterator
-		variable int64 Can
 	
 		if !${Client.InSpace}
 		{
 			return FALSE
 		}
 
-		if !${EVEWindow[Inventory](exists)}
+		if !${Client.Inventory}
 		{
-			EVE:Execute[OpenInventory]
 			return FALSE
 		}
 		
@@ -131,41 +129,47 @@ objectdef obj_Jetcan inherits obj_State
 			while ${TargetIterator:Next(exists)}
 		}
 		
-		if ${Entity[GroupID==GROUP_CARGOCONTAINER && HaveLootRights && Distance<LOOT_RANGE && !IsAbandoned](exists)}
-		{
-			Can:Set[${Entity[GroupID==GROUP_CARGOCONTAINER && HaveLootRights && Distance<LOOT_RANGE && !IsAbandoned]}]
+		variable index:entity Targets
+		variable iterator TargetIterator
 
-			if !${EVEWindow[Inventory].ChildWindowExists[${Can}]}
+		EVE:QueryEntities[Targets, "GroupID==GROUP_CARGOCONTAINER && HaveLootRights && Distance<LOOT_RANGE && !IsAbandoned"]
+		Targets:GetIterator[TargetIterator]
+		
+		if ${TargetIterator:First(exists)}
+			do
 			{
-				UI:Update["obj_Jetcan", "Opening - ${Entity[${Can}].Name}", "g"]
-				Entity[${Can}]:Open
-				return FALSE
-			}
-			
-			if ${EVEWindow[Inventory].ChildUsedCapacity[${Can}]} == -1
-			{
-				EVEWindow[Inventory]:MakeChildActive[${Can}]
-				return FALSE
-			}
-			
-			if ${EVEWindow[Inventory].ChildCapacity[${Can}]} - ${EVEWindow[Inventory].ChildUsedCapacity[${Can}]} > 1000
-			{
-				if ${MyShip.HasOreHold}
+				if !${EVEWindow[Inventory].ChildWindowExists[${Can}]}
 				{
-					Cargo:PopulateCargoList[OreHold]
+					UI:Update["obj_Jetcan", "Opening - ${Entity[${Can}].Name}", "g"]
+					Entity[${Can}]:Open
+					return FALSE
 				}
-				else
+				if 	${EVEWindow[Inventory].ChildUsedCapacity[${TargetIterator.Value}]} == -1 || \
+					${EVEWindow[Inventory].ChildCapacity[${TargetIterator.Value}]} == 0
 				{
-					Cargo:PopulateCargoList[Ship]
-					Cargo:Filter["CategoryID == CATEGORYID_ORE || GroupID == GROUP_HARVESTABLECLOUD", FALSE]
+					EVEWindow[Inventory]:MakeChildActive[${TargetIterator.Value}]
+					return FALSE
 				}
-				Cargo:MoveCargoList[Jetcan, "", ${Can}]
-				This:QueueState["Stack", 1000, ${Can}]
-				This:QueueState["Fill", 2000]
-				return TRUE
+				
+				if ${EVEWindow[Inventory].ChildCapacity[${TargetIterator.Value}]} - ${EVEWindow[Inventory].ChildUsedCapacity[${TargetIterator.Value}]} > 1000
+				{
+					if ${MyShip.HasOreHold}
+					{
+						Cargo:PopulateCargoList[OreHold]
+					}
+					else
+					{
+						Cargo:PopulateCargoList[Ship]
+						Cargo:Filter["CategoryID == CATEGORYID_ORE || GroupID == GROUP_HARVESTABLECLOUD", FALSE]
+					}
+					Cargo:MoveCargoList[Jetcan, "", ${TargetIterator.Value}]
+					This:QueueState["Stack", 1000, ${TargetIterator.Value}]
+					This:QueueState["Fill", 2000]
+					return TRUE
+				}
 			}
-		}
-
+			while ${TargetIterator:Next(exists)}
+		
 		if  ${MyShip.HasOreHold}
 		{
 			if ${EVEWindow[Inventory].ChildCapacity[ShipOreHold]} == 0
