@@ -135,10 +135,10 @@ objectdef obj_Jetcan inherits obj_State
 		if ${TargetIterator:First(exists)}
 			do
 			{
-				if !${EVEWindow[Inventory].ChildWindowExists[${Can}]}
+				if !${EVEWindow[Inventory].ChildWindowExists[${TargetIterator.Value}]}
 				{
-					UI:Update["obj_Jetcan", "Opening - ${Entity[${Can}].Name}", "g"]
-					Entity[${Can}]:Open
+					UI:Update["obj_Jetcan", "Opening - ${Entity[${TargetIterator.Value}].Name}", "g"]
+					Entity[${TargetIterator.Value}]:Open
 					return FALSE
 				}
 				if 	${EVEWindow[Inventory].ChildUsedCapacity[${TargetIterator.Value}]} == -1 || \
