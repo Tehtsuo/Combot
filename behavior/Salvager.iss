@@ -84,6 +84,8 @@ objectdef obj_Salvager inherits obj_State
 	method Initialize()
 	{
 		This[parent]:Initialize
+		LavishScript:RegisterEvent[ComBot_RemoveBookmark]
+		Event[ComBot_RemoveBookmark]:AttachAtom[This:RemoveBookmarkEvent]
 		NPCs:AddAllNPCs
 		DynamicAddBehavior("Salvager", "Dedicated Salvager")
 	}
@@ -103,6 +105,32 @@ objectdef obj_Salvager inherits obj_State
 		This:DeactivateStateQueueDisplay
 		This:Clear
 		This:QueueState["DropCloak", 50, FALSE]
+	}
+	
+	method RemoveBookmarkEvent(int64 ID)
+	{
+		This:QueueState["RemoveBookmarkEventState", 10000, ${ID}]
+	}
+	
+	member:bool RemoveBookmarkEventState(int64 ID)
+	{
+		variable index:bookmark Bookmarks
+		variable iterator Bookmark
+		EVE:GetBookmarks[Bookmarks]
+		Bookmarks:GetIterator[Bookmark]
+		if ${Bookmark:First(exists)}
+			do
+			{
+				if  ${Bookmark.Value.ID} == ${ID} &&\
+					${Bookmark.Value.CreatorID} == ${Me.CharID}
+				{
+					UI:Update["Salvager", "Removing bookmark from relay - ${Bookmark.Value.Label}", "o", TRUE]
+					Bookmark.Value:Remove
+					return TRUE
+				}
+			}
+			while ${Bookmark:Next(exists)}
+		return TRUE
 	}
 
 	member:bool CheckBookmarks()
@@ -165,6 +193,7 @@ objectdef obj_Salvager inherits obj_State
 					if ${BookmarkIterator.Value.Created.AsInt64} + 72000000000 < ${EVETime.AsInt64} && !${UsedBookmarks.Contains[${BookmarkIterator.Value.ID}]}
 					{
 						UI:Update["Salvager", "Removing expired bookmark - ${BookmarkIterator.Value.Label}", "o", TRUE]
+						relay "all other" -event ComBot_RemoveBookmark ${BookmarkIterator.Value.ID}						
 						BookmarkIterator.Value:Remove
 						UsedBookmarks:Add[${BookmarkIterator.Value.ID}]
 						This:InsertState["CheckBookmarks"]
@@ -203,6 +232,7 @@ objectdef obj_Salvager inherits obj_State
 					if ${BookmarkIterator.Value.Created.AsInt64} + 72000000000 < ${EVETime.AsInt64} && !${UsedBookmarks.Contains[${BookmarkIterator.Value.ID}]}
 					{
 						UI:Update["Salvager", "Removing expired bookmark - ${BookmarkIterator.Value.Label}", "o", TRUE]
+						relay "all other" -event ComBot_RemoveBookmark ${BookmarkIterator.Value.ID}						
 						BookmarkIterator.Value:Remove
 						UsedBookmarks:Add[${BookmarkIterator.Value.ID}]
 						This:InsertState["CheckBookmarks"]
@@ -547,6 +577,7 @@ objectdef obj_Salvager inherits obj_State
 						{
 							UI:Update["obj_Salvage", "Finished Salvaging ${BookmarkIterator.Value.Label} - Deleting", "g"]
 							This:InsertState["DeleteBookmark", 1000, "${BookmarkCreator},${BookmarkIterator.Value.ID}"]
+							relay "all other" -event ComBot_RemoveBookmark ${BookmarkIterator.Value.ID}						
 							BookmarkIterator.Value:Remove
 							return TRUE
 						}

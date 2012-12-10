@@ -329,7 +329,7 @@ objectdef obj_Ratter inherits obj_State
 			if ${BookmarkIterator.Value.Label.Left[${Config.SalvagePrefix.Length}].Upper.Equal[${Config.SalvagePrefix}]} && \
 				${BookmarkIterator.Value.CreatorID} == ${Me.CharID}
 			{
-				if ${BookmarkIterator.Value.Created.AsInt64} + 18000000000 < ${EVETime.AsInt64}
+				if ${BookmarkIterator.Value.Created.AsInt64} + 72000000000 < ${EVETime.AsInt64}
 				{
 					UI:Update["Ratter", "Removing old bookmark - ${BookmarkIterator.Value.Label}", "o", TRUE]
 					BookmarkIterator.Value:Remove
