@@ -154,5 +154,14 @@ objectdef obj_Client
 		This.NextPulse:Set[${Math.Calc[${LavishScript.RunningTime} + ${delay}]}]
 	}
 	
-
+	member:bool Inventory()
+	{
+		if !${EVEWindow[Inventory](exists)}
+		{
+			UI:Update["Client", "Opening inventory", "g"]
+			EVE:Execute[OpenInventory]
+			return FALSE
+		}
+		return TRUE
+	}
 }
