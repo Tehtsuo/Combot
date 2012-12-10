@@ -162,6 +162,34 @@ objectdef obj_Client
 			EVE:Execute[OpenInventory]
 			return FALSE
 		}
+		if ${EVEWindow[Inventory].ChildWindowExists[ShipCargo]}
+		{
+			if 	${EVEWindow[Inventory].ChildUsedCapacity[ShipCargo]} == -1 || \
+				${EVEWindow[Inventory].ChildCapacity[ShipCargo]} <= 0
+			{
+				EVEWindow[Inventory]:MakeChildActive[ShipCargo]
+				return FALSE
+			}
+		}
+		if ${EVEWindow[Inventory].ChildWindowExists[ShipOreHold]}
+		{
+			if 	${EVEWindow[Inventory].ChildUsedCapacity[ShipOreHold]} == -1 || \
+				${EVEWindow[Inventory].ChildCapacity[ShipOreHold]} <= 0
+			{
+				EVEWindow[Inventory]:MakeChildActive[ShipOreHold]
+				return FALSE
+			}
+		}
+		if ${EVEWindow[Inventory].ChildWindowExists[ShipFleetHangar]}
+		{
+			if 	${EVEWindow[Inventory].ChildUsedCapacity[ShipFleetHangar]} == -1 || \
+				${EVEWindow[Inventory].ChildCapacity[ShipFleetHangar]} <= 0
+			{
+				EVEWindow[Inventory]:MakeChildActive[ShipFleetHangar]
+				return FALSE
+			}
+		}
+		
 		return TRUE
 	}
 }
