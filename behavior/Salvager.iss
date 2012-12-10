@@ -94,7 +94,6 @@ objectdef obj_Salvager inherits obj_State
 		This:AssignStateQueueDisplay[DebugStateList@Debug@ComBotTab@ComBot]
 		if ${This.IsIdle}
 		{
-			This:QueueState["OpenCargoHold", 500]
 			This:QueueState["CheckCargoHold", 500]
 		}
 	}
@@ -250,7 +249,6 @@ objectdef obj_Salvager inherits obj_State
 			This:QueueState["SalvageWrecks", 500, "${Me.CharID}"]
 			This:QueueState["ClearAlreadySalvaged", 100]
 			This:QueueState["RefreshBookmarks", 3000]
-			This:QueueState["OpenCargoHold", 500]
 			This:QueueState["CheckCargoHold", 500]
 			return TRUE
 		}
@@ -261,7 +259,6 @@ objectdef obj_Salvager inherits obj_State
 			This:QueueState["Traveling"]
 			This:QueueState["Log", 10, "Idling for 1 minute"]
 			This:QueueState["Idle", 60000]
-			This:QueueState["OpenCargoHold", 500]
 			This:QueueState["CheckCargoHold", 500]
 			return TRUE
 		}
@@ -341,7 +338,6 @@ objectdef obj_Salvager inherits obj_State
 				This:QueueState["SalvageWrecks", 500, "${Me.CharID}"]
 				This:QueueState["ClearAlreadySalvaged", 100]
 				This:QueueState["RefreshBookmarks", 3000]
-				This:QueueState["OpenCargoHold", 500]
 				This:QueueState["CheckCargoHold", 500]
 				return TRUE
 			}
@@ -362,7 +358,6 @@ objectdef obj_Salvager inherits obj_State
 				This:QueueState["SalvageWrecks", 500, "${Me.CharID}"]
 				This:QueueState["ClearAlreadySalvaged", 100]
 				This:QueueState["RefreshBookmarks", 3000]
-				This:QueueState["OpenCargoHold", 500]
 				This:QueueState["CheckCargoHold", 500]
 				return TRUE
 			}
@@ -380,16 +375,14 @@ objectdef obj_Salvager inherits obj_State
 			return TRUE
 		}
 
-		if !${EVEWindow[Inventory](exists)}
+		if !${Client.Inventory}
 		{
-			UI:Update["obj_Salvage", "Opening inventory", "g"]
-			EVE:Execute[OpenInventory]
 			return FALSE
 		}
 
-		if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) > ${FullHold}
+		if (${EVEWindow[Inventory].ChildUsedCapacity[ShipCargo]} / ${EVEWindow[Inventory].ChildCapacity[ShipCargo]}) > ${FullHold}
 		{
-			UI:Update["obj_Salvage", "Unload trip required", "g"]
+			UI:Update["Salvage", "Unload trip required", "g"]
 			if ${Dedicated}
 			{
 				This:Clear
@@ -501,18 +494,17 @@ objectdef obj_Salvager inherits obj_State
 			}
 			else
 			{
-				UI:Update["obj_Salvage", "Gate found, but no more bookmarks from player.  Ignoring", "g"]
+				UI:Update["Salvager", "Gate found, but no more bookmarks from player.  Ignoring", "g"]
 				This:Clear
 			}
 		}
-		This:QueueState["OpenCargoHold", 500]
 		This:QueueState["CheckCargoHold", 500]
 		return TRUE
 	}
 	
 	member:bool JumpToCelestial()
 	{
-		UI:Update["obj_Salvage", "Warping to ${Entity[GroupID = GROUP_SUN].Name}", "g"]
+		UI:Update["Salvager", "Warping to ${Entity[GroupID = GROUP_SUN].Name}", "g"]
 		Move:Warp[${Entity["GroupID = GROUP_SUN"].ID}]
 		return TRUE
 	}
@@ -553,24 +545,14 @@ objectdef obj_Salvager inherits obj_State
 		return TRUE
 	}
 	
-	member:bool OpenCargoHold()
-	{
-		if !${EVEWindow[Inventory](exists)}
-		{
-			UI:Update["obj_Salvage", "Opening inventory", "g"]
-			EVE:Execute[OpenInventory]
-			return FALSE
-		}
-		if !${EVEWindow[byCaption, "active ship"](exists)}
-		{
-			EVEWindow[byName,"Inventory"]:MakeChildActive[ShipCargo]
-		}
-		return TRUE
-	}
 	
 	member:bool CheckCargoHold()
 	{
-		if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) > 0.75
+		if !${Client.Inventory}
+		{
+			return FALSE
+		}
+		if (${EVEWindow[Inventory].ChildUsedCapacity[ShipCargo]} / ${EVEWindow[Inventory].ChildCapacity[ShipCargo]}) > 0.75
 		{
 			UI:Update["obj_Salvage", "Unload trip required", "g"]
 			This:QueueState["Offload"]
