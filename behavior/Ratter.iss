@@ -215,7 +215,7 @@ objectdef obj_Ratter inherits obj_State
 		if !${EVEWindow[Inventory](exists)}
 		{
 			UI:Update["Ratter", "Opening inventory", "g"]
-			MyShip:Open
+			EVE:Execute[OpenInventory]
 			return FALSE
 		}
 		return TRUE
