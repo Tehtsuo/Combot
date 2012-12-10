@@ -63,12 +63,6 @@ objectdef obj_Jetcan inherits obj_State
 		
 		if  ${MyShip.HasOreHold}
 		{
-			if 	${EVEWindow[Inventory].ChildUsedCapacity[ShipOreHold]} == -1 || \
-				${EVEWindow[Inventory].ChildCapacity[ShipOreHold]} == 0
-			{
-				EVEWindow[Inventory]:MakeChildActive[ShipOreHold]
-				return FALSE
-			}
 			if 	${EVEWindow[Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[Inventory].ChildCapacity[ShipOreHold]} < ${Miner.Config.Threshold} * .01 || \
 				${EVEWindow[Inventory].ChildUsedCapacity[ShipOreHold]} == 0
 			{
@@ -77,12 +71,6 @@ objectdef obj_Jetcan inherits obj_State
 		}
 		else
 		{
-			if 	${EVEWindow[Inventory].ChildUsedCapacity[ShipCargo]} == -1 || \
-				${EVEWindow[Inventory].ChildCapacity[ShipCargo]} == 0
-			{
-				EVEWindow[Inventory]:MakeChildActive[ShipCargo]
-				return FALSE
-			}
 			if 	${EVEWindow[Inventory].ChildUsedCapacity[ShipCargo]} / ${EVEWindow[Inventory].ChildCapacity[ShipCargo]} < ${Miner.Config.Threshold} * .01 || \
 				${EVEWindow[Inventory].ChildUsedCapacity[ShipCargo]}
 			{
@@ -150,7 +138,7 @@ objectdef obj_Jetcan inherits obj_State
 					return FALSE
 				}
 				if 	${EVEWindow[Inventory].ChildUsedCapacity[${TargetIterator.Value}]} == -1 || \
-					${EVEWindow[Inventory].ChildCapacity[${TargetIterator.Value}]} == 0
+					${EVEWindow[Inventory].ChildCapacity[${TargetIterator.Value}]} <= 0
 				{
 					EVEWindow[Inventory]:MakeChildActive[${TargetIterator.Value}]
 					return FALSE
@@ -179,11 +167,6 @@ objectdef obj_Jetcan inherits obj_State
 		
 		if  ${MyShip.HasOreHold}
 		{
-			if ${EVEWindow[Inventory].ChildCapacity[ShipOreHold]} == 0
-			{
-				EVEWindow[Inventory]:MakeChildActive[ShipOreHold]
-				return FALSE
-			}
 			if ${EVEWindow[Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[Inventory].ChildCapacity[ShipOreHold]} >= ${Config.Miner.Threshold} * .01
 			{
 				Cargo:PopulateCargoList[OreHold]
@@ -203,12 +186,6 @@ objectdef obj_Jetcan inherits obj_State
 		}
 		else
 		{
-			if 	${EVEWindow[Inventory].ChildUsedCapacity[ShipCargo]} == -1 || \
-				${EVEWindow[Inventory].ChildCapacity[ShipCargo]} == 0
-			{
-				EVEWindow[Inventory]:MakeChildActive[ShipCargo]
-				return FALSE
-			}
 			if ${EVEWindow[Inventory].ChildUsedCapacity[ShipCargo]} / ${EVEWindow[Inventory].ChildCapacity[ShipCargo]} >= ${Config.Miner.Threshold} * .01
 			{
 				Cargo:PopulateCargoList[Ship]
@@ -272,9 +249,8 @@ objectdef obj_Jetcan inherits obj_State
 		{
 			return TRUE
 		}
-		if !${EVEWindow[Inventory](exists)}
+		if !${Client.Inventory}
 		{
-			EVE:Execute[OpenInventory]
 			return FALSE
 		}
 		EVEWindow[ByItemID, ${ID}]:StackAll
@@ -288,9 +264,8 @@ objectdef obj_Jetcan inherits obj_State
 		{
 			return TRUE
 		}
-		if !${EVEWindow[Inventory](exists)}
+		if !${Client.Inventory}
 		{
-			EVE:Execute[OpenInventory]
 			return FALSE
 		}
 		if !${EVEWindow[Inventory].ChildWindowExists[${ID}]}
@@ -319,9 +294,8 @@ objectdef obj_Jetcan inherits obj_State
 	
 	member:bool NewCan()
 	{
-		if !${EVEWindow[Inventory](exists)}
+		if !${Client.Inventory}
 		{
-			EVE:Execute[OpenInventory]
 			return FALSE
 		}
 		if ${MyShip.HasOreHold}
@@ -346,9 +320,8 @@ objectdef obj_Jetcan inherits obj_State
 			return TRUE
 		}
 
-		if !${EVEWindow[Inventory](exists)}
+		if !${Client.Inventory}
 		{
-			EVE:Execute[OpenInventory]
 			return FALSE
 		}
 		if !${EVEWindow[Inventory].ChildWindowExists[${ID}]}
@@ -388,9 +361,8 @@ objectdef obj_Jetcan inherits obj_State
 	member:bool FillCan()
 	{
 		variable int64 Can
-		if !${EVEWindow[Inventory](exists)}
+		if !${Client.Inventory}
 		{
-			EVE:Execute[OpenInventory]
 			return FALSE
 		}
 		
