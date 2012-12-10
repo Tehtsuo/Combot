@@ -622,15 +622,11 @@ objectdef obj_Cargo inherits obj_State
 	{
 		variable int64 Container
 
-	
-		if !${EVEWindow[Inventory](exists)}
+		if !${Client.Inventory}
 		{
-			UI:Update["obj_Cargo", "Making sure inventory is open", "g"]
-			MyShip:Open
 			return FALSE
 		}
 
-		
 		if ${Me.InSpace} && ${This.CargoQueue.Peek.Action.NotEqual[Move]}
 		{
 			if ${Entity[Name = "${This.CargoQueue.Peek.Container}"](exists)}
@@ -704,6 +700,11 @@ objectdef obj_Cargo inherits obj_State
 	{
 		variable int64 Container
 
+		if !${Client.Inventory}
+		{
+			return FALSE
+		}
+		
 		if ${Me.InSpace}
 		{
 			if ${Entity[Name = "${This.CargoQueue.Peek.Container}"](exists)}
@@ -758,6 +759,11 @@ objectdef obj_Cargo inherits obj_State
 	{
 		variable int64 Container
 
+		if !${Client.Inventory}
+		{
+			return FALSE
+		}
+		
 		if ${Me.InSpace}
 		{
 			if ${Entity[Name = "${This.CargoQueue.Peek.Container}"](exists)}
