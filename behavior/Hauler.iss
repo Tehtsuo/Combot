@@ -140,37 +140,19 @@ objectdef obj_Hauler inherits obj_State
 		{
 			return FALSE
 		}
-		if ${EVEWindow[Inventory].ChildWindowExists[ShipOreHold]} && !${OreHold}
+		if ${EVEWindow[Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[Inventory].ChildCapacity[ShipOreHold]} < ${Config.Threshold} * .01
 		{
-			if 	${EVEWindow[Inventory].ChildUsedCapacity[ShipOreHold]} == -1 || \
-				${EVEWindow[Inventory].ChildCapacity[ShipOreHold]} <= 0
-			{
-				EVEWindow[Inventory]:MakeChildActive[ShipOreHold]
-				return FALSE
-			}
-			if ${EVEWindow[Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[Inventory].ChildCapacity[ShipOreHold]} < ${Config.Threshold} * .01
-			{
-				Cargo:PopulateCargoList[Ship]
-				Cargo:MoveCargoList[OreHold]
-				This:InsertState["CheckCargoHold", 500, "TRUE"]
-				return TRUE
-			}
+			Cargo:PopulateCargoList[Ship]
+			Cargo:MoveCargoList[OreHold]
+			This:InsertState["CheckCargoHold", 500, "TRUE"]
+			return TRUE
 		}
-		if ${EVEWindow[Inventory].ChildWindowExists[ShipFleetHangar]} && !${CorpHangar}
+		if ${EVEWindow[Inventory].ChildUsedCapacity[ShipFleetHangar]} / ${EVEWindow[Inventory].ChildCapacity[ShipFleetHangar]} < ${Config.Threshold} * .01
 		{
-			if 	${EVEWindow[Inventory].ChildUsedCapacity[ShipFleetHangar]} == -1 || \
-				${EVEWindow[Inventory].ChildCapacity[ShipFleetHangar]} <= 0
-			{
-				EVEWindow[Inventory]:MakeChildActive[ShipFleetHangar]
-				return FALSE
-			}
-			if ${EVEWindow[Inventory].ChildUsedCapacity[ShipFleetHangar]} / ${EVEWindow[Inventory].ChildCapacity[ShipFleetHangar]} < ${Config.Threshold} * .01
-			{
-				Cargo:PopulateCargoList[Ship]
-				Cargo:MoveCargoList[Container]
-				This:InsertState["CheckCargoHold", 500, "TRUE, TRUE"]
-				return TRUE
-			}
+			Cargo:PopulateCargoList[Ship]
+			Cargo:MoveCargoList[Container]
+			This:InsertState["CheckCargoHold", 500, "TRUE, TRUE"]
+			return TRUE
 		}
 
 		if ${Busy.IsBusy}
@@ -179,14 +161,6 @@ objectdef obj_Hauler inherits obj_State
 			return FALSE
 		}
 
-		
-		if 	${EVEWindow[Inventory].ChildUsedCapacity[ShipCargo]} == -1 || \
-			${EVEWindow[Inventory].ChildCapacity[ShipCargo]} <= 0
-		{
-			EVEWindow[Inventory]:MakeChildActive[ShipCargo]
-			return FALSE
-		}
-		
 		if ${EVEWindow[Inventory].ChildUsedCapacity[ShipCargo]} / ${EVEWindow[Inventory].ChildCapacity[ShipCargo]} >= ${Config.Threshold} * .01
 		{
 			UI:Update["Hauler", "Unload trip required", "g"]
@@ -216,12 +190,7 @@ objectdef obj_Hauler inherits obj_State
 			{
 				return FALSE
 			}
-			if 	${EVEWindow[Inventory].ChildCapacity[ShipCargo]} == 0
-			{
-				EVEWindow[Inventory]:MakeChildActive[ShipCargo]
-				return FALSE
-			}
-			if ${OrcaCargo} > ${Config.Threshold} * .01 * ${MyShip.CargoCapacity}
+			if ${OrcaCargo} > ${Config.Threshold} * .01 * ${EVEWindow[Inventory].ChildCapacity[ShipCargo]}
 			{
 				return TRUE
 			}
@@ -408,12 +377,6 @@ objectdef obj_Hauler inherits obj_State
 		
 		variable iterator CanIter
 		
-		if 	${EVEWindow[Inventory].ChildUsedCapacity[ShipCargo]} == -1 || \
-			${EVEWindow[Inventory].ChildCapacity[ShipCargo]} == 0
-		{
-			EVEWindow[Inventory]:MakeChildActive[ShipCargo]
-			return FALSE
-		}
 		
 		if ${EVEWindow[Inventory].ChildUsedCapacity[ShipCargo]} > (${Config.Threshold} * .01 * ${EVEWindow[Inventory].ChildCapacity[ShipCargo]}
 		{
