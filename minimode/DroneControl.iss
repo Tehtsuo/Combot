@@ -64,7 +64,7 @@ objectdef obj_DroneControl inherits obj_State
 	variable bool CurAggressive
 	variable bool CurIPC
 	
-	variable RecallActive=FALSE
+	variable bool RecallActive=FALSE
 	
 	method Initialize()
 	{
