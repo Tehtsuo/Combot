@@ -143,7 +143,7 @@ objectdef obj_Hauler inherits obj_State
 		if ${EVEWindow[Inventory].ChildWindowExists[ShipOreHold]} && !${OreHold}
 		{
 			if 	${EVEWindow[Inventory].ChildUsedCapacity[ShipOreHold]} == -1 || \
-				${EVEWindow[Inventory].ChildCapacity[ShipOreHold]} == 0
+				${EVEWindow[Inventory].ChildCapacity[ShipOreHold]} <= 0
 			{
 				EVEWindow[Inventory]:MakeChildActive[ShipOreHold]
 				return FALSE
@@ -159,7 +159,7 @@ objectdef obj_Hauler inherits obj_State
 		if ${EVEWindow[Inventory].ChildWindowExists[ShipFleetHangar]} && !${CorpHangar}
 		{
 			if 	${EVEWindow[Inventory].ChildUsedCapacity[ShipFleetHangar]} == -1 || \
-				${EVEWindow[Inventory].ChildCapacity[ShipFleetHangar]} == 0
+				${EVEWindow[Inventory].ChildCapacity[ShipFleetHangar]} <= 0
 			{
 				EVEWindow[Inventory]:MakeChildActive[ShipFleetHangar]
 				return FALSE
@@ -181,7 +181,7 @@ objectdef obj_Hauler inherits obj_State
 
 		
 		if 	${EVEWindow[Inventory].ChildUsedCapacity[ShipCargo]} == -1 || \
-			${EVEWindow[Inventory].ChildCapacity[ShipCargo]} == 0
+			${EVEWindow[Inventory].ChildCapacity[ShipCargo]} <= 0
 		{
 			EVEWindow[Inventory]:MakeChildActive[ShipCargo]
 			return FALSE
@@ -192,7 +192,6 @@ objectdef obj_Hauler inherits obj_State
 			UI:Update["Hauler", "Unload trip required", "g"]
 			Cargo:At[${Config.Dropoff},${Config.DropoffType},${Config.DropoffSubType}, ${Config.DropoffContainer}]:Unload:Unload["",0,ShipCorpHangar]:Unload["",0,OreHold]
 			This:QueueState["Traveling"]
-			This:QueueState["OpenCargoHold"]
 			This:QueueState["CheckCargoHold"]
 			return TRUE
 		}
@@ -260,7 +259,6 @@ objectdef obj_Hauler inherits obj_State
 		{
 			Cargo:At[${Config.Pickup},${Config.PickupType},${Config.PickupSubType},${Config.PickupContainer}]:Load
 			This:QueueState["Traveling"]
-			This:QueueState["OpenCargoHold"]
 			This:QueueState["CheckCargoHold"]
 		}
 		return TRUE
@@ -291,7 +289,6 @@ objectdef obj_Hauler inherits obj_State
 			This:QueueState["CheckTargetList", 50]
 			This:QueueState["LootCans", 1000, ${FleetMembers.Get[1].ToEntity.ID}]
 			This:QueueState["DepopulateTargetList", 2000]
-			This:QueueState["OpenCargoHold"]
 			This:QueueState["CheckCargoHold"]
 			FleetMembers:Remove[1]
 			FleetMembers:Collapse
@@ -327,7 +324,6 @@ objectdef obj_Hauler inherits obj_State
 			This:QueueState["CheckTargetList", 50]
 			This:QueueState["LootCans", 1000, ${FleetMembers.Get[1].ToEntity.ID}]
 			This:QueueState["DepopulateTargetList", 2000]
-			This:QueueState["OpenCargoHold"]
 			This:QueueState["CheckCargoHold"]
 			FleetMembers:Remove[1]
 			FleetMembers:Collapse
@@ -739,7 +735,6 @@ objectdef obj_HaulerUI inherits obj_State
 	{
 		if ${This.IsIdle}
 		{
-			This:QueueState["OpenCargoHold"]
 			This:QueueState["UpdateBookmarkLists", 5]
 		}
 	}
@@ -749,11 +744,6 @@ objectdef obj_HaulerUI inherits obj_State
 		This:Clear
 	}
 
-	member:bool OpenCargoHold()
-	{
-		return ${Client.Inventory}
-	}
-	
 	
 	method UpdateQueueList()
 	{
