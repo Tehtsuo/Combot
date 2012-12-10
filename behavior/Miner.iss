@@ -857,6 +857,16 @@ objectdef obj_Miner inherits obj_State
 			}
 			while ${Roid:Next(exists)}
 		}
+		if ${Roid:Last(exists)}		
+		{
+			if ${Ship.ModuleList_MiningLaser.InactiveCount}
+			{
+				UI:Update["obj_Miner", "Activating ${Ship.ModuleList_MiningLaser.InactiveCount} laser(s) on ${Roid.Value.Name} (${ComBot.MetersToKM_Str[${Roid.Value.Distance}]})", "y"]
+				Ship.ModuleList_MiningLaser:ActivateCount[${Ship.ModuleList_MiningLaser.InactiveCount}, ${Roid.Value.ID}]
+				Profiling:EndTrack
+				return TRUE
+			}
+		}
 		
 		Profiling:EndTrack
 		return TRUE
