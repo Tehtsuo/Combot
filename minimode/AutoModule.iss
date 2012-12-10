@@ -74,6 +74,7 @@ objectdef obj_AutoModule inherits obj_State
 {
 	variable obj_Configuration_AutoModule Config
 	variable bool SafetyOveride=FALSE
+	variable bool DropCloak=FALSE
 	
 	method Initialize()
 	{
@@ -105,7 +106,20 @@ objectdef obj_AutoModule inherits obj_State
 		}
 		if ${Ship.ModuleList_Cloaks.Count} && ${Config.Cloak}
 		{
-			Ship.ModuleList_Cloaks:Activate
+			if ${This.DropCloak}
+			{
+				if ${Ship.ModuleList_Cloaks.ActiveCount}
+				{
+					Ship.ModuleList_Cloaks:Deactivate
+				}
+			}
+			else
+			{
+				if !${Ship.ModuleList_Cloaks.ActiveCount}
+				{
+					Ship.ModuleList_Cloaks:Activate
+				}
+			}
 		}
 
 		if ${Ship.ModuleList_Regen_Shield.InactiveCount} && ((${MyShip.ShieldPct} < ${Config.ActiveShieldBoost} && ${MyShip.CapacitorPct} > ${Config.ActiveShieldCap}) || ${Config.ShieldBoost})

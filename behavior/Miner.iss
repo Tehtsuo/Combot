@@ -205,6 +205,7 @@ objectdef obj_Miner inherits obj_State
 		This:DeactivateStateQueueDisplay
 		Asteroids:ClearExclusions
 		This:Clear
+		This:QueueState["DropCloak", 50, FALSE]
 	}
 	
 	method PopulateTargetList()
@@ -308,6 +309,12 @@ objectdef obj_Miner inherits obj_State
 			Profiling:EndTrack
 			return TRUE
 		}
+	}
+
+	member:bool DropCloak(bool arg)
+	{
+		AutoModule.DropCloak:Set[${arg}]
+		return TRUE
 	}
 	
 	member:bool PrepareWarp()
@@ -447,7 +454,9 @@ objectdef obj_Miner inherits obj_State
 		}
 		else
 		{
+			This:QueueState["DropCloak", 50, TRUE]
 			This:QueueState["Mine"]
+			This:QueueState["DropCloak", 50, FALSE]
 			This:QueueState["CheckCargoHold"]
 		}
 		Profiling:EndTrack

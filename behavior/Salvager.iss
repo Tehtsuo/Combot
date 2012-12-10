@@ -102,6 +102,7 @@ objectdef obj_Salvager inherits obj_State
 	{
 		This:DeactivateStateQueueDisplay
 		This:Clear
+		This:QueueState["DropCloak", 50, FALSE]
 	}
 
 	member:bool CheckBookmarks()
@@ -228,7 +229,9 @@ objectdef obj_Salvager inherits obj_State
 			This:QueueState["Log", 1000, "Salvaging at ${Target}"]
 			This:QueueState["InitialUpdate", 100]
 			This:QueueState["Updated", 100]
+			This:QueueState["DropCloak", 50, TRUE]
 			This:QueueState["SalvageWrecks", 500, "${BookmarkCreator}"]
+			This:QueueState["DropCloak", 50, FALSE]
 			This:QueueState["ClearAlreadySalvaged", 100]
 			This:QueueState["DeleteBookmark", 1000, "${BookmarkCreator}"]
 			This:QueueState["RefreshBookmarks", 3000]
@@ -246,7 +249,9 @@ objectdef obj_Salvager inherits obj_State
 			This:QueueState["Log", 1000, "Salvaging in belt"]
 			This:QueueState["InitialUpdate", 100]
 			This:QueueState["Updated", 100]
+			This:QueueState["DropCloak", 50, TRUE]
 			This:QueueState["SalvageWrecks", 500, "${Me.CharID}"]
+			This:QueueState["DropCloak", 50, FALSE]
 			This:QueueState["ClearAlreadySalvaged", 100]
 			This:QueueState["RefreshBookmarks", 3000]
 			This:QueueState["CheckCargoHold", 500]
@@ -286,7 +291,9 @@ objectdef obj_Salvager inherits obj_State
 		NonDedicatedNPCRun:Set[${NPCRun}]
 		This:QueueState["InitialUpdate", 100]
 		This:QueueState["Updated", 100]
+		This:QueueState["DropCloak", 50, TRUE]
 		This:QueueState["SalvageWrecks", 500, "0"]
+		This:QueueState["DropCloak", 50, FALSE]
 		This:QueueState["DoneSalvaging"]
 		Salvaging:Set[TRUE]
 	}
@@ -308,6 +315,12 @@ objectdef obj_Salvager inherits obj_State
 		return ${NPCs.Updated}
 	}
 
+	member:bool DropCloak(bool arg)
+	{
+		AutoModule.DropCloak:Set[${arg}]
+		return TRUE
+	}
+	
 	member:bool SalvageWrecks(int64 BookmarkCreator)
 	{
 		variable float FullHold = 0.95
@@ -335,7 +348,9 @@ objectdef obj_Salvager inherits obj_State
 				This:QueueState["Log", 10, "Salvaging in belt"]
 				This:QueueState["InitialUpdate", 100]
 				This:QueueState["Updated", 100]
+				This:QueueState["DropCloak", 50, TRUE]
 				This:QueueState["SalvageWrecks", 500, "${Me.CharID}"]
+				This:QueueState["DropCloak", 50, FALSE]
 				This:QueueState["ClearAlreadySalvaged", 100]
 				This:QueueState["RefreshBookmarks", 3000]
 				This:QueueState["CheckCargoHold", 500]
@@ -355,7 +370,9 @@ objectdef obj_Salvager inherits obj_State
 				This:QueueState["Log", 10, "Salvaging in belt"]
 				This:QueueState["InitialUpdate", 100]
 				This:QueueState["Updated", 100]
+				This:QueueState["DropCloak", 50, TRUE]
 				This:QueueState["SalvageWrecks", 500, "${Me.CharID}"]
+				This:QueueState["DropCloak", 50, FALSE]
 				This:QueueState["ClearAlreadySalvaged", 100]
 				This:QueueState["RefreshBookmarks", 3000]
 				This:QueueState["CheckCargoHold", 500]
@@ -485,7 +502,9 @@ objectdef obj_Salvager inherits obj_State
 				This:QueueState["Traveling"]
 				This:QueueState["InitialUpdate", 100]
 				This:QueueState["Updated", 100]
+				This:QueueState["DropCloak", 50, TRUE]
 				This:QueueState["SalvageWrecks", 500, "${BookmarkCreator}"]
+				This:QueueState["DropCloak", 50, FALSE]
 				This:QueueState["ClearAlreadySalvaged", 100]
 				This:QueueState["DeleteBookmark", 1000, "${BookmarkCreator}"]
 				This:QueueState["RefreshBookmarks", 1000]

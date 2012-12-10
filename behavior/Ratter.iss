@@ -194,6 +194,7 @@ objectdef obj_Ratter inherits obj_State
 		{
 			if ${Config.AssistOnly}
 			{
+				This:QueueState["DropCloak", 50, TRUE]
 				This:QueueState["Rat"]
 			}
 			else
@@ -207,6 +208,7 @@ objectdef obj_Ratter inherits obj_State
 	{
 		This:DeactivateStateQueueDisplay
 		This:Clear
+		This:QueueState["DropCloak", 50, FALSE]
 	}
 	
 	
@@ -260,7 +262,9 @@ objectdef obj_Ratter inherits obj_State
 		This:QueueState["InitialUpdate"]
 		This:QueueState["Updated"]
 		This:QueueState["Log", 10, "Ratting, g"]
+		This:QueueState["DropCloak", 50, TRUE]
 		This:QueueState["Rat"]
+		This:QueueState["DropCloak", 50, FALSE]
 		return TRUE
 	}
 	
@@ -482,12 +486,20 @@ objectdef obj_Ratter inherits obj_State
 			return TRUE
 		}
 	}
+	
+	member:bool DropCloak(bool arg)
+	{
+		AutoModule.DropCloak:Set[${arg}]
+		return TRUE
+	}
+	
 	member:bool Rat(bool RefreshBookmarks=FALSE)
 	{
 		if !${Client.InSpace}
 		{
 			if ${Config.AssistOnly}
 			{
+				This:QueueState["DropCloak", 50, TRUE]
 				This:QueueState["Rat"]
 			}
 			else

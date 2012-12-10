@@ -125,6 +125,7 @@ objectdef obj_Hauler inherits obj_State
 	{
 		This:DeactivateStateQueueDisplay
 		This:Clear
+		This:QueueState["DropCloak", 50, FALSE]
 	}
 	
 	
@@ -256,7 +257,9 @@ objectdef obj_Hauler inherits obj_State
 		{
 			This:QueueState["PopulateTargetList", 2000, ${FleetMembers.Get[1].ToEntity.ID}]
 			This:QueueState["CheckTargetList", 50]
+			This:QueueState["DropCloak", 50, TRUE]
 			This:QueueState["LootCans", 1000, ${FleetMembers.Get[1].ToEntity.ID}]
+			This:QueueState["DropCloak", 50, FALSE]
 			This:QueueState["DepopulateTargetList", 2000]
 			This:QueueState["CheckCargoHold"]
 			FleetMembers:Remove[1]
@@ -291,7 +294,9 @@ objectdef obj_Hauler inherits obj_State
 		{
 			This:QueueState["PopulateTargetListAllCans", 2000]
 			This:QueueState["CheckTargetList", 50]
+			This:QueueState["DropCloak", 50, TRUE]
 			This:QueueState["LootCans", 1000, ${FleetMembers.Get[1].ToEntity.ID}]
+			This:QueueState["DropCloak", 50, FALSE]
 			This:QueueState["DepopulateTargetList", 2000]
 			This:QueueState["CheckCargoHold"]
 			FleetMembers:Remove[1]
@@ -364,6 +369,12 @@ objectdef obj_Hauler inherits obj_State
 		return FALSE
 	}
 
+	member:bool DropCloak(bool arg)
+	{
+		AutoModule.DropCloak:Set[${arg}]
+		return TRUE
+	}
+	
 	member:bool LootCans(int64 ID)
 	{
 		if !${Entity[${ID}](exists)}
