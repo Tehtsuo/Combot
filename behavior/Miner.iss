@@ -253,20 +253,34 @@ objectdef obj_Miner inherits obj_State
 			return FALSE
 		}
 
-		if 	${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipOreHold].UsedCapacity} / ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipOreHold].Capacity} >= ${Config.Threshold} * .01 && \
-			${MyShip.HasOreHold} && \
+		if 	${MyShip.HasOreHold}
+		{
+			if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipOreHold].UsedCapacity} / ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipOreHold].Capacity} >= ${Config.Threshold} * .01 && \
 			!${Config.Dropoff_Type.Equal[No Dropoff]} && \
 			!${Config.Dropoff_Type.Equal[Jetcan]} && \
 			!${Config.OrcaMode}
-		{
-			UI:Update["obj_Miner", "Unload trip required", "g"]
-			This:QueueState["PrepareWarp"]
-			This:QueueState["Dropoff"]
-			This:QueueState["Traveling"]
-			This:QueueState["CheckCargoHold"]
-			This:QueueState["RequestUpdate"]
-			Profiling:EndTrack
-			return TRUE
+			{
+				UI:Update["obj_Miner", "Unload trip required", "g"]
+				This:QueueState["PrepareWarp"]
+				This:QueueState["Dropoff"]
+				This:QueueState["Traveling"]
+				This:QueueState["CheckCargoHold"]
+				This:QueueState["RequestUpdate"]
+				Profiling:EndTrack
+				return TRUE
+			}
+			else
+			{
+				This:QueueState["GoToMiningSystem"]
+				This:QueueState["Traveling"]
+				This:QueueState["Undock"]
+				This:QueueState["WaitForSpace"]
+				This:QueueState["RequestUpdate"]
+				This:QueueState["Updated"]
+				This:QueueState["CheckForWork"]
+				Profiling:EndTrack
+				return TRUE
+			}
 		}
 		elseif ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].UsedCapacity} / ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].Capacity} >= ${Config.Threshold} * .01 && \
 			!${MyShip.HasOreHold} && \
