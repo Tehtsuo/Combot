@@ -208,7 +208,7 @@ objectdef obj_Ratter inherits obj_State
 	{
 		This:DeactivateStateQueueDisplay
 		This:Clear
-		This:QueueState["DropCloak", 50, FALSE]
+		noop This.DropCloak[FALSE]
 	}
 	
 	
@@ -242,7 +242,7 @@ objectdef obj_Ratter inherits obj_State
 		}
 		
 	
-		if 	${EVEWindow[Inventory].ChildUsedCapacity[ShipCargo]} / ${EVEWindow[Inventory].ChildCapacity[ShipCargo]} > ${Config.Threshold} * .01 ||\
+		if 	${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].UsedCapacity} / ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].Capacity} > ${Config.Threshold} * .01 ||\
 			${AmmoCount} < ${Config.AmmoSupply}
 		{
 			UI:Update["Ratter", "Unload/Reload trip required", "g"]
@@ -594,7 +594,7 @@ objectdef obj_Ratter inherits obj_State
 				while ${ItemIterator:Next(exists)}
 		}
 		
-		if 	${EVEWindow[Inventory].ChildUsedCapacity[ShipCargo]} / ${EVEWindow[Inventory].ChildCapacity[ShipCargo]} > ${Config.Threshold} * .01 ||\
+		if 	${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].UsedCapacity} / ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].Capacity} > ${Config.Threshold} * .01 ||\
 			${AmmoCount} < ${Config.AmmoSupply}
 		{
 			Move:SaveSpot

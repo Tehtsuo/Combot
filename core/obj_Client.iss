@@ -162,30 +162,33 @@ objectdef obj_Client
 			EVE:Execute[OpenInventory]
 			return FALSE
 		}
-		if ${EVEWindow[Inventory].ChildWindowExists[ShipCargo]}
+		if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo](exists)}
 		{
-			if 	${EVEWindow[Inventory].ChildUsedCapacity[ShipCargo]} == -1 || \
-				${EVEWindow[Inventory].ChildCapacity[ShipCargo]} <= 0
+			if 	${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].UsedCapacity} == -1 || \
+				${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].Capacity} <= 0
 			{
-				EVEWindow[Inventory]:MakeChildActive[ShipCargo]
+				UI:Update["Client", "Cargo hold information invalid, activating", "g"]
+				EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo]:MakeActive
 				return FALSE
 			}
 		}
-		if ${EVEWindow[Inventory].ChildWindowExists[ShipOreHold]}
+		if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipOreHold](exists)}
 		{
-			if 	${EVEWindow[Inventory].ChildUsedCapacity[ShipOreHold]} == -1 || \
-				${EVEWindow[Inventory].ChildCapacity[ShipOreHold]} <= 0
+			if 	${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipOreHold].UsedCapacity} == -1 || \
+				${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipOreHold].Capacity} <= 0
 			{
-				EVEWindow[Inventory]:MakeChildActive[ShipOreHold]
+				UI:Update["Client", "Ore hold information invalid, activating", "g"]
+				EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipOreHold]:MakeActive
 				return FALSE
 			}
 		}
-		if ${EVEWindow[Inventory].ChildWindowExists[ShipFleetHangar]}
+		if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar](exists)}
 		{
-			if 	${EVEWindow[Inventory].ChildUsedCapacity[ShipFleetHangar]} == -1 || \
-				${EVEWindow[Inventory].ChildCapacity[ShipFleetHangar]} <= 0
+			if 	${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar].UsedCapacity} == -1 || \
+				${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar].Capacity} <= 0
 			{
-				EVEWindow[Inventory]:MakeChildActive[ShipFleetHangar]
+				UI:Update["Client", "Fleet Hangar information invalid, activating", "g"]
+				EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar]:MakeActive
 				return FALSE
 			}
 		}

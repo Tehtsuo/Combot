@@ -125,7 +125,7 @@ objectdef obj_Hauler inherits obj_State
 	{
 		This:DeactivateStateQueueDisplay
 		This:Clear
-		This:QueueState["DropCloak", 50, FALSE]
+		noop This.DropCloak[FALSE]
 	}
 	
 	
@@ -135,30 +135,29 @@ objectdef obj_Hauler inherits obj_State
 		{
 			return FALSE
 		}
-		if ${EVEWindow[Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[Inventory].ChildCapacity[ShipOreHold]} < ${Config.Threshold} * .01
+		if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipOreHold].UsedCapacity} / ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipOreHold].Capacity} < ${Config.Threshold} * .01 && !${OreHold}
 		{
 			Cargo:PopulateCargoList[Ship]
 			Cargo:MoveCargoList[OreHold]
 			This:InsertState["CheckCargoHold", 500, "TRUE"]
 			return TRUE
 		}
-		if ${EVEWindow[Inventory].ChildUsedCapacity[ShipFleetHangar]} / ${EVEWindow[Inventory].ChildCapacity[ShipFleetHangar]} < ${Config.Threshold} * .01
+		if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar].UsedCapacity} / ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar].Capacity} < ${Config.Threshold} * .01 && !${CorpHangar}
 		{
+			echo Moving
 			Cargo:PopulateCargoList[Ship]
 			Cargo:MoveCargoList[Fleet Hangar]
 			This:InsertState["CheckCargoHold", 500, "TRUE, TRUE"]
 			return TRUE
 		}
-
-		DroneControl:Recall
-		if ${Busy.IsBusy}
-		{
-			return FALSE
-		}
-
-		if ${EVEWindow[Inventory].ChildUsedCapacity[ShipCargo]} / ${EVEWindow[Inventory].ChildCapacity[ShipCargo]} >= ${Config.Threshold} * .01
+		if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].UsedCapacity} / ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].Capacity} >= ${Config.Threshold} * .01
 		{
 			UI:Update["Hauler", "Unload trip required", "g"]
+			DroneControl:Recall
+			if ${Busy.IsBusy}
+			{
+				return FALSE
+			}
 			Cargo:At[${Config.Dropoff},${Config.DropoffType},${Config.DropoffSubType}, ${Config.DropoffContainer}]:Unload:Unload["",0,ShipCorpHangar]:Unload["",0,OreHold]
 			This:QueueState["Traveling"]
 			This:QueueState["CheckCargoHold"]
@@ -166,6 +165,7 @@ objectdef obj_Hauler inherits obj_State
 		}
 		else
 		{
+			echo Check
 			This:QueueState["CheckForWork"]
 			This:QueueState["QueuePickup"]
 			return TRUE
@@ -185,7 +185,7 @@ objectdef obj_Hauler inherits obj_State
 			{
 				return FALSE
 			}
-			if ${OrcaCargo} > ${Config.Threshold} * .01 * ${EVEWindow[Inventory].ChildCapacity[ShipCargo]}
+			if ${OrcaCargo} > ${Config.Threshold} * .01 * ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].Capacity}
 			{
 				return TRUE
 			}
@@ -383,7 +383,7 @@ objectdef obj_Hauler inherits obj_State
 		variable iterator CanIter
 		
 		
-		if ${EVEWindow[Inventory].ChildUsedCapacity[ShipCargo]} > (${Config.Threshold} * .01 * ${EVEWindow[Inventory].ChildCapacity[ShipCargo]}
+		if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].UsedCapacity} > (${Config.Threshold} * .01 * ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].Capacity}
 		{
 			return TRUE
 		}
@@ -458,20 +458,19 @@ objectdef obj_Hauler inherits obj_State
 		}
 		else
 		{
-			if !${EVEWindow[Inventory].ChildWindowExists[${CurrentCan}]}
+			if !${EVEWindow[Inventory].ChildWindow[${CurrentCan}](exists)}
 			{
 				Entity[${CurrentCan}]:Open
 				return FALSE
 			}
-			if 	${EVEWindow[Inventory].ChildUsedCapacity[${CurrentCan}]} == -1 || \
-				${EVEWindow[Inventory].ChildCapacity[${CurrentCan}]} == 0
+			if !${EVEWindow[ByItemID, ${CurrentCan}](exists)}
 			{
-				EVEWindow[Inventory]:MakeChildActive[${CurrentCan}]
+				EVEWindow[Inventory]:ChildWindow[${CurrentCan}]:MakeActive
 				return FALSE
 			}
 			Cargo:PopulateCargoList[Container, ${CurrentCan}]
 			
-			if ${EVEWindow[Inventory].ChildUsedCapacity[${CurrentCan}]} > ${Math.Calc[${EVEWindow[Inventory].ChildCapacity[ShipCargo]} - ${EVEWindow[Inventory].ChildUsedCapacity[ShipCargo]}]}
+			if ${EVEWindow[Inventory].ChildWindow[${CurrentCan}].UsedCapacity} > ${Math.Calc[${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].Capacity} - ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].UsedCapacity}]}
 			{
 				if ${PopCan}
 				{

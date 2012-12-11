@@ -64,7 +64,7 @@ function atexit()
 function main(string Character="")
 {
 	declarevariable MinimumISXEVE float64 script
-	MinimumISXEVE:Set[20121210.0002]
+	MinimumISXEVE:Set[20121210.0034]
 
 	declarevariable EVEExtension obj_EVEExtension script
 	EVEExtension.Character:Set[${Character}]

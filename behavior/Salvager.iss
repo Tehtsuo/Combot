@@ -104,7 +104,7 @@ objectdef obj_Salvager inherits obj_State
 	{
 		This:DeactivateStateQueueDisplay
 		This:Clear
-		This:QueueState["DropCloak", 50, FALSE]
+		noop This.DropCloak[FALSE]
 	}
 	
 	method RemoveBookmarkEvent(int64 ID)
@@ -427,7 +427,7 @@ objectdef obj_Salvager inherits obj_State
 			return FALSE
 		}
 
-		if (${EVEWindow[Inventory].ChildUsedCapacity[ShipCargo]} / ${EVEWindow[Inventory].ChildCapacity[ShipCargo]}) > ${FullHold}
+		if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].UsedCapacity} / ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].Capacity} > ${FullHold}
 		{
 			UI:Update["Salvage", "Unload trip required", "g"]
 			if ${Dedicated}
@@ -602,7 +602,7 @@ objectdef obj_Salvager inherits obj_State
 		{
 			return FALSE
 		}
-		if (${EVEWindow[Inventory].ChildUsedCapacity[ShipCargo]} / ${EVEWindow[Inventory].ChildCapacity[ShipCargo]}) > 0.75
+		if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].UsedCapacity} / ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].Capacity} > 0.75
 		{
 			UI:Update["obj_Salvage", "Unload trip required", "g"]
 			This:QueueState["Offload"]

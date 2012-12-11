@@ -218,10 +218,13 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							<Height>6%</Height>
 							<OnSelect>
 								variable int counter
-								Script[ComBot].VariableScope.Config.Common:SetComBot_Mode[${This.SelectedItem.Value}]
-								for ( counter:Set[1] ; ${counter} &lt;= ${This.Items} ; counter:Inc )
+								if !${This.SelectedItem.Value.Equal[${Script[ComBot].VariableScope.Config.Common.ComBot_Mode}]}
 								{
-									Script[ComBot].VariableScope.${This.OrderedItem[${counter}].Value}:Stop
+									Script[ComBot].VariableScope.Config.Common:SetComBot_Mode[${This.SelectedItem.Value}]
+									for ( counter:Set[1] ; ${counter} &lt;= ${This.Items} ; counter:Inc )
+									{
+										Script[ComBot].VariableScope.${This.OrderedItem[${counter}].Value}:Stop
+									}
 								}
 								if ${Script[ComBot].VariableScope.UI.Reloaded}
 								{

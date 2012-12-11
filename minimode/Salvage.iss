@@ -277,11 +277,11 @@ objectdef obj_LootCans inherits obj_State
 				{
 					continue
 				}
-				if ${EVEWindow[Inventory].ChildWindowExists[${TargetIterator.Value}]}
+				if ${EVEWindow[Inventory].ChildWindow[${TargetIterator.Value}](exists)}
 				{
 					if !${EVEWindow[ByItemID, ${TargetIterator.Value}](exists)}
 					{
-						EVEWindow[Inventory]:MakeChildActive[${TargetIterator.Value}]
+						EVEWindow[Inventory]:ChildWindow[${TargetIterator.Value}]:MakeActive
 						return FALSE
 					}
 					
@@ -305,7 +305,7 @@ objectdef obj_LootCans inherits obj_State
 					This:InsertState["Stack"]
 					return TRUE
 				}
-				if !${EVEWindow[Inventory].ChildWindowExists[${TargetIterator.Value}]}
+				if !${EVEWindow[Inventory].ChildWindow[${TargetIterator.Value}](exists)}
 				{
 					UI:Update["Salvage", "Opening - ${TargetIterator.Value.Name}", "g"]
 					TargetIterator.Value:Open
