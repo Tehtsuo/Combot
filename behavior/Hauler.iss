@@ -469,7 +469,7 @@ objectdef obj_Hauler inherits obj_State
 			}
 			if !${EVEWindow[ByItemID, ${CurrentCan}](exists)}
 			{
-				EVEWindow[Inventory]:ChildWindow[${CurrentCan}]:MakeActive
+				EVEWindow[Inventory].ChildWindow[${CurrentCan}]:MakeActive
 				return FALSE
 			}
 			Cargo:PopulateCargoList[Container, ${CurrentCan}]
