@@ -468,7 +468,7 @@ objectdef obj_Cargo inherits obj_State
 					EVE:MoveItemsTo[TransferIndex, MyStationHangar, Hangar]
 					break
 				case Corporation Hangar
-					echo MOVE TO CORPORATION HANGAR - EVE:MoveItemsTo[TransferIndex, MyStationCorporateHangar, StationCorporateHangar${TransferFolder}]
+					echo MOVE TO CORPORATION HANGAR - EVE:MoveItemsTo[TransferIndex, MyStationCorporateHangar, StationCorporateHangar${TransferFolder}] - TransferIndex: ${TransferIndex.Used}
 					EVE:MoveItemsTo[TransferIndex, MyStationCorporateHangar, StationCorporateHangar${TransferFolder}]
 					break
 			}
@@ -645,7 +645,7 @@ objectdef obj_Cargo inherits obj_State
 
 		if ${EVEWindow[Inventory].ChildWindow[${Me.Station.ID}, StationCorpHangar](exists)} && !${OpenedCorpHangar}
 		{
-			EVEWindow[Inventory]:ChildWindow[${Me.Station.ID}, Corporation Hangars]:MakeActive
+			EVEWindow[Inventory].ChildWindow[${Me.Station.ID}, Corporation Hangars]:MakeActive
 			This:InsertState["Stack", 2000, TRUE]
 			return TRUE
 		}
@@ -719,7 +719,8 @@ objectdef obj_Cargo inherits obj_State
 		
 		if ${EVEWindow[Inventory].ChildWindow[${Me.Station.ID}, StationCorpHangar](exists)} && !${OpenedCorpHangar}
 		{
-			EVEWindow[Inventory]:ChildWindow[${Me.Station.ID}, Corporation Hangars]:MakeActive
+			echo STATION HANGAR CHECK TRUE
+			EVEWindow[Inventory].ChildWindow[${Me.Station.ID}, Corporation Hangars]:MakeActive
 			This:InsertState["Unload", 2000, TRUE]
 			return TRUE
 		}
