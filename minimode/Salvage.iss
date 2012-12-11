@@ -281,7 +281,7 @@ objectdef obj_LootCans inherits obj_State
 				{
 					if !${EVEWindow[ByItemID, ${TargetIterator.Value}](exists)}
 					{
-						EVEWindow[Inventory]:ChildWindow[${TargetIterator.Value}]:MakeActive
+						EVEWindow[Inventory].ChildWindow[${TargetIterator.Value}]:MakeActive
 						return FALSE
 					}
 					
@@ -299,8 +299,10 @@ objectdef obj_LootCans inherits obj_State
 						}
 						while ${CargoIterator:Next(exists)}
 					}
+					
 					UI:Update["Salvage", "Looting - ${TargetIterator.Value.Name}", "g"]
-					EVEWindow[ByItemID, ${TargetIterator.Value}]:LootAll
+					Cargo:PopulateCargoList[Container, ${TargetIterator.Value.ID}]
+					Cargo:MoveCargoList[SHIP]
 					This:InsertState["Loot"]
 					This:InsertState["Stack"]
 					return TRUE
