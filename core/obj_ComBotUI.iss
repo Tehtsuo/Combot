@@ -57,6 +57,14 @@ objectdef obj_ComBotUI
 		
 		This:Update["ComBot", "Current Branch: \ay${Branch}", "g"]
 		This:Update["ComBot", "Current Version: \ay${Version}", "g"]
+		
+		if ${ISXEVE.Version} < ${MinimumISXEVE}
+		{
+			This:Update["ComBot", "You are currently using ISXEVE version \ay${ISXEVE.Version}", "r"]
+			This:Update["ComBot", "ComBot requires version \ay${MinimumISXEVE.Precision[4]} \aror higher", "r"]
+			This:Update["ComBot", "This may be because ISXEVE will be patched soon and is currently broken", "r"]
+		}
+		
 		This:Update["ComBot", "Initializing modules", "y"]
 
 		Event[ISXEVE_onFrame]:AttachAtom[This:Pulse]

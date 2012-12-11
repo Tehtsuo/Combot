@@ -194,11 +194,11 @@ objectdef obj_Ratter inherits obj_State
 		{
 			if ${Config.AssistOnly}
 			{
+				This:QueueState["DropCloak", 50, TRUE]
 				This:QueueState["Rat"]
 			}
 			else
 			{
-				This:QueueState["OpenCargoHold"]
 				This:QueueState["CheckCargoHold"]
 			}
 		}
@@ -208,18 +208,9 @@ objectdef obj_Ratter inherits obj_State
 	{
 		This:DeactivateStateQueueDisplay
 		This:Clear
+		noop This.DropCloak[FALSE]
 	}
 	
-	member:bool OpenCargoHold()
-	{
-		if !${EVEWindow[Inventory](exists)}
-		{
-			UI:Update["Ratter", "Opening inventory", "g"]
-			MyShip:Open
-			return FALSE
-		}
-		return TRUE
-	}
 	
 	member:bool CheckCargoHold()
 	{
@@ -227,7 +218,12 @@ objectdef obj_Ratter inherits obj_State
 		variable iterator ItemIterator
 		variable int AmmoCount=0
 		variable string Reload=""
-
+		
+		if !${Client.Inventory}
+		{
+			return FALSE
+		}
+		
 		MyShip:GetCargo[Items]
 		Items:GetIterator[ItemIterator]
 
@@ -246,13 +242,12 @@ objectdef obj_Ratter inherits obj_State
 		}
 		
 	
-		if 	${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity} > ${Config.Threshold} * .01 ||\
+		if 	${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].UsedCapacity} / ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].Capacity} > ${Config.Threshold} * .01 ||\
 			${AmmoCount} < ${Config.AmmoSupply}
 		{
 			UI:Update["Ratter", "Unload/Reload trip required", "g"]
 			Cargo:At[${Config.Dropoff},${Config.DropoffType},${Config.DropoffSubType}, ${Config.DropoffContainer}]:Unload${Reload}
 			This:QueueState["Traveling"]
-			This:QueueState["OpenCargoHold"]
 			This:QueueState["CheckCargoHold"]
 			return TRUE
 		}
@@ -267,7 +262,9 @@ objectdef obj_Ratter inherits obj_State
 		This:QueueState["InitialUpdate"]
 		This:QueueState["Updated"]
 		This:QueueState["Log", 10, "Ratting, g"]
+		This:QueueState["DropCloak", 50, TRUE]
 		This:QueueState["Rat"]
+		This:QueueState["DropCloak", 50, FALSE]
 		return TRUE
 	}
 	
@@ -332,7 +329,7 @@ objectdef obj_Ratter inherits obj_State
 			if ${BookmarkIterator.Value.Label.Left[${Config.SalvagePrefix.Length}].Upper.Equal[${Config.SalvagePrefix}]} && \
 				${BookmarkIterator.Value.CreatorID} == ${Me.CharID}
 			{
-				if ${BookmarkIterator.Value.Created.AsInt64} + 18000000000 < ${EVETime.AsInt64}
+				if ${BookmarkIterator.Value.Created.AsInt64} + 72000000000 < ${EVETime.AsInt64}
 				{
 					UI:Update["Ratter", "Removing old bookmark - ${BookmarkIterator.Value.Label}", "o", TRUE]
 					BookmarkIterator.Value:Remove
@@ -399,7 +396,6 @@ objectdef obj_Ratter inherits obj_State
 					Move:Bookmark[${Config.Dropoff}, TRUE, 0, TRUE]
 					This:Clear
 					This:QueueState["Traveling"]
-					This:QueueState["OpenCargoHold"]
 					This:QueueState["CheckCargoHold"]
 					return TRUE
 				}
@@ -440,13 +436,17 @@ objectdef obj_Ratter inherits obj_State
 	
 	member:bool VerifyRatLocation()
 	{
+		DroneControl:Recall
+		if ${Busy.IsBusy}
+		{
+			return FALSE
+		}
 		if ${Entity[CategoryID == CATEGORYID_SHIP && IsPC && !IsFleetMember && OwnerID != ${Me.CharID}]}
 		{
 			UI:Update["Ratter", "This location is occupied, going to next", "g"]
 			This:InsertState["VerifyRatLocation"]
 			This:InsertState["Traveling"]
 			This:InsertState["MoveToNewRatLocation"]
-			Drones:RecallAll
 		}
 		return TRUE
 	}
@@ -490,21 +490,34 @@ objectdef obj_Ratter inherits obj_State
 			return TRUE
 		}
 	}
+	
+	member:bool DropCloak(bool arg)
+	{
+		AutoModule.DropCloak:Set[${arg}]
+		return TRUE
+	}
+	
 	member:bool Rat(bool RefreshBookmarks=FALSE)
 	{
 		if !${Client.InSpace}
 		{
 			if ${Config.AssistOnly}
 			{
+				This:QueueState["DropCloak", 50, TRUE]
 				This:QueueState["Rat"]
 			}
 			else
 			{
-				This:QueueState["OpenCargoHold"]
 				This:QueueState["CheckCargoHold"]
 			}
 			return TRUE
 		}
+
+		if !${Client.Inventory}
+		{
+			return FALSE
+		}
+			
 		if ${Me.ToEntity.Mode} == 3
 		{
 			FirstWreck:Set[0]
@@ -556,7 +569,6 @@ objectdef obj_Ratter inherits obj_State
 			}
 			else
 			{
-				This:QueueState["OpenCargoHold"]
 				This:QueueState["CheckCargoHold"]
 				return TRUE
 			}
@@ -582,11 +594,10 @@ objectdef obj_Ratter inherits obj_State
 				while ${ItemIterator:Next(exists)}
 		}
 		
-		if 	${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity} > ${Config.Threshold} * .01 ||\
+		if 	${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].UsedCapacity} / ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].Capacity} > ${Config.Threshold} * .01 ||\
 			${AmmoCount} < ${Config.AmmoSupply}
 		{
 			Move:SaveSpot
-			This:QueueState["OpenCargoHold"]
 			This:QueueState["CheckCargoHold"]
 			return TRUE
 		}
@@ -717,13 +728,7 @@ objectdef obj_RatterUI inherits obj_State
 
 	member:bool OpenCargoHold()
 	{
-		if !${EVEWindow[Inventory](exists)}
-		{
-			UI:Update["Ratter", "Opening inventory", "g"]
-			EVE:Execute[OpenInventory]
-			return FALSE
-		}
-		return TRUE
+		return ${Client.Inventory}
 	}
 	
 	member:bool UpdateBookmarkLists()

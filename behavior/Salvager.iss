@@ -84,6 +84,8 @@ objectdef obj_Salvager inherits obj_State
 	method Initialize()
 	{
 		This[parent]:Initialize
+		LavishScript:RegisterEvent[ComBot_RemoveBookmark]
+		Event[ComBot_RemoveBookmark]:AttachAtom[This:RemoveBookmarkEvent]
 		NPCs:AddAllNPCs
 		DynamicAddBehavior("Salvager", "Dedicated Salvager")
 	}
@@ -94,7 +96,6 @@ objectdef obj_Salvager inherits obj_State
 		This:AssignStateQueueDisplay[DebugStateList@Debug@ComBotTab@ComBot]
 		if ${This.IsIdle}
 		{
-			This:QueueState["OpenCargoHold", 500]
 			This:QueueState["CheckCargoHold", 500]
 		}
 	}
@@ -103,6 +104,33 @@ objectdef obj_Salvager inherits obj_State
 	{
 		This:DeactivateStateQueueDisplay
 		This:Clear
+		noop This.DropCloak[FALSE]
+	}
+	
+	method RemoveBookmarkEvent(int64 ID)
+	{
+		This:QueueState["RemoveBookmarkEventState", 10000, ${ID}]
+	}
+	
+	member:bool RemoveBookmarkEventState(int64 ID)
+	{
+		variable index:bookmark Bookmarks
+		variable iterator Bookmark
+		EVE:GetBookmarks[Bookmarks]
+		Bookmarks:GetIterator[Bookmark]
+		if ${Bookmark:First(exists)}
+			do
+			{
+				if  ${Bookmark.Value.ID} == ${ID} &&\
+					${Bookmark.Value.CreatorID} == ${Me.CharID}
+				{
+					UI:Update["Salvager", "Removing bookmark from relay - ${Bookmark.Value.Label}", "o", TRUE]
+					Bookmark.Value:Remove
+					return TRUE
+				}
+			}
+			while ${Bookmark:Next(exists)}
+		return TRUE
 	}
 
 	member:bool CheckBookmarks()
@@ -165,6 +193,7 @@ objectdef obj_Salvager inherits obj_State
 					if ${BookmarkIterator.Value.Created.AsInt64} + 72000000000 < ${EVETime.AsInt64} && !${UsedBookmarks.Contains[${BookmarkIterator.Value.ID}]}
 					{
 						UI:Update["Salvager", "Removing expired bookmark - ${BookmarkIterator.Value.Label}", "o", TRUE]
+						relay "all other" -event ComBot_RemoveBookmark ${BookmarkIterator.Value.ID}						
 						BookmarkIterator.Value:Remove
 						UsedBookmarks:Add[${BookmarkIterator.Value.ID}]
 						This:InsertState["CheckBookmarks"]
@@ -203,6 +232,7 @@ objectdef obj_Salvager inherits obj_State
 					if ${BookmarkIterator.Value.Created.AsInt64} + 72000000000 < ${EVETime.AsInt64} && !${UsedBookmarks.Contains[${BookmarkIterator.Value.ID}]}
 					{
 						UI:Update["Salvager", "Removing expired bookmark - ${BookmarkIterator.Value.Label}", "o", TRUE]
+						relay "all other" -event ComBot_RemoveBookmark ${BookmarkIterator.Value.ID}						
 						BookmarkIterator.Value:Remove
 						UsedBookmarks:Add[${BookmarkIterator.Value.ID}]
 						This:InsertState["CheckBookmarks"]
@@ -229,7 +259,9 @@ objectdef obj_Salvager inherits obj_State
 			This:QueueState["Log", 1000, "Salvaging at ${Target}"]
 			This:QueueState["InitialUpdate", 100]
 			This:QueueState["Updated", 100]
+			This:QueueState["DropCloak", 50, TRUE]
 			This:QueueState["SalvageWrecks", 500, "${BookmarkCreator}"]
+			This:QueueState["DropCloak", 50, FALSE]
 			This:QueueState["ClearAlreadySalvaged", 100]
 			This:QueueState["DeleteBookmark", 1000, "${BookmarkCreator}"]
 			This:QueueState["RefreshBookmarks", 3000]
@@ -247,10 +279,11 @@ objectdef obj_Salvager inherits obj_State
 			This:QueueState["Log", 1000, "Salvaging in belt"]
 			This:QueueState["InitialUpdate", 100]
 			This:QueueState["Updated", 100]
+			This:QueueState["DropCloak", 50, TRUE]
 			This:QueueState["SalvageWrecks", 500, "${Me.CharID}"]
+			This:QueueState["DropCloak", 50, FALSE]
 			This:QueueState["ClearAlreadySalvaged", 100]
 			This:QueueState["RefreshBookmarks", 3000]
-			This:QueueState["OpenCargoHold", 500]
 			This:QueueState["CheckCargoHold", 500]
 			return TRUE
 		}
@@ -261,7 +294,6 @@ objectdef obj_Salvager inherits obj_State
 			This:QueueState["Traveling"]
 			This:QueueState["Log", 10, "Idling for 1 minute"]
 			This:QueueState["Idle", 60000]
-			This:QueueState["OpenCargoHold", 500]
 			This:QueueState["CheckCargoHold", 500]
 			return TRUE
 		}
@@ -289,7 +321,9 @@ objectdef obj_Salvager inherits obj_State
 		NonDedicatedNPCRun:Set[${NPCRun}]
 		This:QueueState["InitialUpdate", 100]
 		This:QueueState["Updated", 100]
+		This:QueueState["DropCloak", 50, TRUE]
 		This:QueueState["SalvageWrecks", 500, "0"]
+		This:QueueState["DropCloak", 50, FALSE]
 		This:QueueState["DoneSalvaging"]
 		Salvaging:Set[TRUE]
 	}
@@ -311,6 +345,12 @@ objectdef obj_Salvager inherits obj_State
 		return ${NPCs.Updated}
 	}
 
+	member:bool DropCloak(bool arg)
+	{
+		AutoModule.DropCloak:Set[${arg}]
+		return TRUE
+	}
+	
 	member:bool SalvageWrecks(int64 BookmarkCreator)
 	{
 		variable float FullHold = 0.95
@@ -338,10 +378,11 @@ objectdef obj_Salvager inherits obj_State
 				This:QueueState["Log", 10, "Salvaging in belt"]
 				This:QueueState["InitialUpdate", 100]
 				This:QueueState["Updated", 100]
+				This:QueueState["DropCloak", 50, TRUE]
 				This:QueueState["SalvageWrecks", 500, "${Me.CharID}"]
+				This:QueueState["DropCloak", 50, FALSE]
 				This:QueueState["ClearAlreadySalvaged", 100]
 				This:QueueState["RefreshBookmarks", 3000]
-				This:QueueState["OpenCargoHold", 500]
 				This:QueueState["CheckCargoHold", 500]
 				return TRUE
 			}
@@ -359,10 +400,11 @@ objectdef obj_Salvager inherits obj_State
 				This:QueueState["Log", 10, "Salvaging in belt"]
 				This:QueueState["InitialUpdate", 100]
 				This:QueueState["Updated", 100]
+				This:QueueState["DropCloak", 50, TRUE]
 				This:QueueState["SalvageWrecks", 500, "${Me.CharID}"]
+				This:QueueState["DropCloak", 50, FALSE]
 				This:QueueState["ClearAlreadySalvaged", 100]
 				This:QueueState["RefreshBookmarks", 3000]
-				This:QueueState["OpenCargoHold", 500]
 				This:QueueState["CheckCargoHold", 500]
 				return TRUE
 			}
@@ -380,16 +422,14 @@ objectdef obj_Salvager inherits obj_State
 			return TRUE
 		}
 
-		if !${EVEWindow[Inventory](exists)}
+		if !${Client.Inventory}
 		{
-			UI:Update["obj_Salvage", "Opening inventory", "g"]
-			EVE:Execute[OpenInventory]
 			return FALSE
 		}
 
-		if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) > ${FullHold}
+		if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].UsedCapacity} / ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].Capacity} > ${FullHold}
 		{
-			UI:Update["obj_Salvage", "Unload trip required", "g"]
+			UI:Update["Salvage", "Unload trip required", "g"]
 			if ${Dedicated}
 			{
 				This:Clear
@@ -492,7 +532,9 @@ objectdef obj_Salvager inherits obj_State
 				This:QueueState["Traveling"]
 				This:QueueState["InitialUpdate", 100]
 				This:QueueState["Updated", 100]
+				This:QueueState["DropCloak", 50, TRUE]
 				This:QueueState["SalvageWrecks", 500, "${BookmarkCreator}"]
+				This:QueueState["DropCloak", 50, FALSE]
 				This:QueueState["ClearAlreadySalvaged", 100]
 				This:QueueState["DeleteBookmark", 1000, "${BookmarkCreator}"]
 				This:QueueState["RefreshBookmarks", 1000]
@@ -501,18 +543,17 @@ objectdef obj_Salvager inherits obj_State
 			}
 			else
 			{
-				UI:Update["obj_Salvage", "Gate found, but no more bookmarks from player.  Ignoring", "g"]
+				UI:Update["Salvager", "Gate found, but no more bookmarks from player.  Ignoring", "g"]
 				This:Clear
 			}
 		}
-		This:QueueState["OpenCargoHold", 500]
 		This:QueueState["CheckCargoHold", 500]
 		return TRUE
 	}
 	
 	member:bool JumpToCelestial()
 	{
-		UI:Update["obj_Salvage", "Warping to ${Entity[GroupID = GROUP_SUN].Name}", "g"]
+		UI:Update["Salvager", "Warping to ${Entity[GroupID = GROUP_SUN].Name}", "g"]
 		Move:Warp[${Entity["GroupID = GROUP_SUN"].ID}]
 		return TRUE
 	}
@@ -536,6 +577,7 @@ objectdef obj_Salvager inherits obj_State
 						{
 							UI:Update["obj_Salvage", "Finished Salvaging ${BookmarkIterator.Value.Label} - Deleting", "g"]
 							This:InsertState["DeleteBookmark", 1000, "${BookmarkCreator},${BookmarkIterator.Value.ID}"]
+							relay "all other" -event ComBot_RemoveBookmark ${BookmarkIterator.Value.ID}						
 							BookmarkIterator.Value:Remove
 							return TRUE
 						}
@@ -553,24 +595,14 @@ objectdef obj_Salvager inherits obj_State
 		return TRUE
 	}
 	
-	member:bool OpenCargoHold()
-	{
-		if !${EVEWindow[Inventory](exists)}
-		{
-			UI:Update["obj_Salvage", "Opening inventory", "g"]
-			EVE:Execute[OpenInventory]
-			return FALSE
-		}
-		if !${EVEWindow[byCaption, "active ship"](exists)}
-		{
-			EVEWindow[byName,"Inventory"]:MakeChildActive[ShipCargo]
-		}
-		return TRUE
-	}
 	
 	member:bool CheckCargoHold()
 	{
-		if (${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity}) > 0.75
+		if !${Client.Inventory}
+		{
+			return FALSE
+		}
+		if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].UsedCapacity} / ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].Capacity} > 0.75
 		{
 			UI:Update["obj_Salvage", "Unload trip required", "g"]
 			This:QueueState["Offload"]

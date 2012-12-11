@@ -44,6 +44,8 @@ objectdef obj_Jetcan inherits obj_State
 	
 	member:bool Fill()
 	{
+		echo BEGINNING OF FILL
+		
 		variable index:entity Targets
 		variable iterator TargetIterator
 	
@@ -52,34 +54,31 @@ objectdef obj_Jetcan inherits obj_State
 			return FALSE
 		}
 
+		if !${Client.Inventory}
+		{
+			return FALSE
+		}
+		
+		echo AFTER INVENTORY CHECK
+		
 		if  ${MyShip.HasOreHold}
 		{
-			if ${EVEWindow[Inventory].ChildCapacity[ShipOreHold]} != 0
-			{
-				if ${EVEWindow[Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[Inventory].ChildCapacity[ShipOreHold]} < ${Miner.Config.Threshold} * .01
-				{
-					return FALSE
-				}
-			}
-			else
+			if 	${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipOreHold].UsedCapacity} / ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipOreHold].Capacity} < ${Miner.Config.Threshold} * .01 || \
+				${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipOreHold].UsedCapacity} == 0
 			{
 				return FALSE
 			}
 		}
 		else
 		{
-			if ${MyShip.CargoCapacity} != 0
-			{
-				if ${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity} < ${Miner.Config.Threshold} * .01
-				{
-					return FALSE
-				}
-			}
-			else
+			if 	${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].UsedCapacity} / ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].Capacity} < ${Miner.Config.Threshold} * .01 || \
+				${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].UsedCapacity}
 			{
 				return FALSE
 			}
 		}
+		
+		echo REACHED AGE CHECK
 		
 		CanAges:GetIterator[TargetIterator]
 		if ${TargetIterator:First(exists)}
@@ -96,17 +95,18 @@ objectdef obj_Jetcan inherits obj_State
 					{
 						if ${Entity[${TargetIterator.Key}].Distance < LOOT_RANGE}
 						{
-							if !${EVEWindow[Inventory].ChildWindowExists[${TargetIterator.Value}]}
+							if !${EVEWindow[Inventory].ChildWindow[${TargetIterator.Value}](exists)}
 							{
 								UI:Update["obj_Jetcan", "Opening - ${TargetIterator.Value.Name}", "g"]
-								TargetIterator.Value:OpenCargo
+								TargetIterator.Value:Open
 								return FALSE
 							}
-							; if !${EVEWindow[ByItemID, ${TargetIterator.Value}](exists)}
-							; {
-								; EVEWindow[Inventory]:MakeChildActive[${TargetIterator.Value}]
-								; return FALSE
-							; }
+							if 	${EVEWindow[Inventory].ChildWindow[${TargetIterator.Value}].UsedCapacity} == -1 || \
+								${EVEWindow[Inventory].ChildWindow[${TargetIterator.Value}].Capacity} <= 0
+							{
+								EVEWindow[Inventory].ChildWindow[${TargetIterator.Value}]:MakeActive
+								return FALSE
+							}
 							This:QueueState["LootCan", 1000, ${TargetIterator.Key}]
 							This:QueueState["NewCan", 2000]
 							This:QueueState["TransferCan", 10000, "${TargetIterator.Key}"]
@@ -124,25 +124,29 @@ objectdef obj_Jetcan inherits obj_State
 			while ${TargetIterator:Next(exists)}
 		}
 		
+		echo REACHED FILL
+		
 		EVE:QueryEntities[Targets, "GroupID==GROUP_CARGOCONTAINER && HaveLootRights && Distance<LOOT_RANGE && !IsAbandoned"]
 		Targets:GetIterator[TargetIterator]
-		if ${TargetIterator:First(exists)} && ${EVEWindow[Inventory](exists)}
-		{
+		
+		if ${TargetIterator:First(exists)}
 			do
 			{
-				if !${EVEWindow[Inventory].ChildWindowExists[${TargetIterator.Value}]}
+				if !${EVEWindow[Inventory].ChildWindow[${TargetIterator.Value}](exists)}
 				{
 					UI:Update["obj_Jetcan", "Opening - ${TargetIterator.Value.Name}", "g"]
-					TargetIterator.Value:OpenCargo
+					TargetIterator.Value:Open
 					return FALSE
 				}
-				if ${EVEWindow[Inventory].ChildCapacity[${TargetIterator.Value}]} - ${EVEWindow[Inventory].ChildUsedCapacity[${TargetIterator.Value}]} > 1000
+				if 	${EVEWindow[Inventory].ChildWindow[${TargetIterator.Value}].UsedCapacity} == -1 || \
+					${EVEWindow[Inventory].ChildWindow[${TargetIterator.Value}].Capacity} <= 0
 				{
-					; if !${EVEWindow[ByItemID, ${TargetIterator.Value}](exists)}
-					; {
-						; EVEWindow[Inventory]:MakeChildActive[${TargetIterator.Value}]
-						; return FALSE
-					; }
+					EVEWindow[Inventory].ChildWindow[${TargetIterator.Value}]:MakeActive
+					return FALSE
+				}
+				
+				if ${EVEWindow[Inventory].ChildWindow[${TargetIterator.Value}].Capacity} - ${EVEWindow[Inventory].ChildWindow[${TargetIterator.Value}].UsedCapacity} > 1000
+				{
 					if ${MyShip.HasOreHold}
 					{
 						Cargo:PopulateCargoList[OreHold]
@@ -159,53 +163,46 @@ objectdef obj_Jetcan inherits obj_State
 				}
 			}
 			while ${TargetIterator:Next(exists)}
-		}
-
+		
+		echo REACHED JETTISON
+		
 		if  ${MyShip.HasOreHold}
 		{
-			if ${EVEWindow[Inventory].ChildCapacity[ShipOreHold]} != 0
+			if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipOreHold].UsedCapacity} / ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipOreHold].Capacity} >= ${Config.Miner.Threshold} * .01
 			{
-				if ${EVEWindow[Inventory].ChildUsedCapacity[ShipOreHold]} / ${EVEWindow[Inventory].ChildCapacity[ShipOreHold]} >= ${Config.Miner.Threshold} * .01
+				Cargo:PopulateCargoList[OreHold]
+				if ${Cargo.CargoList.Used}
 				{
-					Cargo:PopulateCargoList[OreHold]
-					Cargo.CargoList:GetIterator[TargetIterator]
-					if ${TargetIterator:First(exists)}
-					{
-						TargetIterator.Value:Jettison
-						This:QueueState["Idle", 5000]
-						if ${Miner.Config.RenameCans}
-						{
-							This:QueueState["Rename", 2000]
-						}
-						This:QueueState["FillCan", 1500]
-						This:QueueState["Fill", 30000]
-						return TRUE
-					}
+					Cargo.CargoList.Get[1]:Jettison
 				}
+				This:QueueState["Idle", 5000]
+				if ${Miner.Config.RenameCans}
+				{
+					This:QueueState["Rename", 2000]
+				}
+				This:QueueState["FillCan", 1500]
+				This:QueueState["Fill", 2000]
+				return TRUE
 			}
 		}
 		else
 		{
-			if ${MyShip.CargoCapacity} != 0
+			if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].UsedCapacity} / ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].Capacity} >= ${Config.Miner.Threshold} * .01
 			{
-				if ${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity} >= ${Config.Miner.Threshold} * .01
+				Cargo:PopulateCargoList[Ship]
+				Cargo:Filter["CategoryID == CATEGORYID_ORE || GroupID == GROUP_HARVESTABLECLOUD", FALSE]
+				if ${Cargo.CargoList.Used}
 				{
-					Cargo:PopulateCargoList[Ship]
-					Cargo:Filter["CategoryID == CATEGORYID_ORE || GroupID == GROUP_HARVESTABLECLOUD", FALSE]
-					Cargo.CargoList:GetIterator[TargetIterator]
-					if ${TargetIterator:First(exists)}
-					{
-						TargetIterator.Value:Jettison
-						This:QueueState["Idle", 5000]
-						if ${Miner.Config.RenameCans}
-						{
-							This:QueueState["Rename", 2000]
-						}
-						This:QueueState["FillCan", 1500]
-						This:QueueState["Fill", 30000]
-						return TRUE
-					}
+					Cargo.CargoList.Get[1]:Jettison
 				}
+				This:QueueState["Idle", 5000]
+				if ${Miner.Config.RenameCans}
+				{
+					This:QueueState["Rename", 2000]
+				}
+				This:QueueState["FillCan", 1500]
+				This:QueueState["Fill", 2000]
+				return TRUE
 			}
 		}
 
@@ -253,16 +250,10 @@ objectdef obj_Jetcan inherits obj_State
 		{
 			return TRUE
 		}
-		if !${EVEWindow[Inventory](exists)}
+		if !${Client.Inventory}
 		{
-			MyShip:Open
 			return FALSE
 		}
-		; if !${EVEWindow[ByItemID, ${ID}](exists)}
-		; {
-			; EVEWindow[Inventory]:MakeChildActive[${ID}]
-			; return FALSE
-		; }
 		EVEWindow[ByItemID, ${ID}]:StackAll
 		return TRUE
 	}
@@ -274,16 +265,22 @@ objectdef obj_Jetcan inherits obj_State
 		{
 			return TRUE
 		}
-		if !${EVEWindow[Inventory](exists)}
+		if !${Client.Inventory}
 		{
-			MyShip:Open
 			return FALSE
 		}
-		; if !${EVEWindow[ByItemID, ${ID}](exists)}
-		; {
-			; EVEWindow[Inventory]:MakeChildActive[${ID}]
-			; return FALSE
-		; }
+		if !${EVEWindow[Inventory].ChildWindow[${ID}](exists)}
+		{
+			UI:Update["obj_Jetcan", "Opening - ${Entity[${ID}].Name}", "g"]
+			TargetIterator.Value:Open
+			return FALSE
+		}
+		if 	${EVEWindow[Inventory].ChildWindow[${ID}].UsedCapacity} == -1 || \
+			${EVEWindow[Inventory].ChildWindow[${ID}].Capacity} <= 0
+		{
+			EVEWindow[Inventory].ChildWindow[${ID}]:MakeActive
+			return FALSE
+		}
 		Entity[${ID}]:GetCargo[CargoList]
 		if ${MyShip.HasOreHold}
 		{
@@ -298,9 +295,8 @@ objectdef obj_Jetcan inherits obj_State
 	
 	member:bool NewCan()
 	{
-		if !${EVEWindow[Inventory](exists)}
+		if !${Client.Inventory}
 		{
-			MyShip:Open
 			return FALSE
 		}
 		if ${MyShip.HasOreHold}
@@ -318,75 +314,92 @@ objectdef obj_Jetcan inherits obj_State
 	
 	member:bool TransferCan(int64 ID)
 	{
-		variable index:entity Cans
-		variable iterator CanIterator
-		variable int CanAge
+		variable int64 Can
+
 		if !${Entity[${ID}](exists)}
 		{
 			return TRUE
 		}
-		if !${EVEWindow[Inventory](exists)}
+
+		if !${Client.Inventory}
 		{
-			MyShip:Open
 			return FALSE
 		}
-		; if !${EVEWindow[ByItemID, ${ID}](exists)}
-		; {
-			; EVEWindow[Inventory]:MakeChildActive[${ID}]
-			; return FALSE
-		; }
-		Cargo:PopulateList[Container, "", ${ID}]
-		EVE:QueryEntities[Cans, "GroupID==GROUP_CARGOCONTAINER && HaveLootRights && Distance<LOOT_RANGE && !IsAbandoned"]
-		Cans:GetIterator[CanIterator]
-		
-		if ${CanIterator:First(exists)} && ${EVEWindow[Inventory](exists)}
+		if !${EVEWindow[Inventory].ChildWindow[${ID}](exists)}
 		{
-			if !${CanAges.Element[CanIterator.Value.ID](exists)}
-			{
-				Cargo:MoveCargoList[Jetcan, "", ${CanIterator.Value.ID}]
-				return TRUE
-			}
+			UI:Update["obj_Jetcan", "Opening - ${Entity[${ID}].Name}", "g"]
+			TargetIterator.Value:Open
+			return FALSE
 		}
+		if 	${EVEWindow[Inventory].ChildWindow[${ID}].UsedCapacity} == -1 || \
+			${EVEWindow[Inventory].ChildWindow[${ID}].Capacity} <= 0
+		{
+			EVEWindow[Inventory].ChildWindow[${ID}]:MakeActive
+			return FALSE
+		}
+		
+		Cargo:PopulateList[Container, "", ${ID}]
+		
+		if ${Entity[GroupID==GROUP_CARGOCONTAINER && HaveLootRights && Distance<LOOT_RANGE && !IsAbandoned]}
+		{
+			Can:Set[${Entity[GroupID==GROUP_CARGOCONTAINER && HaveLootRights && Distance<LOOT_RANGE && !IsAbandoned]}]
+		}
+		else
+		{
+			return TRUE
+		}
+		
+		if !${CanAges.Element[${Can}](exists)}
+		{
+			Cargo:MoveCargoList[Jetcan, "", ${Can}]
+			return TRUE
+		}
+
 		return TRUE
 	}
 	
+	
 	member:bool FillCan()
 	{
-		variable index:entity Targets
-		variable iterator TargetIterator
-		
-		EVE:QueryEntities[Targets, "GroupID==GROUP_CARGOCONTAINER && HaveLootRights && Distance<LOOT_RANGE && !IsAbandoned"]
-		Targets:GetIterator[TargetIterator]
-		if ${TargetIterator:First(exists)} && ${EVEWindow[Inventory](exists)}
+		variable int64 Can
+		if !${Client.Inventory}
 		{
-			do
-			{
-				if !${EVEWindow[Inventory].ChildWindowExists[${TargetIterator.Value}]}
-				{
-					UI:Update["obj_Jetcan", "Opening - ${TargetIterator.Value.Name}", "g"]
-					TargetIterator.Value:OpenCargo
-					return FALSE
-				}
-				; if !${EVEWindow[ByItemID, ${TargetIterator.Value}](exists)}
-				; {
-					; EVEWindow[Inventory]:MakeChildActive[${TargetIterator.Value}]
-					; return FALSE
-				; }
-				if ${MyShip.HasOreHold}
-				{
-					Cargo:PopulateCargoList[OreHold]
-				}
-				else
-				{
-					Cargo:PopulateCargoList[Ship]
-					Cargo:Filter["CategoryID == CATEGORYID_ORE || GroupID == GROUP_HARVESTABLECLOUD", FALSE]
-				}
-				Cargo:MoveCargoList[Jetcan, "", ${TargetIterator.Value}]
-				This:QueueState["Stack", 1000, ${TargetIterator.Value}]
-				return TRUE
-			}
-			while ${TargetIterator:Next(exists)}
+			return FALSE
 		}
+		
+		if ${Entity[GroupID==GROUP_CARGOCONTAINER && HaveLootRights && Distance<LOOT_RANGE && !IsAbandoned]}
+		{
+			Can:Set[${Entity[GroupID==GROUP_CARGOCONTAINER && HaveLootRights && Distance<LOOT_RANGE && !IsAbandoned]}]
+		}
+		else
+		{
+			return TRUE
+		}
+		
+		if !${EVEWindow[Inventory].ChildWindow[${Can}](exists)}
+		{
+			UI:Update["obj_Jetcan", "Opening - ${Entity[${Can}].Name}", "g"]
+			Entity[${Can}]:Open
+			return FALSE
+		}
+		if 	${EVEWindow[Inventory].ChildWindow[${Can}].UsedCapacity} == -1 || \
+			${EVEWindow[Inventory].ChildWindow[${Can}].Capacity} <= 0
+		{
+			EVEWindow[Inventory].ChildWindow[${Can}]:MakeActive
+			return FALSE
+		}
+		
+		if ${MyShip.HasOreHold}
+		{
+			Cargo:PopulateCargoList[OreHold]
+		}
+		else
+		{
+			Cargo:PopulateCargoList[Ship]
+			Cargo:Filter["CategoryID == CATEGORYID_ORE || GroupID == GROUP_HARVESTABLECLOUD", FALSE]
+		}
+		Cargo:MoveCargoList[Jetcan, "", ${Can}]
+		This:QueueState["Stack", 1000, ${Can}]
 		return TRUE
 	}
 

@@ -278,7 +278,7 @@ objectdef obj_Security inherits obj_State
 	
 	member:bool PrepFlee(string Message)
 	{
-		if ${Client.InSpace}
+		if ${Client.InSpace} && !${Move.SavedSpotExists}
 		{
 			Move:SaveSpot
 		}

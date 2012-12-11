@@ -154,5 +154,44 @@ objectdef obj_Client
 		This.NextPulse:Set[${Math.Calc[${LavishScript.RunningTime} + ${delay}]}]
 	}
 	
-
+	member:bool Inventory()
+	{
+		if !${EVEWindow[Inventory](exists)}
+		{
+			EVE:Execute[OpenInventory]
+			return FALSE
+		}
+		if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo](exists)}
+		{
+			if 	${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].UsedCapacity} == -1 || \
+				${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].Capacity} <= 0
+			{
+				UI:Update["Client", "Cargo hold information invalid, activating", "g"]
+				EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo]:MakeActive
+				return FALSE
+			}
+		}
+		if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipOreHold](exists)}
+		{
+			if 	${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipOreHold].UsedCapacity} == -1 || \
+				${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipOreHold].Capacity} <= 0
+			{
+				UI:Update["Client", "Ore hold information invalid, activating", "g"]
+				EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipOreHold]:MakeActive
+				return FALSE
+			}
+		}
+		if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar](exists)}
+		{
+			if 	${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar].UsedCapacity} == -1 || \
+				${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar].Capacity} <= 0
+			{
+				UI:Update["Client", "Fleet Hangar information invalid, activating", "g"]
+				EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar]:MakeActive
+				return FALSE
+			}
+		}
+		
+		return TRUE
+	}
 }
