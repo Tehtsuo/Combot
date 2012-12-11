@@ -158,7 +158,6 @@ objectdef obj_Client
 	{
 		if !${EVEWindow[Inventory](exists)}
 		{
-			UI:Update["Client", "Opening inventory", "g"]
 			EVE:Execute[OpenInventory]
 			return FALSE
 		}
