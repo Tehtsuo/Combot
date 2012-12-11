@@ -144,7 +144,6 @@ objectdef obj_Hauler inherits obj_State
 		}
 		if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar].UsedCapacity} / ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar].Capacity} < ${Config.Threshold} * .01 && !${CorpHangar}
 		{
-			echo Moving
 			Cargo:PopulateCargoList[Ship]
 			Cargo:MoveCargoList[Fleet Hangar]
 			This:InsertState["CheckCargoHold", 500, "TRUE, TRUE"]
@@ -165,7 +164,6 @@ objectdef obj_Hauler inherits obj_State
 		}
 		else
 		{
-			echo Check
 			This:QueueState["CheckForWork"]
 			This:QueueState["QueuePickup"]
 			return TRUE
@@ -619,7 +617,6 @@ objectdef obj_Hauler inherits obj_State
 							{
 								if (${BookmarkIterator.Value.TimeCreated.Compare[${BookmarkTime}]} < 0 && ${BookmarkIterator.Value.DateCreated.Compare[${BookmarkDate}]} <= 0) || ${BookmarkIterator.Value.DateCreated.Compare[${BookmarkDate}]} < 0
 								{
-									echo Next bookmark set - ${BookmarkIterator.Value} - ${BookmarkIterator.Value.JumpsTo} Jumps
 									Target:Set[${BookmarkIterator.Value.Label}]
 									BookmarkTime:Set[${BookmarkIterator.Value.TimeCreated}]
 									BookmarkDate:Set[${BookmarkIterator.Value.DateCreated}]
