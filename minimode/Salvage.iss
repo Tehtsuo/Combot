@@ -281,7 +281,7 @@ objectdef obj_LootCans inherits obj_State
 				{
 					if !${EVEWindow[ByItemID, ${TargetIterator.Value}](exists)}
 					{
-						EVEWindow[Inventory]:ChildWindow[${TargetIterator.Value}]:MakeActive
+						EVEWindow[Inventory].ChildWindow[${TargetIterator.Value}]:MakeActive
 						return FALSE
 					}
 					

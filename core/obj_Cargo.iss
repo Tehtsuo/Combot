@@ -780,7 +780,7 @@ objectdef obj_Cargo inherits obj_State
 
 		if ${EVEWindow[Inventory].ChildWindow[${Me.Station.ID}, StationCorpHangar](exists)} && !${OpenedCorpHangar}
 		{
-			EVEWindow[Inventory]:ChildWindow[${Me.Station.ID}, Corporation Hangars]:MakeActive
+			EVEWindow[Inventory].ChildWindow[${Me.Station.ID}, Corporation Hangars]:MakeActive
 			This:InsertState["Load", 2000, TRUE]
 			return TRUE
 		}
