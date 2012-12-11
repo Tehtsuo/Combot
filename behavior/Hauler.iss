@@ -152,6 +152,7 @@ objectdef obj_Hauler inherits obj_State
 				Cargo:PopulateCargoList[Ship]
 				Cargo:MoveCargoList[Fleet Hangar]
 			}
+			echo This:InsertState["CheckCargoHold", 500, "TRUE, TRUE"]
 			This:InsertState["CheckCargoHold", 500, "TRUE, TRUE"]
 			return TRUE
 		}
