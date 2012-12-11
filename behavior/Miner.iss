@@ -825,7 +825,7 @@ objectdef obj_Miner inherits obj_State
 		
 		variable iterator Roid
 		variable bool Approaching=FALSE
-		Asteroids.LockedTargetList:GetIterator[Roid]
+		Asteroids.LockedAndLockingTargetList:GetIterator[Roid]
 		
 		variable float LaserSplitCount = ${Math.Calc[${Ship.ModuleList_MiningLaser.Count} / ${Asteroids.MinLockCount}]}
 		variable int LaserRoidSplitCount = ${Math.Calc[${Ship.ModuleList_MiningLaser.Count} % ${Asteroids.MinLockCount}]}
@@ -839,6 +839,10 @@ objectdef obj_Miner inherits obj_State
 			{
 				if ${Roid.Value.ID(exists)}
 				{
+					if !${Roid.Value.IsLockedTarget}
+					{
+						continue
+					}
 					LaserRoidCount:Inc
 					if ${LaserRoidCount} > ${LaserRoidSplitCount}
 					{
