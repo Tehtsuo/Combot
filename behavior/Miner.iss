@@ -468,6 +468,7 @@ objectdef obj_Miner inherits obj_State
 		Profiling:StartTrack["Miner: CheckForWork"]
 		if !${Asteroids.TargetList.Used}
 		{
+			This:QueueState["PrepareWarp"]
 			This:QueueState["MoveToBelt"]
 			if ${Config.MineAlone}
 			{
@@ -493,6 +494,7 @@ objectdef obj_Miner inherits obj_State
 			UI:Update["Miner", "This location is occupied, going to next", "g"]
 			This:InsertState["VerifyMiningLocation"]
 			This:InsertState["MoveToBelt"]
+			This:InsertState["PrepareWarp"]
 			Drones:RecallAll
 		}
 		return TRUE
