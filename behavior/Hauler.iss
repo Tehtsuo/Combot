@@ -147,10 +147,12 @@ objectdef obj_Hauler inherits obj_State
 		}
 		if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar](exists)}
 		{
+			echo Before Capacity check
 			if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar].UsedCapacity} / ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar].Capacity} < ${Config.Threshold} * .01 && !${CorpHangar}
 			{
+				echo Capacity check true, populating and moving
 				Cargo:PopulateCargoList[Ship]
-				Cargo:MoveCargoList[Fleet Hangar]
+				Cargo:MoveCargoList["Fleet Hangar"]
 			}
 			echo This:InsertState["CheckCargoHold", 500, "TRUE, TRUE"]
 			This:InsertState["CheckCargoHold", 500, "TRUE, TRUE"]
