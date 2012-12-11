@@ -135,17 +135,23 @@ objectdef obj_Hauler inherits obj_State
 		{
 			return FALSE
 		}
-		if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipOreHold].UsedCapacity} / ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipOreHold].Capacity} < ${Config.Threshold} * .01 && !${OreHold}
+		if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipOreHold](exists)}
 		{
-			Cargo:PopulateCargoList[Ship]
-			Cargo:MoveCargoList[OreHold]
+			${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipOreHold].UsedCapacity} / ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipOreHold].Capacity} < ${Config.Threshold} * .01 && !${OreHold}
+			{
+				Cargo:PopulateCargoList[Ship]
+				Cargo:MoveCargoList[OreHold]
+			}
 			This:InsertState["CheckCargoHold", 500, "TRUE"]
 			return TRUE
 		}
-		if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar].UsedCapacity} / ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar].Capacity} < ${Config.Threshold} * .01 && !${CorpHangar}
+		if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar](exists)}
 		{
-			Cargo:PopulateCargoList[Ship]
-			Cargo:MoveCargoList[Fleet Hangar]
+			if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar].UsedCapacity} / ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar].Capacity} < ${Config.Threshold} * .01 && !${CorpHangar}
+			{
+				Cargo:PopulateCargoList[Ship]
+				Cargo:MoveCargoList[Fleet Hangar]
+			}
 			This:InsertState["CheckCargoHold", 500, "TRUE, TRUE"]
 			return TRUE
 		}
