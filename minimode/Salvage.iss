@@ -299,8 +299,10 @@ objectdef obj_LootCans inherits obj_State
 						}
 						while ${CargoIterator:Next(exists)}
 					}
+					
 					UI:Update["Salvage", "Looting - ${TargetIterator.Value.Name}", "g"]
-					EVEWindow[ByItemID, ${TargetIterator.Value}]:LootAll
+					Cargo:PopulateCargoList[Container, ${TargetIterator.Value.ID}]
+					Cargo:MoveCargoList[SHIP]
 					This:InsertState["Loot"]
 					This:InsertState["Stack"]
 					return TRUE
