@@ -642,9 +642,9 @@ objectdef obj_Cargo inherits obj_State
 		
 		}
 
-		if ${EVEWindow[Inventory].ChildWindow[StationCorpHangar](exists)} && !${OpenedCorpHangar}
+		if ${EVEWindow[Inventory].ChildWindow[${Me.Station.ID}, StationCorpHangar](exists)} && !${OpenedCorpHangar}
 		{
-			EVEWindow[Inventory]:ChildWindow[Corporation Hangars]:MakeActive
+			EVEWindow[Inventory]:ChildWindow[${Me.Station.ID}, Corporation Hangars]:MakeActive
 			This:InsertState["Stack", 2000, TRUE]
 			return TRUE
 		}
@@ -716,9 +716,9 @@ objectdef obj_Cargo inherits obj_State
 			}
 		}
 		
-		if ${EVEWindow[Inventory].ChildWindow[StationCorpHangar](exists)} && !${OpenedCorpHangar}
+		if ${EVEWindow[Inventory].ChildWindow[${Me.Station.ID}, StationCorpHangar](exists)} && !${OpenedCorpHangar}
 		{
-			EVEWindow[Inventory]:ChildWindow[Corporation Hangars]:MakeActive
+			EVEWindow[Inventory]:ChildWindow[${Me.Station.ID}, Corporation Hangars]:MakeActive
 			This:InsertState["Unload", 2000, TRUE]
 			return TRUE
 		}
@@ -776,9 +776,9 @@ objectdef obj_Cargo inherits obj_State
 			}
 		}
 
-		if ${EVEWindow[Inventory].ChildWindow[StationCorpHangar](exists)} && !${OpenedCorpHangar}
+		if ${EVEWindow[Inventory].ChildWindow[${Me.Station.ID}, StationCorpHangar](exists)} && !${OpenedCorpHangar}
 		{
-			EVEWindow[Inventory]:ChildWindow[Corporation Hangars]:MakeActive
+			EVEWindow[Inventory]:ChildWindow[${Me.Station.ID}, Corporation Hangars]:MakeActive
 			This:InsertState["Load", 2000, TRUE]
 			return TRUE
 		}
