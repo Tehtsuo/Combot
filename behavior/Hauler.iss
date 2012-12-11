@@ -137,7 +137,7 @@ objectdef obj_Hauler inherits obj_State
 		}
 		if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipOreHold](exists)}
 		{
-			${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipOreHold].UsedCapacity} / ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipOreHold].Capacity} < ${Config.Threshold} * .01 && !${OreHold}
+			if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipOreHold].UsedCapacity} / ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipOreHold].Capacity} < ${Config.Threshold} * .01 && !${OreHold}
 			{
 				Cargo:PopulateCargoList[Ship]
 				Cargo:MoveCargoList[OreHold]
