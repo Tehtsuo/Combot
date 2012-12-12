@@ -81,6 +81,43 @@ objectdef obj_Cargo inherits obj_State
 		This[parent]:Initialize
 	}
 
+	method ActivateSource(string location, int64 ID=-1)
+	{
+		switch ${location} 
+		{
+			case Ship
+				if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo](exists)}
+				{
+					EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo]:MakeActive
+				}
+				break
+			case ShipCorpHangar
+				if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar](exists)}
+				{
+					EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar]:MakeActive
+				}
+				break
+			case OreHold
+				if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipOreHold](exists)}
+				{
+					EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipOreHold]:MakeActive
+				}
+				break
+			case Corporation Hangar
+				if ${EVEWindow[Inventory].ChildWindow[StationCorpHangar](exists)}
+				{
+					EVEWindow[Inventory].ChildWindow[StationCorpHangars]:MakeActive
+				}
+				break
+			case Personal Hangar
+				if ${EVEWindow[Inventory].ChildWindow[StationItems](exists)}
+				{
+					EVEWindow[Inventory].ChildWindow[StationItems]:MakeActive
+				}
+				Me.Station:GetHangarItems[CargoList]
+				break
+		}
+	}
 	
 	method PopulateCargoList(string location, int64 ID=-1, string Folder="")
 	{
@@ -485,7 +522,7 @@ objectdef obj_Cargo inherits obj_State
 		This.BuildAction.Container:Set[${arg_Container}]
 	}
 	
-	method Load(string arg_Query = "", int arg_Quantity = 0)
+	method Load(string arg_Query = "", int arg_Quantity = 0, string arg_Source = "Ship")
 	{
 		if 	${This.BuildAction.Bookmark.Length} == 0 || \
 			${This.BuildAction.LocationType.Length} == 0
@@ -494,7 +531,7 @@ objectdef obj_Cargo inherits obj_State
 			return
 		}
 		
-		This.CargoQueue:Queue[${This.BuildAction.Bookmark}, Load, ${This.BuildAction.LocationType}, ${This.BuildAction.LocationSubtype}, ${This.BuildAction.Container}, ${arg_Query}, ${arg_Quantity}]
+		This.CargoQueue:Queue[${This.BuildAction.Bookmark}, Load, ${This.BuildAction.LocationType}, ${This.BuildAction.LocationSubtype}, ${This.BuildAction.Container}, ${arg_Query}, ${arg_Quantity}, ${arg_Source}]
 		This.Processing:Set[TRUE]
 		if ${This.IsIdle}
 		{
@@ -570,6 +607,7 @@ objectdef obj_Cargo inherits obj_State
 		This:QueueState["Traveling"]
 		This:QueueState["WarpFleetMember"]
 		This:QueueState["Traveling"]
+		This:QueueState["Activate"]
 		This:QueueState["${This.CargoQueue.Peek.Action}"]
 		This:QueueState["Stack"]
 		This:QueueState["Dequeue"]
@@ -600,6 +638,20 @@ objectdef obj_Cargo inherits obj_State
 		This.CargoQueue:Dequeue
 		return TRUE
 	}
+
+
+	member:bool Activate()
+	{
+		if !${Client.Inventory}
+		{
+			return FALSE
+		}
+
+		Cargo:ActivateSource[${This.CargoQueue.Peek.Source}]
+		return TRUE
+	}
+	
+	
 
 	member:bool Stack(bool OpenedCorpHangar=FALSE, bool StackedShip=FALSE)
 	{
@@ -668,7 +720,7 @@ objectdef obj_Cargo inherits obj_State
 			return TRUE
 		}
 		
-		switch ${This.BuildAction.LocationType}
+		switch ${This.CargoQueue.Peek.LocationType}
 		{
 			case Personal Hangar
 				EVE:StackItems[MyStationHangar, Hangar]

@@ -44,7 +44,6 @@ objectdef obj_Jetcan inherits obj_State
 	
 	member:bool Fill()
 	{
-		echo BEGINNING OF FILL
 		
 		variable index:entity Targets
 		variable iterator TargetIterator
@@ -59,7 +58,6 @@ objectdef obj_Jetcan inherits obj_State
 			return FALSE
 		}
 		
-		echo AFTER INVENTORY CHECK
 		
 		if  ${MyShip.HasOreHold}
 		{
@@ -78,7 +76,6 @@ objectdef obj_Jetcan inherits obj_State
 			}
 		}
 		
-		echo REACHED AGE CHECK
 		
 		CanAges:GetIterator[TargetIterator]
 		if ${TargetIterator:First(exists)}
@@ -124,7 +121,6 @@ objectdef obj_Jetcan inherits obj_State
 			while ${TargetIterator:Next(exists)}
 		}
 		
-		echo REACHED FILL
 		
 		EVE:QueryEntities[Targets, "GroupID==GROUP_CARGOCONTAINER && HaveLootRights && Distance<LOOT_RANGE && !IsAbandoned"]
 		Targets:GetIterator[TargetIterator]
@@ -164,7 +160,6 @@ objectdef obj_Jetcan inherits obj_State
 			}
 			while ${TargetIterator:Next(exists)}
 		
-		echo REACHED JETTISON
 		
 		if  ${MyShip.HasOreHold}
 		{
