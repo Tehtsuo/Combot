@@ -79,6 +79,7 @@ objectdef obj_Cargo inherits obj_State
 	method Initialize()
 	{
 		This[parent]:Initialize
+		This.PulseFrequency:Set[500]
 	}
 
 	method ActivateSource(string location, int64 ID=-1)
