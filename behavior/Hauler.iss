@@ -225,7 +225,7 @@ objectdef obj_Hauler inherits obj_State
 		}
 		else
 		{
-			Cargo:At[${Config.Pickup},${Config.PickupType},${Config.PickupSubType},${Config.PickupContainer}]:Load
+			Cargo:At[${Config.Pickup},${Config.PickupType},${Config.PickupSubType},${Config.PickupContainer}]:Load["GroupID != GROUP_MINING_CRYSTAL"]
 			This:QueueState["Traveling"]
 			This:QueueState["CheckCargoHold"]
 		}
