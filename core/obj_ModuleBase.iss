@@ -61,7 +61,6 @@ objectdef obj_ModuleBase inherits obj_State
 	{
 		if !${Deactivated}
 		{
-			echo DEACTIVATING ${MyShip.Module[${ModuleID}].Name}
 			MyShip.Module[${ModuleID}]:Deactivate
 			Deactivated:Set[TRUE]
 			This:Clear
@@ -162,6 +161,7 @@ objectdef obj_ModuleBase inherits obj_State
 	
 	member:bool WaitTillInactive(int Count = -1)
 	{
+		echo ${MyShip.Module[${ModuleID}].ToItem.Name}: Waiting to inactive - Count: ${Count}
 		if ${Count} > 1000
 		{
 			echo ${MyShip.Module[${ModuleID}].ToItem.Name}: WaitTillInactive failed after 5 seconds, trying another Deactivate
