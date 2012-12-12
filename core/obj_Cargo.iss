@@ -452,7 +452,6 @@ objectdef obj_Cargo inherits obj_State
 								}
 							}
 							while ${Cargo:Next(exists)}
-						echo EVE:MoveItemsTo[TransferIndex, ${ID}, FleetHangar]
 						EVE:MoveItemsTo[TransferIndex, ${ID}, FleetHangar]
 					}
 					break
@@ -476,7 +475,6 @@ objectdef obj_Cargo inherits obj_State
 							}
 						}
 						while ${Cargo:Next(exists)}
-					echo EVE:MoveItemsTo[TransferIndex, ${ID}]
 					EVE:MoveItemsTo[TransferIndex, ${ID}]
 					break
 				case OreHold
@@ -505,7 +503,6 @@ objectdef obj_Cargo inherits obj_State
 					EVE:MoveItemsTo[TransferIndex, MyStationHangar, Hangar]
 					break
 				case Corporation Hangar
-					echo MOVE TO CORPORATION HANGAR - EVE:MoveItemsTo[TransferIndex, MyStationCorporateHangar, StationCorporateHangar${TransferFolder}] - TransferIndex: ${TransferIndex.Used}
 					EVE:MoveItemsTo[TransferIndex, MyStationCorporateHangar, StationCorporateHangar${TransferFolder}]
 					break
 			}
@@ -706,7 +703,7 @@ objectdef obj_Cargo inherits obj_State
 		
 		}
 
-		if ${EVEWindow[Inventory].ChildWindow[StationCorpHangar](exists)} && !${OpenedCorpHangar}
+		if !${EVEWindow[Inventory].ChildWindow[StationCorpHangar](exists)} && !${OpenedCorpHangar}
 		{
 			EVEWindow[Inventory].ChildWindow[StationCorpHangars]:MakeActive
 			This:InsertState["Stack", 2000, TRUE]
@@ -780,10 +777,8 @@ objectdef obj_Cargo inherits obj_State
 			}
 		}
 		
-		echo STATION HANGAR CHECK:  ${EVEWindow[Inventory].ChildWindow[StationCorpHangar](exists)} && ${OpenedCorpHangar}
-		if ${EVEWindow[Inventory].ChildWindow[StationCorpHangar](exists)} && !${OpenedCorpHangar}
+		if !${EVEWindow[Inventory].ChildWindow[StationCorpHangar](exists)} && !${OpenedCorpHangar}
 		{
-			echo STATION HANGAR CHECK TRUE
 			EVEWindow[Inventory].ChildWindow[StationCorpHangars]:MakeActive
 			This:InsertState["Unload", 2000, TRUE]
 			return TRUE
@@ -842,7 +837,7 @@ objectdef obj_Cargo inherits obj_State
 			}
 		}
 
-		if ${EVEWindow[Inventory].ChildWindow[StationCorpHangar](exists)} && !${OpenedCorpHangar}
+		if !${EVEWindow[Inventory].ChildWindow[StationCorpHangar](exists)} && !${OpenedCorpHangar}
 		{
 			EVEWindow[Inventory].ChildWindow[StationCorpHangars]:MakeActive
 			This:InsertState["Load", 2000, TRUE]
