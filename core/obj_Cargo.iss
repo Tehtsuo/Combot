@@ -780,6 +780,7 @@ objectdef obj_Cargo inherits obj_State
 			}
 		}
 		
+		echo STATION HANGAR CHECK:  ${EVEWindow[Inventory].ChildWindow[StationCorpHangar](exists)} && ${OpenedCorpHangar}
 		if ${EVEWindow[Inventory].ChildWindow[StationCorpHangar](exists)} && !${OpenedCorpHangar}
 		{
 			echo STATION HANGAR CHECK TRUE
