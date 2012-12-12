@@ -550,7 +550,6 @@ objectdef obj_Cargo inherits obj_State
 			return FALSE
 		}
 
-		variable string Info
 		UI:Update["Cargo", "Processing \ao${This.CargoQueue.Peek.Action}\ag at \ao${This.CargoQueue.Peek.Bookmark}", "g", TRUE]
 		switch ${This.CargoQueue.Peek.Action}
 		{
