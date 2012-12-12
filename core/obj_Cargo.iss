@@ -549,7 +549,19 @@ objectdef obj_Cargo inherits obj_State
 			return FALSE
 		}
 
-		UI:Update["Cargo", "Process ${This.CargoQueue.Peek.Action} @ ${This.CargoQueue.Peek.Bookmark} - ${This.CargoQueue.Peek.LocationType}", "g", TRUE]
+		variable string Info
+		UI:Update["Cargo", "Processing \ao${This.CargoQueue.Peek.Action}\ag at \ao${This.CargoQueue.Peek.Bookmark}", "g", TRUE]
+		switch ${This.CargoQueue.Peek.Action}
+		{
+			case Unload
+				UI:Update["Cargo", " Source: \ao${This.CargoQueue.Peek.Source}", "-g", TRUE]
+				UI:Update["Cargo", " Destination: \ao${This.CargoQueue.Peek.LocationType}\a-g - \ao${This.CargoQueue.Peek.LocationSubType}\a-g - \ao${This.CargoQueue.Peek.Container}", "-g", TRUE]
+				break
+			case Load
+				UI:Update["Cargo", " Source: \ao${This.CargoQueue.Peek.LocationType}\a-g - \ao${This.CargoQueue.Peek.LocationSubType}\a-g - \ao${This.CargoQueue.Peek.Container}", "-g", TRUE]
+				UI:Update["Cargo", " Destination: \aoShip", "-g", TRUE]
+				break
+		}
 		
 		if !${Local[${This.CargoQueue.Peek.Container}](exists)}
 		{
