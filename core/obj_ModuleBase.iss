@@ -61,10 +61,11 @@ objectdef obj_ModuleBase inherits obj_State
 	{
 		if !${Deactivated}
 		{
+			echo DEACTIVATING ${MyShip.Module[${ModuleID}].Name}
 			MyShip.Module[${ModuleID}]:Deactivate
 			Deactivated:Set[TRUE]
 			This:Clear
-			This:QueueState["WaitTillInactive"]
+			This:QueueState["WaitTillInactive", 50, 0]
 		}
 	}
 	
@@ -159,7 +160,7 @@ objectdef obj_ModuleBase inherits obj_State
 		return TRUE
 	}
 	
-	member:bool WaitTillInactive(int Count = 0)
+	member:bool WaitTillInactive(int Count = -1)
 	{
 		if ${Count} > 1000
 		{
@@ -170,8 +171,12 @@ objectdef obj_ModuleBase inherits obj_State
 		}
 		if ${MyShip.Module[${ModuleID}].IsActive}
 		{
-			This:InsertState["WaitTillInactive", 50, ${Count:Inc}]
-			return TRUE
+			if ${Count} >= 0
+			{
+				This:InsertState["WaitTillInactive", 50, ${Count:Inc}]
+				return TRUE
+			}
+			return FALSE
 		}
 		Activated:Set[FALSE]
 		Deactivated:Set[FALSE]
