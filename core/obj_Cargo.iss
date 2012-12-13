@@ -582,7 +582,14 @@ objectdef obj_Cargo inherits obj_State
 		DroneControl:Recall
 		if ${Busy.IsBusy}
 		{
-			return FALSE
+			if ${Busy.BusyModes.Used} == 1 && ${Busy.BusyModes.Contains[Salvage]}
+			{
+				;Leaving here for possible use
+			}
+			else
+			{
+				return FALSE
+			}
 		}
 
 		UI:Update["Cargo", "Processing \ao${This.CargoQueue.Peek.Action}\ag at \ao${This.CargoQueue.Peek.Bookmark}", "g", TRUE]
