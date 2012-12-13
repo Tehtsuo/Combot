@@ -694,6 +694,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 												<Item>Corporation Hangar</Item>
 												<Item>Personal Hangar</Item>
 												<Item>Fleet Hangar</Item>
+												<Item>No Dropoff</Item>
 											</Items>
 											<OnLoad>
 												This.ItemByText[${Script[ComBot].VariableScope.Hauler.Config.DropoffType}]:Select
@@ -728,6 +729,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 														UIElement[DropoffContainerTitle@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
 														Script[ComBot].VariableScope.Hauler.Config:SetDropoffContainer[\"\"]
 														UIElement[DropoffSubTypeTitle@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Corporate Folder]
+														UIElement[DropoffTitle@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
+														UIElement[Dropoff@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
 														break
 													case Container
 														UIElement[DropoffSubType@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 1]
@@ -745,6 +748,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 														UIElement[DropoffSubType@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
 														UIElement[DropoffTitle@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Container Bookmark]
 														UIElement[DropoffSubTypeTitle@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Corporate Folder]
+														UIElement[DropoffTitle@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
+														UIElement[Dropoff@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
 														break
 													case Fleet Hangar
 														UIElement[DropoffContainer@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
@@ -754,6 +759,8 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 														UIElement[DropoffSubTypeTitle@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
 														UIElement[DropoffSubType@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
 														Script[ComBot].VariableScope.Hauler.Config:SetDropoffSubType[\"\"]
+														UIElement[DropoffTitle@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
+														UIElement[Dropoff@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
 														break
 													case Personal Hangar
 														UIElement[DropoffSubTypeTitle@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
@@ -763,6 +770,18 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 														UIElement[DropoffContainerTitle@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
 														Script[ComBot].VariableScope.Hauler.Config:SetDropoffContainer[\"\"]
 														UIElement[DropoffTitle@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Dropoff Station Bookmark]
+														UIElement[DropoffTitle@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
+														UIElement[Dropoff@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
+														break
+													case No Dropoff
+														UIElement[DropoffSubTypeTitle@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
+														UIElement[DropoffSubType@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
+														Script[ComBot].VariableScope.Hauler.Config:SetDropoffSubType[\"\"]
+														UIElement[DropoffContainer@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
+														UIElement[DropoffContainerTitle@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
+														Script[ComBot].VariableScope.Hauler.Config:SetDropoffContainer[\"\"]
+														UIElement[DropoffTitle@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
+														UIElement[Dropoff@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
 												}
 												UIElement[DropoffContainer@DropoffFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[${Script[ComBot].VariableScope.Hauler.Config.DropoffContainer}]
 											</OnSelect>
