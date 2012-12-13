@@ -848,7 +848,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									variable int counter
 									variable collection:bool selected
 
-									if ${UIElement[obj_MinerIceMining@@Miner_Frame@ComBot_Miner].Checked}
+									if ${UIElement[obj_MinerIceMining@MiningFrame@Miner_Frame@ComBot_Miner].Checked}
 									{
 										Ores:Set[${LavishSettings[ComBotSettings].FindSet[${Me.Name}].FindSet[Miner].FindSet[ICE_Types]}]
 										Ores:Clear
@@ -864,6 +864,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									}
 									else
 									{
+										if !${LavishSettings[ComBotSettings].FindSet[${Me.Name}].FindSet[Miner].FindSet[ORE_Types](exists)}
+										{
+											LavishSettings[ComBotSettings].FindSet[${Me.Name}].FindSet[Miner]:AddSet[ORE_Types]
+										}
 										Ores:Set[${LavishSettings[ComBotSettings].FindSet[${Me.Name}].FindSet[Miner].FindSet[Ore_Types]}]
 										Ores:Clear
 										for ( counter:Set[1] ; ${counter} &lt;= ${UIElement[obj_MinerOrePriority@MiningFrame@Miner_Frame@ComBot_Miner].SelectedItems} ; counter:Inc )
