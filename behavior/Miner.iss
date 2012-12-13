@@ -253,7 +253,36 @@ objectdef obj_Miner inherits obj_State
 			return FALSE
 		}
 
-		if 	${MyShip.HasOreHold}
+		
+		if ${Config.OrcaMode}
+		{
+			if 	${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar].UsedCapacity} / ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar].Capacity} >= ${Config.Threshold} * .01 && \
+				!${Config.Dropoff_Type.Equal[No Dropoff]} && \
+				!${Config.Dropoff_Type.Equal[Jetcan]}
+			{
+				UI:Update["obj_Miner", "Unload trip required", "g"]
+				This:QueueState["PrepareWarp"]
+				This:QueueState["Dropoff"]
+				This:QueueState["Traveling"]
+				This:QueueState["CheckCargoHold"]
+				This:QueueState["RequestUpdate"]
+				Profiling:EndTrack
+				return TRUE
+			}
+			else
+			{
+				This:QueueState["GoToMiningSystem"]
+				This:QueueState["Traveling"]
+				This:QueueState["Undock"]
+				This:QueueState["WaitForSpace"]
+				This:QueueState["RequestUpdate"]
+				This:QueueState["Updated"]
+				This:QueueState["CheckForWork"]
+				Profiling:EndTrack
+				return TRUE
+			}
+		}
+		elseif 	${MyShip.HasOreHold}
 		{
 			if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipOreHold].UsedCapacity} / ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipOreHold].Capacity} >= ${Config.Threshold} * .01 && \
 			!${Config.Dropoff_Type.Equal[No Dropoff]} && \
@@ -296,34 +325,6 @@ objectdef obj_Miner inherits obj_State
 			This:QueueState["RequestUpdate"]
 			Profiling:EndTrack
 			return TRUE
-		}
-		elseif ${Config.OrcaMode}
-		{
-			if 	${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar].UsedCapacity} / ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar].Capacity} >= ${Config.Threshold} * .01 && \
-				!${Config.Dropoff_Type.Equal[No Dropoff]} && \
-				!${Config.Dropoff_Type.Equal[Jetcan]}
-			{
-				UI:Update["obj_Miner", "Unload trip required", "g"]
-				This:QueueState["PrepareWarp"]
-				This:QueueState["Dropoff"]
-				This:QueueState["Traveling"]
-				This:QueueState["CheckCargoHold"]
-				This:QueueState["RequestUpdate"]
-				Profiling:EndTrack
-				return TRUE
-			}
-			else
-			{
-				This:QueueState["GoToMiningSystem"]
-				This:QueueState["Traveling"]
-				This:QueueState["Undock"]
-				This:QueueState["WaitForSpace"]
-				This:QueueState["RequestUpdate"]
-				This:QueueState["Updated"]
-				This:QueueState["CheckForWork"]
-				Profiling:EndTrack
-				return TRUE
-			}
 		}
 		else
 		{
