@@ -141,10 +141,13 @@ objectdef obj_Hauler inherits obj_State
 			if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipOreHold].UsedCapacity} / ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipOreHold].Capacity} < ${Config.Threshold} * .01
 			{
 				Cargo:PopulateCargoList[Ship]
-				Cargo:MoveCargoList[OreHold]
+				if ${Cargo.CargoList.Used}
+				{
+					Cargo:MoveCargoList[OreHold]
+					This:InsertState["CheckCargoHold", 500, "TRUE"]
+					return TRUE
+				}
 			}
-			This:InsertState["CheckCargoHold", 500, "TRUE"]
-			return TRUE
 		}
 		if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar](exists)} && !${CorpHangar}
 		{
@@ -158,7 +161,8 @@ objectdef obj_Hauler inherits obj_State
 					return TRUE
 				}
 			}
-			if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar].UsedCapacity} / ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar].Capacity} < ${Config.Threshold} * .01
+			if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar].UsedCapacity} / ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar].Capacity} < ${Config.Threshold} * .01 && \
+				${Config.DropoffType.Equal[No Dropoff]}
 			{
 				Cargo:PopulateCargoList[OreHold]
 				if ${Cargo.CargoList.Used}
@@ -167,9 +171,9 @@ objectdef obj_Hauler inherits obj_State
 					This:InsertState["CheckCargoHold", 500, "TRUE"]
 					return TRUE
 				}
+				relay "all other" -event ComBot_Orca_Cargo ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar].UsedCapacity}
 			}
-			This:InsertState["CheckCargoHold", 500, "TRUE, TRUE"]
-			return TRUE
+			
 		}
 		if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].UsedCapacity} / ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].Capacity} >= ${Config.Threshold} * .01 && \
 			!${Config.DropoffType.Equal[No Dropoff]}
