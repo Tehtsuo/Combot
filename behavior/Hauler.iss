@@ -63,7 +63,8 @@ objectdef obj_Configuration_Hauler
 	Setting(string, Mode, SetMode)
 	Setting(int, Threshold, SetThreshold)	
 	Setting(bool, Repeat, SetRepeat)	
-	
+	Setting(bool, FlybyPickups, SetFlybyPickups)	
+
 }
 
 objectdef obj_Hauler inherits obj_State
@@ -190,7 +191,8 @@ objectdef obj_Hauler inherits obj_State
 				return FALSE
 			}
 			
-			if ${OrcaCargo} > ${Config.Threshold} * .01 * ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].Capacity}
+			if ${OrcaCargo} > ${Config.Threshold} * .01 * ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].Capacity} || \
+				${Config.FlybyPickups}
 			{
 				return TRUE
 			}

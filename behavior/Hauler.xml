@@ -215,6 +215,33 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 											<Alignment>Center</Alignment>
 											<Text>Fleet Hangar Name</Text>
 										</Text>
+										<CheckBox name='FlybyPickups'> 
+											<X>34%</X> 
+											<Y>45%</Y> 
+											<Width>32%</Width> 
+											<Height>10%</Height> 
+											<Alignment>Center</Alignment>
+											<Text>Only perform fly-by pickups</Text>
+											<OnLoad>
+												if ${Script[ComBot].VariableScope.Hauler.Config.FlybyPickups}
+												{
+													This:SetChecked
+												}
+												if !${Script[ComBot].VariableScope.Hauler.Config.PickupType.Equal[Fleet Hangar]}
+												{
+													This:Hide
+												}
+											</OnLoad>
+											<OnChange>
+												Script[ComBot].VariableScope.Hauler.Config:SetFlybyPickups[${This.Checked}]
+											</OnChange>
+											<OnMouseEnter>
+												UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText["If this is toggled on, ComBot will wait until the fleet hangar has enough to fill your threshold before going to pick up.  If it is deselected, ComBot will always immediately fly to your pickup pilot and remain there until your threshold is reached."]
+											</OnMouseEnter>
+											<OnMouseExit>
+												UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText[""]
+											</OnMouseExit>
+										</CheckBox>
 										<TextEntry name='PickupContainer'> 
 											<X>34%</X> 
 											<Y>80%</Y> 
@@ -351,6 +378,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 														UIElement[PickupContainer@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
 														UIElement[PickupSubType@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
 														UIElement[PickupSubTypeTitle@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
+														UIElement[FlybyPickups@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
 														break
 													case Corporation Hangar
 														UIElement[PickupSubType@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 1]
@@ -366,6 +394,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 														UIElement[PickupContainer@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
 														UIElement[PickupSubType@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
 														UIElement[PickupSubTypeTitle@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
+														UIElement[FlybyPickups@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
 														break
 													case Fleet Hangar
 														UIElement[PickupTitle@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Mining System Bookmark]
@@ -374,6 +403,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 														UIElement[PickupContainer@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
 														UIElement[PickupSubType@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
 														UIElement[PickupSubTypeTitle@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
+														UIElement[FlybyPickups@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
 														break
 													case Jetcan
 														UIElement[PickupTitle@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Mining System Bookmark]
@@ -388,6 +418,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 														UIElement[PickupSubType@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler].ItemByText[${Script[ComBot].VariableScope.Hauler.Config.PickupSubType}]:Select
 														UIElement[PickupSubType@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
 														UIElement[PickupSubTypeTitle@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
+														UIElement[FlybyPickups@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
 														break
 													default
 														UIElement[PickupTitle@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Pickup Station Bookmark]
@@ -395,6 +426,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 														UIElement[PickupContainer@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
 														UIElement[PickupSubType@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
 														UIElement[PickupSubTypeTitle@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
+														UIElement[FlybyPickups@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
 														break
 												}
 											</OnLoad>
