@@ -189,6 +189,9 @@ objectdef obj_Hauler inherits obj_State
 			{
 				return FALSE
 			}
+			
+			echo FLEET HANGAR AT ${OrcaCargo}
+			
 			if ${OrcaCargo} > ${Config.Threshold} * .01 * ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].Capacity}
 			{
 				return TRUE
