@@ -346,7 +346,7 @@ objectdef obj_Miner inherits obj_State
 		return TRUE
 	}
 	
-	member:bool PrepareWarp()
+	member:bool PrepareWarp(bool Save=TRUE)
 	{
 		DroneControl:Recall
 		if ${Busy.IsBusy}
@@ -357,7 +357,7 @@ objectdef obj_Miner inherits obj_State
 		{
 			relay all -event ComBot_Orca_InBelt FALSE
 		}
-		if ${Asteroids.TargetList.Used} && !${Config.Dropoff_Type.Equal[Fleet Hangar]} && !${Config.Tether}
+		if ${Asteroids.TargetList.Used} && !${Config.Dropoff_Type.Equal[Fleet Hangar]} && !${Config.Tether} && ${Save}
 		{
 			Move:SaveSpot
 		}
@@ -495,7 +495,7 @@ objectdef obj_Miner inherits obj_State
 			UI:Update["Miner", "This location is occupied, going to next", "g"]
 			This:InsertState["VerifyMiningLocation"]
 			This:InsertState["MoveToBelt"]
-			This:InsertState["PrepareWarp"]
+			This:InsertState["PrepareWarp", 500, FALSE]
 			Drones:RecallAll
 		}
 		return TRUE
