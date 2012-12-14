@@ -28,6 +28,8 @@ objectdef obj_PriorityTargets
 
 	method Initialize()
 	{
+		; Web
+		This.Scramble:Insert["Stasis Tower"]
 	
 		This.Scramble:Insert["Angel Frigate Vessel"]
 		This.Scramble:Insert["Arch Angel Hijacker"]
