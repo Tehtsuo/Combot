@@ -197,16 +197,27 @@ objectdef obj_Automate inherits obj_State
 		return TRUE
 	}
 	
-	method LogoutNow()
+	method DeltaLogoutNow()
 	{
-		UI:Update["Automate", "Logout time!", "r"]
-		Move:NonGameTiedPulse:Set[TRUE]
+		variable int Logout=${Math.Rand[${Config.LogoutDelta} + 1]}
+		UI:Update["Automate", "Logout will proceed in \ao${Logout}\ag minutes", "g"]
 		This:Clear
+		This:QueueState["Idle", ${Math.Calc[${Logout} * 60000].Int}
 		This:QueueState["MoveToLogout"]
 		This:QueueState["Traveling"]
 		This:QueueState["Logout"]
 	}
 
+	method LogoutNow()
+	{
+		UI:Update["Automate", "Logout time!", "r"]
+		This:Clear
+		This:QueueState["MoveToLogout"]
+		This:QueueState["Traveling"]
+		This:QueueState["Logout"]
+	}
+	
+	
 	method GotoLogoutNow()
 	{
 		UI:Update["Automate", "Going Home!", "r"]
