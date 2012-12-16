@@ -176,7 +176,7 @@ objectdef obj_HangarSale inherits obj_State
 		{
 			return FALSE
 		}
-		if !${EVEWindow[Inventory].ActiveChild.Equal[StationItems]}
+		if !${EVEWindow[Inventory].ActiveChild.Name.Equal[StationItems]}
 		{
 			EVEWindow[Inventory].ChildWindow[${Me.Station.ID}, StationItems]:MakeActive
 		}
