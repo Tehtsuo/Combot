@@ -185,6 +185,28 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									UIElement[Information@InformationFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText[""]
 								</OnMouseExit>
 							</Checkbox>
+							<Checkbox name='Relay'> 
+								<X>67%</X> 
+								<Y>10%</Y> 
+								<Width>32%</Width> 
+								<Height>9%</Height> 
+								<Text>Relay bookmark removals</Text>
+								<OnLoad>
+									if ${Script[ComBot].VariableScope.Salvager.Config.Relay}
+									{
+										This:SetChecked
+									}
+								</OnLoad>
+								<OnLeftClick>
+									Script[ComBot].VariableScope.Salvager.Config:SetRelay[${This.Checked}]
+								</OnLeftClick>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText["When this option is checked, ComBot will relay bookmark removals.  Use this when you are in a corporation which only allows you to remove your own bookmarks.  ComBot will give other sessions instructions to remove bookmarks when it is finished salvaging."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@ComBot_DedicatedSalvager_Frame@ComBot_DedicatedSalvager]:SetText[""]
+								</OnMouseExit>
+							</Checkbox>
 							<Textentry Name="BeltPatrolBookmark">
 								<BackgroundColor>FF000000</BackgroundColor>
 								<Border>1</Border>

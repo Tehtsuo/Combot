@@ -63,7 +63,8 @@ objectdef obj_Configuration_Hauler
 	Setting(string, Mode, SetMode)
 	Setting(int, Threshold, SetThreshold)	
 	Setting(bool, Repeat, SetRepeat)	
-	
+	Setting(bool, FlybyPickups, SetFlybyPickups)	
+
 }
 
 objectdef obj_Hauler inherits obj_State
@@ -140,22 +141,42 @@ objectdef obj_Hauler inherits obj_State
 			if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipOreHold].UsedCapacity} / ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipOreHold].Capacity} < ${Config.Threshold} * .01
 			{
 				Cargo:PopulateCargoList[Ship]
-				Cargo:MoveCargoList[OreHold]
+				if ${Cargo.CargoList.Used}
+				{
+					Cargo:MoveCargoList[OreHold]
+					This:InsertState["CheckCargoHold", 500, "TRUE"]
+					return TRUE
+				}
 			}
-			This:InsertState["CheckCargoHold", 500, "TRUE"]
-			return TRUE
 		}
 		if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar](exists)} && !${CorpHangar}
 		{
 			if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar].UsedCapacity} / ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar].Capacity} < ${Config.Threshold} * .01
 			{
 				Cargo:PopulateCargoList[Ship]
-				Cargo:MoveCargoList[Fleet Hangar]
+				if ${Cargo.CargoList.Used}
+				{
+					Cargo:MoveCargoList[Fleet Hangar]
+					This:InsertState["CheckCargoHold", 500, "TRUE"]
+					return TRUE
+				}
 			}
-			This:InsertState["CheckCargoHold", 500, "TRUE, TRUE"]
-			return TRUE
+			if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar].UsedCapacity} / ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar].Capacity} < ${Config.Threshold} * .01 && \
+				${Config.DropoffType.Equal[No Dropoff]}
+			{
+				Cargo:PopulateCargoList[OreHold]
+				if ${Cargo.CargoList.Used}
+				{
+					Cargo:MoveCargoList[Fleet Hangar]
+					This:InsertState["CheckCargoHold", 500, "TRUE"]
+					return TRUE
+				}
+				relay "all other" -event ComBot_Orca_Cargo ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar].UsedCapacity}
+			}
+			
 		}
-		if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].UsedCapacity} / ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].Capacity} >= ${Config.Threshold} * .01
+		if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].UsedCapacity} / ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].Capacity} >= ${Config.Threshold} * .01 && \
+			!${Config.DropoffType.Equal[No Dropoff]}
 		{
 			UI:Update["Hauler", "Unload trip required", "g"]
 			DroneControl:Recall
@@ -189,7 +210,9 @@ objectdef obj_Hauler inherits obj_State
 			{
 				return FALSE
 			}
-			if ${OrcaCargo} > ${Config.Threshold} * .01 * ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].Capacity}
+			
+			if ${OrcaCargo} > ${Config.Threshold} * .01 * ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].Capacity} || \
+				${Config.FlybyPickups}
 			{
 				return TRUE
 			}
@@ -225,7 +248,7 @@ objectdef obj_Hauler inherits obj_State
 		}
 		else
 		{
-			Cargo:At[${Config.Pickup},${Config.PickupType},${Config.PickupSubType},${Config.PickupContainer}]:Load
+			Cargo:At[${Config.Pickup},${Config.PickupType},${Config.PickupSubType},${Config.PickupContainer}]:Load["GroupID != GROUP_MINING_CRYSTAL"]
 			This:QueueState["Traveling"]
 			This:QueueState["CheckCargoHold"]
 		}

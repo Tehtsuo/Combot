@@ -59,6 +59,7 @@ objectdef obj_Configuration_Salvager
 	Setting(bool, SalvageYellow, SetSalvageYellow)
 	Setting(bool, AvoidShips, SetAvoidShips)
 	Setting(bool, FollowGates, SetFollowGates)
+	Setting(bool, Relay, SetRelay)
 	Setting(string, BeltPatrol, SetBeltPatrol)
 	Setting(string, DropoffContainer, SetDropoffContainer)
 	Setting(string, Size, SetSize)
@@ -193,7 +194,10 @@ objectdef obj_Salvager inherits obj_State
 					if ${BookmarkIterator.Value.Created.AsInt64} + 72000000000 < ${EVETime.AsInt64} && !${UsedBookmarks.Contains[${BookmarkIterator.Value.ID}]}
 					{
 						UI:Update["Salvager", "Removing expired bookmark - ${BookmarkIterator.Value.Label}", "o", TRUE]
-						relay "all other" -event ComBot_RemoveBookmark ${BookmarkIterator.Value.ID}						
+						if ${Config.Relay}
+						{
+							relay "all other" -event ComBot_RemoveBookmark ${BookmarkIterator.Value.ID}						
+						}
 						BookmarkIterator.Value:Remove
 						UsedBookmarks:Add[${BookmarkIterator.Value.ID}]
 						This:InsertState["CheckBookmarks"]
@@ -232,7 +236,10 @@ objectdef obj_Salvager inherits obj_State
 					if ${BookmarkIterator.Value.Created.AsInt64} + 72000000000 < ${EVETime.AsInt64} && !${UsedBookmarks.Contains[${BookmarkIterator.Value.ID}]}
 					{
 						UI:Update["Salvager", "Removing expired bookmark - ${BookmarkIterator.Value.Label}", "o", TRUE]
-						relay "all other" -event ComBot_RemoveBookmark ${BookmarkIterator.Value.ID}						
+						if ${Config.Relay}
+						{
+							relay "all other" -event ComBot_RemoveBookmark ${BookmarkIterator.Value.ID}						
+						}
 						BookmarkIterator.Value:Remove
 						UsedBookmarks:Add[${BookmarkIterator.Value.ID}]
 						This:InsertState["CheckBookmarks"]
@@ -577,7 +584,10 @@ objectdef obj_Salvager inherits obj_State
 						{
 							UI:Update["obj_Salvage", "Finished Salvaging ${BookmarkIterator.Value.Label} - Deleting", "g"]
 							This:InsertState["DeleteBookmark", 1000, "${BookmarkCreator},${BookmarkIterator.Value.ID}"]
-							relay "all other" -event ComBot_RemoveBookmark ${BookmarkIterator.Value.ID}						
+							if ${Config.Relay}
+							{
+								relay "all other" -event ComBot_RemoveBookmark ${BookmarkIterator.Value.ID}						
+							}
 							BookmarkIterator.Value:Remove
 							return TRUE
 						}

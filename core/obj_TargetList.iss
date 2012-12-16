@@ -259,7 +259,6 @@ objectdef obj_TargetList inherits obj_State
 		This:QueueState["UpdateList"]
 		NeedUpdate:Set[FALSE]
 		Profiling:EndTrack
-;		echo UpdateList ${This.ObjectName}
 		return TRUE
 	}
 	
@@ -382,14 +381,12 @@ objectdef obj_TargetList inherits obj_State
 				if !${This.IPCTargets.Element[${EntityIterator.Value.ID}](exists)}
 				{
 					This.IPCTargets:Set[${EntityIterator.Value.ID}, ${Math.Calc[${LavishScript.RunningTime} + 40000]}]
-					echo "Adding ${EntityIterator.Value.Name}"
 				}
 				else
 				{
 					if ${This.IPCTargets.Element[${EntityIterator.Value.ID}]} < ${Math.Calc[${LavishScript.RunningTime} - 20000]}
 					{
 						This.IPCTargets:Set[${EntityIterator.Value.ID}, ${Math.Calc[${LavishScript.RunningTime} + 40000]}]
-						echo "Adding ${EntityIterator.Value.Name}"
 					}
 				}
 			}
@@ -403,14 +400,12 @@ objectdef obj_TargetList inherits obj_State
 				if !${This.IPCTargets.Element[${EntityIterator.Value.ID}](exists)}
 				{
 					This.IPCTargets:Set[${EntityIterator.Value.ID}, ${Math.Calc[${LavishScript.RunningTime} + 40000]}]
-					echo "Adding ${EntityIterator.Value.Name}"
 				}
 				else
 				{
 					if ${This.IPCTargets.Element[${EntityIterator.Value.ID}]} < ${Math.Calc[${LavishScript.RunningTime} - 20000]}
 					{
 						This.IPCTargets:Set[${EntityIterator.Value.ID}, ${Math.Calc[${LavishScript.RunningTime} + 40000]}]
-						echo "Adding ${EntityIterator.Value.Name}"
 					}
 				}
 			}

@@ -601,23 +601,8 @@ objectdef obj_Ratter inherits obj_State
 			This:QueueState["CheckCargoHold"]
 			return TRUE
 		}
-		
-		if ${Config.Squat}
-		{
-			if ${FirstWreck} == 0
-			{
-				if ${Entity[GroupID==GROUP_WRECK && HaveLootRights](exists)}
-				{
-					FirstWreck:Set[${Entity[GroupID==GROUP_WRECK && HaveLootRights].ID}]
-				}
-			}
-			else
-			{
-				Move:Approach[${FirstWreck}, 2000]
-			}
-		}
-		
-		
+	
+
 		Rats.MinLockCount:Set[${Config.Locks}]
 		Rats.AutoLock:Set[TRUE]
 		DroneControl.DroneTargets.AutoLock:Set[TRUE]
@@ -634,7 +619,33 @@ objectdef obj_Ratter inherits obj_State
 			ModuleToUse:Set[Rats]
 		}
 		
-		if ${Entity[${CurrentTarget}](exists)}
+		
+		if ${Config.Squat}
+		{
+			if ${FirstWreck} == 0
+			{
+				if ${Entity[GroupID==GROUP_WRECK && HaveLootRights](exists)}
+				{
+					FirstWreck:Set[${Entity[GroupID==GROUP_WRECK && HaveLootRights].ID}]
+				}
+			}
+			else
+			{
+				if ${Config.SpeedTank}
+				{
+					if ${Me.ToEntity.Mode} != 4
+					{
+						UI:Update["Ratter", "SpeedTank: Orbiting \ao${Entity[${FirstWreck}].Name}", "g"]
+						Entity[${FirstWreck}]:Orbit[${Math.Calc[${Config.SpeedTankDistance}*1000+1000].Int}]
+					}
+				}
+				else
+				{
+					Move:Approach[${FirstWreck}, 2000]
+				}
+			}
+		}
+		elseif ${Entity[${CurrentTarget}](exists)}
 		{
 			if ${Config.SpeedTank}
 			{

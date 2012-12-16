@@ -253,7 +253,36 @@ objectdef obj_Miner inherits obj_State
 			return FALSE
 		}
 
-		if 	${MyShip.HasOreHold}
+		
+		if ${Config.OrcaMode}
+		{
+			if 	${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar].UsedCapacity} / ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar].Capacity} >= ${Config.Threshold} * .01 && \
+				!${Config.Dropoff_Type.Equal[No Dropoff]} && \
+				!${Config.Dropoff_Type.Equal[Jetcan]}
+			{
+				UI:Update["obj_Miner", "Unload trip required", "g"]
+				This:QueueState["PrepareWarp"]
+				This:QueueState["Dropoff"]
+				This:QueueState["Traveling"]
+				This:QueueState["CheckCargoHold"]
+				This:QueueState["RequestUpdate"]
+				Profiling:EndTrack
+				return TRUE
+			}
+			else
+			{
+				This:QueueState["GoToMiningSystem"]
+				This:QueueState["Traveling"]
+				This:QueueState["Undock"]
+				This:QueueState["WaitForSpace"]
+				This:QueueState["RequestUpdate"]
+				This:QueueState["Updated"]
+				This:QueueState["CheckForWork"]
+				Profiling:EndTrack
+				return TRUE
+			}
+		}
+		elseif 	${MyShip.HasOreHold}
 		{
 			if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipOreHold].UsedCapacity} / ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipOreHold].Capacity} >= ${Config.Threshold} * .01 && \
 			!${Config.Dropoff_Type.Equal[No Dropoff]} && \
@@ -297,34 +326,6 @@ objectdef obj_Miner inherits obj_State
 			Profiling:EndTrack
 			return TRUE
 		}
-		elseif ${Config.OrcaMode}
-		{
-			if 	${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar].UsedCapacity} / ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar].Capacity} >= ${Config.Threshold} * .01 && \
-				!${Config.Dropoff_Type.Equal[No Dropoff]} && \
-				!${Config.Dropoff_Type.Equal[Jetcan]}
-			{
-				UI:Update["obj_Miner", "Unload trip required", "g"]
-				This:QueueState["PrepareWarp"]
-				This:QueueState["Dropoff"]
-				This:QueueState["Traveling"]
-				This:QueueState["CheckCargoHold"]
-				This:QueueState["RequestUpdate"]
-				Profiling:EndTrack
-				return TRUE
-			}
-			else
-			{
-				This:QueueState["GoToMiningSystem"]
-				This:QueueState["Traveling"]
-				This:QueueState["Undock"]
-				This:QueueState["WaitForSpace"]
-				This:QueueState["RequestUpdate"]
-				This:QueueState["Updated"]
-				This:QueueState["CheckForWork"]
-				Profiling:EndTrack
-				return TRUE
-			}
-		}
 		else
 		{
 			This:QueueState["GoToMiningSystem"]
@@ -345,7 +346,7 @@ objectdef obj_Miner inherits obj_State
 		return TRUE
 	}
 	
-	member:bool PrepareWarp()
+	member:bool PrepareWarp(bool Save=TRUE)
 	{
 		DroneControl:Recall
 		if ${Busy.IsBusy}
@@ -356,7 +357,7 @@ objectdef obj_Miner inherits obj_State
 		{
 			relay all -event ComBot_Orca_InBelt FALSE
 		}
-		if ${Asteroids.TargetList.Used} && !${Config.Dropoff_Type.Equal[Fleet Hangar]} && !${Config.Tether}
+		if ${Asteroids.TargetList.Used} && !${Config.Dropoff_Type.Equal[Fleet Hangar]} && !${Config.Tether} && ${Save}
 		{
 			Move:SaveSpot
 		}
@@ -494,7 +495,7 @@ objectdef obj_Miner inherits obj_State
 			UI:Update["Miner", "This location is occupied, going to next", "g"]
 			This:InsertState["VerifyMiningLocation"]
 			This:InsertState["MoveToBelt"]
-			This:InsertState["PrepareWarp"]
+			This:InsertState["PrepareWarp", 500, FALSE]
 			Drones:RecallAll
 		}
 		return TRUE

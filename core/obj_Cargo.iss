@@ -79,8 +79,46 @@ objectdef obj_Cargo inherits obj_State
 	method Initialize()
 	{
 		This[parent]:Initialize
+		This.PulseFrequency:Set[500]
 	}
 
+	method ActivateSource(string location, int64 ID=-1)
+	{
+		switch ${location} 
+		{
+			case Ship
+				if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo](exists)}
+				{
+					EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo]:MakeActive
+				}
+				break
+			case ShipCorpHangar
+				if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar](exists)}
+				{
+					EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar]:MakeActive
+				}
+				break
+			case OreHold
+				if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipOreHold](exists)}
+				{
+					EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipOreHold]:MakeActive
+				}
+				break
+			case Corporation Hangar
+				if ${EVEWindow[Inventory].ChildWindow[StationCorpHangar](exists)}
+				{
+					EVEWindow[Inventory].ChildWindow[StationCorpHangars]:MakeActive
+				}
+				break
+			case Personal Hangar
+				if ${EVEWindow[Inventory].ChildWindow[StationItems](exists)}
+				{
+					EVEWindow[Inventory].ChildWindow[StationItems]:MakeActive
+				}
+				Me.Station:GetHangarItems[CargoList]
+				break
+		}
+	}
 	
 	method PopulateCargoList(string location, int64 ID=-1, string Folder="")
 	{
@@ -415,7 +453,6 @@ objectdef obj_Cargo inherits obj_State
 								}
 							}
 							while ${Cargo:Next(exists)}
-						echo EVE:MoveItemsTo[TransferIndex, ${ID}, FleetHangar]
 						EVE:MoveItemsTo[TransferIndex, ${ID}, FleetHangar]
 					}
 					break
@@ -439,7 +476,6 @@ objectdef obj_Cargo inherits obj_State
 							}
 						}
 						while ${Cargo:Next(exists)}
-					echo EVE:MoveItemsTo[TransferIndex, ${ID}]
 					EVE:MoveItemsTo[TransferIndex, ${ID}]
 					break
 				case OreHold
@@ -468,7 +504,6 @@ objectdef obj_Cargo inherits obj_State
 					EVE:MoveItemsTo[TransferIndex, MyStationHangar, Hangar]
 					break
 				case Corporation Hangar
-					echo MOVE TO CORPORATION HANGAR - EVE:MoveItemsTo[TransferIndex, MyStationCorporateHangar, StationCorporateHangar${TransferFolder}] - TransferIndex: ${TransferIndex.Used}
 					EVE:MoveItemsTo[TransferIndex, MyStationCorporateHangar, StationCorporateHangar${TransferFolder}]
 					break
 			}
@@ -485,7 +520,7 @@ objectdef obj_Cargo inherits obj_State
 		This.BuildAction.Container:Set[${arg_Container}]
 	}
 	
-	method Load(string arg_Query = "", int arg_Quantity = 0)
+	method Load(string arg_Query = "", int arg_Quantity = 0, string arg_Source = "Ship")
 	{
 		if 	${This.BuildAction.Bookmark.Length} == 0 || \
 			${This.BuildAction.LocationType.Length} == 0
@@ -494,7 +529,7 @@ objectdef obj_Cargo inherits obj_State
 			return
 		}
 		
-		This.CargoQueue:Queue[${This.BuildAction.Bookmark}, Load, ${This.BuildAction.LocationType}, ${This.BuildAction.LocationSubtype}, ${This.BuildAction.Container}, ${arg_Query}, ${arg_Quantity}]
+		This.CargoQueue:Queue[${This.BuildAction.Bookmark}, Load, ${This.BuildAction.LocationType}, ${This.BuildAction.LocationSubtype}, ${This.BuildAction.Container}, ${arg_Query}, ${arg_Quantity}, ${arg_Source}]
 		This.Processing:Set[TRUE]
 		if ${This.IsIdle}
 		{
@@ -547,10 +582,28 @@ objectdef obj_Cargo inherits obj_State
 		DroneControl:Recall
 		if ${Busy.IsBusy}
 		{
-			return FALSE
+			if ${Busy.BusyModes.Used} == 1 && ${Busy.BusyModes.Contains[Salvage]}
+			{
+				;Leaving here for possible use
+			}
+			else
+			{
+				return FALSE
+			}
 		}
 
-		UI:Update["Cargo", "Process ${This.CargoQueue.Peek.Action} @ ${This.CargoQueue.Peek.Bookmark} - ${This.CargoQueue.Peek.LocationType}", "g", TRUE]
+		UI:Update["Cargo", "Processing \ao${This.CargoQueue.Peek.Action}\ag at \ao${This.CargoQueue.Peek.Bookmark}", "g", TRUE]
+		switch ${This.CargoQueue.Peek.Action}
+		{
+			case Unload
+				UI:Update["Cargo", " Source: \ao${This.CargoQueue.Peek.Source}", "-g", TRUE]
+				UI:Update["Cargo", " Destination: \ao${This.CargoQueue.Peek.LocationType}\a-g - \ao${This.CargoQueue.Peek.LocationSubType}\a-g - \ao${This.CargoQueue.Peek.Container}", "-g", TRUE]
+				break
+			case Load
+				UI:Update["Cargo", " Source: \ao${This.CargoQueue.Peek.LocationType}\a-g - \ao${This.CargoQueue.Peek.LocationSubType}\a-g - \ao${This.CargoQueue.Peek.Container}", "-g", TRUE]
+				UI:Update["Cargo", " Destination: \aoShip", "-g", TRUE]
+				break
+		}
 		
 		if !${Local[${This.CargoQueue.Peek.Container}](exists)}
 		{
@@ -559,6 +612,7 @@ objectdef obj_Cargo inherits obj_State
 		This:QueueState["Traveling"]
 		This:QueueState["WarpFleetMember"]
 		This:QueueState["Traveling"]
+		This:QueueState["Activate"]
 		This:QueueState["${This.CargoQueue.Peek.Action}"]
 		This:QueueState["Stack"]
 		This:QueueState["Dequeue"]
@@ -589,6 +643,20 @@ objectdef obj_Cargo inherits obj_State
 		This.CargoQueue:Dequeue
 		return TRUE
 	}
+
+
+	member:bool Activate()
+	{
+		if !${Client.Inventory}
+		{
+			return FALSE
+		}
+
+		Cargo:ActivateSource[${This.CargoQueue.Peek.Source}]
+		return TRUE
+	}
+	
+	
 
 	member:bool Stack(bool OpenedCorpHangar=FALSE, bool StackedShip=FALSE)
 	{
@@ -643,9 +711,9 @@ objectdef obj_Cargo inherits obj_State
 		
 		}
 
-		if ${EVEWindow[Inventory].ChildWindow[${Me.Station.ID}, StationCorpHangar](exists)} && !${OpenedCorpHangar}
+		if !${EVEWindow[Inventory].ChildWindow[StationCorpHangar](exists)} && !${OpenedCorpHangar}
 		{
-			EVEWindow[Inventory].ChildWindow[${Me.Station.ID}, Corporation Hangars]:MakeActive
+			EVEWindow[Inventory].ChildWindow[StationCorpHangars]:MakeActive
 			This:InsertState["Stack", 2000, TRUE]
 			return TRUE
 		}
@@ -657,7 +725,7 @@ objectdef obj_Cargo inherits obj_State
 			return TRUE
 		}
 		
-		switch ${This.BuildAction.LocationType}
+		switch ${This.CargoQueue.Peek.LocationType}
 		{
 			case Personal Hangar
 				EVE:StackItems[MyStationHangar, Hangar]
@@ -717,10 +785,9 @@ objectdef obj_Cargo inherits obj_State
 			}
 		}
 		
-		if ${EVEWindow[Inventory].ChildWindow[${Me.Station.ID}, StationCorpHangar](exists)} && !${OpenedCorpHangar}
+		if !${EVEWindow[Inventory].ChildWindow[StationCorpHangar](exists)} && !${OpenedCorpHangar}
 		{
-			echo STATION HANGAR CHECK TRUE
-			EVEWindow[Inventory].ChildWindow[${Me.Station.ID}, Corporation Hangars]:MakeActive
+			EVEWindow[Inventory].ChildWindow[StationCorpHangars]:MakeActive
 			This:InsertState["Unload", 2000, TRUE]
 			return TRUE
 		}
@@ -778,9 +845,9 @@ objectdef obj_Cargo inherits obj_State
 			}
 		}
 
-		if ${EVEWindow[Inventory].ChildWindow[${Me.Station.ID}, StationCorpHangar](exists)} && !${OpenedCorpHangar}
+		if !${EVEWindow[Inventory].ChildWindow[StationCorpHangar](exists)} && !${OpenedCorpHangar}
 		{
-			EVEWindow[Inventory].ChildWindow[${Me.Station.ID}, Corporation Hangars]:MakeActive
+			EVEWindow[Inventory].ChildWindow[StationCorpHangars]:MakeActive
 			This:InsertState["Load", 2000, TRUE]
 			return TRUE
 		}

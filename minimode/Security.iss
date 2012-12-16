@@ -305,9 +305,12 @@ objectdef obj_Security inherits obj_State
 	{
 		Profiling:StartTrack["Security_Flee"]
 
-		Move:Bookmark[${Config.FleeTo}]
+		if !${Me.InStation}
+		{
+			Move:Bookmark[${Config.FleeTo}]
+			This:QueueState["Traveling"]
+		}
 		
-		This:QueueState["Traveling"]
 		if !${PerformWait}
 		{
 			This:QueueState["StationClear"]

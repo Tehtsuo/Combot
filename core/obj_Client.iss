@@ -161,17 +161,14 @@ objectdef obj_Client
 			EVE:Execute[OpenInventory]
 			return FALSE
 		}
-		if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo](exists)}
+		if 	${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].UsedCapacity} == -1 || \
+			${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].Capacity} <= 0
 		{
-			if 	${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].UsedCapacity} == -1 || \
-				${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].Capacity} <= 0
-			{
-				UI:Update["Client", "Cargo hold information invalid, activating", "g"]
-				EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo]:MakeActive
-				return FALSE
-			}
+			UI:Update["Client", "Cargo hold information invalid, activating", "g"]
+			EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo]:MakeActive
+			return FALSE
 		}
-		if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipOreHold](exists)}
+		if ${MyShip.HasOreHold}
 		{
 			if 	${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipOreHold].UsedCapacity} == -1 || \
 				${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipOreHold].Capacity} <= 0
