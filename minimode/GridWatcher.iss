@@ -50,7 +50,7 @@ objectdef obj_Configuration_GridWatcher
 objectdef obj_GridWatcher inherits obj_State
 {
 	variable obj_Configuration_GridWatcher Config
-	variable collection:int LastDetection
+	variable set AlreadyDetected
 	
 	method Initialize()
 	{
@@ -84,13 +84,13 @@ objectdef obj_GridWatcher inherits obj_State
 		{
 			do
 			{
-				if ${LastDetection.Element[${EntityNames.Value.Name}]} < ${LavishScript.RunningTime}
+				if ${Entity[Name =- "${EntityNames.Value.Name}"](exists)}
 				{
-					if ${Entity[Name =- "${EntityNames.Value.Name}"](exists)}
+					if !${AlreadyDetected.Contains[${Entity[Name =- "${EntityNames.Value.Name}"].ID}]}
 					{
 						uplink speak "${Entity[Name =- "${EntityNames.Value.Name}"].Name} Found"
-						LastDetection:Set[${EntityNames.Value.Name}, ${Math.Calc[${LavishScript.RunningTime}+30000]}]
-						EVE:CreateBookmark["${EntityNames.Value.Name} ${EVETime.Time.Left[-3].Replace[":",""]}"]
+						AlreadyDetected:Add[${Entity[Name =- "${EntityNames.Value.Name}"].ID}]
+						EVE:CreateBookmark["${Entity[Name =- "${EntityNames.Value.Name}"].Name} ${EVETime.Time.Left[-3].Replace[":",""]}"]
 					}
 				}
 			}
