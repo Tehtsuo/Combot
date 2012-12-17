@@ -100,7 +100,6 @@ objectdef obj_Automate inherits obj_State
 				UI:Update["Automate", "Starting in \ao${Delta}\ag minutes", "g"]
 				This:QueueState["AllowLogin", ${Math.Calc[${Delta} * 60000]}.Int]
 				This:QueueState["WaitForLogin"]
-				This:QueueState["AutoStart"]
 				This:QueueState["Launch"]
 			}
 		}
@@ -183,6 +182,7 @@ objectdef obj_Automate inherits obj_State
 	{
 		if ${Me(exists)} && ${MyShip(exists)} && (${Me.InSpace} || ${Me.InStation})
 		{
+			echo Logged in
 			return TRUE
 		}
 		return FALSE
