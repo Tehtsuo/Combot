@@ -662,10 +662,6 @@ objectdef obj_Miner inherits obj_State
 		{
 			MaxTarget:Set[${Config.MaxLaserLocks}]
 		}
-		if ${Ship.ModuleList_MiningLaser.Count} < ${MaxTarget}
-		{
-			MaxTarget:Set[${Ship.ModuleList_MiningLaser.Count}]
-		}
 		if ${Config.IceMining} || ${Config.GasHarvesting}
 		{
 			MaxTarget:Set[1]
@@ -804,11 +800,19 @@ objectdef obj_Miner inherits obj_State
 		}
 
 
-		if ${Ship.ModuleList_MiningLaser.ActiveCount} < ${Ship.ModuleList_MiningLaser.Count}
+		if ${Ship.ModuleList_MiningLaser.ActiveCount} < ${Ship.ModuleList_MiningLaser.Count} && ${Asteroids.LockedTarget.Count} >= ${Ship.ModuleList_MiningLaser.Count}
+		{
+			This:InsertState["ActivateLasers", 2000]
+		}
+		elseif ${Ship.ModuleList_MiningLaser.ActiveCount} < ${Ship.ModuleList_MiningLaser.Count}
 		{
 			This:InsertState["ActivateLasers", 2000]
 			This:InsertState["Updated"]
-			This:InsertState["RequestUpdate"]
+			Asteroids:RequestUpdate
+		}
+		elseif ${Asteroids.LockedTarget.Count} < ${MaxTarget}
+		{
+			Asteroids:RequestUpdate
 		}
 		
 		Profiling:EndTrack
@@ -853,8 +857,8 @@ objectdef obj_Miner inherits obj_State
 		variable bool Approaching=FALSE
 		Asteroids.LockedAndLockingTargetList:GetIterator[Roid]
 		
-		variable float LaserSplitCount = ${Math.Calc[${Ship.ModuleList_MiningLaser.Count} / ${Asteroids.MinLockCount}]}
-		variable int LaserRoidSplitCount = ${Math.Calc[${Ship.ModuleList_MiningLaser.Count} % ${Asteroids.MinLockCount}]}
+		variable float LaserSplitCount = ${Math.Calc[${Ship.ModuleList_MiningLaser.Count} / ${MaxTarget}]}
+		variable int LaserRoidSplitCount = ${Math.Calc[${Ship.ModuleList_MiningLaser.Count} % ${MaxTarget}]}
 		variable int LaserCount = ${LaserSplitCount.Ceil}
 		variable int LaserRoidCount = 0
 		
