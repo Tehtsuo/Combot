@@ -670,6 +670,10 @@ objectdef obj_Miner inherits obj_State
 		{
 			MaxTarget:Set[1]
 		}
+		if ${MaxTarget} < 1
+		{
+			MaxTarget:Set[1]
+		}
 		
 		Asteroids.MinLockCount:Set[${MaxTarget}]
 		Asteroids.MaxRange:Set[${Ship.ModuleList_MiningLaser.Range}]
@@ -822,9 +826,30 @@ objectdef obj_Miner inherits obj_State
 		}
 		Asteroids:RequestUpdate
 		
-		
+		variable int MaxTarget = ${MyShip.MaxLockedTargets}
+		if ${Me.MaxLockedTargets} < ${MaxTarget}
+		{
+			MaxTarget:Set[${Math.Calc[${Me.MaxLockedTargets}]}]
+		}
+		if ${Config.MaxLaserLocks} < ${MaxTarget}
+		{
+			MaxTarget:Set[${Config.MaxLaserLocks}]
+		}
+		if ${Ship.ModuleList_MiningLaser.Count} < ${MaxTarget}
+		{
+			MaxTarget:Set[${Ship.ModuleList_MiningLaser.Count}]
+		}
+		if ${Config.IceMining} || ${Config.GasHarvesting}
+		{
+			MaxTarget:Set[1]
+		}
+		if ${MaxTarget} < 1
+		{
+			MaxTarget:Set[1]
+		}
 		
 		variable iterator Roid
+		variable iterator RoidCheck
 		variable bool Approaching=FALSE
 		Asteroids.LockedAndLockingTargetList:GetIterator[Roid]
 		
@@ -886,7 +911,24 @@ objectdef obj_Miner inherits obj_State
 		}
 		if ${Roid:Last(exists)}	&& !${Approaching}	
 		{
-			if ${Ship.ModuleList_MiningLaser.InactiveCount}
+			variable int InRange = 0
+			Asteroids.TargetList:GetIterator[RoidCheck]
+			if ${RoidCheck:First(exists)}
+			{
+				do
+				{
+					if ${RoidCheck.Distance} < ${Ship.ModuleList_MiningLaser.Range}
+					{
+						InRange:Inc
+					}
+					else
+					{
+						break
+					}
+				}
+				while ${RoidCheck:Next(exists)}
+			}
+			if ${Ship.ModuleList_MiningLaser.InactiveCount} && ${InRange} < ${MaxTarget}
 			{
 				UI:Update["obj_Miner", "Activating ${Ship.ModuleList_MiningLaser.InactiveCount} laser(s) on ${Roid.Value.Name} (${ComBot.MetersToKM_Str[${Roid.Value.Distance}]})", "y"]
 				Ship.ModuleList_MiningLaser:ActivateCount[${Ship.ModuleList_MiningLaser.InactiveCount}, ${Roid.Value.ID}]
