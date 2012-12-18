@@ -154,10 +154,98 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<Width>32%</Width>
 								<Height>70%</Height>
 								<OnLoad>
+									Script[ComBot].VariableScope.Courier.LocalUI:BuildAgentList
 									Script[ComBot].VariableScope.Courier.LocalUI:UpdateAgentList
 								</OnLoad>
+								<OnSelect>
+									variable int64 AgentIndex = ${Agent[${This.SelectedItem.Text}].Index}
+									UIElement[AgentName@AgentFrame@Courier@ComBot_Courier@ComBot_Courier]:SetText[${This.SelectedItem.Text}]
+									UIElement[AgentDivision@AgentFrame@Courier@ComBot_Courier@ComBot_Courier]:SetText[${Agent[${AgentIndex}].Division}]
+									UIElement[AgentLevel@AgentFrame@Courier@ComBot_Courier@ComBot_Courier]:SetText[Level: ${Agent[${AgentIndex}].Level}]
+									UIElement[AgentStanding@AgentFrame@Courier@ComBot_Courier@ComBot_Courier]:SetText[Standing: ${Agent[${AgentIndex}].StandingTo}]
+									UIElement[AgentStation@AgentFrame@Courier@ComBot_Courier@ComBot_Courier]:SetText[${Agent[${AgentIndex}].Station}]
+								</OnSelect>
 								<OnMouseEnter>
 									UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText["This field Is used to select agents to be added to the list of agents for which to run missions."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText[""]
+								</OnMouseExit>
+							</listbox>					
+
+							<Text name='AgentName'> 
+								<X>34%</X> 
+								<Y>3%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+							</Text>
+							<Text name='AgentDivision'> 
+								<X>34%</X> 
+								<Y>15%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+							</Text>
+							<Text name='AgentLevel'> 
+								<X>34%</X> 
+								<Y>25%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+							</Text>
+							<Text name='AgentStanding'> 
+								<X>34%</X> 
+								<Y>35%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+							</Text>
+							<Text name='AgentStation'> 
+								<X>34%</X> 
+								<Y>45%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+							</Text>
+							<Button name='Add'> 
+								<X>34%</X> 
+								<Y>75%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<OnLeftClick>
+									if ${UIElement[AgentName@AgentFrame@Courier@ComBot_Courier@ComBot_Courier].Text.Length} != 0
+									{
+										variable int64 AgentIndex = ${Agent[${UIElement[AgentName@AgentFrame@Courier@ComBot_Courier@ComBot_Courier].Text}].Index}
+										Script[ComBot].VariableScope.Courier.Config.AgentsRef:AddSetting[${UIElement[AgentName@AgentFrame@Courier@ComBot_Courier@ComBot_Courier].Text},${AgentIndex}]										
+										Script[ComBot].VariableScope.Config:Save
+										Script[ComBot].VariableScope.Courier.LocalUI:BuildAgentsList
+									}
+								</OnLeftClick>
+							</Button>
+							<Button name='Remove'> 
+								<X>34%</X> 
+								<Y>75%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<OnLeftClick>
+									if ${UIElement[Agents@AgentFrame@Courier@ComBot_Courier@ComBot_Courier].SelectedItem.Text.Length} != 0
+									{
+										Script[ComBot].VariableScope.Courier.Config.AgentsRef.FindSetting[${UIElement[Agents@AgentFrame@Courier@ComBot_Courier@ComBot_Courier].SelectedItem.Text}]										
+										Script[ComBot].VariableScope.Config:Save
+										Script[ComBot].VariableScope.Courier.LocalUI:BuildAgentsList
+									}
+								</OnLeftClick>
+							</Button>
+							
+							<listbox Name="Agents">
+								<BackgroundColor>FF000000</BackgroundColor>
+								<Border>1</Border>
+								<BorderColor>FFFFFFFF</BorderColor>
+								<X>67%</X>
+								<Y>5%</Y>
+								<Width>32%</Width>
+								<Height>90%</Height>
+								<OnLoad>
+									Script[ComBot].VariableScope.Courier.LocalUI:BuildAgentsList
+								</OnLoad>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText["This field contains the agents ComBot will run courier missions for."]
 								</OnMouseEnter>
 								<OnMouseExit>
 									UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText[""]
