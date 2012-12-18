@@ -857,10 +857,14 @@ objectdef obj_Miner inherits obj_State
 		variable bool Approaching=FALSE
 		Asteroids.LockedAndLockingTargetList:GetIterator[Roid]
 		
-		variable float LaserSplitCount = ${Math.Calc[${Ship.ModuleList_MiningLaser.Count} / ${MaxTarget}]}
-		variable int LaserRoidSplitCount = ${Math.Calc[${Ship.ModuleList_MiningLaser.Count} % ${MaxTarget}]}
-		variable int LaserCount = ${LaserSplitCount.Ceil}
+		variable float LaserSplitCount
+		variable int LaserRoidSplitCount
+		variable int LaserCount
 		variable int LaserRoidCount = 0
+		
+		LaserSplitCount:Set[${Math.Calc[${Ship.ModuleList_MiningLaser.Count} / ${MaxTarget}]}]
+		LaserRoidSplitCount:Set[${Math.Calc[${Ship.ModuleList_MiningLaser.Count} % ${MaxTarget}]}]
+		LaserCount:Set[${LaserSplitCount.Ceil}]
 		
 		
 		if ${Roid:First(exists)}
@@ -901,6 +905,7 @@ objectdef obj_Miner inherits obj_State
 					}
 					else
 					{
+						
 						if ${Ship.ModuleList_MiningLaser.ActiveCountOn[${Roid.Value.ID}]} < ${LaserCount}
 						{
 							UI:Update["obj_Miner", "Activating 1 laser on ${Roid.Value.Name} (${ComBot.MetersToKM_Str[${Roid.Value.Distance}]})", "y"]
@@ -921,7 +926,7 @@ objectdef obj_Miner inherits obj_State
 			{
 				do
 				{
-					if ${RoidCheck.Distance} < ${Ship.ModuleList_MiningLaser.Range}
+					if ${RoidCheck.Value.Distance} < ${Ship.ModuleList_MiningLaser.Range}
 					{
 						InRange:Inc
 					}
