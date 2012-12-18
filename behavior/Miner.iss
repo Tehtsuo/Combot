@@ -662,11 +662,11 @@ objectdef obj_Miner inherits obj_State
 		{
 			MaxTarget:Set[${Config.MaxLaserLocks}]
 		}
-		if ${Ship.ModuleList_MiningLaser.Count} < ${MaxTarget}
-		{
-			MaxTarget:Set[${Ship.ModuleList_MiningLaser.Count}]
-		}
 		if ${Config.IceMining} || ${Config.GasHarvesting}
+		{
+			MaxTarget:Set[1]
+		}
+		if ${MaxTarget} < 1
 		{
 			MaxTarget:Set[1]
 		}
@@ -800,11 +800,19 @@ objectdef obj_Miner inherits obj_State
 		}
 
 
-		if ${Ship.ModuleList_MiningLaser.ActiveCount} < ${Ship.ModuleList_MiningLaser.Count}
+		if ${Ship.ModuleList_MiningLaser.ActiveCount} < ${Ship.ModuleList_MiningLaser.Count} && ${Asteroids.LockedTarget.Count} >= ${Ship.ModuleList_MiningLaser.Count}
+		{
+			This:InsertState["ActivateLasers", 2000]
+		}
+		elseif ${Ship.ModuleList_MiningLaser.ActiveCount} < ${Ship.ModuleList_MiningLaser.Count}
 		{
 			This:InsertState["ActivateLasers", 2000]
 			This:InsertState["Updated"]
-			This:InsertState["RequestUpdate"]
+			Asteroids:RequestUpdate
+		}
+		elseif ${Asteroids.LockedTarget.Count} < ${MaxTarget}
+		{
+			Asteroids:RequestUpdate
 		}
 		
 		Profiling:EndTrack
@@ -822,14 +830,35 @@ objectdef obj_Miner inherits obj_State
 		}
 		Asteroids:RequestUpdate
 		
-		
+		variable int MaxTarget = ${MyShip.MaxLockedTargets}
+		if ${Me.MaxLockedTargets} < ${MaxTarget}
+		{
+			MaxTarget:Set[${Math.Calc[${Me.MaxLockedTargets}]}]
+		}
+		if ${Config.MaxLaserLocks} < ${MaxTarget}
+		{
+			MaxTarget:Set[${Config.MaxLaserLocks}]
+		}
+		if ${Ship.ModuleList_MiningLaser.Count} < ${MaxTarget}
+		{
+			MaxTarget:Set[${Ship.ModuleList_MiningLaser.Count}]
+		}
+		if ${Config.IceMining} || ${Config.GasHarvesting}
+		{
+			MaxTarget:Set[1]
+		}
+		if ${MaxTarget} < 1
+		{
+			MaxTarget:Set[1]
+		}
 		
 		variable iterator Roid
+		variable iterator RoidCheck
 		variable bool Approaching=FALSE
 		Asteroids.LockedAndLockingTargetList:GetIterator[Roid]
 		
-		variable float LaserSplitCount = ${Math.Calc[${Ship.ModuleList_MiningLaser.Count} / ${Asteroids.MinLockCount}]}
-		variable int LaserRoidSplitCount = ${Math.Calc[${Ship.ModuleList_MiningLaser.Count} % ${Asteroids.MinLockCount}]}
+		variable float LaserSplitCount = ${Math.Calc[${Ship.ModuleList_MiningLaser.Count} / ${MaxTarget}]}
+		variable int LaserRoidSplitCount = ${Math.Calc[${Ship.ModuleList_MiningLaser.Count} % ${MaxTarget}]}
 		variable int LaserCount = ${LaserSplitCount.Ceil}
 		variable int LaserRoidCount = 0
 		
@@ -886,7 +915,24 @@ objectdef obj_Miner inherits obj_State
 		}
 		if ${Roid:Last(exists)}	&& !${Approaching}	
 		{
-			if ${Ship.ModuleList_MiningLaser.InactiveCount}
+			variable int InRange = 0
+			Asteroids.TargetList:GetIterator[RoidCheck]
+			if ${RoidCheck:First(exists)}
+			{
+				do
+				{
+					if ${RoidCheck.Distance} < ${Ship.ModuleList_MiningLaser.Range}
+					{
+						InRange:Inc
+					}
+					else
+					{
+						break
+					}
+				}
+				while ${RoidCheck:Next(exists)}
+			}
+			if ${Ship.ModuleList_MiningLaser.InactiveCount} && ${InRange} < ${MaxTarget}
 			{
 				UI:Update["obj_Miner", "Activating ${Ship.ModuleList_MiningLaser.InactiveCount} laser(s) on ${Roid.Value.Name} (${ComBot.MetersToKM_Str[${Roid.Value.Distance}]})", "y"]
 				Ship.ModuleList_MiningLaser:ActivateCount[${Ship.ModuleList_MiningLaser.InactiveCount}, ${Roid.Value.ID}]
