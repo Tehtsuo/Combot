@@ -90,6 +90,27 @@ objectdef obj_Move inherits obj_State
 		This:ActivateAutoPilot
 	}
 
+	method TravelToStation(int64 StationID)
+	{
+		if ${Me.ToEntity.Mode} == 3 || ${Me.AutoPilotOn}
+		{
+			return
+		}
+
+		variable index:int DestinationList
+		EVE:GetWaypoints[DestinationList]
+		
+		if ${DestinationList[${DestinationList.Used}]} != ${StationID}
+		{
+			UI:Update["obj_Move", "Setting destination to ${EVE.Station[${StationID}].Name}", "g", TRUE]
+			UI:Log["Redacted:  obj_Move - Setting destination to XXXXXXX (StationID)"]
+			EVE.Station[${StationID}]:SetDestination
+			return
+		}
+		
+		This:ActivateAutoPilot
+	}
+	
 	method Undock()
 	{
 		EVE:Execute[CmdExitStation]
@@ -142,7 +163,7 @@ objectdef obj_Move inherits obj_State
 			return
 		}
 		
-		if !${EVE.Bookmark[${DestinationBookmarkLabel}](exists)}
+		if !${EVE.Bookmark[${DestinationBookmarkLabel}](exists)} && !${EVE.Station[${DestinationBookmarkLabel}](exists)}
 		{
 			UI:Update["obj_Move", "Attempted to travel to a bookmark which does not exist", "r"]
 			UI:Update["obj_Move", "Bookmark label: ${DestinationBookmarkLabel}", "r", TRUE]
@@ -328,7 +349,7 @@ objectdef obj_Move inherits obj_State
 
 		if ${Me.InStation}
 		{
-			if ${Me.StationID} == ${EVE.Bookmark[${Bookmark}].ItemID}
+			if ${Me.StationID} == ${EVE.Bookmark[${Bookmark}].ItemID} || ${Me.StationID} == ${Bookmark}
 			{
 				UI:Update["obj_Move", "Docked at ${Bookmark}", "g", TRUE]
 				UI:Log["Redacted:  obj_Move - Docked at XXXXXXX"]
@@ -354,10 +375,17 @@ objectdef obj_Move inherits obj_State
 			return FALSE
 		}
 		
-		if  ${EVE.Bookmark[${Bookmark}].SolarSystemID} != ${Me.SolarSystemID}
+		if ${EVE.Bookmark[${Bookmark}](exists)}
 		{
-			This:TravelToSystem[${EVE.Bookmark[${Bookmark}].SolarSystemID}]
-			return FALSE
+			if  ${EVE.Bookmark[${Bookmark}].SolarSystemID} != ${Me.SolarSystemID}
+			{
+				This:TravelToSystem[${EVE.Bookmark[${Bookmark}].SolarSystemID}]
+				return FALSE
+			}
+		}
+		if ${EVE.Station[${Bookmark}](exists)}
+		{
+			This:TravelToStation[${Bookmark}]
 		}
 		
 		if ${EVE.Bookmark[${Bookmark}].ItemID} == -1
