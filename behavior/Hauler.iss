@@ -199,6 +199,7 @@ objectdef obj_Hauler inherits obj_State
 
 	method OrcaCargoUpdate(float value)
 	{
+		echo ORCA CARGO AT ${value}
 		OrcaCargo:Set[${value}]
 	}
 	
