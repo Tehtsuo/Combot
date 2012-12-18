@@ -451,6 +451,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 														UIElement[PickupContainer@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
 														UIElement[PickupSubType@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
 														UIElement[PickupSubTypeTitle@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
+														UIElement[FlybyPickups@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
 														break
 													case Corporation Hangar
 														UIElement[PickupSubType@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:AddItem[Corporation Folder 1]
@@ -467,6 +468,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 														Script[ComBot].VariableScope.Hauler.Config:SetPickupContainer[\"\"]
 														UIElement[PickupSubType@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
 														UIElement[PickupSubTypeTitle@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
+														UIElement[FlybyPickups@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
 														break
 													case Fleet Hangar
 														UIElement[PickupTitle@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Mining System Bookmark]
@@ -476,6 +478,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 														UIElement[PickupSubType@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
 														UIElement[PickupSubTypeTitle@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
 														Script[ComBot].VariableScope.Hauler.Config:SetPickupSubType[\"\"]
+														UIElement[FlybyPickups@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
 														break
 													case Jetcan
 														UIElement[PickupSubTypeTitle@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Jetcan Mode]
@@ -491,6 +494,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 														UIElement[PickupSubType@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler].ItemByText[${Script[ComBot].VariableScope.Hauler.Config.PickupSubType}]:Select
 														UIElement[PickupSubType@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
 														UIElement[PickupSubTypeTitle@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Show
+														UIElement[FlybyPickups@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
 														break
 													default
 														UIElement[PickupTitle@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[Pickup Station Bookmark]
@@ -500,6 +504,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 														UIElement[PickupSubType@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
 														UIElement[PickupSubTypeTitle@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
 														Script[ComBot].VariableScope.Hauler.Config:SetPickupSubType[\"\"]
+														UIElement[FlybyPickups@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:Hide
 														break
 												}
 												UIElement[PickupContainer@PickupFrame@Continuous@HaulerTab@Hauler_Frame@ComBot_Hauler]:SetText[${Script[ComBot].VariableScope.Hauler.Config.PickupContainer}]
