@@ -102,6 +102,11 @@ objectdef obj_Automate inherits obj_State
 				This:QueueState["WaitForLogin"]
 				This:QueueState["Launch"]
 			}
+			else
+			{
+				This:QueueState["WaitForLogin"]
+				This:QueueState["Launch"]
+			}
 		}
 		else
 		{
