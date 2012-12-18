@@ -116,7 +116,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<X>0%</X>
 						<Y>4%</Y>
 						<Width>100%</Width>
-						<Height>30%</Height>
+						<Height>60%</Height>
 						<BackgroundColor>FF000000</BackgroundColor>
 						<Border>1</Border>
 						<BorderColor>FFFFFFFF</BorderColor>
@@ -124,25 +124,25 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 				
 							<Text name='AgentTitle'> 
 								<X>1%</X> 
-								<Y>3%</Y> 
+								<Y>1%</Y> 
 								<Width>32%</Width> 
-								<Height>10%</Height> 
+								<Height>5%</Height> 
 								<Alignment>Center</Alignment>
 								<Text>Agent Selection</Text>
 							</Text>
 							<Textentry name='Agent'> 
 								<X>1%</X> 
-								<Y>10%</Y> 
+								<Y>5%</Y> 
 								<Width>32%</Width> 
-								<Height>15%</Height> 
+								<Height>5%</Height> 
 								<OnChange>
 									Script[ComBot].VariableScope.Courier.LocalUI:UpdateAgentList
 								</OnChange>
 								<OnMouseEnter>
-									UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText["This field is used to filter the available agents displayed in the selection list below."]
+									UIElement[Information@InformationFrame@Courier@ComBot_Courier]:SetText["This field is used to filter the available agents displayed in the selection list below."]
 								</OnMouseEnter>
 								<OnMouseExit>
-									UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText[""]
+									UIElement[Information@InformationFrame@Courier@ComBot_Courier]:SetText[""]
 								</OnMouseExit>
 							</Textentry>
 							<listbox Name="AgentList">
@@ -150,69 +150,107 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<Border>1</Border>
 								<BorderColor>FFFFFFFF</BorderColor>
 								<X>1%</X>
-								<Y>25%</Y>
+								<Y>10%</Y>
 								<Width>32%</Width>
-								<Height>70%</Height>
+								<Height>40%</Height>
 								<OnLoad>
 									Script[ComBot].VariableScope.Courier.LocalUI:BuildAgentList
 									Script[ComBot].VariableScope.Courier.LocalUI:UpdateAgentList
 								</OnLoad>
 								<OnSelect>
-									variable int64 AgentIndex = ${Agent[${This.SelectedItem.Text}].Index}
-									UIElement[AgentName@AgentFrame@Courier@ComBot_Courier@ComBot_Courier]:SetText[${This.SelectedItem.Text}]
-									UIElement[AgentDivision@AgentFrame@Courier@ComBot_Courier@ComBot_Courier]:SetText[${Agent[${AgentIndex}].Division}]
-									UIElement[AgentLevel@AgentFrame@Courier@ComBot_Courier@ComBot_Courier]:SetText[Level: ${Agent[${AgentIndex}].Level}]
-									UIElement[AgentStanding@AgentFrame@Courier@ComBot_Courier@ComBot_Courier]:SetText[Standing: ${Agent[${AgentIndex}].StandingTo}]
-									UIElement[AgentStation@AgentFrame@Courier@ComBot_Courier@ComBot_Courier]:SetText[${Agent[${AgentIndex}].Station}]
+									variable int64 Selected = ${Agent[${This.SelectedItem.Text}].Index}
+									UIElement[AgentName@AgentFrame@Courier@ComBot_Courier]:SetText[${This.SelectedItem.Text}]
+									UIElement[AgentDivision@AgentFrame@Courier@ComBot_Courier]:SetText[Division: ${Agent[${Selected}].Division}]
+									UIElement[AgentLevel@AgentFrame@Courier@ComBot_Courier]:SetText[Level: ${Agent[${Selected}].Level}]
+									if !${Agent[${AgentIndex}].StandingTo(exists)}
+									{
+										UIElement[AgentStanding@AgentFrame@Courier@ComBot_Courier]:SetText[Standing: 0]
+									}
+									else
+									{
+										UIElement[AgentStanding@AgentFrame@Courier@ComBot_Courier]:SetText[Standing: ${Agent[${Selected}].StandingTo}]
+									}
+									UIElement[AgentStation@AgentFrame@Courier@ComBot_Courier]:SetText[Station: ${Agent[${Selected}].Station}]
+									UIElement[AgentCorp@AgentFrame@Courier@ComBot_Courier]:SetText[Corporation: ${Being[${Agent[${Selected}].CorporationID}].Name}]
+									UIElement[AgentFaction@AgentFrame@Courier@ComBot_Courier]:SetText[Faction: ${Being[${Agent[${Selected}].FactionID}].Name}]
+									UIElement[AgentSystem@AgentFrame@Courier@ComBot_Courier]:SetText[Solar System: ${Agent[${Selected}].Solarsystem.Name}]
+									UIElement[AgentSecurity@AgentFrame@Courier@ComBot_Courier]:SetText[Security: ${Math.Calc[${Agent[${Selected}].Solarsystem.Security} * 10]}]
 								</OnSelect>
 								<OnMouseEnter>
-									UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText["This field Is used to select agents to be added to the list of agents for which to run missions."]
+									UIElement[Information@InformationFrame@Courier@ComBot_Courier]:SetText["This field is used to select agents to be added to the list of agents for which to run missions.  To add make agents available to this list, open People &amp; Places, search for the agent, and double click to start a conversation."]
 								</OnMouseEnter>
 								<OnMouseExit>
-									UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText[""]
+									UIElement[Information@InformationFrame@Courier@ComBot_Courier]:SetText[""]
 								</OnMouseExit>
 							</listbox>					
 
 							<Text name='AgentName'> 
+								<X>3%</X> 
+								<Y>55%</Y> 
+								<Width>27%</Width> 
+								<Height>5%</Height> 
+								<OnLoad>
+									This.Font:SetColor[FF00FF00]
+								</OnLoad>
+							</Text>
+							<Text name='AgentCorp'> 
 								<X>34%</X> 
-								<Y>3%</Y> 
-								<Width>32%</Width> 
-								<Height>10%</Height> 
+								<Y>60%</Y> 
+								<Width>30%</Width> 
+								<Height>5%</Height> 
+							</Text>
+							<Text name='AgentFaction'> 
+								<X>67%</X> 
+								<Y>60%</Y> 
+								<Width>30%</Width> 
+								<Height>5%</Height> 
 							</Text>
 							<Text name='AgentDivision'> 
-								<X>34%</X> 
-								<Y>15%</Y> 
-								<Width>32%</Width> 
-								<Height>10%</Height> 
+								<X>3%</X> 
+								<Y>60%</Y> 
+								<Width>50%</Width> 
+								<Height>5%</Height> 
 							</Text>
 							<Text name='AgentLevel'> 
-								<X>34%</X> 
-								<Y>25%</Y> 
-								<Width>32%</Width> 
-								<Height>10%</Height> 
+								<X>3%</X> 
+								<Y>65%</Y> 
+								<Width>50%</Width> 
+								<Height>5%</Height> 
 							</Text>
 							<Text name='AgentStanding'> 
-								<X>34%</X> 
-								<Y>35%</Y> 
-								<Width>32%</Width> 
-								<Height>10%</Height> 
+								<X>3%</X> 
+								<Y>70%</Y> 
+								<Width>50%</Width> 
+								<Height>5%</Height> 
 							</Text>
 							<Text name='AgentStation'> 
+								<X>3%</X> 
+								<Y>75%</Y> 
+								<Width>50%</Width> 
+								<Height>5%</Height> 
+							</Text>
+							<Text name='AgentSystem'> 
+								<X>3%</X> 
+								<Y>80%</Y> 
+								<Width>50%</Width> 
+								<Height>5%</Height> 
+							</Text>
+							<Text name='AgentSecurity'> 
 								<X>34%</X> 
-								<Y>45%</Y> 
-								<Width>32%</Width> 
-								<Height>10%</Height> 
+								<Y>80%</Y> 
+								<Width>50%</Width> 
+								<Height>5%</Height> 
 							</Text>
 							<Button name='Add'> 
 								<X>34%</X> 
-								<Y>75%</Y> 
+								<Y>20%</Y> 
 								<Width>32%</Width> 
-								<Height>10%</Height> 
+								<Height>5%</Height> 
+								<Text>Add</Text>
 								<OnLeftClick>
-									if ${UIElement[AgentName@AgentFrame@Courier@ComBot_Courier@ComBot_Courier].Text.Length} != 0
+									if ${UIElement[AgentList@AgentFrame@Courier@ComBot_Courier].SelectedItem(exists)}
 									{
-										variable int64 AgentIndex = ${Agent[${UIElement[AgentName@AgentFrame@Courier@ComBot_Courier@ComBot_Courier].Text}].Index}
-										Script[ComBot].VariableScope.Courier.Config.AgentsRef:AddSetting[${UIElement[AgentName@AgentFrame@Courier@ComBot_Courier@ComBot_Courier].Text},${AgentIndex}]										
+										Script[ComBot].VariableScope.Courier.Config.AgentsRef:AddSetting[${UIElement[AgentList@AgentFrame@Courier@ComBot_Courier].SelectedItem.Text},${Agent[${UIElement[AgentList@AgentFrame@Courier@ComBot_Courier].SelectedItem.Text}].Index}]										
 										Script[ComBot].VariableScope.Config:Save
 										Script[ComBot].VariableScope.Courier.LocalUI:BuildAgentsList
 									}
@@ -220,13 +258,14 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 							</Button>
 							<Button name='Remove'> 
 								<X>34%</X> 
-								<Y>75%</Y> 
+								<Y>25%</Y> 
 								<Width>32%</Width> 
-								<Height>10%</Height> 
+								<Height>5%</Height> 
+								<Text>Remove</Text>
 								<OnLeftClick>
-									if ${UIElement[Agents@AgentFrame@Courier@ComBot_Courier@ComBot_Courier].SelectedItem.Text.Length} != 0
+									if ${UIElement[Agents@AgentFrame@Courier@ComBot_Courier].SelectedItem(exists)} != 0
 									{
-										Script[ComBot].VariableScope.Courier.Config.AgentsRef.FindSetting[${UIElement[Agents@AgentFrame@Courier@ComBot_Courier@ComBot_Courier].SelectedItem.Text}]										
+										Script[ComBot].VariableScope.Courier.Config.AgentsRef.FindSetting[${UIElement[Agents@AgentFrame@Courier@ComBot_Courier].SelectedItem.Text}]:Remove								
 										Script[ComBot].VariableScope.Config:Save
 										Script[ComBot].VariableScope.Courier.LocalUI:BuildAgentsList
 									}
@@ -238,22 +277,95 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<Border>1</Border>
 								<BorderColor>FFFFFFFF</BorderColor>
 								<X>67%</X>
-								<Y>5%</Y>
+								<Y>1%</Y>
 								<Width>32%</Width>
-								<Height>90%</Height>
+								<Height>49%</Height>
 								<OnLoad>
 									Script[ComBot].VariableScope.Courier.LocalUI:BuildAgentsList
 								</OnLoad>
 								<OnMouseEnter>
-									UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText["This field contains the agents ComBot will run courier missions for."]
+									UIElement[Information@InformationFrame@Courier@ComBot_Courier]:SetText["This field contains the agents ComBot will run courier missions for."]
 								</OnMouseEnter>
 								<OnMouseExit>
-									UIElement[Information@InformationFrame@Hauler_Frame@ComBot_Hauler]:SetText[""]
+									UIElement[Information@InformationFrame@Courier@ComBot_Courier]:SetText[""]
 								</OnMouseExit>
 							</listbox>					
 						</Children>
 					</Frame>
+
+					<Text name='ConfigFrameTitle'> 
+						<X>1%</X> 
+						<Y>65%</Y> 
+						<Width>32%</Width> 
+						<Height>4%</Height> 
+						<Text>Configuration</Text>
+						<OnLoad>
+							This.Font:SetColor[FFFFFF00]
+						</OnLoad>
+					</Text>
+					<Frame name="ConfigFrame">
+						<X>0%</X>
+						<Y>67%</Y>
+						<Width>100%</Width>
+						<Height>12%</Height>
+						<BackgroundColor>FF000000</BackgroundColor>
+						<Border>1</Border>
+						<BorderColor>FFFFFFFF</BorderColor>
+						<Children>
+							<Checkbox name='AvoidLowSec'>
+								<X>1%</X>
+								<Y>5%</Y>
+								<Width>32%</Width> 
+								<Height>40%</Height> 
+								<Text>Avoid Low Sec</Text>
+								<OnLoad>
+									if ${Script[ComBot].VariableScope.Courier.Config.AvoidLowSec}
+									{
+										This:SetChecked
+									}
+								</OnLoad>
+								<OnLeftClick>
+									Script[ComBot].VariableScope.Courier.Config:SetAvoidLowSec[${This.Checked}]
+								</OnLeftClick>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Courier@ComBot_Courier]:SetText["When checked, ComBot will not accept missions which take you through Low Sec."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Courier@ComBot_Courier]:SetText[""]
+								</OnMouseExit>
+							</Checkbox>									
+						</Children>
+					</Frame>
 					
+					<Text name='InformationFrameTitle'> 
+						<X>1%</X> 
+						<Y>80%</Y> 
+						<Width>32%</Width> 
+						<Height>4%</Height> 
+						<Text>Information</Text>
+						<OnLoad>
+							This.Font:SetColor[FFFFFF00]
+						</OnLoad>
+					</Text>
+					<Frame name="InformationFrame">
+						<X>0%</X>
+						<Y>82%</Y>
+						<Width>100%</Width>
+						<Height>18%</Height>
+						<BackgroundColor>FF000000</BackgroundColor>
+						<Border>1</Border>
+						<BorderColor>FFFFFFFF</BorderColor>
+						<Children>
+							<Text name='Information'> 
+								<X>5%</X> 
+								<Y>5%</Y> 
+								<Width>90%</Width> 
+								<Height>90%</Height> 
+								<Wrap />
+								<VerticalAlignment>Center</VerticalAlignment>
+							</Text>
+						</Children>
+					</Frame>					
 				</Children>
 			</Frame>
 		</Children>
