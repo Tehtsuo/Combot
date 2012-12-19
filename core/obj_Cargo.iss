@@ -592,7 +592,15 @@ objectdef obj_Cargo inherits obj_State
 			}
 		}
 
-		UI:Update["Cargo", "Processing \ao${This.CargoQueue.Peek.Action}\ag at \ao${This.CargoQueue.Peek.Bookmark}", "g", TRUE]
+		if ${EVE.Bookmark[${This.CargoQueue.Peek.Bookmark}](exists)}
+		{
+			UI:Update["Cargo", "Processing \ao${This.CargoQueue.Peek.Action}\ag at \ao${This.CargoQueue.Peek.Bookmark}", "g", TRUE]
+		}
+		if ${EVE.Station[${This.CargoQueue.Peek.Bookmark}](exists)}
+		{
+			UI:Update["Cargo", "Processing \ao${This.CargoQueue.Peek.Action}\ag at \ao${EVE.Station[${This.CargoQueue.Peek.Bookmark}].Name}", "g", TRUE]
+		}
+		
 		switch ${This.CargoQueue.Peek.Action}
 		{
 			case Unload

@@ -81,7 +81,7 @@ objectdef obj_Move inherits obj_State
 		
 		if ${DestinationList[${DestinationList.Used}]} != ${DestinationSystemID}
 		{
-			UI:Update["obj_Move", "Setting destination to ${Universe[${DestinationSystemID}].Name}", "g", TRUE]
+			UI:Update["obj_Move", "Setting destination to \ao${Universe[${DestinationSystemID}].Name}", "g", TRUE]
 			UI:Log["Redacted:  obj_Move - Setting destination to XXXXXXX (SystemID)"]
 			Universe[${DestinationSystemID}]:SetDestination
 			return
@@ -90,6 +90,27 @@ objectdef obj_Move inherits obj_State
 		This:ActivateAutoPilot
 	}
 
+	method TravelToStation(int64 StationID)
+	{
+		if ${Me.ToEntity.Mode} == 3 || ${Me.AutoPilotOn}
+		{
+			return
+		}
+
+		variable index:int DestinationList
+		EVE:GetWaypoints[DestinationList]
+		
+		if ${DestinationList[${DestinationList.Used}]} != ${StationID}
+		{
+			UI:Update["obj_Move", "Setting destination to \ao${EVE.Station[${StationID}].Name}", "g", TRUE]
+			UI:Log["Redacted:  obj_Move - Setting destination to XXXXXXX (StationID)"]
+			EVE.Station[${StationID}]:SetDestination
+			return
+		}
+		
+		This:ActivateAutoPilot
+	}
+	
 	method Undock()
 	{
 		EVE:Execute[CmdExitStation]
@@ -142,7 +163,7 @@ objectdef obj_Move inherits obj_State
 			return
 		}
 		
-		if !${EVE.Bookmark[${DestinationBookmarkLabel}](exists)}
+		if !${EVE.Bookmark[${DestinationBookmarkLabel}](exists)} && !${EVE.Station[${DestinationBookmarkLabel}](exists)}
 		{
 			UI:Update["obj_Move", "Attempted to travel to a bookmark which does not exist", "r"]
 			UI:Update["obj_Move", "Bookmark label: ${DestinationBookmarkLabel}", "r", TRUE]
@@ -150,7 +171,14 @@ objectdef obj_Move inherits obj_State
 			return
 		}
 
-		UI:Update["obj_Move", "Movement queued.  Destination: ${DestinationBookmarkLabel}", "g", TRUE]
+		if ${EVE.Bookmark[${DestinationBookmarkLabel}](exists)}
+		{
+			UI:Update["obj_Move", "Movement to \ao${DestinationBookmarkLabel}\ag queued", "g", TRUE]
+		}
+		if ${EVE.Station[${DestinationBookmarkLabel}](exists)}
+		{
+			UI:Update["obj_Move", "Movement to \ao${EVE.Station[${DestinationBookmarkLabel}].Name}\ag queued", "g", TRUE]
+		}
 		UI:Log["Redacted:  obj_Move - Movement queued.  Destination: XXXXXXX (Bookmark)"]
 		This.Traveling:Set[TRUE]
 		This:QueueState["BookmarkMove", 2000, "${DestinationBookmarkLabel}, ${IgnoreGate}, ${Distance}, ${FleetWarp}"]
@@ -328,16 +356,23 @@ objectdef obj_Move inherits obj_State
 
 		if ${Me.InStation}
 		{
-			if ${Me.StationID} == ${EVE.Bookmark[${Bookmark}].ItemID}
+			if ${Me.StationID} == ${EVE.Bookmark[${Bookmark}].ItemID} || ${Me.StationID} == ${Bookmark}
 			{
-				UI:Update["obj_Move", "Docked at ${Bookmark}", "g", TRUE]
+				if ${EVE.Bookmark[${Bookmark}](exists)}
+				{
+					UI:Update["obj_Move", "Docked at \ao${Bookmark}", "g", TRUE]
+				}
+				if ${EVE.Station[${Bookmark}](exists)}
+				{
+					UI:Update["obj_Move", "Docked at \ao${EVE.Station[${Bookmark}].Name}", "g", TRUE]
+				}
 				UI:Log["Redacted:  obj_Move - Docked at XXXXXXX"]
 				This.Traveling:Set[FALSE]
 				return TRUE
 			}
 			else
 			{
-				UI:Update["obj_Move", "Undocking from ${Me.Station.Name}", "g", TRUE]
+				UI:Update["obj_Move", "Undocking from \ao${Me.Station.Name}", "g", TRUE]
 				UI:Log["Redacted:  obj_Move - Undocking from XXXXXXX"]
 				This:Undock
 				return FALSE
@@ -354,10 +389,17 @@ objectdef obj_Move inherits obj_State
 			return FALSE
 		}
 		
-		if  ${EVE.Bookmark[${Bookmark}].SolarSystemID} != ${Me.SolarSystemID}
+		if ${EVE.Bookmark[${Bookmark}](exists)}
 		{
-			This:TravelToSystem[${EVE.Bookmark[${Bookmark}].SolarSystemID}]
-			return FALSE
+			if  ${EVE.Bookmark[${Bookmark}].SolarSystemID} != ${Me.SolarSystemID}
+			{
+				This:TravelToSystem[${EVE.Bookmark[${Bookmark}].SolarSystemID}]
+				return FALSE
+			}
+		}
+		if ${EVE.Station[${Bookmark}](exists)}
+		{
+			This:TravelToStation[${Bookmark}]
 		}
 		
 		if ${EVE.Bookmark[${Bookmark}].ItemID} == -1
