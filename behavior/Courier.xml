@@ -254,7 +254,22 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 										Script[ComBot].VariableScope.Config:Save
 										Script[ComBot].VariableScope.Courier.LocalUI:BuildAgentsList
 									}
+									elseif ${UIElement[Agent@AgentFrame@Courier@ComBot_Courier].Text.Length} > 0
+									{
+										if ${Agent[${UIElement[Agent@AgentFrame@Courier@ComBot_Courier].Text}](exists)]
+										{
+											Script[ComBot].VariableScope.Courier.Config.AgentsRef:AddSetting[${UIElement[Agent@AgentFrame@Courier@ComBot_Courier].Text},${Agent[${UIElement[Agent@AgentFrame@Courier@ComBot_Courier].Text}].Index}]										
+											Script[ComBot].VariableScope.Config:Save
+											Script[ComBot].VariableScope.Courier.LocalUI:BuildAgentsList
+										}
+									}
 								</OnLeftClick>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Courier@ComBot_Courier]:SetText["This button adds the currently selected Agent, or the name typed into the filter field if no agent is selected, to the Agent list"]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Courier@ComBot_Courier]:SetText[""]
+								</OnMouseExit>
 							</Button>
 							<Button name='Remove'> 
 								<X>34%</X> 
