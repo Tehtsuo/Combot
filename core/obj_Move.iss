@@ -356,26 +356,39 @@ objectdef obj_Move inherits obj_State
 
 		if ${Me.InStation}
 		{
-			if ${Me.StationID} == ${EVE.Bookmark[${Bookmark}].ItemID} || ${Me.StationID} == ${Bookmark}
+			if ${EVE.Bookmark[${Bookmark}](exists)}
 			{
-				if ${EVE.Bookmark[${Bookmark}](exists)}
+				if ${Me.StationID} == ${EVE.Bookmark[${Bookmark}].ItemID}
 				{
 					UI:Update["obj_Move", "Docked at \ao${Bookmark}", "g", TRUE]
+					UI:Log["Redacted:  obj_Move - Docked at XXXXXXX"]
+					This.Traveling:Set[FALSE]
+					return TRUE
 				}
-				if ${EVE.Station[${Bookmark}](exists)}
+				else
+				{
+					UI:Update["obj_Move", "Undocking from \ao${Me.Station.Name}", "g", TRUE]
+					UI:Log["Redacted:  obj_Move - Undocking from XXXXXXX"]
+					This:Undock
+					return FALSE
+				}
+			}
+			if ${EVE.Station[${Bookmark}](exists)}
+			{
+				if ${Me.StationID} == ${Bookmark}
 				{
 					UI:Update["obj_Move", "Docked at \ao${EVE.Station[${Bookmark}].Name}", "g", TRUE]
+					UI:Log["Redacted:  obj_Move - Docked at XXXXXXX"]
+					This.Traveling:Set[FALSE]
+					return TRUE
 				}
-				UI:Log["Redacted:  obj_Move - Docked at XXXXXXX"]
-				This.Traveling:Set[FALSE]
-				return TRUE
-			}
-			else
-			{
-				UI:Update["obj_Move", "Undocking from \ao${Me.Station.Name}", "g", TRUE]
-				UI:Log["Redacted:  obj_Move - Undocking from XXXXXXX"]
-				This:Undock
-				return FALSE
+				else
+				{
+					UI:Update["obj_Move", "Undocking from \ao${Me.Station.Name}", "g", TRUE]
+					UI:Log["Redacted:  obj_Move - Undocking from XXXXXXX"]
+					This:Undock
+					return FALSE
+				}
 			}
 		}
 
