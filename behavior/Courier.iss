@@ -271,11 +271,6 @@ objectdef obj_Courier inherits obj_State
 			EVEWindow[AgentBrowser]:Close
 			return FALSE
 		}
-		if ${EVEWindow[addressbook](exists)}
-		{
-			EVEWindow[addressbook]:Close
-			return FALSE
-		}
 		if ${EVEWindow[byCaption, Agent Conversation](exists)}
 		{
 			EVEWindow[byCaption, Agent Conversation]:Close
@@ -292,7 +287,6 @@ objectdef obj_Courier inherits obj_State
 		switch ${Action} 
 		{
 			case OFFER
-				echo ${AgentID} -  ${Me.StationID} != ${Agent[${AgentIndex}].StationID}
 				if ${Me.StationID} != ${Agent[${AgentIndex}].StationID}
 				{
 					Move:Bookmark[${Agent[${AgentIndex}].StationID}]
@@ -351,7 +345,11 @@ objectdef obj_Courier inherits obj_State
 				}
 				DialogStrings:GetIterator[i]
 				
-				Config.AgentsTimeoutRef:AddSetting[${Agent[${AgentIndex}].ID},${Time.Timestamp}]
+				variable time NextTime=${Time}
+				NextTime.Hour:Inc[4]
+				NextTime:Update
+				
+				Config.AgentsTimeoutRef:AddSetting[${Agent[${AgentIndex}].ID},${NextTime.Timestamp}]
 				Config:Save
 				
 				if ${i:First(exists)}
@@ -445,7 +443,7 @@ objectdef obj_Courier inherits obj_State
 	method PopulateAgentTimeout()
 	{
 		variable iterator i
-		Config.AgentsRef:GetSettingIterator[i]
+		Config.AgentsTimeoutRef:GetSettingIterator[i]
 
 		AgentTimeout:Clear
 		if ${i:First(exists)}
