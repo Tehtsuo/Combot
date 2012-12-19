@@ -69,7 +69,7 @@ objectdef obj_Courier inherits obj_State
 	variable obj_CourierUI LocalUI
 	
 	variable queue:int64 AgentQueue
-	variable collection:time AgentTimeout
+	variable collection:int64 AgentTimeout
 
 	method Initialize()
 	{
@@ -168,7 +168,7 @@ objectdef obj_Courier inherits obj_State
 						if !${m.Value.Type.Find[Courier]}
 						{
 							This:PopulateAgentTimeout
-							if ${AgentTimeout.Element[${AgentQueue.Peek}].Timestamp} >= ${Time.Timestamp}
+							if ${AgentTimeout.Element[${Agent[${AgentQueue.Peek}].ID}]} >= ${Time.Timestamp}
 							{
 								UI:Update["Courier", "${Agent[${AgentQueue.Peek}].Name}\ao is on cooldown, skipping", "o"]
 								AgentQueue:Dequeue
@@ -245,6 +245,7 @@ objectdef obj_Courier inherits obj_State
 			UI:Update["Courier", "Cargo \ao${Cargo.CargoList.Get[1].Name} \agis already on-board", "g"]
 			UI:Update["Courier", "Proceeding to dropoff", "g"]
 			Cargo:At[${Dropoff}]:Unload[TypeID == ${TypeID}]
+			This:QueueState["Cleanup"]
 			This:QueueState["Traveling"]
 			This:QueueState["CompleteMission", 1500, "${m.Value.AgentID}, ${Home}, ${m.Value.RemoteCompletable}"]
 			This:QueueState["CheckForWork"]
@@ -253,6 +254,7 @@ objectdef obj_Courier inherits obj_State
 		{
 			UI:Update["Courier", "Cargo not on-board, proceeding to pickup", "g"]
 			Cargo:At[${Pickup}]:Load[TypeID == ${TypeID}]:At[${Dropoff}]:Unload[TypeID == ${TypeID}]
+			This:QueueState["Cleanup"]
 			This:QueueState["Traveling"]
 			This:QueueState["CompleteMission", 1500, "${m.Value.AgentID}, ${Home}, ${m.Value.RemoteCompletable}"]
 			This:QueueState["CheckForWork"]
@@ -264,9 +266,9 @@ objectdef obj_Courier inherits obj_State
 	
 	member:bool Cleanup()
 	{
-		if ${EVEWindow[journal](exists)}
+		if ${EVEWindow[AgentBrowser](exists)}
 		{
-			EVEWindow[journal]:Close
+			EVEWindow[AgentBrowser]:Close
 			return FALSE
 		}
 		if ${EVEWindow[addressbook](exists)}
@@ -339,7 +341,7 @@ objectdef obj_Courier inherits obj_State
 			case DECLINE
 				if !${EVEWindow[agentinteraction_${Agent[${AgentIndex}].ID}](exists)}
 				{
-					Agent[id, ${AgentID}]:StartConversation
+					Agent[${AgentIndex}]:StartConversation
 					return FALSE
 				}
 				Agent[${AgentIndex}]:GetDialogResponses[DialogStrings]
@@ -349,7 +351,8 @@ objectdef obj_Courier inherits obj_State
 				}
 				DialogStrings:GetIterator[i]
 				
-				Config.AgentsTimeoutRef:AddSetting[${Agent[${AgentIndex}].ID},${Time}]										
+				Config.AgentsTimeoutRef:AddSetting[${Agent[${AgentIndex}].ID},${Time.Timestamp}]
+				Config:Save
 				
 				if ${i:First(exists)}
 					do
