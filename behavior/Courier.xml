@@ -250,14 +250,13 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<OnLeftClick>
 									if ${UIElement[AgentList@AgentFrame@Courier@ComBot_Courier].SelectedItem(exists)}
 									{
-										echo SelectedItem
 										Script[ComBot].VariableScope.Courier.Config.AgentsRef:AddSetting[${UIElement[AgentList@AgentFrame@Courier@ComBot_Courier].SelectedItem.Text},${Agent[${UIElement[AgentList@AgentFrame@Courier@ComBot_Courier].SelectedItem.Text}].Index}]										
 										Script[ComBot].VariableScope.Config:Save
 										Script[ComBot].VariableScope.Courier.LocalUI:BuildAgentsList
 									}
 									elseif ${UIElement[Agent@AgentFrame@Courier@ComBot_Courier].Text.Length} > 0
 									{
-										if ${Agent[${UIElement[Agent@AgentFrame@Courier@ComBot_Courier].Text}](exists)]}
+										if ${Agent[${UIElement[Agent@AgentFrame@Courier@ComBot_Courier].Text}](exists)}
 										{
 											Script[ComBot].VariableScope.Courier.Config.AgentsRef:AddSetting[${UIElement[Agent@AgentFrame@Courier@ComBot_Courier].Text},${Agent[${UIElement[Agent@AgentFrame@Courier@ComBot_Courier].Text}].Index}]										
 											Script[ComBot].VariableScope.Config:Save
