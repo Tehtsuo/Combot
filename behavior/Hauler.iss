@@ -184,7 +184,7 @@ objectdef obj_Hauler inherits obj_State
 			{
 				return FALSE
 			}
-			Cargo:At[${Config.Dropoff},${Config.DropoffType},${Config.DropoffSubType}, ${Config.DropoffContainer}]:Unload:Unload["",0,ShipCorpHangar]:Unload["",0,OreHold]
+			Cargo:At[${Config.Dropoff},${Config.DropoffType},${Config.DropoffSubType}, ${Config.DropoffContainer}]:Unload["!(Name =- \"Crystal\")"]:Unload["!(Name =- \"Crystal\")",0,ShipCorpHangar]:Unload["",0,OreHold]
 			This:QueueState["Traveling"]
 			This:QueueState["CheckCargoHold"]
 			return TRUE
@@ -213,7 +213,7 @@ objectdef obj_Hauler inherits obj_State
 			}
 			
 			if ${OrcaCargo} > ${Config.Threshold} * .01 * ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].Capacity} || \
-				${Config.FlybyPickups}
+				!${Config.FlybyPickups}
 			{
 				return TRUE
 			}
