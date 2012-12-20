@@ -29,11 +29,11 @@ objectdef obj_Base_Configuration
 		SetName:Set[${name}]
 		if !${BaseConfig.BaseRef.FindSet[${This.SetName}](exists)}
 		{
-			UI:Update["obj_Configuration", " ${This.SetName} settings missing - initializing", "o"]
+			UI:Update["Configuration", " ${This.SetName} settings missing - initializing", "o"]
 			BaseConfig.BaseRef:AddSet[${This.SetName}]
 			This:Set_Default_Values[]
 		}
-		UI:Update["obj_Configuration", " ${This.SetName}: Initialized", "-g"]
+		UI:Update["Configuration", " ${This.SetName}: Initialized", "-g"]
 	}
 
 	member:settingsetref CommonRef()
@@ -77,7 +77,7 @@ objectdef obj_Configuration_BaseConfig
 
 		if !${CONFIG_PATH.FileExists["${CONFIG_PATH}/${CONFIG_FILE}"]}
 		{
-			UI:Update["obj_Configuration", "Configuration file is ${CONFIG_FILE}", "g", TRUE]
+			UI:Update["Configuration", "Configuration file is ${CONFIG_FILE}", "g", TRUE]
 			LavishSettings[ComBotSettings]:Import["${CONFIG_PATH}/${CONFIG_FILE}"]
 		}
 
@@ -130,10 +130,10 @@ objectdef obj_Configuration_Common
 	{
 		if !${BaseConfig.BaseRef.FindSet[${This.SetName}](exists)}
 		{
-			UI:Update["obj_Configuration", " ${This.SetName} settings missing - initializing", "o"]
+			UI:Update["Configuration", " ${This.SetName} settings missing - initializing", "o"]
 			This:Set_Default_Values[]
 		}
-		UI:Update["obj_Configuration", " ${This.SetName}: Initialized", "-g"]
+		UI:Update["Configuration", " ${This.SetName}: Initialized", "-g"]
 	}
 
 	member:settingsetref CommonRef()
@@ -183,10 +183,10 @@ objectdef obj_Configuration_Fleets
 	{
 		if !${BaseConfig.BaseRef.FindSet[${This.SetName}](exists)}
 		{
-			UI:Update["obj_Configuration", " ${This.SetName} settings missing - initializing", "o"]
+			UI:Update["Configuration", " ${This.SetName} settings missing - initializing", "o"]
 			This:Set_Default_Values[]
 		}
-		UI:Update["obj_Configuration", " ${This.SetName}: Initialized", "-g"]
+		UI:Update["Configuration", " ${This.SetName}: Initialized", "-g"]
 	}
 
 	member:settingsetref CommonRef()
@@ -401,7 +401,7 @@ objectdef obj_Configuration_RefineData
 
 	method Initialize()
 	{
-		UI:Update["obj_Configuration", " ${This.SetName}: Load on demand", "-g"]
+		UI:Update["Configuration", " ${This.SetName}: Load on demand", "-g"]
 	}
 
 	method Shutdown()
@@ -421,7 +421,7 @@ objectdef obj_Configuration_RefineData
 		}
 		BaseRef:Set[${LavishSettings[RefineData].FindSet[Refines]}]
 
-		UI:Update["obj_Configuration", " ${This.SetName}: Initialized", "-g"]
+		UI:Update["Configuration", " ${This.SetName}: Initialized", "-g"]
 	}
 	
 	member:int Tritanium(int ID)

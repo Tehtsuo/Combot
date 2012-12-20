@@ -30,7 +30,6 @@ objectdef obj_Configuration_Automate
 			UI:Update["Automate", " ${This.SetName} settings missing - initializing", "o"]
 			This:Set_Default_Values[]
 		}
-		UI:Update["Automate", " ${This.SetName}: Initialized", "-g"]
 	}
 
 	member:settingsetref CommonRef()

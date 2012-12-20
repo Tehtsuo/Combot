@@ -30,7 +30,6 @@ objectdef obj_Configuration_AutoThrust
 			UI:Update["obj_AutoThrust", " ${This.SetName} settings missing - initializing", "o"]
 			This:Set_Default_Values[]
 		}
-		UI:Update["obj_AutoThrust", " ${This.SetName}: Initialized", "-g"]
 	}
 
 	member:settingsetref CommonRef()

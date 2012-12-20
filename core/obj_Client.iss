@@ -140,7 +140,7 @@ objectdef obj_Client
 		
 		if ${BookmarkIndex.Used}
 		{
-			UI:Update["obj_Client", "Undock warping to ${BookmarkIndex.Get[1].Label}", "g"]
+			UI:Update["Client", "Undock warping to ${BookmarkIndex.Get[1].Label}", "g"]
 			BookmarkIndex.Get[1]:WarpTo
 			Client:Wait[5000]
 		}
@@ -149,7 +149,7 @@ objectdef obj_Client
 
 	method Wait(int delay)
 	{
-		UI:Update["obj_Client", "Initiating ${delay} millisecond wait", "-o"]
+		UI:Update["Client", "Initiating ${delay} millisecond wait", "-o"]
 		This.Ready:Set[FALSE]
 		This.NextPulse:Set[${Math.Calc[${LavishScript.RunningTime} + ${delay}]}]
 	}

@@ -38,7 +38,7 @@ objectdef obj_NPCData
 		}
 		BaseRef:Set[${LavishSettings[NPCData].FindSet[NPCTypes]}]
 
-		UI:Update["obj_Configuration", " ${This.SetName}: Initialized", "-g"]
+		UI:Update["Configuration", " ${This.SetName}: Initialized", "-g"]
 	}
 
 	method Shutdown()

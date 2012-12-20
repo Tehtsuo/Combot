@@ -594,22 +594,24 @@ objectdef obj_Cargo inherits obj_State
 
 		if ${EVE.Bookmark[${This.CargoQueue.Peek.Bookmark}](exists)}
 		{
-			UI:Update["Cargo", "Processing \ao${This.CargoQueue.Peek.Action}\ag at \ao${This.CargoQueue.Peek.Bookmark}", "g", TRUE]
+			UI:Update["Cargo", "Processing \ao${This.CargoQueue.Peek.Action}", "g", TRUE]
+			UI:Update["Cargo", " Location: \ag${This.CargoQueue.Peek.Bookmark}", "-g", TRUE]
 		}
 		if ${EVE.Station[${This.CargoQueue.Peek.Bookmark}](exists)}
 		{
-			UI:Update["Cargo", "Processing \ao${This.CargoQueue.Peek.Action}\ag at \ao${EVE.Station[${This.CargoQueue.Peek.Bookmark}].Name}", "g", TRUE]
+			UI:Update["Cargo", "Processing \ao${This.CargoQueue.Peek.Action}\ag", "g", TRUE]
+			UI:Update["Cargo", " Location: \ag${EVE.Station[${This.CargoQueue.Peek.Bookmark}].Name}", "-g", TRUE]
 		}
 		
 		switch ${This.CargoQueue.Peek.Action}
 		{
 			case Unload
-				UI:Update["Cargo", " Source: \ao${This.CargoQueue.Peek.Source}", "-g", TRUE]
-				UI:Update["Cargo", " Destination: \ao${This.CargoQueue.Peek.LocationType}\a-g - \ao${This.CargoQueue.Peek.LocationSubType}\a-g - \ao${This.CargoQueue.Peek.Container}", "-g", TRUE]
+				UI:Update["Cargo", " Source: \ag${This.CargoQueue.Peek.Source}", "-g", TRUE]
+				UI:Update["Cargo", " Destination: \ag${This.CargoQueue.Peek.LocationType}\a-g - \ao${This.CargoQueue.Peek.LocationSubType}\a-g - \ao${This.CargoQueue.Peek.Container}", "-g", TRUE]
 				break
 			case Load
-				UI:Update["Cargo", " Source: \ao${This.CargoQueue.Peek.LocationType}\a-g - \ao${This.CargoQueue.Peek.LocationSubType}\a-g - \ao${This.CargoQueue.Peek.Container}", "-g", TRUE]
-				UI:Update["Cargo", " Destination: \aoShip", "-g", TRUE]
+				UI:Update["Cargo", " Source: \ag${This.CargoQueue.Peek.LocationType}\a-g - \ao${This.CargoQueue.Peek.LocationSubType}\a-g - \ao${This.CargoQueue.Peek.Container}", "-g", TRUE]
+				UI:Update["Cargo", " Destination: \agShip", "-g", TRUE]
 				break
 		}
 		
