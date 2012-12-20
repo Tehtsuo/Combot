@@ -741,7 +741,6 @@ objectdef obj_Miner inherits obj_State
 			relay all -event ComBot_Orca_InBelt TRUE
 			relay all -event ComBot_Orca_Cargo ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar].UsedCapacity}
 			Cargo:PopulateCargoList[ShipCorpHangar]
-			echo ShipCorpHangar:  ${Cargo.CargoList.Used}
 			if ${Cargo.CargoList.Used} && !${Config.Dropoff_Type.Equal[No Dropoff]}
 			{
 				if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].UsedCapacity} / ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipCargo].Capacity} < ${Config.Threshold} * .01
@@ -758,6 +757,18 @@ objectdef obj_Miner inherits obj_State
 					if ${Cargo.CargoList.Used}
 					{
 						Cargo:MoveCargoList[OreHold]
+						return TRUE
+					}
+				}
+			}
+			Cargo:PopulateCargoList[Ship]
+			if ${Cargo.CargoList.Used} && ${Config.Dropoff_Type.Equal[No Dropoff]}
+			{
+				if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar].UsedCapacity} / ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar].Capacity} < ${Config.Threshold} * .01
+				{
+					if ${Cargo.CargoList.Used}
+					{
+						Cargo:MoveCargoList[Fleet Hangar]
 						return TRUE
 					}
 				}
