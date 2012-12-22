@@ -185,8 +185,9 @@ objectdef obj_Courier inherits obj_State
 						}
 						else
 						{
-							if !${m.Value.Type.Find[Important]}
+							if !${m.Value.Type.Find[Storyline]}
 							{
+								echo ${m.Value.Type}
 								UI:Update["Courier", "Declining mission from \ao${Agent[id, ${m.Value.AgentID}].Name}", "g"]
 								This:InsertState["CheckForWork"]
 								This:InsertState["InteractAgent", 1500, "${Agent[id, ${m.Value.AgentID}].Index}, DECLINE"]
@@ -414,7 +415,7 @@ objectdef obj_Courier inherits obj_State
 					{
 						if ${i.Value.Text.Find[Decline]}
 						{
-							;i.Value:Say[${Agent[${AgentIndex}].ID}]
+							i.Value:Say[${Agent[${AgentIndex}].ID}]
 							break
 						}
 					}
