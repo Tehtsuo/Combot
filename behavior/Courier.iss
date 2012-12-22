@@ -185,10 +185,17 @@ objectdef obj_Courier inherits obj_State
 						}
 						else
 						{
-							UI:Update["Courier", "Declining mission from \ao${Agent[id, ${m.Value.AgentID}].Name}", "g"]
-							This:InsertState["CheckForWork"]
-							This:InsertState["InteractAgent", 1500, "${Agent[id, ${m.Value.AgentID}].Index}, DECLINE"]
-							return TRUE
+							if !${m.Value.Type.Find[Important]}
+							{
+								UI:Update["Courier", "Declining mission from \ao${Agent[id, ${m.Value.AgentID}].Name}", "g"]
+								This:InsertState["CheckForWork"]
+								This:InsertState["InteractAgent", 1500, "${Agent[id, ${m.Value.AgentID}].Index}, DECLINE"]
+								return TRUE
+							}
+							else
+							{
+								continue
+							}
 						}
 					}
 					if ${m.Value.State} == 1
