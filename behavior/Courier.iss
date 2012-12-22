@@ -227,11 +227,19 @@ objectdef obj_Courier inherits obj_State
 						}
 						else
 						{
-							if ${m.Value.Name.Find[Materials For War Preparation]} && ${Config.Materials}
+							if ${m.Value.Name.Find[Materials For War Preparation]}
 							{
-								This:InsertState["CheckForWork", 1500, TRUE]
-								return TRUE
+								if ${Config.Materials}
+								{
+									This:InsertState["CheckForWork", 1500, TRUE]
+									return TRUE
+								}
+								else
+								{
+									continue
+								}
 							}
+							
 							UI:Update["Courier", "Accepting mission from \ao${Agent[id, ${m.Value.AgentID}].Name}", "g"]
 							This:InsertState["CheckForWork"]
 							This:InsertState["InteractAgent", 1500, "${Agent[id, ${m.Value.AgentID}].Index}, ACCEPT"]
