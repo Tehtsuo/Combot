@@ -174,9 +174,9 @@ objectdef obj_Courier inherits obj_State
 					if !${m.Value.Type.Find[Courier]}
 					{
 						This:PopulateAgentTimeout
-						if ${AgentTimeout.Element[${Agent[${AgentQueue.Peek}].ID}]} >= ${Time.Timestamp}
+						if ${AgentTimeout.Element[${m.Value.AgentID}]} >= ${Time.Timestamp}
 						{
-							UI:Update["Courier", "${Agent[${AgentQueue.Peek}].Name}\ao is on cooldown, skipping", "o"]
+							UI:Update["Courier", "${Agent[id, ${m.Value.AgentID}].Name}\ao is on cooldown, skipping", "o"]
 							if ${m.Value.AgentID} == ${Agent[${AgentQueue.Peek}].ID}
 							{
 								AgentQueue:Dequeue
@@ -185,9 +185,9 @@ objectdef obj_Courier inherits obj_State
 						}
 						else
 						{
-							UI:Update["Courier", "Declining mission from \ao${Agent[${AgentQueue.Peek}].Name}", "g"]
+							UI:Update["Courier", "Declining mission from \ao${Agent[id, ${m.Value.AgentID}].Name}", "g"]
 							This:InsertState["CheckForWork"]
-							This:InsertState["InteractAgent", 1500, "${AgentQueue.Peek}, DECLINE"]
+							This:InsertState["InteractAgent", 1500, "${Agent[id, ${m.Value.AgentID}].Index}, DECLINE"]
 							return TRUE
 						}
 					}
@@ -199,9 +199,9 @@ objectdef obj_Courier inherits obj_State
 						}
 						else
 						{
-							UI:Update["Courier", "Accepting mission from \ao${Agent[${AgentQueue.Peek}].Name}", "g"]
+							UI:Update["Courier", "Accepting mission from \ao${Agent[id, ${m.Value.AgentID}].Name}", "g"]
 							This:InsertState["CheckForWork"]
-							This:InsertState["InteractAgent", 1500, "${AgentQueue.Peek}, ACCEPT"]
+							This:InsertState["InteractAgent", 1500, "${Agent[id, ${m.Value.AgentID}].Index}, ACCEPT"]
 							return TRUE
 						}
 					}
@@ -230,15 +230,18 @@ objectdef obj_Courier inherits obj_State
 			This:PopulateAgentTimeout
 			if ${AgentTimeout.Element[${Agent[${AgentQueue.Peek}].ID}]} >= ${Time.Timestamp}
 			{
-				UI:Update["Courier", "${Agent[${AgentQueue.Peek}].Name}\ao is on cooldown, skipping", "o"]
-				AgentQueue:Dequeue
+				UI:Update["Courier", "${Agent[id, ${m.Value.AgentID}].Name}\ao is on cooldown, skipping", "o"]
+				if ${m.Value.AgentID} == ${Agent[${AgentQueue.Peek}].ID}
+				{
+					AgentQueue:Dequeue
+				}
 				return FALSE
 			}
 			else
 			{
 				UI:Update["Courier", "Declining Low-Sec mission", "g"]
 				This:InsertState["CheckForWork"]
-				This:InsertState["InteractAgent", 1500, "${AgentQueue.Peek}, DECLINE"]
+				This:InsertState["InteractAgent", 1500, "${Agent[id, ${m.Value.AgentID}].Index}, DECLINE"]
 				return TRUE
 			}
 		}
