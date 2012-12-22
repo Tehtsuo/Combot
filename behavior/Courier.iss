@@ -330,7 +330,7 @@ objectdef obj_Courier inherits obj_State
 		else
 		{
 			UI:Update["Courier", "Cargo not on-board, proceeding to pickup", "g"]
-			if ${Skip}
+			if ${Skip} || !${Pickup}
 			{
 				Cargo:At[${Config.Pickup},${Config.PickupType},${Config.PickupSubType},${Config.PickupContainer}]:Load[TypeID == ${TypeID},${parse}]:At[${Agent[id, ${m.Value.AgentID}].StationID}]:Unload[TypeID == ${TypeID}]
 				This:QueueState["Cleanup"]
