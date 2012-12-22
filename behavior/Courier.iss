@@ -181,7 +181,7 @@ objectdef obj_Courier inherits obj_State
 							{
 								AgentQueue:Dequeue
 							}
-							return FALSE
+							continue
 						}
 						else
 						{
