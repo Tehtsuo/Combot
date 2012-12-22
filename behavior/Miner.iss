@@ -776,20 +776,34 @@ objectdef obj_Miner inherits obj_State
 			
 			if !${Config.DontMove}
 			{
-				if ${Roid:First(exists)}
+				if !${Config.Tether}
 				{
-					if ${Config.IceMining}
+					if ${Roid:First(exists)}
 					{
-						Move:Approach[${Roid.Value.ID}, 10000]
+						if ${Config.IceMining}
+						{
+							Move:Approach[${Roid.Value.ID}, 10000]
+						}
+						elseif ${Config.GasHarvesting}
+						{
+							Move:Approach[${Roid.Value.ID}, 1000]
+						}
+						else
+						{
+							Move:Approach[${Roid.Value.ID}, 8000]
+						}
 					}
-					elseif ${Config.GasHarvesting}
+				}
+				else
+				{
+					if ${Entity[Name = "${Config.TetherName}"](exists)}
 					{
-						Move:Approach[${Roid.Value.ID}, 1000]
+						if ${Entity[Name = "${Config.TetherName}"].Distance} > 1500 && ${MyShip.ToEntity.Mode} != 1
+						{
+							Entity[Name = "${Config.TetherName}"]:KeepAtRange
+						}
 					}
-					else
-					{
-						Move:Approach[${Roid.Value.ID}, 8000]
-					}
+					
 				}
 			}
 		}
