@@ -116,7 +116,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						<X>0%</X>
 						<Y>4%</Y>
 						<Width>100%</Width>
-						<Height>60%</Height>
+						<Height>40%</Height>
 						<BackgroundColor>FF000000</BackgroundColor>
 						<Border>1</Border>
 						<BorderColor>FFFFFFFF</BorderColor>
@@ -126,15 +126,15 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<X>1%</X> 
 								<Y>1%</Y> 
 								<Width>32%</Width> 
-								<Height>5%</Height> 
+								<Height>4%</Height> 
 								<Alignment>Center</Alignment>
 								<Text>Agent Selection</Text>
 							</Text>
 							<Textentry name='Agent'> 
 								<X>1%</X> 
-								<Y>5%</Y> 
+								<Y>6%</Y> 
 								<Width>32%</Width> 
-								<Height>5%</Height> 
+								<Height>10%</Height> 
 								<OnChange>
 									Script[ComBot].VariableScope.Courier.LocalUI:UpdateAgentList
 								</OnChange>
@@ -150,9 +150,9 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<Border>1</Border>
 								<BorderColor>FFFFFFFF</BorderColor>
 								<X>1%</X>
-								<Y>10%</Y>
+								<Y>15%</Y>
 								<Width>32%</Width>
-								<Height>40%</Height>
+								<Height>35%</Height>
 								<OnLoad>
 									Script[ComBot].VariableScope.Courier.LocalUI:BuildAgentList
 									Script[ComBot].VariableScope.Courier.LocalUI:UpdateAgentList
@@ -236,16 +236,16 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<Height>5%</Height> 
 							</Text>
 							<Text name='AgentSecurity'> 
-								<X>34%</X> 
+								<X>67%</X> 
 								<Y>80%</Y> 
 								<Width>50%</Width> 
 								<Height>5%</Height> 
 							</Text>
 							<Button name='Add'> 
 								<X>34%</X> 
-								<Y>20%</Y> 
+								<Y>15%</Y> 
 								<Width>32%</Width> 
-								<Height>5%</Height> 
+								<Height>10%</Height> 
 								<Text>Add</Text>
 								<OnLeftClick>
 									if ${UIElement[AgentList@AgentFrame@Courier@ComBot_Courier].SelectedItem(exists)}
@@ -275,7 +275,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<X>34%</X> 
 								<Y>25%</Y> 
 								<Width>32%</Width> 
-								<Height>5%</Height> 
+								<Height>10%</Height> 
 								<Text>Remove</Text>
 								<OnLeftClick>
 									if ${UIElement[Agents@AgentFrame@Courier@ComBot_Courier].SelectedItem(exists)} != 0
@@ -287,14 +287,22 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								</OnLeftClick>
 							</Button>
 							
+							<Text name='AgentsTitle'> 
+								<X>67%</X> 
+								<Y>1%</Y> 
+								<Width>32%</Width> 
+								<Height>4%</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Agent Queue</Text>
+							</Text>
 							<listbox Name="Agents">
 								<BackgroundColor>FF000000</BackgroundColor>
 								<Border>1</Border>
 								<BorderColor>FFFFFFFF</BorderColor>
 								<X>67%</X>
-								<Y>1%</Y>
+								<Y>6%</Y>
 								<Width>32%</Width>
-								<Height>49%</Height>
+								<Height>45%</Height>
 								<OnLoad>
 									Script[ComBot].VariableScope.Courier.LocalUI:BuildAgentsList
 								</OnLoad>
@@ -308,9 +316,327 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 						</Children>
 					</Frame>
 
+					<Text name='PickupFrameTitle'> 
+						<X>1%</X> 
+						<Y>45%</Y> 
+						<Width>32%</Width> 
+						<Height>4%</Height> 
+						<Text>Pickup Configuration</Text>
+						<OnLoad>
+							This.Font:SetColor[FFFFFF00]
+						</OnLoad>
+					</Text>
+					<Frame name="PickupFrame">
+						<X>0%</X>
+						<Y>47%</Y>
+						<Width>100%</Width>
+						<Height>20%</Height>
+						<BackgroundColor>FF000000</BackgroundColor>
+						<Border>1</Border>
+						<BorderColor>FFFFFFFF</BorderColor>
+						<Children>
+							<Text name='PickupTitle'> 
+								<X>34%</X> 
+								<Y>3%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Pickup Bookmark</Text>
+							</Text>
+							<Textentry name='Pickup'> 
+								<X>34%</X> 
+								<Y>15%</Y> 
+								<Width>32%</Width> 
+								<Height>15%</Height> 
+								<OnLoad>
+									This:SetText[${Script[ComBot].VariableScope.Courier.Config.Pickup}]
+								</OnLoad>
+								<OnChange>
+									if ${This.Text.Length}
+									{
+										Script[ComBot].VariableScope.Courier.Config:SetPickup[${This.Text}]
+									}
+									else
+									{
+										Script[ComBot].VariableScope.Courier.Config:SetPickup[\"\"]
+									}
+									UIElement[PickupList@PickupFrame@Courier@ComBot_Courier]:Show
+									Script[ComBot].VariableScope.Courier.LocalUI:Start
+								</OnChange>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Courier@ComBot_Courier]:SetText["This field needs to contain the exact name of your pickup bookmark.  The bookmark can be a station if you are picking up from a personal hangar or corporate hangar, or a location if you are picking up from a Player Owned Station structure.  If you are picking up from an Fleet Hangar or Jetcan, the bookmark needs to be any bookmark in the system where your fleet is mining."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Courier@ComBot_Courier]:SetText[""]
+								</OnMouseExit>
+							</Textentry>
+							<listbox Name="PickupList">
+								<BackgroundColor>FF000000</BackgroundColor>
+								<Border>1</Border>
+								<BorderColor>FFFFFFFF</BorderColor>
+								<X>34%</X>
+								<Y>30%</Y>
+								<Width>32%</Width>
+								<Height>40%</Height>
+								<OnLoad>
+									This:SetZOrder[alwaysontop]
+									This:Hide
+								</OnLoad>
+								<OnSelect>
+									UIElement[Pickup@PickupFrame@Courier@ComBot_Courier]:SetText[${This.SelectedItem.Text}]
+									Script[ComBot].VariableScope.Courier.Config:SetPickup[${This.SelectedItem.Text}]
+									This:Hide
+									Script[ComBot].VariableScope.Courier.LocalUI:Stop
+								</OnSelect>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Courier@ComBot_Courier]:SetText["This field needs to contain the exact name of your pickup bookmark.  The bookmark can be a station if you are picking up from a personal hangar or corporate hangar, or a location if you are picking up from a Player Owned Station structure.  If you are picking up from an Fleet Hangar or Jetcan, the bookmark needs to be any bookmark in the system where your fleet is mining."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Courier@ComBot_Courier]:SetText[""]
+								</OnMouseExit>
+							</listbox>					
+							<Text name='PickupContainerTitle'> 
+								<X>34%</X> 
+								<Y>68%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Fleet Hangar Name</Text>
+							</Text>
+							<TextEntry name='PickupContainer'> 
+								<X>34%</X> 
+								<Y>80%</Y> 
+								<Width>32%</Width> 
+								<Height>15%</Height> 
+								<OnLoad>
+									This:SetText[${Script[ComBot].VariableScope.Courier.Config.PickupContainer}]
+									This:Hide
+								</OnLoad>
+								<OnChange>
+									Script[ComBot].VariableScope.Courier.Config:SetPickupContainer[${This.Text}]
+								</OnChange>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Courier@ComBot_Courier]:SetText["This field is used to supply ComBot with an identifier for your pickup location.  If you are picking up from an Fleet Hangar, this needs to contain the name of the pilot flying your Fleet Hangar.  If you are picking up from a Player Owned Station structure, this needs to contain the structure's name."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Courier@ComBot_Courier]:SetText[""]
+								</OnMouseExit>
+							</TextEntry>
+
+							<Text name='PickupSubTypeTitle'> 
+								<X>67%</X> 
+								<Y>3%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Jetcan Mode</Text>
+								<OnLoad>
+									switch ${Script[ComBot].VariableScope.Courier.Config.PickupType}
+									{
+										case Corporation Folder
+											This:SetText[Corporation Folder]
+											break
+										case Container
+											This:SetText[Corporation Folder]
+											break
+										default
+											This:Hide
+									}
+								</OnLoad>
+							</Text>
+							<listbox Name="PickupSubType">
+								<BackgroundColor>FF000000</BackgroundColor>
+								<Border>1</Border>
+								<BorderColor>FFFFFFFF</BorderColor>
+								<X>67%</X>
+								<Y>15%</Y>
+								<Width>32%</Width>
+								<Height>80%</Height>
+								<OnLoad>
+									switch ${Script[ComBot].VariableScope.Courier.Config.PickupType}
+									{
+										case Corporation Hangar
+											This:AddItem[Corporation Folder 1]
+											This:AddItem[Corporation Folder 2]
+											This:AddItem[Corporation Folder 3]
+											This:AddItem[Corporation Folder 4]
+											This:AddItem[Corporation Folder 5]
+											This:AddItem[Corporation Folder 6]
+											This:AddItem[Corporation Folder 7]
+											break
+										case Container
+											This:AddItem[Corporation Folder 1]
+											This:AddItem[Corporation Folder 2]
+											This:AddItem[Corporation Folder 3]
+											This:AddItem[Corporation Folder 4]
+											This:AddItem[Corporation Folder 5]
+											This:AddItem[Corporation Folder 6]
+											This:AddItem[Corporation Folder 7]
+											break
+										default
+											This:Hide
+									}
+									This.ItemByText[${Script[ComBot].VariableScope.Courier.Config.PickupSubType}]:Select
+								</OnLoad>
+								<OnSelect>
+									Script[ComBot].VariableScope.Courier.Config:SetPickupSubType[${This.SelectedItem.Text}]
+								</OnSelect>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Courier@ComBot_Courier]:SetText["This field is used to further configure your pickup type for types that have additional options, like Jetcans."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Courier@ComBot_Courier]:SetText[""]
+								</OnMouseExit>
+							</listbox>
+							
+							<Text name='PickupTypeTitle'> 
+								<X>1%</X> 
+								<Y>3%</Y> 
+								<Width>32%</Width> 
+								<Height>10%</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Pickup Type</Text>
+							</Text>
+							<listbox Name="PickupType">
+								<BackgroundColor>FF000000</BackgroundColor>
+								<Border>1</Border>
+								<BorderColor>FFFFFFFF</BorderColor>
+								<X>1%</X>
+								<Y>15%</Y>
+								<Width>32%</Width>
+								<Height>80%</Height>
+								<Items>
+									<Item>Container</Item>
+									<Item>Corporation Hangar</Item>
+									<Item>Personal Hangar</Item>
+									<Item>Fleet Hangar</Item>
+								</Items>
+								<OnLoad>
+									This.ItemByText[${Script[ComBot].VariableScope.Courier.Config.PickupType}]:Select
+									UIElement[PickupSubType@PickupFrame@Courier@ComBot_Courier]:ClearItems
+
+									switch ${Script[ComBot].VariableScope.Courier.Config.PickupType}
+									{
+										case Container
+											UIElement[PickupSubType@PickupFrame@Courier@ComBot_Courier]:AddItem[Corporation Folder 1]
+											UIElement[PickupSubType@PickupFrame@Courier@ComBot_Courier]:AddItem[Corporation Folder 2]
+											UIElement[PickupSubType@PickupFrame@Courier@ComBot_Courier]:AddItem[Corporation Folder 3]
+											UIElement[PickupSubType@PickupFrame@Courier@ComBot_Courier]:AddItem[Corporation Folder 4]
+											UIElement[PickupSubType@PickupFrame@Courier@ComBot_Courier]:AddItem[Corporation Folder 5]
+											UIElement[PickupSubType@PickupFrame@Courier@ComBot_Courier]:AddItem[Corporation Folder 6]
+											UIElement[PickupSubType@PickupFrame@Courier@ComBot_Courier]:AddItem[Corporation Folder 7]
+											UIElement[PickupSubType@PickupFrame@Courier@ComBot_Courier].ItemByText[${Script[ComBot].VariableScope.Courier.Config.PickupSubType}]:Select
+											UIElement[PickupTitle@PickupFrame@Courier@ComBot_Courier]:SetText[Container Bookmark]
+											UIElement[PickupContainerTitle@PickupFrame@Courier@ComBot_Courier]:SetText[Container Name]
+											UIElement[PickupContainerTitle@PickupFrame@Courier@ComBot_Courier]:Show
+											UIElement[PickupContainer@PickupFrame@Courier@ComBot_Courier]:Show
+											UIElement[PickupSubType@PickupFrame@Courier@ComBot_Courier]:Show
+											UIElement[PickupSubTypeTitle@PickupFrame@Courier@ComBot_Courier]:Show
+											break
+										case Corporation Hangar
+											UIElement[PickupSubType@PickupFrame@Courier@ComBot_Courier]:AddItem[Corporation Folder 1]
+											UIElement[PickupSubType@PickupFrame@Courier@ComBot_Courier]:AddItem[Corporation Folder 2]
+											UIElement[PickupSubType@PickupFrame@Courier@ComBot_Courier]:AddItem[Corporation Folder 3]
+											UIElement[PickupSubType@PickupFrame@Courier@ComBot_Courier]:AddItem[Corporation Folder 4]
+											UIElement[PickupSubType@PickupFrame@Courier@ComBot_Courier]:AddItem[Corporation Folder 5]
+											UIElement[PickupSubType@PickupFrame@Courier@ComBot_Courier]:AddItem[Corporation Folder 6]
+											UIElement[PickupSubType@PickupFrame@Courier@ComBot_Courier]:AddItem[Corporation Folder 7]
+											UIElement[PickupSubType@PickupFrame@Courier@ComBot_Courier].ItemByText[${Script[ComBot].VariableScope.Courier.Config.PickupSubType}]:Select
+											UIElement[PickupTitle@PickupFrame@Courier@ComBot_Courier]:SetText[Pickup Station Bookmark]
+											UIElement[PickupContainerTitle@PickupFrame@Courier@ComBot_Courier]:Hide
+											UIElement[PickupContainer@PickupFrame@Courier@ComBot_Courier]:Hide
+											UIElement[PickupSubType@PickupFrame@Courier@ComBot_Courier]:Show
+											UIElement[PickupSubTypeTitle@PickupFrame@Courier@ComBot_Courier]:Show
+											break
+										case Fleet Hangar
+											UIElement[PickupTitle@PickupFrame@Courier@ComBot_Courier]:SetText[Mining System Bookmark]
+											UIElement[PickupContainerTitle@PickupFrame@Courier@ComBot_Courier]:SetText[Fleet Hangar Pilot Name]
+											UIElement[PickupContainerTitle@PickupFrame@Courier@ComBot_Courier]:Show
+											UIElement[PickupContainer@PickupFrame@Courier@ComBot_Courier]:Show
+											UIElement[PickupSubType@PickupFrame@Courier@ComBot_Courier]:Hide
+											UIElement[PickupSubTypeTitle@PickupFrame@Courier@ComBot_Courier]:Hide
+											break
+										default
+											UIElement[PickupTitle@PickupFrame@Courier@ComBot_Courier]:SetText[Pickup Station Bookmark]
+											UIElement[PickupContainerTitle@PickupFrame@Courier@ComBot_Courier]:Hide
+											UIElement[PickupContainer@PickupFrame@Courier@ComBot_Courier]:Hide
+											UIElement[PickupSubType@PickupFrame@Courier@ComBot_Courier]:Hide
+											UIElement[PickupSubTypeTitle@PickupFrame@Courier@ComBot_Courier]:Hide
+											break
+									}
+								</OnLoad>
+								<OnSelect>
+									Script[ComBot].VariableScope.Courier.Config:SetPickupType[${This.SelectedItem.Text}]
+									UIElement[PickupSubType@PickupFrame@Courier@ComBot_Courier]:ClearItems
+
+									switch ${Script[ComBot].VariableScope.Courier.Config.PickupType}
+									{
+										case Container
+											UIElement[PickupSubType@PickupFrame@Courier@ComBot_Courier]:AddItem[Corporation Folder 1]
+											UIElement[PickupSubType@PickupFrame@Courier@ComBot_Courier]:AddItem[Corporation Folder 2]
+											UIElement[PickupSubType@PickupFrame@Courier@ComBot_Courier]:AddItem[Corporation Folder 3]
+											UIElement[PickupSubType@PickupFrame@Courier@ComBot_Courier]:AddItem[Corporation Folder 4]
+											UIElement[PickupSubType@PickupFrame@Courier@ComBot_Courier]:AddItem[Corporation Folder 5]
+											UIElement[PickupSubType@PickupFrame@Courier@ComBot_Courier]:AddItem[Corporation Folder 6]
+											UIElement[PickupSubType@PickupFrame@Courier@ComBot_Courier]:AddItem[Corporation Folder 7]
+											UIElement[PickupSubTypeTitle@PickupFrame@Courier@ComBot_Courier]:SetText[Corporate Folder]
+											UIElement[PickupTitle@PickupFrame@Courier@ComBot_Courier]:SetText[Container Bookmark]
+											UIElement[PickupContainerTitle@PickupFrame@Courier@ComBot_Courier]:SetText[Container Name]
+											UIElement[PickupContainerTitle@PickupFrame@Courier@ComBot_Courier]:Show
+											UIElement[PickupContainer@PickupFrame@Courier@ComBot_Courier]:Show
+											UIElement[PickupSubType@PickupFrame@Courier@ComBot_Courier]:Show
+											UIElement[PickupSubTypeTitle@PickupFrame@Courier@ComBot_Courier]:Show
+											break
+										case Corporation Hangar
+											UIElement[PickupSubType@PickupFrame@Courier@ComBot_Courier]:AddItem[Corporation Folder 1]
+											UIElement[PickupSubType@PickupFrame@Courier@ComBot_Courier]:AddItem[Corporation Folder 2]
+											UIElement[PickupSubType@PickupFrame@Courier@ComBot_Courier]:AddItem[Corporation Folder 3]
+											UIElement[PickupSubType@PickupFrame@Courier@ComBot_Courier]:AddItem[Corporation Folder 4]
+											UIElement[PickupSubType@PickupFrame@Courier@ComBot_Courier]:AddItem[Corporation Folder 5]
+											UIElement[PickupSubType@PickupFrame@Courier@ComBot_Courier]:AddItem[Corporation Folder 6]
+											UIElement[PickupSubType@PickupFrame@Courier@ComBot_Courier]:AddItem[Corporation Folder 7]
+											UIElement[PickupSubTypeTitle@PickupFrame@Courier@ComBot_Courier]:SetText[Corporate Folder]
+											UIElement[PickupTitle@PickupFrame@Courier@ComBot_Courier]:SetText[Pickup Station Bookmark]
+											UIElement[PickupContainerTitle@PickupFrame@Courier@ComBot_Courier]:Hide
+											UIElement[PickupContainer@PickupFrame@Courier@ComBot_Courier]:Hide
+											Script[ComBot].VariableScope.Courier.Config:SetPickupContainer[\"\"]
+											UIElement[PickupSubType@PickupFrame@Courier@ComBot_Courier]:Show
+											UIElement[PickupSubTypeTitle@PickupFrame@Courier@ComBot_Courier]:Show
+											break
+										case Fleet Hangar
+											UIElement[PickupTitle@PickupFrame@Courier@ComBot_Courier]:SetText[Mining System Bookmark]
+											UIElement[PickupContainerTitle@PickupFrame@Courier@ComBot_Courier]:SetText[Fleet Hangar Pilot Name]
+											UIElement[PickupContainerTitle@PickupFrame@Courier@ComBot_Courier]:Show
+											UIElement[PickupContainer@PickupFrame@Courier@ComBot_Courier]:Show
+											UIElement[PickupSubType@PickupFrame@Courier@ComBot_Courier]:Hide
+											UIElement[PickupSubTypeTitle@PickupFrame@Courier@ComBot_Courier]:Hide
+											Script[ComBot].VariableScope.Courier.Config:SetPickupSubType[\"\"]
+											break
+										default
+											UIElement[PickupTitle@PickupFrame@Courier@ComBot_Courier]:SetText[Pickup Station Bookmark]
+											UIElement[PickupContainerTitle@PickupFrame@Courier@ComBot_Courier]:Hide
+											UIElement[PickupContainer@PickupFrame@Courier@ComBot_Courier]:Hide
+											Script[ComBot].VariableScope.Courier.Config:SetPickupContainer[\"\"]
+											UIElement[PickupSubType@PickupFrame@Courier@ComBot_Courier]:Hide
+											UIElement[PickupSubTypeTitle@PickupFrame@Courier@ComBot_Courier]:Hide
+											Script[ComBot].VariableScope.Courier.Config:SetPickupSubType[\"\"]
+											break
+									}
+									UIElement[PickupContainer@PickupFrame@Courier@ComBot_Courier]:SetText[${Script[ComBot].VariableScope.Courier.Config.PickupContainer}]
+								</OnSelect>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Courier@ComBot_Courier]:SetText["This field determines how ComBot should pick up cargo for hauling."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Courier@ComBot_Courier]:SetText[""]
+								</OnMouseExit>
+							</listbox>
+						</Children>
+					</Frame>				
+
 					<Text name='ConfigFrameTitle'> 
 						<X>1%</X> 
-						<Y>65%</Y> 
+						<Y>68%</Y> 
 						<Width>32%</Width> 
 						<Height>4%</Height> 
 						<Text>Configuration</Text>
@@ -320,9 +646,9 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 					</Text>
 					<Frame name="ConfigFrame">
 						<X>0%</X>
-						<Y>67%</Y>
+						<Y>70%</Y>
 						<Width>100%</Width>
-						<Height>12%</Height>
+						<Height>9%</Height>
 						<BackgroundColor>FF000000</BackgroundColor>
 						<Border>1</Border>
 						<BorderColor>FFFFFFFF</BorderColor>
@@ -344,6 +670,43 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								</OnLeftClick>
 								<OnMouseEnter>
 									UIElement[Information@InformationFrame@Courier@ComBot_Courier]:SetText["When checked, ComBot will not accept missions which take you through Low Sec."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Courier@ComBot_Courier]:SetText[""]
+								</OnMouseExit>
+							</Checkbox>									
+							<Checkbox name='Materials'>
+								<X>34%</X>
+								<Y>5%</Y>
+								<Width>32%</Width> 
+								<Height>40%</Height> 
+								<Text>Materials for War Preparation</Text>
+								<OnLoad>
+									if ${Script[ComBot].VariableScope.Courier.Config.Materials}
+									{
+										This:SetChecked
+									}
+									else
+									{
+										UIElement[PickupFrameTitle@Courier@ComBot_Courier]:Hide
+										UIElement[PickupFrame@Courier@ComBot_Courier]:Hide
+									}
+								</OnLoad>
+								<OnLeftClick>
+									Script[ComBot].VariableScope.Courier.Config:SetMaterials[${This.Checked}]
+									if ${Script[ComBot].VariableScope.Courier.Config.Materials}
+									{
+										UIElement[PickupFrameTitle@Courier@ComBot_Courier]:Show
+										UIElement[PickupFrame@Courier@ComBot_Courier]:Show
+									}
+									else
+									{
+										UIElement[PickupFrameTitle@Courier@ComBot_Courier]:Hide
+										UIElement[PickupFrame@Courier@ComBot_Courier]:Hide
+									}
+								</OnLeftClick>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Courier@ComBot_Courier]:SetText["When checked, ComBot will run the Materials for War Preparation mission, picking up the ore from your pickup location above."]
 								</OnMouseEnter>
 								<OnMouseExit>
 									UIElement[Information@InformationFrame@Courier@ComBot_Courier]:SetText[""]
