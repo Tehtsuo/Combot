@@ -630,7 +630,7 @@ objectdef obj_Ratter inherits obj_State
 					Entity[${FirstWreck}]:SetName[This salvage site belongs to ${Me.Name}]
 				}
 			}
-		{
+		}
 		
 		if ${Config.Squat}
 		{
