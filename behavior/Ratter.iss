@@ -465,6 +465,7 @@ objectdef obj_Ratter inherits obj_State
 	{
 		if ${Me.ToEntity.Mode} == 3
 		{
+			This:InsertState["Updated"]
 			This:InsertState["InitialUpdate"]
 			This:InsertState["VerifyRatLocation"]
 			This:InsertState["Traveling"]
@@ -487,6 +488,12 @@ objectdef obj_Ratter inherits obj_State
 		}
 		if ${LavishScript.RunningTime} > ${FinishedDelay}
 		{
+			This:InsertState["Updated"]
+			This:InsertState["InitialUpdate"]
+			This:InsertState["VerifyRatLocation"]
+			This:InsertState["Traveling"]
+			This:InsertState["MoveToNewRatLocation"]
+			This:InsertState["Traveling"]
 			return TRUE
 		}
 	}
