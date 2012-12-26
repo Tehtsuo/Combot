@@ -620,16 +620,21 @@ objectdef obj_Ratter inherits obj_State
 		}
 		
 		
-		if ${Config.Squat}
+		if ${FirstWreck} == 0
 		{
-			if ${FirstWreck} == 0
+			if ${Entity[GroupID==GROUP_WRECK && HaveLootRights](exists)}
 			{
-				if ${Entity[GroupID==GROUP_WRECK && HaveLootRights](exists)}
+				FirstWreck:Set[${Entity[GroupID==GROUP_WRECK && HaveLootRights].ID}]
+				if ${Config.Salvage}
 				{
-					FirstWreck:Set[${Entity[GroupID==GROUP_WRECK && HaveLootRights].ID}]
+					Entity[${FirstWreck}]:SetName[This salvage site belongs to ${Me.Name}]
 				}
 			}
-			else
+		{
+		
+		if ${Config.Squat}
+		{
+			if ${FirstWreck}
 			{
 				if ${Config.SpeedTank}
 				{
