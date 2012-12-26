@@ -172,10 +172,9 @@ objectdef obj_Login inherits obj_State
 		Login:SetPassword[${Config.Common.Password}]
 		Login:Connect
 		UI:Update["obj_Login", "Login command sent", "g"]
-		This:Clear
-		This:QueueState["Idle", 20000]
-		This:QueueState["Login"]
-		This:QueueState["SelectCharacter"]
+		This:InsertState["SelectCharacter"]
+		This:InsertState["Login"]
+		This:InsertState["Idle", 20000]
 		return TRUE
 	}
 	
