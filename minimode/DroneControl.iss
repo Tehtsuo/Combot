@@ -95,7 +95,7 @@ objectdef obj_DroneControl inherits obj_State
 				}
 				while ${groupIterator:Next(exists)}
 			}
-			Rats:AddQueryString["IsNPC && !IsMoribund && (${groups})"]
+			Rats:AddQueryString["Distance < 150000 && IsNPC && !IsMoribund && (${groups})"]
 
 			seperator:Set[""]
 			groups:Set[""]
@@ -109,7 +109,7 @@ objectdef obj_DroneControl inherits obj_State
 				}
 				while ${groupIterator:Next(exists)}
 			}
-			Rats:AddQueryString["IsNPC && !IsMoribund && (${groups})"]
+			Rats:AddQueryString["Distance < 150000 && IsNPC && !IsMoribund && (${groups})"]
 			
 			seperator:Set[""]
 			groups:Set[""]
@@ -123,7 +123,7 @@ objectdef obj_DroneControl inherits obj_State
 				}
 				while ${groupIterator:Next(exists)}
 			}
-			Rats:AddQueryString["IsNPC && !IsMoribund && (${groups})"]
+			Rats:AddQueryString["Distance < 150000 && IsNPC && !IsMoribund && (${groups})"]
 			
 			
 			NPCData.BaseRef:GetSetIterator[classIterator]
@@ -143,7 +143,7 @@ objectdef obj_DroneControl inherits obj_State
 						}
 						while ${groupIterator:Next(exists)}
 					}
-					DroneTargets:AddQueryString["IsNPC && !IsMoribund && (${groups})"]
+					DroneTargets:AddQueryString["Distance < 150000 && IsNPC && !IsMoribund && (${groups})"]
 				}
 				while ${classIterator:Next(exists)}
 			}

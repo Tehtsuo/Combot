@@ -127,7 +127,7 @@ objectdef obj_Ratter inherits obj_State
 			}
 			while ${groupIterator:Next(exists)}
 		}
-		Rats:AddQueryString["IsNPC && !IsMoribund && (${groups})"]
+		Rats:AddQueryString["Distance < 150000 && IsNPC && !IsMoribund && (${groups})"]
 
 		seperator:Set[""]
 		groups:Set[""]
@@ -141,7 +141,7 @@ objectdef obj_Ratter inherits obj_State
 			}
 			while ${groupIterator:Next(exists)}
 		}
-		Rats:AddQueryString["IsNPC && !IsMoribund && (${groups})"]
+		Rats:AddQueryString["Distance < 150000 && IsNPC && !IsMoribund && (${groups})"]
 		
 		seperator:Set[""]
 		groups:Set[""]
@@ -155,7 +155,7 @@ objectdef obj_Ratter inherits obj_State
 			}
 			while ${groupIterator:Next(exists)}
 		}
-		Rats:AddQueryString["IsNPC && !IsMoribund && (${groups})"]
+		Rats:AddQueryString["Distance < 150000 && IsNPC && !IsMoribund && (${groups})"]
 		
 
 		
@@ -176,7 +176,7 @@ objectdef obj_Ratter inherits obj_State
 					}
 					while ${groupIterator:Next(exists)}
 				}
-				Rats:AddQueryString["IsNPC && !IsMoribund && (${groups})"]
+				Rats:AddQueryString["Distance < 150000 && IsNPC && !IsMoribund && (${groups})"]
 			}
 			while ${classIterator:Next(exists)}
 		}
