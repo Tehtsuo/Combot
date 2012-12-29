@@ -282,6 +282,10 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									{
 										This:SetChecked
 									}
+									if ${Script[ComBot].VariableScope.Ratter.Config.SpeedTank}
+									{
+										This:Hide
+									}
 								</OnLoad>
 								<OnLeftClick>
 									Script[ComBot].VariableScope.Ratter.Config:SetKeepRange[${This.Checked}]
