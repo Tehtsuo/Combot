@@ -128,7 +128,7 @@ objectdef obj_Ratter inherits obj_State
 			}
 			while ${groupIterator:Next(exists)}
 		}
-		Rats:AddQueryString["IsNPC && !IsMoribund && (${groups})"]
+		Rats:AddQueryString["Distance < 150000 && IsNPC && !IsMoribund && (${groups})"]
 
 		seperator:Set[""]
 		groups:Set[""]
@@ -142,7 +142,7 @@ objectdef obj_Ratter inherits obj_State
 			}
 			while ${groupIterator:Next(exists)}
 		}
-		Rats:AddQueryString["IsNPC && !IsMoribund && (${groups})"]
+		Rats:AddQueryString["Distance < 150000 && IsNPC && !IsMoribund && (${groups})"]
 		
 		seperator:Set[""]
 		groups:Set[""]
@@ -156,7 +156,7 @@ objectdef obj_Ratter inherits obj_State
 			}
 			while ${groupIterator:Next(exists)}
 		}
-		Rats:AddQueryString["IsNPC && !IsMoribund && (${groups})"]
+		Rats:AddQueryString["Distance < 150000 && IsNPC && !IsMoribund && (${groups})"]
 		
 
 		
@@ -177,7 +177,7 @@ objectdef obj_Ratter inherits obj_State
 					}
 					while ${groupIterator:Next(exists)}
 				}
-				Rats:AddQueryString["IsNPC && !IsMoribund && (${groups})"]
+				Rats:AddQueryString["Distance < 150000 && IsNPC && !IsMoribund && (${groups})"]
 			}
 			while ${classIterator:Next(exists)}
 		}
@@ -685,7 +685,7 @@ objectdef obj_Ratter inherits obj_State
 			}
 		}
 		
-		if !${Entity[${CurrentTarget}](exists)} || (!${Entity[${CurrentTarget}].IsLockedTarget} && !${Entity[${CurrentTarget}].BeingTargeted})
+		if !${Entity[${CurrentTarget}](exists)} || (!${Entity[${CurrentTarget}].IsLockedTarget} && !${Entity[${CurrentTarget}].BeingTargeted}) || ${Entity[${CurrentTarget}].Distance} > 150000
 		{
 			CurrentTarget:Set[-1]
 		}

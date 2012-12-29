@@ -80,7 +80,7 @@ objectdef obj_TargetList inherits obj_State
 	
 	method AddTargetingMe()
 	{
-		This:AddQueryString["IsTargetingMe && IsNPC && !IsMoribund"]
+		This:AddQueryString["Distance < 150000 && IsTargetingMe && IsNPC && !IsMoribund"]
 		NeedUpdate:Set[TRUE]
 	}
 	
