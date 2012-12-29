@@ -256,11 +256,35 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									if ${This.Checked}
 									{
 										UIElement[SpeedTankDistance@RatterFrame@Frame@ComBot_Ratter]:Show
+										UIElement[KeepRange@RatterFrame@Frame@ComBot_Ratter]:Hide
 									}
 									else
 									{
 										UIElement[SpeedTankDistance@RatterFrame@Frame@ComBot_Ratter]:Hide
+										UIElement[KeepRange@RatterFrame@Frame@ComBot_Ratter]:Show
 									}
+								</OnLeftClick>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText["When this option is checked, ComBot will speed tank by orbiting targets."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText[""]
+								</OnMouseExit>
+							</Checkbox>
+							<Checkbox name='KeepRange'> 
+								<X>34%</X> 
+								<Y>75%</Y> 
+								<Width>32%</Width> 
+								<Height>9%</Height> 
+								<Text>Keep tether pilot at range</Text>
+								<OnLoad>
+									if ${Script[ComBot].VariableScope.Ratter.Config.KeepRange}
+									{
+										This:SetChecked
+									}
+								</OnLoad>
+								<OnLeftClick>
+									Script[ComBot].VariableScope.Ratter.Config:SetKeepRange[${This.Checked}]
 								</OnLeftClick>
 								<OnMouseEnter>
 									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText["When this option is checked, ComBot will speed tank by orbiting targets."]

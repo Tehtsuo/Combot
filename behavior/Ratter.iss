@@ -62,6 +62,7 @@ objectdef obj_Configuration_Ratter
 	Setting(bool, Salvage, SetSalvage)
 	Setting(bool, SpeedTank, SetSpeedTank)
 	Setting(bool, Tether, SetTether)
+	Setting(bool, KeepRange, SetKeepRange)
 	Setting(bool, Squat, SetSquat)
 	Setting(bool, DroneControl, SetDroneControl)
 	Setting(int, Warp, SetWarp)
@@ -687,7 +688,7 @@ objectdef obj_Ratter inherits obj_State
 				}
 			}
 		}
-		elseif ${Config.Tether}
+		elseif ${Config.Tether} && ${Config.KeepRange}
 		{
 			if ${Entity[Name =- "${Config.TetherPilot}"].Exists}
 			{
