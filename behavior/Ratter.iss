@@ -672,7 +672,7 @@ objectdef obj_Ratter inherits obj_State
 						{
 							UI:Update["Ratter", "SpeedTank: Keeping \ao${Entity[${CurrentTarget}].Name} at range", "g"]
 							Orbiting:Set[0]
-							${ModuleToUse}.LockedAndLockingTargetList.Get[1]:KeepRange[${Math.Calc[${Config.SpeedTankDistance}*1000+1000].Int}]
+							${ModuleToUse}.LockedAndLockingTargetList.Get[1]:KeepAtRange[${Math.Calc[${Config.SpeedTankDistance}*1000+1000].Int}]
 						}
 					}
 					else
