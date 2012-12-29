@@ -658,29 +658,42 @@ objectdef obj_Ratter inherits obj_State
 				}
 			}
 		}
-		elseif ${Entity[${CurrentTarget}](exists)}
+		elseif ${Config.SpeedTank}
 		{
-			if ${Config.SpeedTank}
+			if ${Entity[${CurrentTarget}](exists)}
 			{
-				if ${Me.ToEntity.Mode} != 4
+				if ${Config.SpeedTank}
 				{
-					UI:Update["Ratter", "SpeedTank: Orbiting \ao${Entity[${CurrentTarget}].Name}", "g"]
-					Orbiting:Set[0]
-					${ModuleToUse}.LockedAndLockingTargetList.Get[1]:Orbit[${Math.Calc[${Config.SpeedTankDistance}*1000+1000].Int}]
+					if ${Me.ToEntity.Mode} != 4
+					{
+						UI:Update["Ratter", "SpeedTank: Orbiting \ao${Entity[${CurrentTarget}].Name}", "g"]
+						Orbiting:Set[0]
+						${ModuleToUse}.LockedAndLockingTargetList.Get[1]:Orbit[${Math.Calc[${Config.SpeedTankDistance}*1000+1000].Int}]
+					}
+					elseif ${Entity[(GroupID==GROUP_LARGECOLLIDABLEOBJECT || GroupID==GROUP_LARGECOLLIDABLESHIP || GroupID==GROUP_LARGECOLLIDABLESTRUCTURE) && Distance < 5000]} && \
+							${Orbiting} != ${Entity[(GroupID==GROUP_LARGECOLLIDABLEOBJECT || GroupID==GROUP_LARGECOLLIDABLESHIP || GroupID==GROUP_LARGECOLLIDABLESTRUCTURE) && Distance < 5000]}
+					{
+						UI:Update["Ratter", "SpeedTank: Orbiting \ao${Entity[(GroupID==GROUP_LARGECOLLIDABLEOBJECT || GroupID==GROUP_LARGECOLLIDABLESHIP || GroupID==GROUP_LARGECOLLIDABLESTRUCTURE) && Distance < 5000].Name}", "g"]
+						Orbiting:Set[${Entity[(GroupID==GROUP_LARGECOLLIDABLEOBJECT || GroupID==GROUP_LARGECOLLIDABLESHIP || GroupID==GROUP_LARGECOLLIDABLESTRUCTURE) && Distance < 5000]}]
+						Entity[(GroupID==GROUP_LARGECOLLIDABLEOBJECT || GroupID==GROUP_LARGECOLLIDABLESHIP || GroupID==GROUP_LARGECOLLIDABLESTRUCTURE) && Distance < 5000]:Orbit[10000]
+					}
+					elseif !${Entity[(GroupID==GROUP_LARGECOLLIDABLEOBJECT || GroupID==GROUP_LARGECOLLIDABLESHIP || GroupID==GROUP_LARGECOLLIDABLESTRUCTURE) && Distance < 8000]} &&\
+							${Me.ToEntity.Approaching.ID} != ${CurrentTarget}
+					{
+						UI:Update["Ratter", "SpeedTank: Orbiting \ao${Entity[${CurrentTarget}].Name}", "g"]
+						Orbiting:Set[0]
+						Entity[${CurrentTarget}]:Orbit[${Math.Calc[${Config.SpeedTankDistance}*1000+1000].Int}]
+					}
 				}
-				elseif ${Entity[(GroupID==GROUP_LARGECOLLIDABLEOBJECT || GroupID==GROUP_LARGECOLLIDABLESHIP || GroupID==GROUP_LARGECOLLIDABLESTRUCTURE) && Distance < 5000]} && \
-						${Orbiting} != ${Entity[(GroupID==GROUP_LARGECOLLIDABLEOBJECT || GroupID==GROUP_LARGECOLLIDABLESHIP || GroupID==GROUP_LARGECOLLIDABLESTRUCTURE) && Distance < 5000]}
+			}
+		}
+		elseif ${Config.Tether}
+		{
+			if ${Entity[Name =- "${Config.TetherPilot}"].Exists}
+			{
+				if ${Me.ToEntity.Mode} != 1
 				{
-					UI:Update["Ratter", "SpeedTank: Orbiting \ao${Entity[(GroupID==GROUP_LARGECOLLIDABLEOBJECT || GroupID==GROUP_LARGECOLLIDABLESHIP || GroupID==GROUP_LARGECOLLIDABLESTRUCTURE) && Distance < 5000].Name}", "g"]
-					Orbiting:Set[${Entity[(GroupID==GROUP_LARGECOLLIDABLEOBJECT || GroupID==GROUP_LARGECOLLIDABLESHIP || GroupID==GROUP_LARGECOLLIDABLESTRUCTURE) && Distance < 5000]}]
-					Entity[(GroupID==GROUP_LARGECOLLIDABLEOBJECT || GroupID==GROUP_LARGECOLLIDABLESHIP || GroupID==GROUP_LARGECOLLIDABLESTRUCTURE) && Distance < 5000]:Orbit[10000]
-				}
-				elseif !${Entity[(GroupID==GROUP_LARGECOLLIDABLEOBJECT || GroupID==GROUP_LARGECOLLIDABLESHIP || GroupID==GROUP_LARGECOLLIDABLESTRUCTURE) && Distance < 8000]} &&\
-						${Me.ToEntity.Approaching.ID} != ${CurrentTarget}
-				{
-					UI:Update["Ratter", "SpeedTank: Orbiting \ao${Entity[${CurrentTarget}].Name}", "g"]
-					Orbiting:Set[0]
-					Entity[${CurrentTarget}]:Orbit[${Math.Calc[${Config.SpeedTankDistance}*1000+1000].Int}]
+					Entity[Name =- "${Config.TetherPilot}"]:KeepAtRange
 				}
 			}
 		}
