@@ -690,7 +690,7 @@ objectdef obj_Ratter inherits obj_State
 		}
 		elseif ${Config.Tether} && ${Config.KeepRange}
 		{
-			if ${Entity[Name =- "${Config.TetherPilot}"].Exists}
+			if ${Entity[Name =- "${Config.TetherPilot}"](exists)}
 			{
 				if ${Me.ToEntity.Mode} != 1
 				{
