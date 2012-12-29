@@ -256,16 +256,44 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									if ${This.Checked}
 									{
 										UIElement[SpeedTankDistance@RatterFrame@Frame@ComBot_Ratter]:Show
+										UIElement[SpeedTankKeepRange@RatterFrame@Frame@ComBot_Ratter]:Show
 										UIElement[KeepRange@RatterFrame@Frame@ComBot_Ratter]:Hide
 									}
 									else
 									{
 										UIElement[SpeedTankDistance@RatterFrame@Frame@ComBot_Ratter]:Hide
+										UIElement[SpeedTankKeepRange@RatterFrame@Frame@ComBot_Ratter]:Hide
 										UIElement[KeepRange@RatterFrame@Frame@ComBot_Ratter]:Show
 									}
 								</OnLeftClick>
 								<OnMouseEnter>
 									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText["When this option is checked, ComBot will speed tank by orbiting targets."]
+								</OnMouseEnter>
+								<OnMouseExit>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText[""]
+								</OnMouseExit>
+							</Checkbox>
+							<Checkbox name='SpeedTankKeepRange'> 
+								<X>56%</X> 
+								<Y>65%</Y> 
+								<Width>10%</Width> 
+								<Height>9%</Height> 
+								<Text>Keep Range</Text>
+								<OnLoad>
+									if ${Script[ComBot].VariableScope.Ratter.Config.SpeedTankKeepRange}
+									{
+										This:SetChecked
+									}
+									if !${Script[ComBot].VariableScope.Ratter.Config.SpeedTank}
+									{
+										This:Hide
+									}
+								</OnLoad>
+								<OnLeftClick>
+									Script[ComBot].VariableScope.Ratter.Config:SetSpeedTankKeepRange[${This.Checked}]
+								</OnLeftClick>
+								<OnMouseEnter>
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText["When this option is checked, ComBot will keep targets at range instead of orbiting them while speed tanking."]
 								</OnMouseEnter>
 								<OnMouseExit>
 									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText[""]
@@ -291,7 +319,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									Script[ComBot].VariableScope.Ratter.Config:SetKeepRange[${This.Checked}]
 								</OnLeftClick>
 								<OnMouseEnter>
-									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText["When this option is checked, ComBot will speed tank by orbiting targets."]
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText["When this option is checked, ComBot will keep your tether target at range."]
 								</OnMouseEnter>
 								<OnMouseExit>
 									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText[""]
