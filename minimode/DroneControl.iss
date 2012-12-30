@@ -1,6 +1,6 @@
 /*
 
-ComBot  Copyright © 2012  Tehtsuo and Vendan
+ComBot  Copyright ï¿½ 2012  Tehtsuo and Vendan
 
 This file is part of ComBot.
 
@@ -348,6 +348,10 @@ objectdef obj_DroneControl inherits obj_State
 			Drones:RecallAll
 			This:QueueState["Idle", 2000]
 			This:QueueState["RecallCheck"]
+		}
+		else
+		{
+			Busy:UnsetBusy["DroneControl"]
 		}
 		
 		This:QueueState["Idle", 20000]
