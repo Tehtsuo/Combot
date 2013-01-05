@@ -233,7 +233,7 @@ objectdef obj_Miner inherits obj_State
 				do
 				{
 					Asteroids:AddQueryString[CategoryID==CATEGORYID_ORE && Name =- "${OreTypeIterator.Key}"]
-					ClosestRoidQuery:Concat[${sep}(CategoryID==CATEGORYID_ORE && Name =- "${OreTypeIterator.Key}"]
+					ClosestRoidQuery:Concat[${sep}(CategoryID==CATEGORYID_ORE && Name =- "${OreTypeIterator.Key})"]
 					sep:Set[" || "]
 				}
 				while ${OreTypeIterator:Next(exists)}
