@@ -109,7 +109,7 @@ objectdef obj_Salvage inherits obj_State
 	
 	member:bool Salvage()
 	{
-		if ${Client.InSpace}
+		if !${Client.InSpace}
 		{
 			return FALSE
 		}
@@ -135,12 +135,11 @@ objectdef obj_Salvage inherits obj_State
 		{
 			MaxRange:Set[${MyShip.MaxTargetRange}]
 		}
-		Wrecks.MaxRange:Set[${MyShip.MaxTargetRange}]
+		Wrecks.MaxRange:Set[${MaxRange}]
 		Wrecks.MinLockCount:Set[${MaxTarget}]
 		Wrecks.LockOutOfRange:Set[FALSE]
 		Wrecks.AutoLock:Set[TRUE]
 		Wrecks:RequestUpdate
-		
 		
 		Wrecks.LockedTargetList:GetIterator[TargetIterator]
 		if ${TargetIterator:First(exists)}
