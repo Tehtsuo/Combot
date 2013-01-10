@@ -130,7 +130,12 @@ objectdef obj_Salvage inherits obj_State
 		{
 			MaxTarget:Set[${Config.LockCount}]
 		}
-		Wrecks.MaxRange:Set[${Ship.ModuleList_TractorBeams.Range}]
+		variable float MaxRange = ${Ship.ModuleList_TractorBeams.Range}
+		if ${MaxRange} > ${MyShip.MaxTargetRange}
+		{
+			MaxRange:Set[${MyShip.MaxTargetRange}]
+		}
+		Wrecks.MaxRange:Set[${MyShip.MaxTargetRange}]
 		Wrecks.MinLockCount:Set[${MaxTarget}]
 		Wrecks.LockOutOfRange:Set[FALSE]
 		Wrecks.AutoLock:Set[TRUE]

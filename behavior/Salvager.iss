@@ -447,13 +447,19 @@ objectdef obj_Salvager inherits obj_State
 			}
 			return TRUE
 		}
-		
+
 		if ${Salvage.Wrecks.TargetList.Used} == 0
 		{
 			return TRUE
 		}
 		else
 		{
+			variable float MaxRange = ${Ship.ModuleList_TractorBeams.Range}
+			if ${MaxRange} > ${MyShip.MaxTargetRange}
+			{
+				MaxRange:Set[${MyShip.MaxTargetRange}]
+			}
+
 			variable iterator TargetIterator
 			Salvage.Wrecks.TargetList:GetIterator[TargetIterator]
 			if ${TargetIterator:First(exists)}
@@ -467,7 +473,7 @@ objectdef obj_Salvager inherits obj_State
 							Move:Approach[${TargetIterator.Value.ID}]
 							return FALSE
 						}
-						elseif	${TargetIterator.Value.Distance} > ${Ship.ModuleList_TractorBeams.Range}
+						elseif	${TargetIterator.Value.Distance} > ${MaxRange}
 						{
 							Move:Approach[${TargetIterator.Value.ID}]
 							return FALSE
