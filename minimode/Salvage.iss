@@ -56,6 +56,7 @@ objectdef obj_Salvage inherits obj_State
 	{
 		This[parent]:Initialize
 		DynamicAddMiniMode("Salvage", "Salvage")
+		PulseFrequency:Set[500]
 	}
 	
 	
@@ -108,6 +109,11 @@ objectdef obj_Salvage inherits obj_State
 	
 	member:bool Salvage()
 	{
+		if ${Client.InSpace}
+		{
+			return FALSE
+		}
+	
 		variable iterator TargetIterator
 		variable queue:int LootRangeAndTractored
 		variable int MaxTarget = ${MyShip.MaxLockedTargets}
