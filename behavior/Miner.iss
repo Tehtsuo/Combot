@@ -165,6 +165,7 @@ objectdef obj_Miner inherits obj_State
 	variable bool WarpToOrca=FALSE
 	variable index:bookmark BookmarkIndex
 	variable index:entity Belts
+	variable string ClosestRoidQuery
 
 	method Initialize()
 	{
@@ -211,6 +212,9 @@ objectdef obj_Miner inherits obj_State
 	method PopulateTargetList()
 	{
 		Asteroids:ClearQueryString
+		variable string sep
+		ClosestRoidQuery:Set[""]
+		sep:Set[""]
 
 		if !${Config.GasHarvesting}
 		{
@@ -229,6 +233,8 @@ objectdef obj_Miner inherits obj_State
 				do
 				{
 					Asteroids:AddQueryString[CategoryID==CATEGORYID_ORE && Name =- "${OreTypeIterator.Key}"]
+					ClosestRoidQuery:Concat[${sep}Name =- "${OreTypeIterator.Key}"]
+					sep:Set[" || "]
 				}
 				while ${OreTypeIterator:Next(exists)}
 			}
@@ -241,6 +247,8 @@ objectdef obj_Miner inherits obj_State
 		{
 			Asteroids:AddQueryString[GroupID==GROUP_HARVESTABLECLOUD]
 		}
+		ClosestRoidQuery:Set[CategoryID==CATEGORYID_ORE && (${ClosestRoidQuery})]
+		
 	}
 
 	
@@ -724,8 +732,15 @@ objectdef obj_Miner inherits obj_State
 		}
 		else
 		{
-			EVE:QueryEntities[Roids, "GroupID==GROUP_HARVESTABLECLOUD || CategoryID==CATEGORYID_ORE"]
-			Roids:GetIterator[Roid]
+			if ${Config.GasHarvesting}
+			{
+				EVE:QueryEntities[Roids, "GroupID==GROUP_HARVESTABLECLOUD || CategoryID==CATEGORYID_ORE"]
+			}
+			else
+			{
+				EVE:QueryEntities[Roids, "${ClosestRoidQuery}"]
+			}
+Roids:GetIterator[Roid]
 		}
 		if ${Config.OrcaMode}
 		{
