@@ -779,7 +779,7 @@ Roids:GetIterator[Roid]
 			Cargo:PopulateCargoList[Ship]
 			if ${Cargo.CargoList.Used} && ${Config.Dropoff_Type.Equal[No Dropoff]}
 			{
-				if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar].UsedCapacity} / ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar].Capacity} < ${Config.Threshold} * .01
+				if ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar].UsedCapacity} / ${EVEWindow[Inventory].ChildWindow[${MyShip.ID}, ShipFleetHangar].Capacity} < 90 * .01
 				{
 					if ${Cargo.CargoList.Used}
 					{
