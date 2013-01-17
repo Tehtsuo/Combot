@@ -617,7 +617,14 @@ objectdef obj_Cargo inherits obj_State
 		
 		if !${Local[${This.CargoQueue.Peek.Container}](exists)}
 		{
-			Move:Bookmark[${This.CargoQueue.Peek.Bookmark}, TRUE]
+			if ${EVE.Bookmark[${This.CargoQueue.Peek.Bookmark}].TypeID} == 5
+			{
+				Move:System[${EVE.Bookmark[${This.CargoQueue.Peek.Bookmark}].SolarSystemID}]
+			}
+			else
+			{
+				Move:Bookmark[${This.CargoQueue.Peek.Bookmark}, TRUE]
+			}
 		}
 		This:QueueState["Traveling"]
 		This:QueueState["WarpFleetMember"]
