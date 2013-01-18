@@ -617,7 +617,7 @@ objectdef obj_Cargo inherits obj_State
 		
 		if !${Local[${This.CargoQueue.Peek.Container}](exists)}
 		{
-			if ${EVE.Bookmark[${This.CargoQueue.Peek.Bookmark}].TypeID} == 5
+			if ${EVE.Bookmark[${This.CargoQueue.Peek.Bookmark}].TypeID} == 5 && ${EVE.Bookmark[${This.CargoQueue.Peek.Bookmark}].ItemID} != -1
 			{
 				Move:System[${EVE.Bookmark[${This.CargoQueue.Peek.Bookmark}].SolarSystemID}]
 			}
