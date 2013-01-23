@@ -454,6 +454,23 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								</OnLeftClick>
 							</Checkbox>
 				
+							<Checkbox name='Downtime'>
+								<X>1%</X>
+								<Y>50%</Y>
+								<Width>30%</Width> 
+								<Height>10%</Height> 
+								<Text>Logout when downtime message is seen</Text>
+								<OnLoad>
+									if ${Script[ComBot].VariableScope.Automate.Config.Downtime}
+									{
+										This:SetChecked
+									}
+								</OnLoad>
+								<OnLeftClick>
+									Script[ComBot].VariableScope.Automate.Config:SetDowntime[${This.Checked}]
+								</OnLeftClick>
+							</Checkbox>
+
 							<Text name='BookmarkTitle'> 
 								<X>40%</X> 
 								<Y>3%</Y> 

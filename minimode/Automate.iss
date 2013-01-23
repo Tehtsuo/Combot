@@ -59,6 +59,7 @@ objectdef obj_Configuration_Automate
 	Setting(bool, ScheduleLogout, SetScheduleLogout)
 	Setting(string, Bookmark, SetBookmark)
 	Setting(bool, Launch, SetLaunch)
+	Setting(bool, Downtime, SetDowntime)
 	Setting(string, LaunchCommand, SetLaunchCommand)
 }
 
