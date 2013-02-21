@@ -69,10 +69,6 @@ function main(string Character="")
 	declarevariable EVEExtension obj_EVEExtension script
 	EVEExtension.Character:Set[${Character}]
 	call EVEExtension.Initialize
-	while !${EVEExtension.Ready}
-	{
-		wait 10
-	}
 
 	module -require LSMIPC
 	echo "${Time} ComBot: Starting"

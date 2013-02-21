@@ -21,22 +21,19 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 
 objectdef obj_EVEExtension
 {
-	variable bool Ready=FALSE
 	variable string Character=""
 	
 	function Initialize()
 	{
 		do
 		{
-			if ${ISXEVE(exists)}
+			if !${ISXEVE(exists)}
 			{
-				break
+				extension ISXEVE
 			}
-			extension ISXEVE
 			wait 10
 		}
 		while !${ISXEVE(exists)} || !${ISXEVE.IsReady}
-		Ready:Set[TRUE]
 	}
 }
 
