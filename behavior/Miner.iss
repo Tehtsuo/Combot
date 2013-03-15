@@ -145,6 +145,7 @@ objectdef obj_Configuration_Miner
 	Setting(string, TetherName, SetTetherName)	
 	Setting(bool, UseBookmarks, SetUseBookmarks)	
 	Setting(bool, ShortCycle, SetShortCycle)	
+	Setting(int, ShortCyclePercent, SetShortCyclePercent)	
 	Setting(string, BeltPrefix, SetBeltPrefix)	
 	Setting(string, IceBeltPrefix, SetIceBeltPrefix)	
 	Setting(string, GasPrefix, SetGasPrefix)	
