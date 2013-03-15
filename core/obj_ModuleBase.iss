@@ -68,7 +68,7 @@ objectdef obj_ModuleBase inherits obj_State
 		}
 	}
 	
-	method Activate(int64 newTarget=-1, bool DoDeactivate=TRUE)
+	method Activate(int64 newTarget=-1, bool DoDeactivate=TRUE, int DeactivatePercent=100)
 	{
 		if ${DoDeactivate} && ${This.IsActive}
 		{
@@ -81,6 +81,10 @@ objectdef obj_ModuleBase inherits obj_State
 		
 		This:QueueState["ActivateOn", 50, "${newTarget}"]
 		This:QueueState["WaitTillActive", 50, 20]
+		if ${DeactivatePercent} < 100
+		{
+			This:QueueState["DeactivatePercent", 50, ${DeactivatePercent}]
+		}
 		This:QueueState["WaitTillInactive"]
 		if ${DoDeactivate}
 		{
@@ -157,6 +161,22 @@ objectdef obj_ModuleBase inherits obj_State
 			return ${MyShip.Module[${ModuleID}].IsActive}
 		}
 		return TRUE
+	}
+	
+	member:bool DeactivatePercent(int Percent=100)
+	{
+		if ${Percent} == 100
+		{
+			return TRUE
+		}
+		if  ${Math.Calc[((${EVETime.AsInt64} - ${MyShip.Module[${ModuleID}].TimeLastClicked.AsInt64}) / ${MyShip.Module[${ModuleID}].ActivationTime}) * 100]} > ${Percent}
+			MyShip.Module[${ModuleID}]:Deactivate
+			Deactivated:Set[TRUE]
+			This:Clear
+			This:InsertState["WaitTillInactive", 50, 0]
+			return TRUE
+		}		
+		return FALSE
 	}
 	
 	member:bool WaitTillInactive(int Count = -1)

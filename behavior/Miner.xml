@@ -855,7 +855,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<Height>10%</Height> 
 								<Border>1</Border>
 								<OnLoad>
-									This:SetRange[10]
+									This:SetRange[100]
 									This:SetValue[${Script[ComBot].VariableScope.Miner.Config.ShortCyclePercent}]
 									if !${Script[ComBot].VariableScope.Miner.Config.ShortCycle}
 									{

@@ -58,9 +58,9 @@ objectdef obj_Module
 		ModuleBaseModules[${ModuleID}]:Deactivate
 	}
 	
-	method Activate(int64 newTarget=-1, bool DoDeactivate=TRUE)
+	method Activate(int64 newTarget=-1, bool DoDeactivate=TRUE, int DeactivatePercent=100)
 	{
-		ModuleBaseModules[${ModuleID}]:Activate[${newTarget}, ${DoDeactivate}]
+		ModuleBaseModules[${ModuleID}]:Activate[${newTarget}, ${DoDeactivate}, ${DeactivatePercent}]
 	}
 	
 	member:bool LoadMiningCrystal(string OreType)

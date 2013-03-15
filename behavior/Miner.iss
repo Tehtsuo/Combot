@@ -951,7 +951,14 @@ Roids:GetIterator[Roid]
 						if ${Ship.ModuleList_MiningLaser.ActiveCountOn[${Roid.Value.ID}]} < ${LaserCount}
 						{
 							UI:Update["obj_Miner", "Activating 1 laser on ${Roid.Value.Name} (${ComBot.MetersToKM_Str[${Roid.Value.Distance}]})", "y"]
-							Ship.ModuleList_MiningLaser:Activate[${Roid.Value.ID}]
+							; if ${Config.ShortCycle}
+							; {
+								; Ship.ModuleList_MiningLaser:Activate[${Roid.Value.ID}, -1, TRUE, ]
+							; }
+							; else
+							; {
+								Ship.ModuleList_MiningLaser:Activate[${Roid.Value.ID}]
+							; }
 							Profiling:EndTrack
 							return FALSE
 						}
