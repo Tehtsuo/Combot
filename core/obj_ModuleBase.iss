@@ -170,6 +170,7 @@ objectdef obj_ModuleBase inherits obj_State
 			return TRUE
 		}
 		if  ${Math.Calc[((${EVETime.AsInt64} - ${MyShip.Module[${ModuleID}].TimeLastClicked.AsInt64}) / ${MyShip.Module[${ModuleID}].ActivationTime}) * 100]} > ${Percent}
+		{
 			MyShip.Module[${ModuleID}]:Deactivate
 			Deactivated:Set[TRUE]
 			This:Clear
