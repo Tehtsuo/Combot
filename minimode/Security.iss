@@ -266,7 +266,10 @@ objectdef obj_Security inherits obj_State
 		
 		if ${ClearFlee}
 		{
-			ComBot:Resume
+			if !${ComBot.Paused}
+			{
+				${Config.Common.ComBot_Mode}:Start
+			}
 			This:QueueState["CheckSafe", 500]
 			Profiling:EndTrack
 			return TRUE
