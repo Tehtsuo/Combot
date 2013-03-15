@@ -371,6 +371,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 #define GROUP_HEAVYINTERDICTORS 																				894
 #define GROUP_MARAUDERS 																						900
 #define GROUP_TARGETPAINTER 																					379
+#define GROUP_ENERGY_VAMPIRE 																					68
 #define GROUP_ENERGY_TRANSFER																					67
 
 #define TYPE_SALVAGER 																							25861

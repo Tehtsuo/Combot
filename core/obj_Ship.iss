@@ -47,6 +47,7 @@ objectdef obj_Ship inherits obj_State
 		This:AddModuleList[StasisWeb, "ToItem.GroupID = GROUP_STASIS_WEB"]
 		This:AddModuleList[SensorBoost, "ToItem.GroupID = GROUP_SENSORBOOSTER"]
 		This:AddModuleList[TargetPainter, "ToItem.GroupID = GROUP_TARGETPAINTER"]
+		This:AddModuleList[EnergyVampire, "ToItem.GroupID = GROUP_ENERGY_VAMPIRE"]
 		This:AddModuleList[TrackingComputer, "ToItem.GroupID = GROUP_TRACKINGCOMPUTER"]
 		This:AddModuleList[GangLinks, "ToItem.GroupID = GROUP_GANGLINK"]
 		This:AddModuleList[DroneControlUnit, "ToItem.GroupID = GROUP_DRONECONTROLUNIT"]
