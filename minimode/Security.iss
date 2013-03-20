@@ -337,7 +337,7 @@ objectdef obj_Security inherits obj_State
 			This:QueueState["CheckSafe", 500, TRUE]
 			return TRUE
 		}
-		elseif ${MyShip.CapacitorPct} <= 75
+		elseif ${MyShip.CapacitorPct} <= ${Config.CapFleeThreshold}
 		{
 			AutoModule.SafetyOveride:Set[TRUE]
 		}
