@@ -612,7 +612,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 								<Y>10%</Y> 
 								<Width>32%</Width> 
 								<Height>9%</Height> 
-								<Text>Warp to Anomalys using DirectEve</Text>
+								<Text>Warp to Anomalys using EveCom</Text>
 								<OnLoad>
 									if ${Script[ComBot].VariableScope.Ratter.Config.WarpToAnom}
 									{
@@ -623,7 +623,7 @@ along with ComBot.  If not, see <http://www.gnu.org/licenses/>.
 									Script[ComBot].VariableScope.Ratter.Config:SetWarpToAnom[${This.Checked}]
 								</OnLeftClick>
 								<OnMouseEnter>
-									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText["When this option is checked, ComBot will use DirectEve to scan and warp to anomalys."]
+									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText["When this option is checked, ComBot will use EveCom to scan and warp to anomalys."]
 								</OnMouseEnter>
 								<OnMouseExit>
 									UIElement[Information@InformationFrame@Frame@ComBot_Ratter]:SetText[""]
