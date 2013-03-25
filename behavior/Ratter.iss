@@ -424,7 +424,7 @@ objectdef obj_Ratter inherits obj_State
 				return TRUE
 			}
 
-			dotnet WarpToAnom ${Distance}
+			dotnet WarpToAnom WarpToAnom ${Distance}
 			This:InsertState["Idle", 60000]
 			return TRUE
 		}
