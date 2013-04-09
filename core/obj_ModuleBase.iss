@@ -97,7 +97,7 @@ objectdef obj_ModuleBase inherits obj_State
 	{
 		variable index:item Crystals
 		variable iterator Crystal
-		if ${OreType.Find[${MyShip.Module[${ModuleID}].Charge.Name.Token[1," "]}]}
+		if ${OreType.Find[${MyShip.Module[${ModuleID}].Charge.Type.Token[1," "]}]}
 		{
 			return TRUE
 		}
