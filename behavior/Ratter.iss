@@ -444,6 +444,24 @@ objectdef obj_Ratter inherits obj_State
 		{
 			return FALSE
 		}
+		if ${Config.Tether}
+		{
+			if ${Entity[Name =- "${Config.TetherPilot}"](exists)}
+			{
+				This:Clear
+				This:QueueState["Log", 10, "Ratting, g"]
+				This:QueueState["DropCloak", 50, TRUE]
+				This:QueueState["Rat"]
+				This:QueueState["DropCloak", 50, FALSE]
+			}
+			else
+			{
+				UI:Update["Ratter", "Separated from Tether Pilot", "g"]
+				This:InsertState["VerifyRatLocation"]
+				This:InsertState["Traveling"]
+				This:InsertState["MoveToNewRatLocation"]
+			}
+		}
 		if ${Entity[CategoryID == CATEGORYID_SHIP && IsPC && !IsFleetMember && OwnerID != ${Me.CharID}]}
 		{
 			UI:Update["Ratter", "This location is occupied, going to next", "g"]
