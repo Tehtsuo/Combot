@@ -449,7 +449,6 @@ objectdef obj_Ratter inherits obj_State
 			if ${Entity[Name =- "${Config.TetherPilot}"](exists)}
 			{
 				This:Clear
-				This:QueueState["Log", 10, "Ratting, g"]
 				This:QueueState["DropCloak", 50, TRUE]
 				This:QueueState["Rat"]
 				This:QueueState["DropCloak", 50, FALSE]
