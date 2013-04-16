@@ -488,6 +488,12 @@ objectdef obj_Ratter inherits obj_State
 			return TRUE
 		}
 		Rats:RequestUpdate
+		if ${Rats.TargetList.Used} > 0
+			{
+			UI:Update["Ratter", "Found rats on grid", "g"]
+			FinishedDelay:Set[${Math.Calc[${LavishScript.RunningTime} + (10000)]}]
+			return TRUE
+			}		
 		if ${Config.Tether} && !${Entity[Name =- "${Config.TetherPilot}"](exists)}
 		{
 			UI:Update["Ratter", "Tether pilot not on grid", "g"]
