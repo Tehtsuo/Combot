@@ -182,13 +182,8 @@ objectdef obj_ModuleBase inherits obj_State
 	
 	member:bool WaitTillInactive(int Count = -1)
 	{
-		if ${Count} >= 0
-		{
-			echo ${MyShip.Module[${ModuleID}].ToItem.Name}: Waiting to inactive - Count: ${Count}
-		}
 		if ${Count} > 50
 		{
-			echo ${MyShip.Module[${ModuleID}].ToItem.Name}: WaitTillInactive failed after 5 seconds, trying another Deactivate
 			MyShip.Module[${ModuleID}]:Deactivate
 			This:InsertState["WaitTillInactive", 50, 0]
 			return TRUE
