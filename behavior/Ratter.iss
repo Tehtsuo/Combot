@@ -446,20 +446,14 @@ objectdef obj_Ratter inherits obj_State
 		}
 		if ${Config.Tether}
 		{
-			if ${Entity[Name =- "${Config.TetherPilot}"](exists)}
-			{
-				This:Clear
-				This:QueueState["DropCloak", 50, TRUE]
-				This:QueueState["Rat"]
-				This:QueueState["DropCloak", 50, FALSE]
-			}
-			else
+			if !${Entity[Name =- "${Config.TetherPilot}"](exists)}
 			{
 				UI:Update["Ratter", "Separated from Tether Pilot", "g"]
 				This:InsertState["VerifyRatLocation"]
 				This:InsertState["Traveling"]
 				This:InsertState["MoveToNewRatLocation"]
 			}
+			return TRUE
 		}
 		if ${Entity[CategoryID == CATEGORYID_SHIP && IsPC && !IsFleetMember && OwnerID != ${Me.CharID}]}
 		{
@@ -494,12 +488,6 @@ objectdef obj_Ratter inherits obj_State
 			return TRUE
 		}
 		Rats:RequestUpdate
-		if ${Rats.TargetList.Used} > 0
-		{
-			UI:Update["Ratter", "Found rats on grid", "g"]
-			FinishedDelay:Set[${Math.Calc[${LavishScript.RunningTime} + (10000)]}]
-			return TRUE
-		}
 		if ${Config.Tether} && !${Entity[Name =- "${Config.TetherPilot}"](exists)}
 		{
 			UI:Update["Ratter", "Tether pilot not on grid", "g"]
