@@ -452,8 +452,8 @@ objectdef obj_Ratter inherits obj_State
 				This:InsertState["VerifyRatLocation"]
 				This:InsertState["Traveling"]
 				This:InsertState["MoveToNewRatLocation"]
+				return TRUE
 			}
-			return TRUE
 		}
 		if ${Entity[CategoryID == CATEGORYID_SHIP && IsPC && !IsFleetMember && OwnerID != ${Me.CharID}]}
 		{
